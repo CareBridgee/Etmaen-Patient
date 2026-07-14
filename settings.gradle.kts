@@ -24,3 +24,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "CareNest-Pationt"
 include(":app")
+include(":domain")
+include(":data")
+include(":presentation")
+include(":designsystem")
