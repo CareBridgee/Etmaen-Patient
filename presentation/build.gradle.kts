@@ -5,11 +5,7 @@ plugins {
 
 android {
     namespace = "com.carenest.presentation"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
