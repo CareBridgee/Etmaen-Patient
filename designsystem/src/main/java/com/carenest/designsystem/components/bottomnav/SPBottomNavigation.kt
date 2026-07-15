@@ -1,5 +1,6 @@
 package com.carenest.designsystem.components.bottomnav
 
+import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 
 
@@ -27,6 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.carenest.designsystem.R
 
 data class BottomNavItem(
     val label: String,
@@ -68,12 +71,12 @@ private fun SPBottomNavigationItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = if (isSelected) Theme.colors.backGround else Color.Transparent
-    val iconTint = if (isSelected) Theme.colors.primary else Theme.colors.primaryFont.copy(alpha = 0.6f)
-    val textColor = if (isSelected) Theme.colors.primaryFont else Theme.colors.primaryFont.copy(alpha = 0.6f)
+    val backgroundColor = if (isSelected) Theme.colors.primary else Color.Transparent
+    val iconTint = if (isSelected) Theme.colors.onPrimaryVariant else Theme.colors.primaryFont.copy(alpha = 0.6f)
+    val textColor = if (isSelected) Theme.colors.onPrimaryVariant else Theme.colors.primaryFont.copy(alpha = 0.6f)
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(32.dp))
+            .clip(RoundedCornerShape(18.dp))
             .background(backgroundColor)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -90,13 +93,50 @@ private fun SPBottomNavigationItem(
             tint = iconTint,
             modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         BasicText(
             text = item.label,
             style = Theme.typography.body.small.copy(
                 color = textColor,
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
             )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    SpTheme {
+        val items = remember {
+            listOf(
+                BottomNavItem(
+                    label = "Home",
+                    iconRes = R.drawable.ic_home,
+                    iconResSelected =  R.drawable.ic_home
+                ),
+                BottomNavItem(
+                    label = "Services",
+                    iconRes = R.drawable.ic_services,
+                    iconResSelected = R.drawable.ic_services
+                ),
+                BottomNavItem(
+                    label = "Booking",
+                    iconRes = R.drawable.ic_booking,
+                    iconResSelected = R.drawable.ic_booking
+                ),
+                BottomNavItem(
+                    label = "Profile",
+                    iconRes = R.drawable.ic_profile,
+                    iconResSelected = R.drawable.ic_profile
+                ),
+            )
+        }
+
+        SPBottomNavigation(
+            items = items,
+            selectedIndex = 0,
+            onItemSelected = {},
         )
     }
 }
