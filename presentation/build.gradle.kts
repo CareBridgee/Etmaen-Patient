@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
     implementation(libs.bundles.compose)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(project(":domain"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
