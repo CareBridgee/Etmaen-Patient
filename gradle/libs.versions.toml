@@ -16,8 +16,6 @@ coil3 = "3.1.0"
 ktor = "3.1.0"
 kotlinSeralization = "1.8.0"
 kotlinxSerializationPlugin = "2.1.0"
-uiGraphics = "1.11.3"
-foundation = "1.11.3"
 
 
 [libraries]
@@ -29,6 +27,7 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -38,8 +37,8 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 
 # Coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
@@ -75,13 +74,17 @@ compose = [
     "androidx-compose-ui-tooling-preview",
     "androidx-compose-ui-test-manifest",
     "androidx-compose-material3",
+    "androidx-compose-foundation",
     "androidx-compose-material-icons-extended",
     "androidx-activity-compose",
+    "androidx-compose-runtime",
+    "material",
 ]
 
-androidx = [
+androidx-core = [
     "androidx-lifecycle-runtime-ktx",
     "androidx-appcompat",
+    "androidx-core-ktx",
 ]
 
 coil = [
