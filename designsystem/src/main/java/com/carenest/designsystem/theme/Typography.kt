@@ -1,6 +1,5 @@
 package com.carenest.designsystem.theme
 
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -58,50 +57,60 @@ data class SizedTextStyle(
 
 @Composable
 internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
+    // headline-lg
     display = TextStyle(
         fontFamily = fontFamily,
-        fontSize = 40.sp,
+        fontSize = 30.sp,
         fontWeight = FontWeight.Bold,
-        lineHeight = 42.sp
+        lineHeight = 38.sp,
+        letterSpacing = (-0.02).sp
     ),
+    // headline-lg-mobile
     displayMedium = TextStyle(
         fontFamily = fontFamily,
-        fontSize = 26.sp,
+        fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
-        lineHeight = 34.sp
+        lineHeight = 32.sp,
+        letterSpacing = (-0.01).sp
     ),
+    // headline-md
     title = TextStyle(
         fontFamily = fontFamily,
-        fontSize = 24.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold,
-        lineHeight = 32.sp
+        lineHeight = 28.sp
     ),
     body = SizedTextStyle(
+        // body-lg
         large = TextStyle(
+            fontFamily = fontFamily,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Normal,
+            lineHeight = 26.sp
+        ),
+        // body-md
+        medium = TextStyle(
             fontFamily = fontFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             lineHeight = 24.sp
         ),
-        medium = TextStyle(
-            fontFamily = fontFamily,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            lineHeight = 22.sp
-        ),
+        // caption
         small = TextStyle(
             fontFamily = fontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 18.sp
+            lineHeight = 16.sp
         )
     ),
     hint = SizedTextStyle(
+        // label-md, softened to Light for hint usage
         large = TextStyle(
             fontFamily = fontFamily,
-            fontSize = 17.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Light,
-            lineHeight = 26.sp
+            lineHeight = 20.sp,
+            letterSpacing = 0.05.sp
         ),
         medium = TextStyle(
             fontFamily = fontFamily,

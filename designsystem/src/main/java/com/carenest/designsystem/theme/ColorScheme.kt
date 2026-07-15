@@ -1,6 +1,5 @@
 package com.carenest.designsystem.theme
 
-
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
@@ -28,114 +27,61 @@ data class ColorScheme(
     val onAmber: Color,
     val disable: Color,
     val onDisable: Color,
-    val tint: Color,
-    val successContainer: Color,
-    val onSuccessContainer: Color,
-    val warningContainer: Color,
-    val onWarningContainer: Color,
-    val primaryContainer: Color,
-    val onPrimaryContainer: Color,
-    val infoContainer: Color,
-    val onInfoContainer: Color,
-    val bankContainer: Color,
-    val onBankContainer: Color,
-    val vodafoneContainer: Color,
-    val onVodafoneContainer: Color,
-    val processingContainer: Color,
-    val onProcessingContainer: Color,
-    val errorContainer: Color,
-    val onErrorContainer: Color,
-    val track: Color,
-    val divider: Color
+    val tint: Color
 )
+
 val lightColors = ColorScheme(
-    primary = Color(0xFF70856F),         // Green primary color
-    primaryVariant = Color(0xFF8E9B86),  // A slightly darker variant of the green for light mode
-    onPrimary = Color(0xFFECECEC),       // Dark text for better readability on green
-    secondary = Color(0xFFD2D9CC),       // Light neutral secondary color
-    onSecondary = Color(0xFF000000),     // Dark text for secondary surfaces
-    onPrimaryVariant = Color(0xffF9F6F2),
-    backGround = Color(0xFFFEFDFC),
-    primaryFont = Color(0xFF000000),
-    secondaryFont = Color(0xFF636369),
-    surface = Color(0xFFFFFFFF),
-    surfaceVariant = Color(0xFFFDFAF6),
-    onSurface = Color(0xFF000000),
-    hint = Color(0xFFA7A7A7),
+    primary = Color(0xFF006168),           // primary
+    primaryVariant = Color(0xFF0D7C84),    // primary-container
+    onPrimary = Color(0xFFFFFFFF),         // on-primary
+    onPrimaryVariant = Color(0xFFD9FCFF),  // on-primary-container
+    secondary = Color(0xFF516161),         // secondary
+    onSecondary = Color(0xFFFFFFFF),       // on-secondary
+    backGround = Color(0xFFF8F9FA),        // background
+    primaryFont = Color(0xFF191C1D),       // on-surface
+    secondaryFont = Color(0xFF3E494A),     // on-surface-variant
+    surface = Color(0xFFFFFFFF),           // surface-container-lowest
+    surfaceVariant = Color(0xFFE1E3E4),    // surface-variant
+    onSurface = Color(0xFF191C1D),         // on-surface
+    hint = Color(0xFF6E797A),              // outline
     warning = Color(0xFFFFC107),
     onWarning = Color(0xFF000000),
-    error = Color(0xFFF44336),
-    onError = Color(0xFFFFFFFF),
-    success = Color(0xFF4CAF50),
+    error = Color(0xFFBA1A1A),             // error
+    onError = Color(0xFFFFFFFF),           // on-error
+    success = Color(0xFF43A047),           // progress-indicator success
     onSuccess = Color(0xFFFFFFFF),
     amber = Color(0xFFD97706),
     onAmber = Color(0xFFFFFFFF),
-    disable = Color(0xF1FAFAFA),
-    onDisable = Color(0xFFBDBDBD),
-    tint = Color(0xFF3E4A3C),
-    successContainer = Color(0xFFE8F5E9),
-    onSuccessContainer = Color(0xFF2E7D32),
-    warningContainer = Color(0xFFFFF3E0),
-    onWarningContainer = Color(0xFFEF6C00),
-    primaryContainer = Color(0xFFD3E8E6),
-    onPrimaryContainer = Color(0xFF004D40),
-    infoContainer = Color(0xFFF5F5F5),
-    onInfoContainer = Color(0xFF636369),
-    bankContainer = Color(0xFFE0F2F1),
-    onBankContainer = Color(0xFF004D40),
-    vodafoneContainer = Color(0xFFFFF1F0),
-    onVodafoneContainer = Color(0xFFD32F2F),
-    processingContainer = Color(0xFFE3F2FD),
-    onProcessingContainer = Color(0xFF1976D2),
-    errorContainer = Color(0xFFFFEBEE),
-    onErrorContainer = Color(0xFFD32F2F),
-    track = Color(0xFFEBEBEB),
-    divider = Color(0xFFF0F0F0)
+    disable = Color(0xFFEDEEEF),           // surface-container
+    onDisable = Color(0xFFBDC9CA),         // outline-variant
+    tint = Color(0xFF006970),              // surface-tint
 )
 
 val darkColors = ColorScheme(
-    primary = Color(0xFFA9B6A1),         // Kept same green for consistency (or you can tint it darker)
-    primaryVariant = Color(0xFF6A7563),  // Deeper green accent variant for dark backgrounds
-    onPrimary = Color(0xFF121212),       // Dark contrast text for primary elements
-    secondary = Color(0xFF636363),       // Muted, darker version of the secondary color for dark mode
-    onSecondary = Color(0xFF121212),
-    onPrimaryVariant = Color(0xffF9F6F2),
-    backGround = Color(0xFF121212),
-    primaryFont = Color(0xFFEEEEEE),
-    secondaryFont = Color(0xFFAAAAAA),
-    surface = Color(0xFF1E1E1E),
-    surfaceVariant = Color(0xFF1C1A22),
-    onSurface = Color(0xFFEEEEEE),
-    hint = Color(0xFF757575),
+    primary = Color(0xFF7CD4DD),           // inverse-primary
+    primaryVariant = Color(0xFF71D7CD),    // tertiary-fixed-dim
+    onPrimary = Color(0xFF002022),         // on-primary-fixed
+    onPrimaryVariant = Color(0xFF004F54),  // on-primary-fixed-variant
+    secondary = Color(0xFFB8CAC9),         // secondary-fixed-dim
+    onSecondary = Color(0xFF0E1E1E),       // on-secondary-fixed
+    backGround = Color(0xFF191C1D),
+    primaryFont = Color(0xFFE1E3E4),
+    secondaryFont = Color(0xFFBDC9CA),
+    surface = Color(0xFF2E3132),           // inverse-surface
+    surfaceVariant = Color(0xFF3E494A),
+    onSurface = Color(0xFFF0F1F2),         // inverse-on-surface
+    hint = Color(0xFF6E797A),
     warning = Color(0xFFFFD54F),
     onWarning = Color(0xFF121212),
-    error = Color(0xFFCF6679),
-    onError = Color(0xFF121212),
+    error = Color(0xFFFFB4AB),
+    onError = Color(0xFF690005),
     success = Color(0xFF81C784),
     onSuccess = Color(0xFF121212),
     amber = Color(0xFFD97706),
     onAmber = Color(0xFFFFFFFF),
-    disable = Color(0xFF333333),
-    onDisable = Color(0xFF555555),
-    tint = Color(0xFF97A594),
-    successContainer = Color(0xFF1B2E1E),
-    onSuccessContainer = Color(0xFF81C784),
-    warningContainer = Color(0xFF2E200D),
-    onWarningContainer = Color(0xFFFFD54F),
-    primaryContainer = Color(0xFF1B2E2E),
-    onPrimaryContainer = Color(0xFF80CBC4),
-    infoContainer = Color(0xFF2C2C2C),
-    onInfoContainer = Color(0xFFAAAAAA),
-    bankContainer = Color(0xFF002D2D),
-    onBankContainer = Color(0xFF80CBC4),
-    vodafoneContainer = Color(0xFF2D0A0A),
-    onVodafoneContainer = Color(0xFFE57373),
-    processingContainer = Color(0xFF0D1B2D),
-    onProcessingContainer = Color(0xFF64B5F6),
-    errorContainer = Color(0xFF2D0A0A),
-    onErrorContainer = Color(0xFFE57373),
-    track = Color(0xFF2C2C2C),
-    divider = Color(0xFF2C2C2C)
+    disable = Color(0xFF3E494A),
+    onDisable = Color(0xFF6E797A),
+    tint = Color(0xFF7CD4DD),
 )
 
 internal val localSPColorScheme = staticCompositionLocalOf { darkColors }
