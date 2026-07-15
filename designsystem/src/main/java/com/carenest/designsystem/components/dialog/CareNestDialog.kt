@@ -39,7 +39,7 @@ import com.carenest.designsystem.theme.Theme
  * and [confirmColor] change per action (e.g. red trash for delete, heart for wishlist removal).
  */
 @Composable
-fun TrovesDialog(
+fun CareNestDialog(
     title: String,
     message: String,
     confirmText: String,
@@ -126,7 +126,7 @@ fun LoginRequiredDialog(
     onLoginClick: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    TrovesDialog(
+    CareNestDialog(
         title = stringResource(com.carenest.designsystem.R.string.login_required_title),
         message = message,
         confirmText = stringResource(com.carenest.designsystem.R.string.login_required_btn),
