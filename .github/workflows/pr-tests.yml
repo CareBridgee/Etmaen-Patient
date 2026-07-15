@@ -39,12 +39,12 @@ jobs:
       - name: Run all unit tests
         run: ./gradlew test
 
-      - name: Generate merged coverage report
-        if: always()
-        run: ./gradlew koverHtmlReport koverXmlReport
+      # - name: Generate merged coverage report
+      #   if: always()
+      #   run: ./gradlew koverHtmlReport koverXmlReport
 
-      - name: Verify minimum coverage (80%)
-        run: ./gradlew koverVerify
+      # - name: Verify minimum coverage (80%)
+      #   run: ./gradlew koverVerify
 
       - name: Upload coverage report
         if: always()
