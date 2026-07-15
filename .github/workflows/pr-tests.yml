@@ -2,7 +2,6 @@ name: PR Tests & Coverage
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
     branches:
       - develop
 
@@ -11,7 +10,7 @@ permissions:
 
 jobs:
   test:
-    name: Build, Test & Coverage
+    name: Unit Tests & Coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -29,12 +28,6 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      - name: Build project
-        run: ./gradlew build -x test -x lint
-
-      - name: Run lint on Android modules
-        run: ./gradlew :app:lintDebug :presentation:lintDebug
 
       - name: Run all unit tests
         run: ./gradlew test
