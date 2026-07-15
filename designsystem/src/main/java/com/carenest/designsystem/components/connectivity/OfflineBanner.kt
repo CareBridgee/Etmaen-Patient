@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,8 +32,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.carenest.designsystem.R
 import com.carenest.designsystem.theme.Theme
 
 
@@ -59,12 +62,13 @@ fun OfflineBanner(
         when (kind) {
             ConnectivityBanner.BackOnline -> {
                 background = Theme.colors.success
-                label = stringResource(com.carenest.designsystem.R.string.connectivity_back_online_banner)
+                label = stringResource(R.string.connectivity_back_online_banner)
                 icon = Icons.Default.Wifi
             }
+
             else -> {
                 background = Theme.colors.error
-                label = stringResource(com.carenest.designsystem.R.string.connectivity_offline_banner)
+                label = stringResource(R.string.connectivity_offline_banner)
                 icon = Icons.Default.WifiOff
             }
         }
@@ -93,4 +97,25 @@ fun OfflineBanner(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun OfflineBannerPreview() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OfflineBanner(
+            banner = ConnectivityBanner.Offline
+        )
+        OfflineBanner(
+            banner = ConnectivityBanner.BackOnline
+        )
+        OfflineBanner(
+            banner = ConnectivityBanner.Hidden
+        )
+
+    }
+
 }
