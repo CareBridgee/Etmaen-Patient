@@ -19,7 +19,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
-import com.carenest.designsystem.components.bottomnav.SPFloatingBottomNavigation
+import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
 import com.carenest.presentation.R
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
@@ -113,7 +113,7 @@ fun AppNav() {
             )
 
             if (shouldShowBottomBar) {
-                SPFloatingBottomNavigation(
+                SPBottomNavigation(
                     items = listOf(
                         BottomNavItem(
                             stringResource(R.string.nav_home),
