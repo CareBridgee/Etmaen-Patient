@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlinx.serialization)
@@ -13,11 +15,40 @@ android {
 
     defaultConfig {
         minSdk = 24
-    }
 
+    }
+    buildTypes {
+        getByName("debug") {
+            buildConfigField(
+                type = "String",
+                name = "base_url",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("base_url")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "api_key",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("api_key")}\""
+            )
+        }
+        getByName("release") {
+            buildConfigField(
+                type = "String",
+                name = "base_url",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("base_url")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "api_key",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("api_key")}\""
+            )
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
 }
