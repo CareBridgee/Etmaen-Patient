@@ -16,6 +16,8 @@ object NavigationConfig {
     val serializer = SerializersModule {
         polymorphic(NavKey::class) {
             subclass(AppRoute.Splash::class ,AppRoute.Splash.serializer())
+            subclass(AppRoute.Login::class ,AppRoute.Login.serializer())
+            subclass(AppRoute.Register::class ,AppRoute.Register.serializer())
         }
     }
 

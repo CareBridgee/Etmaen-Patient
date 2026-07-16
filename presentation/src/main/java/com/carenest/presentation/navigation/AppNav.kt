@@ -21,6 +21,8 @@ import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
 import com.carenest.presentation.R
+import com.carenest.presentation.auth.login.screens.LoginScreen
+import com.carenest.presentation.auth.register.screens.RegisterScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
 import kotlin.collections.listOf
@@ -35,10 +37,36 @@ fun AppNav() {
         initialRoute
     )
 
+    /**
+     * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
+     */
+    fun replaceWith(route: NavKey) {
+        Snapshot.withMutableSnapshot {
+            backStack.clear()
+            backStack.add(route)
+        }
+    }
+
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
 
         entry<AppRoute.Splash> {
             // TODO: Add SplashScreen
+        }
+
+        entry<AppRoute.Login> {
+            val viewModel: com.carenest.presentation.auth.login.LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+            LoginScreen(
+                viewModel = viewModel,
+                onNavigateToRegister = { backStack.add(AppRoute.Register) }
+            )
+        }
+
+        entry<AppRoute.Register> {
+            val viewModel: com.carenest.presentation.auth.register.RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+            RegisterScreen(
+                viewModel = viewModel,
+                onNavigateHome = { replaceWith(AppRoute.Splash) } // Placeholder for Home
+            )
         }
 
     }
@@ -70,21 +98,6 @@ fun AppNav() {
         }
     }
 
-    /**
-     * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
-     *
-     * Common use cases:
-     * - After successful login
-     * - After completing onboarding
-     * - After logout
-     * - When resetting the app flow
-     */
-    fun replaceWith(route: NavKey) {
-        Snapshot.withMutableSnapshot {
-            backStack.clear()
-            backStack.add(route)
-        }
-    }
 
 
     Scaffold(
