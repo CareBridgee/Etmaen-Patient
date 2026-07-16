@@ -22,58 +22,37 @@ android {
 
 }
 
-dependencies{
-
+dependencies {
+    // Project modules
     implementation(project(":domain"))
 
-    implementation(libs.androidx.core.ktx)
+    // General data dependencies
+    implementation(libs.bundles.data.core)
 
-    // Ktor
+    // Network
     implementation(libs.bundles.ktor)
 
-    // JSON Serialization
-    implementation(libs.kotlinx.serialization)
-
     // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Date and time
-    implementation(libs.kotlinx.datetime)
+    implementation(libs.bundles.coroutines)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     // Room
-    implementation(libs.androidx.room.runtime)
+    implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
 
-    // DataStore
-    implementation(libs.androidx.datastore.preferences)
-
     // WorkManager
-    implementation(libs.androidx.work.runtime.ktx)
-
-    // Hilt with WorkManager
-    implementation(libs.androidx.hilt.work)
+    implementation(libs.bundles.work)
     ksp(libs.androidx.hilt.compiler)
 
     // Paging data source
-    implementation(libs.androidx.paging.runtime)
-
-    // Room + Paging integration
-    implementation(libs.androidx.room.paging)
-
-    // Device location
-    implementation(libs.play.services.location)
+    implementation(libs.bundles.paging.data)
 
     // Unit tests
     testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.ktor.client.mock)
-    testImplementation(libs.androidx.room.testing)
-
+    testImplementation(libs.bundles.data.testing)
 }
 
 room {

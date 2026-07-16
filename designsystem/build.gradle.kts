@@ -24,23 +24,10 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
 
-    // Exposed Compose APIs
-    api(libs.androidx.compose.ui)
-    api(libs.androidx.compose.ui.graphics)
-    api(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.material3)
-    api(libs.androidx.compose.material.icons.extended)
-
-    // Preview
-    implementation(libs.androidx.compose.ui.tooling.preview)
-
-    // Coil
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.ktor3)
-
-    // Ktor engine required by Coil network Ktor
-    implementation(libs.ktor.client.android)
+    // Image loading
+    implementation(libs.bundles.coil)
 
     // Animations
     implementation(libs.lottie.compose)

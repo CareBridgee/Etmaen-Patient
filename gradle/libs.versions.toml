@@ -17,7 +17,7 @@ ktor = "3.1.0"
 kotlinSerialization  = "1.8.0"
 kotlinxSerializationPlugin = "2.3.10"
 uiGraphics = "1.11.3"
-navigationCompose = "2.9.8"
+navigation3 = "1.1.4"
 hilt = "2.60.1"
 androidxHilt = "1.4.0"
 ksp = "2.3.10"
@@ -69,7 +69,9 @@ kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-
 
 
 # Navigation
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleRuntimeKtx" }
 
 # Lifecycle with Compose
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
@@ -140,7 +142,6 @@ compose = [
     "androidx-compose-ui",
     "androidx-compose-ui-graphics",
     "androidx-compose-ui-tooling-preview",
-    "androidx-compose-ui-test-manifest",
     "androidx-compose-material3",
     "androidx-compose-material-icons-extended",
     "androidx-compose-foundation",
@@ -148,6 +149,7 @@ compose = [
 ]
 
 androidx = [
+    "androidx-lifecycle-runtime-ktx",
     "androidx-core-ktx",
     "androidx-appcompat",
 ]
@@ -156,6 +158,7 @@ coil = [
     "coil-compose",
     "coil-compose-core",
     "coil-network-ktor3",
+    "ktor-client-android",
 ]
 
 ktor = [
@@ -180,6 +183,7 @@ coroutines = [
 
 room = [
     "androidx-room-runtime",
+    "androidx-room-paging",
 ]
 
 paging = [
@@ -191,4 +195,44 @@ camera = [
     "androidx-camera-camera2",
     "androidx-camera-lifecycle",
     "androidx-camera-view",
+]
+
+navigation3 = [
+    "androidx-navigation3-runtime",
+    "androidx-navigation3-ui",
+    "androidx-lifecycle-viewmodel-navigation3",
+]
+
+hilt = [
+    "hilt-android",
+    "androidx-hilt-lifecycle-viewmodel-compose",
+]
+
+work = [
+    "androidx-work-runtime-ktx",
+    "androidx-hilt-work",
+]
+
+testing = [
+    "kotlinx-coroutines-test",
+    "ktor-client-mock",
+    "androidx-room-testing",
+]
+
+data-core = [
+    "androidx-core-ktx",
+    "kotlinx-serialization",
+    "kotlinx-datetime",
+    "androidx-datastore-preferences",
+    "play-services-location",
+]
+
+paging-data = [
+    "androidx-paging-runtime",
+]
+
+data-testing = [
+    "kotlinx-coroutines-test",
+    "ktor-client-mock",
+    "androidx-room-testing",
 ]

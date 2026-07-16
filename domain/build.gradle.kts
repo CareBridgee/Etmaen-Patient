@@ -15,16 +15,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+}
 
-    dependencies {
-        // Flow and suspend APIs
-        api(libs.kotlinx.coroutines.core)
+dependencies {
 
-        // Dates used in domain models
-        api(libs.kotlinx.datetime)
+    // Flow and suspend APIs
+    api(libs.kotlinx.coroutines.core)
 
-        // Unit tests
-        testImplementation(libs.junit)
-        testImplementation(libs.kotlinx.coroutines.test)
-    }
+    // Dates used in domain models
+    api(libs.kotlinx.datetime)
+
+    // Unit tests
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
