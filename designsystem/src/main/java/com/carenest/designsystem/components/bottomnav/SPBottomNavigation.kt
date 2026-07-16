@@ -34,7 +34,6 @@ import com.carenest.designsystem.R
 data class BottomNavItem(
     val label: String,
     val iconRes: Int,
-    val iconResSelected:Int
 )
 
 @Composable
@@ -113,22 +112,18 @@ private fun Preview() {
                 BottomNavItem(
                     label = "Home",
                     iconRes = R.drawable.ic_home,
-                    iconResSelected =  R.drawable.ic_home
                 ),
                 BottomNavItem(
                     label = "Services",
                     iconRes = R.drawable.ic_services,
-                    iconResSelected = R.drawable.ic_services
                 ),
                 BottomNavItem(
                     label = "Booking",
                     iconRes = R.drawable.ic_booking,
-                    iconResSelected = R.drawable.ic_booking
                 ),
                 BottomNavItem(
                     label = "Profile",
                     iconRes = R.drawable.ic_profile,
-                    iconResSelected = R.drawable.ic_profile
                 ),
             )
         }
