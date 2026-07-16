@@ -1,5 +1,8 @@
 package com.carenest.data.di
 
+import com.carenest.data.BuildConfig
+import com.carenest.data.utils.KtorPluginKeys
+import com.carenest.data.utils.authenticationplugin
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -7,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
@@ -39,6 +43,12 @@ object NetworkModule {
 
             install(Logging) {
                 level = LogLevel.BODY
+            }
+
+            install(authenticationplugin)
+
+            defaultRequest {
+                url(BuildConfig.base_url)
             }
         }
 }
