@@ -42,7 +42,7 @@ dependencies {
     implementation(project(":domain"))
 
     // AndroidX
-    implementation(libs.bundles.androidx)
+    implementation(libs.bundles.androidx.core)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
