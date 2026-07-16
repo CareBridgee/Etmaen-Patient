@@ -20,7 +20,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
     buildFeatures {
         compose = true
     }
@@ -30,7 +29,7 @@ dependencies {
     // Project modules
     implementation(project(":domain"))
     implementation(project(":designsystem"))
-
+    implementation(libs.bundles.androidx.core)
     // Android core
     implementation(libs.androidx.core.ktx)
 
