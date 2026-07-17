@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SecondaryButton
-import com.carenest.designsystem.components.topbar.BaseTopAppBar
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.register.RegisterIntent
@@ -23,24 +23,19 @@ import com.carenest.designsystem.R as DR
 
 @Composable
 fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
+    ScreenTopBar(
+        title = stringResource(R.string.welcome_topbar_title),
+        showLeadingIcon = true,
+        onLeadingClick = { onEvent(RegisterIntent.BackClicked) }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BaseTopAppBar(
-            title = stringResource(R.string.welcome_topbar_title),
-            leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
-            onLeadingClick = { onEvent(RegisterIntent.BackClicked) },
-            autoMirrorLeadingIcon = true
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
             Spacer(modifier = Modifier.weight(1f))
             
             BasicText(
@@ -90,7 +85,6 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             )
             
             Spacer(modifier = Modifier.weight(1f))
-        }
     }
 }
 

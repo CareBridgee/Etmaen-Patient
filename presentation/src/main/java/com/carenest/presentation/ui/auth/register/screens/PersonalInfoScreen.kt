@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SegmentedControl
 import com.carenest.designsystem.components.textfield.CustomTextField
-import com.carenest.designsystem.components.topbar.BaseTopAppBar
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.register.RegisterIntent
@@ -26,24 +26,19 @@ import com.carenest.designsystem.R as DR
 
 @Composable
 fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) {
+    ScreenTopBar(
+        title = stringResource(R.string.welcome_topbar_title),
+        showLeadingIcon = true,
+        onLeadingClick = { onEvent(RegisterIntent.BackClicked) }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp)
     ) {
-        BaseTopAppBar(
-            title = stringResource(R.string.welcome_topbar_title),
-            leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
-            onLeadingClick = { onEvent(RegisterIntent.BackClicked) },
-            autoMirrorLeadingIcon = true
-        )
-        
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp)
-        ) {
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -157,7 +152,6 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
             )
             
             Spacer(modifier = Modifier.height(32.dp))
-        }
     }
 }
 
