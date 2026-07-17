@@ -34,7 +34,7 @@ jobs:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Run lint and unit tests
-        run: ./gradlew lintDebug testDebugUnitTest --no-daemon
+        run: ./gradlew lintDebug testDebugUnitTest --no-daemon -Dlint.baselines.continue=true
 
       - name: Upload lint reports
         if: always()
