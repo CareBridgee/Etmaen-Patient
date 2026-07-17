@@ -1,11 +1,15 @@
 package com.carenest.presentation.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +24,17 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
+import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.auth.login.screens.LoginScreen
 import com.carenest.presentation.ui.auth.register.screens.RegisterScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
+import com.carenest.presentation.navigation.TopBarConfiguration
+import com.carenest.presentation.navigation.LocalTopBarState
+import androidx.compose.ui.res.painterResource
+import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.auth.otp.screens.OtpScreen
@@ -67,7 +76,7 @@ fun AppNav() {
 
             entry<AppRoute.Login> {
                 LoginScreen(
-                    onNavigateToOtp = { phone -> backStack.add(AppRoute.Otp(phone)) }
+                    onNavigateToOtp = { phone, method -> backStack.add(AppRoute.Otp(phone, method)) }
                 )
             }
 
@@ -120,20 +129,40 @@ fun AppNav() {
             }
         }
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize()
-        ) { paddingValues ->
+        val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
 
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                NavDisplay<NavKey>(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .then(
-                            if (shouldShowBottomBar) Modifier
-                            else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                        ),
+        CompositionLocalProvider(LocalTopBarState provides topBarState) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.colors.backGround)
+                    .statusBarsPadding(),
+                topBar = {
+                    val config = topBarState.value
+                    if (config.title != null) {
+                        BaseTopAppBar(
+                            title = config.title,
+                            leadingIcon = if (config.showLeadingIcon) {
+                                config.leadingIcon ?: painterResource(id = RD.drawable.ic_arrow_back)
+                            } else null,
+                            onLeadingClick = config.onLeadingClick,
+                            autoMirrorLeadingIcon = true
+                        )
+                    }
+                }
+            ) { paddingValues ->
+
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    NavDisplay<NavKey>(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .then(
+                                if (shouldShowBottomBar) Modifier
+                                else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                            ),
                     entries = rememberDecoratedNavEntries(
                         backStack = backStack,
                         entryProvider = entryProvider,
@@ -171,6 +200,7 @@ fun AppNav() {
                             .align(Alignment.BottomCenter)
                             .padding(bottom = paddingValues.calculateBottomPadding()),
                     )
+                }
                 }
             }
         }
