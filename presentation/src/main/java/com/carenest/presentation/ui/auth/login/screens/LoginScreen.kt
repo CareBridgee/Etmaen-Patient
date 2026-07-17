@@ -3,7 +3,7 @@ package com.carenest.presentation.ui.auth.login.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.presentation.ui.auth.login.LoginIntent
 import com.carenest.presentation.ui.auth.login.LoginState
 import com.carenest.presentation.ui.auth.login.LoginStep

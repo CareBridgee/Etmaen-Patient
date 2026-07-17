@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,6 +18,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.login.LoginIntent
 import com.carenest.presentation.ui.auth.login.LoginState
 import com.carenest.presentation.ui.auth.login.LoginStep
+import com.carenest.presentation.R
 import com.carenest.designsystem.R as DR
 
 @Composable
@@ -27,7 +29,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             .background(Theme.colors.backGround)
     ) {
         BaseTopAppBar(
-            title = "Join us via phone number",
+            title = stringResource(R.string.phone_input_topbar_title),
             leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
             onLeadingClick = { onEvent(LoginIntent.BackClicked) },
             autoMirrorLeadingIcon = true
@@ -39,7 +41,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
                 .padding(24.dp)
         ) {
             BasicText(
-                text = "We'll text a code to verify your phone.",
+                text = stringResource(R.string.phone_input_subtitle),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont
                 )
@@ -48,7 +50,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
             
             BasicText(
-                text = "Phone Number",
+                text = stringResource(R.string.phone_input_label),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primary,
                     fontWeight = FontWeight.Bold
@@ -63,7 +65,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             
             Spacer(modifier = Modifier.height(8.dp))
             BasicText(
-                text = "Carrier charges may apply for SMS.",
+                text = stringResource(R.string.phone_input_carrier_charges),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.hint)
             )
             
@@ -78,7 +80,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             
             PrimaryButton(
-                caption = "NEXT",
+                caption = stringResource(R.string.phone_input_next_btn),
                 onClick = { onEvent(LoginIntent.RequestOtpClicked) },
                 isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()

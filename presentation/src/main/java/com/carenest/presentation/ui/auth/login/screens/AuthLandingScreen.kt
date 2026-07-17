@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,6 +16,7 @@ import com.carenest.designsystem.components.button.SocialButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.login.LoginIntent
+import com.carenest.presentation.R
 import com.carenest.designsystem.R as DR
 
 @Composable
@@ -30,7 +32,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
         
         BasicText(
-            text = "CareConnect\nHealthcare",
+            text = stringResource(R.string.auth_title),
             style = Theme.typography.display.copy(
                 color = Theme.colors.primary,
                 fontWeight = FontWeight.Bold,
@@ -39,7 +41,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         BasicText(
-            text = "Reassuring care for you and your loved ones",
+            text = stringResource(R.string.auth_subtitle),
             style = Theme.typography.body.large.copy(
                 color = Theme.colors.primaryFont,
                 textAlign = TextAlign.Center
@@ -49,21 +51,21 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
         
         SocialButton(
-            caption = "Continue with Google",
+            caption = stringResource(R.string.auth_continue_google),
             iconPainter = painterResource(id = DR.drawable.ic_google),
             onClick = { /* Simulated */ }
         )
         Spacer(modifier = Modifier.height(16.dp))
         
         SocialButton(
-            caption = "Continue with Apple",
+            caption = stringResource(R.string.auth_continue_apple),
             iconPainter = painterResource(id = DR.drawable.ic_bank),
             onClick = { /* Simulated */ }
         )
         Spacer(modifier = Modifier.height(16.dp))
         
         SocialButton(
-            caption = "Continue with Phone",
+            caption = stringResource(R.string.auth_continue_phone),
             iconPainter = painterResource(id = DR.drawable.ic_call),
             onClick = { onEvent(LoginIntent.ContinueWithPhoneClicked) }
         )
@@ -71,7 +73,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
         
         BasicText(
-            text = "joining our app means you agree with our Terms of use and privacy policy",
+            text = stringResource(R.string.auth_terms_agreement),
             style = Theme.typography.body.medium.copy(
                 color = Theme.colors.hint,
                 textAlign = TextAlign.Center

@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.register.RegisterIntent
 import com.carenest.presentation.ui.auth.register.RegisterState
 import com.carenest.presentation.ui.auth.register.RegisterStep
+import com.carenest.presentation.R
 import com.carenest.designsystem.R as DR
 
 @Composable
@@ -30,7 +32,7 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
             .background(Theme.colors.backGround)
     ) {
         BaseTopAppBar(
-            title = "CareConnect",
+            title = stringResource(R.string.welcome_topbar_title),
             leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
             onLeadingClick = { onEvent(RegisterIntent.BackClicked) },
             autoMirrorLeadingIcon = true
@@ -48,14 +50,14 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 BasicText(
-                    text = "Step 1 of 2",
+                    text = stringResource(R.string.personal_info_step),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.Bold
                     )
                 )
                 BasicText(
-                    text = "Personal Details",
+                    text = stringResource(R.string.personal_info_step_title),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.hint
                     )
@@ -82,7 +84,7 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
             Spacer(modifier = Modifier.height(32.dp))
             
             BasicText(
-                text = "Personal Info",
+                text = stringResource(R.string.personal_info_title),
                 style = Theme.typography.displayMedium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold
@@ -98,15 +100,15 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
                 CustomTextField(
                     text = state.firstName,
                     onTextChange = { onEvent(RegisterIntent.FirstNameChanged(it)) },
-                    title = "First name",
-                    hint = "Jane",
+                    title = stringResource(R.string.personal_info_first_name_title),
+                    hint = stringResource(R.string.personal_info_first_name_hint),
                     modifier = Modifier.weight(1f)
                 )
                 CustomTextField(
                     text = state.lastName,
                     onTextChange = { onEvent(RegisterIntent.LastNameChanged(it)) },
-                    title = "Last name",
-                    hint = "Doe",
+                    title = stringResource(R.string.personal_info_last_name_title),
+                    hint = stringResource(R.string.personal_info_last_name_hint),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -116,8 +118,8 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
             CustomTextField(
                 text = state.dateOfBirth,
                 onTextChange = { onEvent(RegisterIntent.DobChanged(it)) },
-                title = "Date of birth",
-                hint = "mm/dd/yyyy",
+                title = stringResource(R.string.personal_info_dob_title),
+                hint = stringResource(R.string.personal_info_dob_hint),
                 trailingIcon = painterResource(id = DR.drawable.ic_time), // Use time/calendar as placeholder
                 modifier = Modifier.fillMaxWidth()
             )
@@ -125,12 +127,12 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
             Spacer(modifier = Modifier.height(16.dp))
             
             BasicText(
-                text = "Gender",
+                text = stringResource(R.string.personal_info_gender_title),
                 style = Theme.typography.body.large.copy(color = Theme.colors.primaryFont)
             )
             Spacer(modifier = Modifier.height(8.dp))
             
-            val genderOptions = listOf("Male", "Female")
+            val genderOptions = listOf(stringResource(R.string.personal_info_gender_male), stringResource(R.string.personal_info_gender_female))
             SegmentedControl(
                 items = genderOptions,
                 selectedIndex = genderOptions.indexOf(state.gender),
@@ -148,7 +150,7 @@ fun PersonalInfoScreen(state: RegisterState, onEvent: (RegisterIntent) -> Unit) 
             Spacer(modifier = Modifier.height(32.dp))
             
             PrimaryButton(
-                caption = "Continue",
+                caption = stringResource(R.string.personal_info_continue_btn),
                 onClick = { onEvent(RegisterIntent.ContinueClicked) },
                 isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()

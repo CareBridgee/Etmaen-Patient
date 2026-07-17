@@ -9,11 +9,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.presentation.ui.auth.login.components.OtpTextField
 import com.carenest.designsystem.components.topbar.BaseTopAppBar
@@ -24,6 +25,7 @@ import com.carenest.presentation.ui.auth.otp.OtpEffect
 import com.carenest.presentation.ui.auth.otp.OtpIntent
 import com.carenest.presentation.ui.auth.otp.OtpState
 import com.carenest.presentation.ui.auth.otp.OtpViewModel
+import com.carenest.presentation.R
 import com.carenest.designsystem.R as DR
 
 @Composable
@@ -73,7 +75,7 @@ internal fun OtpScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
             
             BasicText(
-                text = "Verify Phone",
+                text = stringResource(R.string.otp_title),
                 style = Theme.typography.display.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold
@@ -82,7 +84,7 @@ internal fun OtpScreenContent(
             
             Spacer(modifier = Modifier.height(16.dp))
             BasicText(
-                text = "We've sent a 6-digit code to your phone number ${state.phoneNumber}",
+                text = stringResource(R.string.otp_subtitle, state.phoneNumber),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     textAlign = TextAlign.Center
@@ -108,7 +110,7 @@ internal fun OtpScreenContent(
             Spacer(modifier = Modifier.height(32.dp))
             
             PrimaryButton(
-                caption = "VERIFY",
+                caption = stringResource(R.string.otp_verify_btn),
                 onClick = { onEvent(OtpIntent.VerifyOtpClicked) },
                 isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()
@@ -117,7 +119,7 @@ internal fun OtpScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
             
             BasicText(
-                text = "Resend code in 00:30",
+                text = stringResource(R.string.otp_resend_timer),
                 style = Theme.typography.body.large.copy(color = Theme.colors.primary)
             )
         }

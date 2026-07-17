@@ -4,4 +4,54 @@
     <string name="nav_booking">Booking</string>
     <string name="nav_services">Services</string>
     <string name="nav_profile">Profile</string>
+
+    <!-- Auth Landing -->
+    <string name="auth_title">CareConnect\nHealthcare</string>
+    <string name="auth_subtitle">Reassuring care for you and your loved ones</string>
+    <string name="auth_continue_google">Continue with Google</string>
+    <string name="auth_continue_apple">Continue with Apple</string>
+    <string name="auth_continue_phone">Continue with Phone</string>
+    <string name="auth_terms_agreement">joining our app means you agree with our Terms of use and privacy policy</string>
+
+    <!-- Phone Input -->
+    <string name="phone_input_topbar_title">Join us via phone number</string>
+    <string name="phone_input_subtitle">We\'ll text a code to verify your phone.</string>
+    <string name="phone_input_label">Phone Number</string>
+    <string name="phone_input_carrier_charges">Carrier charges may apply for SMS.</string>
+    <string name="phone_input_next_btn">NEXT</string>
+
+    <!-- OTP -->
+    <string name="otp_title">Verify Phone</string>
+    <string name="otp_subtitle">We\'ve sent a 6-digit code to your phone number %1$s</string>
+    <string name="otp_verify_btn">VERIFY</string>
+    <string name="otp_resend_timer">Resend code in 00:30</string>
+
+    <!-- Welcome -->
+    <string name="welcome_topbar_title">CareConnect</string>
+    <string name="welcome_title">Welcome to CareConnect</string>
+    <string name="welcome_subtitle">Your account is ready! To provide the best possible support, we suggest completing your health profile.</string>
+    <string name="welcome_complete_profile_btn">Complete Health Profile\n(RECOMMENDED)</string>
+    <string name="welcome_skip_btn">Skip for Now\nSet up your profile later</string>
+    <string name="welcome_skip_warning">Skipping this may limit AI assessment accuracy and nurse matching. Your data is encrypted and protected.</string>
+
+    <!-- Personal Info -->
+    <string name="personal_info_step">Step 1 of 2</string>
+    <string name="personal_info_step_title">Personal Details</string>
+    <string name="personal_info_title">Personal Info</string>
+    <string name="personal_info_first_name_title">First name</string>
+    <string name="personal_info_first_name_hint">Jane</string>
+    <string name="personal_info_last_name_title">Last name</string>
+    <string name="personal_info_last_name_hint">Doe</string>
+    <string name="personal_info_dob_title">Date of birth</string>
+    <string name="personal_info_dob_hint">mm/dd/yyyy</string>
+    <string name="personal_info_gender_title">Gender</string>
+    <string name="personal_info_gender_male">Male</string>
+    <string name="personal_info_gender_female">Female</string>
+    <string name="personal_info_continue_btn">Continue</string>
+
+    <!-- OnBoarding -->
+    <string name="onboarding_title">CareNest</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_next">Next →</string>
 </resources>

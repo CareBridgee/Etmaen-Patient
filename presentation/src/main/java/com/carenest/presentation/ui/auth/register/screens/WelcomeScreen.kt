@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,6 +18,7 @@ import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.register.RegisterIntent
+import com.carenest.presentation.R
 import com.carenest.designsystem.R as DR
 
 @Composable
@@ -27,7 +29,7 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             .background(Theme.colors.backGround)
     ) {
         BaseTopAppBar(
-            title = "CareConnect",
+            title = stringResource(R.string.welcome_topbar_title),
             leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
             onLeadingClick = { onEvent(RegisterIntent.BackClicked) },
             autoMirrorLeadingIcon = true
@@ -42,7 +44,7 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             
             BasicText(
-                text = "Welcome to CareConnect",
+                text = stringResource(R.string.welcome_title),
                 style = Theme.typography.displayMedium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold
@@ -52,7 +54,7 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             
             BasicText(
-                text = "Your account is ready! To provide the best possible support, we suggest completing your health profile.",
+                text = stringResource(R.string.welcome_subtitle),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     textAlign = TextAlign.Center
@@ -63,7 +65,7 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             Spacer(modifier = Modifier.height(48.dp))
             
             PrimaryButton(
-                caption = "Complete Health Profile\n(RECOMMENDED)",
+                caption = stringResource(R.string.welcome_complete_profile_btn),
                 onClick = { onEvent(RegisterIntent.CompleteProfileClicked) },
                 modifier = Modifier.fillMaxWidth().height(80.dp)
             )
@@ -71,7 +73,7 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             
             SecondaryButton(
-                caption = "Skip for Now\nSet up your profile later",
+                caption = stringResource(R.string.welcome_skip_btn),
                 onClick = { onEvent(RegisterIntent.SkipClicked) },
                 modifier = Modifier.fillMaxWidth().height(80.dp)
             )
@@ -79,7 +81,7 @@ fun WelcomeScreen(onEvent: (RegisterIntent) -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
             
             BasicText(
-                text = "Skipping this may limit AI assessment accuracy and nurse matching. Your data is encrypted and protected.",
+                text = stringResource(R.string.welcome_skip_warning),
                 style = Theme.typography.body.small.copy(
                     color = Theme.colors.hint,
                     textAlign = TextAlign.Center
