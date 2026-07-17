@@ -1,5 +1,6 @@
 package com.carenest.designsystem.components.swipingcards
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -70,6 +71,7 @@ private const val CAMERA_DISTANCE = 12f
  * @param onSwipe invoked exactly once when a swipe crosses the threshold.
  * @param cardContent renders a single card given its data item.
  */
+@SuppressLint("RememberReturnType")
 @Composable
 fun <T> SwipingCardStack(
     cards: List<T>,

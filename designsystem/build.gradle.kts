@@ -8,6 +8,10 @@ android {
     namespace = "com.carenest.designsystem"
     compileSdk = 37
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     defaultConfig {
         minSdk = 24
     }
