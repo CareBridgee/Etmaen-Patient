@@ -11,16 +11,18 @@ import com.carenest.presentation.ui.auth.login.LoginViewModel
 import com.carenest.presentation.ui.auth.login.LoginEffect
 import com.carenest.presentation.core.mvi.ObserveEffect
 
+import com.carenest.presentation.ui.auth.login.OtpDeliveryMethod
+
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
-    onNavigateToOtp: (String) -> Unit
+    onNavigateToOtp: (String, OtpDeliveryMethod) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is LoginEffect.NavigateToOtp -> onNavigateToOtp(effect.phone)
+            is LoginEffect.NavigateToOtp -> onNavigateToOtp(effect.phone, effect.method)
         }
     }
 

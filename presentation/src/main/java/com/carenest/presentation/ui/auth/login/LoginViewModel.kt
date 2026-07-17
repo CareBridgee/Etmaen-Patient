@@ -21,6 +21,9 @@ class LoginViewModel @Inject constructor() : ViewModel(),
             is LoginIntent.PhoneNumberChanged -> {
                 updateState { copy(phoneNumber = event.phone, errorMessage = null) }
             }
+            is LoginIntent.OtpMethodChanged -> {
+                updateState { copy(selectedOtpMethod = event.method) }
+            }
             LoginIntent.ContinueWithPhoneClicked -> {
                 updateState { copy(currentStep = LoginStep.PHONE_INPUT) }
             }
@@ -53,7 +56,7 @@ class LoginViewModel @Inject constructor() : ViewModel(),
                 ) 
             }
             // Emit effect to navigate to verify screen
-            sendEffect(LoginEffect.NavigateToOtp(currentState.phoneNumber))
+            sendEffect(LoginEffect.NavigateToOtp(currentState.phoneNumber, currentState.selectedOtpMethod))
         }
     }
 }
