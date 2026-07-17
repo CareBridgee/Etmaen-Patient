@@ -22,11 +22,11 @@ import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.auth.login.screens.LoginScreen
-import com.carenest.presentation.ui.auth.register.screens.RegisterScreen
+
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
 import com.carenest.presentation.ui.auth.login.LoginViewModel
-import com.carenest.presentation.ui.auth.register.RegisterViewModel
+
 import kotlin.collections.listOf
 
 @Composable
@@ -59,15 +59,7 @@ fun AppNav() {
             val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
             LoginScreen(
                 viewModel = viewModel,
-                onNavigateToRegister = { backStack.add(AppRoute.Register) }
-            )
-        }
-
-        entry<AppRoute.Register> {
-            val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-            RegisterScreen(
-                viewModel = viewModel,
-                onNavigateHome = { replaceWith(AppRoute.Splash) } // Placeholder for Home
+                onNavigateToRegister = { /* TODO: wire Register route */ }
             )
         }
 
