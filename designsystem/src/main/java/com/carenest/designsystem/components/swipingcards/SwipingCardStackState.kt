@@ -42,8 +42,6 @@ class SwipingCardStackState(
             d.commitSwipe(
                 scope = this,
                 direction = direction,
-                velocityX = 0f,
-                velocityY = 0f,
                 onRotate = { onSwipeTrigger?.invoke(direction) }
             )
         }

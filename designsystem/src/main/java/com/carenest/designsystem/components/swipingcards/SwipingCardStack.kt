@@ -109,8 +109,6 @@ fun <T> SwipingCardStack(
             val result = DeckReconciler.reconcile(deck.internalOrder, externalKeys)
             deck.applyReconcile(result)
         }
-        // Return value is irrelevant — side effect only.
-        Unit
     }
 
     val scope = rememberCoroutineScope()
@@ -122,8 +120,8 @@ fun <T> SwipingCardStack(
         // When onRotate is called in commitSwipe, internalOrder has ALREADY been rotated.
         // So the swiped card is now at the back.
         val swipedKey = deck.internalOrder.lastOrNull()
-        val swipedCard = if (swipedKey != null) cardsByKey[swipedKey] else null
-        if (swipedCard != null && swipedKey != null) {
+        val swipedCard = swipedKey?.let { cardsByKey[it] }
+        if (swipedCard != null) {
             val resultingCards = deck.internalOrder.mapNotNull { k -> cardsByKey[k] }
             onSwipeState.value(
                 SwipeResult(
@@ -159,7 +157,7 @@ fun <T> SwipingCardStack(
                 val isTopCard = stackIndex == 0
                 val animState = deck.animStateFor(cardKey)
                 if (animState != null) {
-                    val cameraDistancePx = with(density) { CAMERA_DISTANCE * density.density * 160f }
+                    val cameraDistancePx = CAMERA_DISTANCE * density.density * 160f
 
                     Box(
                         modifier = Modifier
@@ -235,30 +233,27 @@ fun <T> SwipingCardStack(
                                                             deck.commitSwipe(
                                                                 scope = this,
                                                                 direction = direction,
-                                                                velocityX = vx,
-                                                                velocityY = vy,
-                                                                onRotate = {
-                                                                    val resultingCards = deck.internalOrder
-                                                                        .mapNotNull { k -> cardsByKey[k] }
-                                                                    onSwipeState.value(
-                                                                        SwipeResult(
-                                                                            card = swipedCard,
-                                                                            key = cardKey,
-                                                                            direction = direction,
-                                                                            resultingOrder = resultingCards,
-                                                                        )
+                                                            ) {
+                                                                val resultingCards = deck.internalOrder
+                                                                    .mapNotNull { k -> cardsByKey[k] }
+                                                                onSwipeState.value(
+                                                                    SwipeResult(
+                                                                        card = swipedCard,
+                                                                        key = cardKey,
+                                                                        direction = direction,
+                                                                        resultingOrder = resultingCards,
                                                                     )
-                                                                }
-                                                            )
+                                                                )
+                                                            }
                                                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                         }
                                                     }
                                                 } else {
-                                                    scope.launch { deck.settleBack(this) }
+                                                    scope.launch { deck.settleBack() }
                                                 }
                                             },
                                             onDragCancel = {
-                                                scope.launch { deck.settleBack(this) }
+                                                scope.launch { deck.settleBack() }
                                             },
                                         )
                                     }
