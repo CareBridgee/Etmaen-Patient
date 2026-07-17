@@ -19,6 +19,9 @@ sealed interface AppRoute : NavKey {
      data object Login : AppRoute
 
      @Serializable
+     data class Otp(val phone: String) : AppRoute
+
+     @Serializable
      data object Register : AppRoute
 
 }

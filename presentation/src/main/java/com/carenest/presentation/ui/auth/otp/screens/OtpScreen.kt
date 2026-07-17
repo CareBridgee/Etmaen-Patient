@@ -1,9 +1,11 @@
-package com.carenest.presentation.ui.auth.login.screens
+package com.carenest.presentation.ui.auth.otp.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -11,18 +13,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.presentation.ui.auth.login.components.OtpTextField
 import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.ui.auth.login.LoginIntent
-import com.carenest.presentation.ui.auth.login.LoginState
-import com.carenest.presentation.ui.auth.login.LoginStep
+import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.ui.auth.otp.OtpEffect
+import com.carenest.presentation.ui.auth.otp.OtpIntent
+import com.carenest.presentation.ui.auth.otp.OtpState
+import com.carenest.presentation.ui.auth.otp.OtpViewModel
 import com.carenest.designsystem.R as DR
 
 @Composable
-fun VerifyPhoneScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
+fun OtpScreen(
+    viewModel: OtpViewModel = hiltViewModel(),
+    onNavigateToHome: () -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    val state by viewModel.state.collectAsState()
+
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is OtpEffect.NavigateToHome -> onNavigateToHome()
+            is OtpEffect.NavigateBack -> onNavigateBack()
+        }
+    }
+
+    OtpScreenContent(
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+internal fun OtpScreenContent(
+    state: OtpState,
+    onEvent: (OtpIntent) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +60,7 @@ fun VerifyPhoneScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
         BaseTopAppBar(
             title = "",
             leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
-            onLeadingClick = { onEvent(LoginIntent.BackClicked) },
+            onLeadingClick = { onEvent(OtpIntent.BackClicked) },
             autoMirrorLeadingIcon = true
         )
         
@@ -65,7 +94,7 @@ fun VerifyPhoneScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             
             OtpTextField(
                 otpValue = state.otpCode,
-                onOtpValueChange = { onEvent(LoginIntent.OtpCodeChanged(it)) }
+                onOtpValueChange = { onEvent(OtpIntent.OtpCodeChanged(it)) }
             )
             
             if (state.errorMessage != null) {
@@ -80,7 +109,7 @@ fun VerifyPhoneScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             
             PrimaryButton(
                 caption = "VERIFY",
-                onClick = { onEvent(LoginIntent.VerifyOtpClicked) },
+                onClick = { onEvent(OtpIntent.VerifyOtpClicked) },
                 isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -97,11 +126,10 @@ fun VerifyPhoneScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun VerifyPhoneScreenPreview() {
+private fun OtpScreenPreview() {
     SpTheme {
-        VerifyPhoneScreen(
-            state = LoginState(
-                currentStep = LoginStep.VERIFY_OTP,
+        OtpScreenContent(
+            state = OtpState(
                 phoneNumber = "+1 555 000 0000",
                 otpCode = "123"
             ),

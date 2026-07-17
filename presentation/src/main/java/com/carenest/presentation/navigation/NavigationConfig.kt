@@ -22,6 +22,7 @@ object NavigationConfig {
             serializableSubclass(AppRoute.OnBoarding::class)
             subclass(AppRoute.Login::class ,AppRoute.Login.serializer())
             subclass(AppRoute.Register::class ,AppRoute.Register.serializer())
+            subclass(AppRoute.Otp::class ,AppRoute.Otp.serializer())
         }
     }
 

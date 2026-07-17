@@ -28,7 +28,7 @@ import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
-import com.carenest.presentation.ui.auth.login.LoginViewModel
+import com.carenest.presentation.ui.auth.otp.screens.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterViewModel
 import kotlin.collections.listOf
 
@@ -66,18 +66,20 @@ fun AppNav() {
             }
 
             entry<AppRoute.Login> {
-                val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                 LoginScreen(
-                    viewModel = viewModel,
-                    onNavigateToRegister = { backStack.add(AppRoute.Register) }
+                    onNavigateToOtp = { phone -> backStack.add(AppRoute.Otp(phone)) }
                 )
             }
 
-            entry<AppRoute.Register> {
-                val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-                RegisterScreen(
-                    viewModel = viewModel,
-                    onNavigateHome = { replaceWith(AppRoute.Splash) } // Placeholder for Home
+            entry<AppRoute.Otp> { entry ->
+                OtpScreen(
+                    onNavigateToHome = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Splash) // Assuming Splash navigates to Home
+                        }
+                    },
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
 
@@ -87,7 +89,7 @@ fun AppNav() {
                     onNavigateToHome = {
                         Snapshot.withMutableSnapshot {
                             backStack.clear()
-                            backStack.add(AppRoute.Splash)
+                            backStack.add(AppRoute.Login)
                         }
                     },
                 )
