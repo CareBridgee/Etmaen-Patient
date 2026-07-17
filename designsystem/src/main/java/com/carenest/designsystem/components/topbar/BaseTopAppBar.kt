@@ -52,7 +52,6 @@ fun BaseTopAppBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Theme.colors.backGround)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

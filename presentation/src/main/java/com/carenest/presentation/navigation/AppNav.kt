@@ -2,6 +2,7 @@ package com.carenest.presentation.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -133,10 +134,9 @@ fun AppNav() {
 
         CompositionLocalProvider(LocalTopBarState provides topBarState) {
             Scaffold(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.colors.backGround)
-                    .statusBarsPadding(),
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Theme.colors.backGround,
+                contentWindowInsets = WindowInsets(0),
                 topBar = {
                     val config = topBarState.value
                     if (config.title != null) {
@@ -146,7 +146,8 @@ fun AppNav() {
                                 config.leadingIcon ?: painterResource(id = RD.drawable.ic_arrow_back)
                             } else null,
                             onLeadingClick = config.onLeadingClick,
-                            autoMirrorLeadingIcon = true
+                            autoMirrorLeadingIcon = true,
+                            modifier = Modifier.statusBarsPadding()
                         )
                     }
                 }

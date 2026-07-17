@@ -29,6 +29,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.designsystem.R as RD
+import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
 fun SplashScreen(
@@ -52,6 +53,8 @@ fun SplashScreen(
 private fun SplashContent(
     state: SplashState,
 ) {
+    HideTopBar()
+
     Box(
         modifier = Modifier
             .fillMaxSize()

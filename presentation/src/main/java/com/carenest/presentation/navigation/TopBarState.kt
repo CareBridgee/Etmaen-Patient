@@ -31,8 +31,19 @@ fun ScreenTopBar(
             onLeadingClick = onLeadingClick,
             leadingIcon = leadingIcon
         )
-        onDispose {
-            topBarState.value = TopBarConfiguration()
-        }
+        onDispose { /* State persists until the next screen overrides it */ }
+    }
+}
+
+/**
+ * Call this in screens that should NOT show the top bar (e.g. Splash, OnBoarding, AuthLanding).
+ * This explicitly resets the top bar state so no stale bar is visible.
+ */
+@Composable
+fun HideTopBar() {
+    val topBarState = LocalTopBarState.current
+    DisposableEffect(Unit) {
+        topBarState.value = TopBarConfiguration()
+        onDispose { }
     }
 }

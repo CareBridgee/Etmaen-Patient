@@ -27,6 +27,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.login.LoginIntent
 import com.carenest.presentation.R
 import com.carenest.designsystem.R as DR
+import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
 fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
@@ -35,6 +36,8 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
             .fillMaxSize()
             .background(Theme.colors.backGround)
     ) {
+        HideTopBar()
+
         val primaryColor = Theme.colors.primary
         
 

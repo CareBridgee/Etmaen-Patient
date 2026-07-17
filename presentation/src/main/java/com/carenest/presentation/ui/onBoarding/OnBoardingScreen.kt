@@ -39,6 +39,7 @@ import com.carenest.presentation.ui.onBoarding.components.OnBoardingCard
 import com.carenest.presentation.ui.onBoarding.components.OnBoardingCard
 import com.carenest.presentation.ui.onBoarding.components.OnBoardingPageIndicator
 import com.carenest.presentation.R
+import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
 fun OnBoardingScreen(
@@ -65,6 +66,8 @@ fun OnBoardingContent(
     onIntent: (OnBoardingIntent) -> Unit,
 ) {
     val cardStackState = rememberSwipingCardStackState()
+
+    HideTopBar()
 
     Box(
         modifier = Modifier
