@@ -80,7 +80,7 @@ fun OnBoardingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp, bottom = 24.dp),
-                onSkip = { onIntent(OnBoardingIntent.OnSkipClicked) },
+                onSkip = { if (!cardStackState.isAnimating) onIntent(OnBoardingIntent.OnSkipClicked) },
             )
 
             SwipingCardStack(
@@ -152,6 +152,7 @@ fun OnBoardingContent(
 
             PrimaryButton(
                 caption = buttonLabel,
+                isDisabled = cardStackState.isAnimating,
                 onClick = {
                     if (state.isLastPage) {
                         onIntent(OnBoardingIntent.OnNextClicked)

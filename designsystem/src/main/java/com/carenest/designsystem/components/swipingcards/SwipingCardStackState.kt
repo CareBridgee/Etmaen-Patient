@@ -25,6 +25,10 @@ class SwipingCardStackState(
     internal var deck: DeckState? = null
     internal var onSwipeTrigger: ((SwipeDirection) -> Unit)? = null
 
+    /** Whether an animation (swipe or settle) is currently in progress. */
+    val isAnimating: Boolean
+        get() = deck?.isAnimating ?: false
+
     /**
      * Programmatically trigger a swipe of the front card.
      *
@@ -39,9 +43,9 @@ class SwipingCardStackState(
                 scope = this,
                 direction = direction,
                 velocityX = 0f,
-                velocityY = 0f
+                velocityY = 0f,
+                onRotate = { onSwipeTrigger?.invoke(direction) }
             )
-            onSwipeTrigger?.invoke(direction)
         }
     }
 }

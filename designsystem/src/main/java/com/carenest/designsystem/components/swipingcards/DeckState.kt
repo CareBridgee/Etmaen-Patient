@@ -90,6 +90,7 @@ internal class CardAnimState(config: StackPositionConfig, initialXPx: Float) {
     val translationX = Animatable(initialXPx)
     val translationY = Animatable(0f)
     val alpha = Animatable(config.alpha)
+    val elevation = Animatable(config.elevation.value)
 
     // Direct-write state for synchronous background repulsion during drag.
     // The graphicsLayer reads these instead of the Animatable values while dragging.
@@ -241,6 +242,7 @@ internal class DeckState {
                 topAnim.translationY.snapTo(topAnim.translationY.value + currentDragY)
                 topAnim.translationX.animateTo(0f, settleSpec)
                 topAnim.translationY.animateTo(0f, settleSpec)
+                topAnim.elevation.animateTo(stackPositionConfig(0).elevation.value, settleSpec)
             }
 
             // Settle all background cards.
@@ -277,6 +279,7 @@ internal class DeckState {
         direction: SwipeDirection,
         velocityX: Float,
         velocityY: Float,
+        onRotate: () -> Unit = {}
     ) {
         isAnimating = true
 
@@ -325,6 +328,7 @@ internal class DeckState {
         // Rotate deck: top → back (optimistic update).
         val newOrder = DeckReconciler.rotateFrontToBack(internalOrder)
         internalOrder = newOrder
+        onRotate()
 
         // Reset top card anim state to the back position (invisible, ready to cycle in).
         val backPosition = newOrder.lastIndex
@@ -333,6 +337,7 @@ internal class DeckState {
         // These are suspend but called in sequence — snap is instant.
         topAnim.scale.snapTo(backCfg.scale)
         topAnim.rotationZ.snapTo(backCfg.rotationZ)
+        topAnim.elevation.snapTo(backCfg.elevation.value)
         topAnim.translationX.snapTo(backIdleX + flyX) // starts from off-screen
         topAnim.translationY.snapTo(flyY)
         topAnim.alpha.snapTo(0f)
@@ -356,6 +361,7 @@ internal class DeckState {
                     launch { anim.translationX.animateTo(idleX, promoteSpec) }
                     launch { anim.translationY.animateTo(0f, promoteSpec) }
                     launch { anim.alpha.animateTo(cfg.alpha, promoteSpec) }
+                    launch { anim.elevation.animateTo(cfg.elevation.value, promoteSpec) }
                 }
             }
         }

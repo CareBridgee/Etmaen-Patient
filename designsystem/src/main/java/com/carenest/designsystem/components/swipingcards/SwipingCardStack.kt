@@ -19,6 +19,7 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -116,7 +117,8 @@ fun <T> SwipingCardStack(
     val onSwipeState = rememberUpdatedState(onSwipe)
     // Wire up the onSwipe trigger for programmatic swipes from SwipingCardStackState.
     state.onSwipeTrigger = { direction ->
-        // After rotation in commitSwipe, the swiped card is at the back.
+        // When onRotate is called in commitSwipe, internalOrder has ALREADY been rotated.
+        // So the swiped card is now at the back.
         val swipedKey = deck.internalOrder.lastOrNull()
         val swipedCard = if (swipedKey != null) cardsByKey[swipedKey] else null
         if (swipedCard != null && swipedKey != null) {
@@ -188,7 +190,7 @@ fun <T> SwipingCardStack(
                                     translationX += deck.dragX
                                     translationY += deck.dragY
                                 }
-                                shadowElevation = stackPositionConfig(stackIndex).elevation.toPx()
+                                shadowElevation = animState.elevation.value.dp.toPx()
                             }
                             .then(
                                 if (isTopCard && !deck.isAnimating) {
@@ -233,18 +235,20 @@ fun <T> SwipingCardStack(
                                                                 direction = direction,
                                                                 velocityX = vx,
                                                                 velocityY = vy,
+                                                                onRotate = {
+                                                                    val resultingCards = deck.internalOrder
+                                                                        .mapNotNull { k -> cardsByKey[k] }
+                                                                    onSwipeState.value(
+                                                                        SwipeResult(
+                                                                            card = swipedCard,
+                                                                            key = cardKey,
+                                                                            direction = direction,
+                                                                            resultingOrder = resultingCards,
+                                                                        )
+                                                                    )
+                                                                }
                                                             )
                                                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                            val resultingCards = deck.internalOrder
-                                                                .mapNotNull { k -> cardsByKey[k] }
-                                                            onSwipeState.value(
-                                                                SwipeResult(
-                                                                    card = swipedCard,
-                                                                    key = cardKey,
-                                                                    direction = direction,
-                                                                    resultingOrder = resultingCards,
-                                                                )
-                                                            )
                                                         }
                                                     }
                                                 } else {
@@ -287,7 +291,7 @@ fun <T> SwipingCardStack(
                                 translationX = animState.translationX.value
                                 translationY = animState.translationY.value
                                 alpha = animState.alpha.value
-                                shadowElevation = stackPositionConfig(0).elevation.toPx()
+                                shadowElevation = animState.elevation.value.dp.toPx()
                             },
                         contentAlignment = Alignment.Center,
                     ) {
