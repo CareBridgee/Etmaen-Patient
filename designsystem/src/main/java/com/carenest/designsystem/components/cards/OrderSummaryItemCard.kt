@@ -31,13 +31,13 @@ import com.carenest.designsystem.theme.Theme
 
 @Composable
 fun OrderSummaryItemCard(
+    modifier: Modifier = Modifier,
     imageUrl: String? = null,
     imagePainter: Painter? = null,
     name: String,
     specs: String,
     quantity: Int,
     priceFormatted: String,
-    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
