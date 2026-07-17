@@ -100,7 +100,7 @@ private fun RatingHeader(
 
 
         Text(
-            text = stringResource(id = R.string.rating_reviews_suffix, totalReviews),
+            text = androidx.compose.ui.res.pluralStringResource(id = R.plurals.rating_reviews_suffix, count = totalReviews, totalReviews),
             style = Theme.typography.body.medium,
             color = Theme.colors.secondaryFont,
             fontSize = 16.sp

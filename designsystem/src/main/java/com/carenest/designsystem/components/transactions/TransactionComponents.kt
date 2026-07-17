@@ -124,7 +124,7 @@ fun EarningsHeader(
                         modifier = Modifier.size(16.dp)
                     )
                     BasicText(
-                        text = stringResource(id = R.string.earnings_jobs_suffix, state.jobsCount),
+                        text = androidx.compose.ui.res.pluralStringResource(id = R.plurals.earnings_jobs_suffix, count = state.jobsCount, state.jobsCount),
                         style = Theme.typography.body.small.copy(
                             color = Color.White,
                             fontWeight = FontWeight.Medium

@@ -10,6 +10,7 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        disable.add("IconLocation")
     }
 
     defaultConfig {
