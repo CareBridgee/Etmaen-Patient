@@ -27,7 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.swipingcards.SwipeDirection
 import com.carenest.designsystem.components.swipingcards.SwipingCardStack
+import com.carenest.designsystem.components.swipingcards.rememberSwipingCardStackState
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
@@ -59,6 +61,8 @@ fun OnBoardingContent(
     state: OnBoardingState,
     onIntent: (OnBoardingIntent) -> Unit,
 ) {
+    val cardStackState = rememberSwipingCardStackState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -82,6 +86,7 @@ fun OnBoardingContent(
             SwipingCardStack(
                 cards = state.pages,
                 key = { it.id },
+                state = cardStackState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(0.85f),
@@ -147,7 +152,13 @@ fun OnBoardingContent(
 
             PrimaryButton(
                 caption = buttonLabel,
-                onClick = { onIntent(OnBoardingIntent.OnNextClicked) },
+                onClick = {
+                    if (state.isLastPage) {
+                        onIntent(OnBoardingIntent.OnNextClicked)
+                    } else {
+                        cardStackState.swipe(SwipeDirection.Left)
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp),

@@ -74,6 +74,7 @@ fun <T> SwipingCardStack(
     cards: List<T>,
     key: (T) -> Any,
     modifier: Modifier = Modifier,
+    state: SwipingCardStackState = rememberSwipingCardStackState(),
     maxVisibleCards: Int = 4,
     maxRotationY: Float = 38f,
     swipeThresholdFraction: Float = 0.20f,
@@ -94,6 +95,9 @@ fun <T> SwipingCardStack(
     deck.maxRotationY = maxRotationY
     deck.swipeThresholdFraction = swipeThresholdFraction
 
+    // Attach deck to external state for programmatic control.
+    state.deck = deck
+
     // Reconcile external list changes against optimistic internal order.
     remember(externalKeys) {
         if (deck.internalOrder.isEmpty()) {
@@ -110,6 +114,23 @@ fun <T> SwipingCardStack(
     val haptic = LocalHapticFeedback.current
     val density = LocalDensity.current
     val onSwipeState = rememberUpdatedState(onSwipe)
+    // Wire up the onSwipe trigger for programmatic swipes from SwipingCardStackState.
+    state.onSwipeTrigger = { direction ->
+        // After rotation in commitSwipe, the swiped card is at the back.
+        val swipedKey = deck.internalOrder.lastOrNull()
+        val swipedCard = if (swipedKey != null) cardsByKey[swipedKey] else null
+        if (swipedCard != null && swipedKey != null) {
+            val resultingCards = deck.internalOrder.mapNotNull { k -> cardsByKey[k] }
+            onSwipeState.value(
+                SwipeResult(
+                    card = swipedCard,
+                    key = swipedKey,
+                    direction = direction,
+                    resultingOrder = resultingCards,
+                )
+            )
+        }
+    }
 
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
         val widthPx = with(density) { maxWidth.toPx() }
@@ -119,11 +140,17 @@ fun <T> SwipingCardStack(
         deck.containerWidthPx = widthPx
         deck.containerHeightPx = heightPx
 
+        val swipedKey = deck.swipedKey
         val visibleKeys = deck.internalOrder.take(maxVisibleCards)
         val cardWidthDp: Dp = maxWidth
         val cardHeightDp: Dp = maxHeight
 
+        // Render visible cards in back-to-front order.
         visibleKeys.forEachIndexed { stackIndex, cardKey ->
+            // If this card is currently flying out as the swiped card, we skip it here
+            // and render it separately on top to ensure it stays above the new top card.
+            if (cardKey == swipedKey) return@forEachIndexed
+
             key(cardKey) {
                 val isTopCard = stackIndex == 0
                 val animState = deck.animStateFor(cardKey)
@@ -164,7 +191,7 @@ fun <T> SwipingCardStack(
                                 shadowElevation = stackPositionConfig(stackIndex).elevation.toPx()
                             }
                             .then(
-                                if (isTopCard) {
+                                if (isTopCard && !deck.isAnimating) {
                                     Modifier.pointerInput(cardKey) {
                                         val velocityTracker = VelocityTracker()
                                         var hapticFired = false
@@ -236,6 +263,35 @@ fun <T> SwipingCardStack(
                         contentAlignment = Alignment.Center,
                     ) {
                         val item = cardsByKey[cardKey]
+                        if (item != null) {
+                            cardContent(item)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Separately render the swiped card on top of everything while it's animating away.
+        if (swipedKey != null) {
+            key(swipedKey) {
+                val animState = deck.animStateFor(swipedKey)
+                if (animState != null) {
+                    Box(
+                        modifier = Modifier
+                            .size(cardWidthDp, cardHeightDp)
+                            .zIndex(maxVisibleCards + 1f)
+                            .graphicsLayer {
+                                scaleX = animState.scale.value
+                                scaleY = animState.scale.value
+                                rotationZ = animState.rotationZ.value
+                                translationX = animState.translationX.value
+                                translationY = animState.translationY.value
+                                alpha = animState.alpha.value
+                                shadowElevation = stackPositionConfig(0).elevation.toPx()
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        val item = cardsByKey[swipedKey]
                         if (item != null) {
                             cardContent(item)
                         }

@@ -110,6 +110,9 @@ internal class DeckState {
     var internalOrder by mutableStateOf<List<Any>>(emptyList())
         private set
 
+    var swipedKey by mutableStateOf<Any?>(null)
+        private set
+
     var isAnimating by mutableStateOf(false)
     var hasPassedThreshold by mutableStateOf(false)
 
@@ -218,26 +221,47 @@ internal class DeckState {
      */
     suspend fun settleBack(scope: CoroutineScope) {
         val topKey = internalOrder.firstOrNull() ?: return
+        val topAnim = animStateFor(topKey) ?: return
         val settleSpec = spring<Float>(dampingRatio = SETTLE_SPRING_DAMPING, stiffness = SETTLE_SPRING_STIFFNESS)
 
+        // Capture drag state to snap Animatable values for a seamless transition.
+        val currentDragX = dragX
+        val currentDragY = dragY
+
+        // Reset global drag state first.
+        dragX = 0f
+        dragY = 0f
+        rotationY = 0f
+        hasPassedThreshold = false
+
         coroutineScope {
+            // Settle top card from its swiped position.
+            launch {
+                topAnim.translationX.snapTo(topAnim.translationX.value + currentDragX)
+                topAnim.translationY.snapTo(topAnim.translationY.value + currentDragY)
+                topAnim.translationX.animateTo(0f, settleSpec)
+                topAnim.translationY.animateTo(0f, settleSpec)
+            }
+
             // Settle all background cards.
             internalOrder.drop(1).forEachIndexed { idx, key ->
                 val pos = idx + 1
                 val cfg = stackPositionConfig(pos)
                 animStateFor(key)?.let { bgAnim ->
-                    bgAnim.isDragging = false
                     val idleX = idleTranslationXPx(pos, cfg.scale, cfg.rotationZ, containerWidthPx)
-                    launch { bgAnim.translationX.animateTo(idleX, settleSpec) }
-                    launch { bgAnim.translationY.animateTo(0f, settleSpec) }
+                    launch {
+                        // Snap to current repulsion before disabling drag mode to prevent jumps.
+                        if (bgAnim.isDragging) {
+                            bgAnim.translationX.snapTo(bgAnim.repulsionX)
+                            bgAnim.translationY.snapTo(bgAnim.repulsionY)
+                            bgAnim.isDragging = false
+                        }
+                        bgAnim.translationX.animateTo(idleX, settleSpec)
+                        bgAnim.translationY.animateTo(0f, settleSpec)
+                    }
                 }
             }
         }
-
-        dragX = 0f
-        dragY = 0f
-        rotationY = 0f
-        hasPassedThreshold = false
     }
 
     /**
@@ -259,6 +283,13 @@ internal class DeckState {
         val topKey = internalOrder.firstOrNull() ?: run { isAnimating = false; return }
         val topAnim = animStateFor(topKey) ?: run { isAnimating = false; return }
 
+        // Mark this key as swiping so it stays visible in the composition.
+        swipedKey = topKey
+
+        // Capture drag state to snap Animatable values for a seamless fly-out.
+        val currentDragX = dragX
+        val currentDragY = dragY
+
         // Target off-screen position for the fly-out.
         val flyX = when (direction) {
             SwipeDirection.Left -> -containerWidthPx * 1.5f
@@ -273,7 +304,16 @@ internal class DeckState {
 
         val flySpec = spring<Float>(dampingRatio = 1.0f, stiffness = 500f)
 
-        // Fly-out the top card (fire and don't await — deck rotation follows immediately).
+        // Snap and fly-out the top card.
+        // We reset dragX/Y/rotationY AFTER snapping topAnim but BEFORE deck rotation.
+        topAnim.translationX.snapTo(topAnim.translationX.value + currentDragX)
+        topAnim.translationY.snapTo(topAnim.translationY.value + currentDragY)
+
+        dragX = 0f
+        dragY = 0f
+        rotationY = 0f
+        hasPassedThreshold = false
+
         scope.launch {
             coroutineScope {
                 launch { topAnim.translationX.animateTo(flyX, flySpec) }
@@ -305,7 +345,12 @@ internal class DeckState {
                 val cfg = stackPositionConfig(index)
                 val idleX = idleTranslationXPx(index, cfg.scale, cfg.rotationZ, containerWidthPx)
                 animStateFor(key)?.let { anim ->
-                    anim.isDragging = false
+                    // If it was a background card being repelled, snap it to its repelled pos first.
+                    if (anim.isDragging) {
+                        anim.translationX.snapTo(anim.repulsionX)
+                        anim.translationY.snapTo(anim.repulsionY)
+                        anim.isDragging = false
+                    }
                     launch { anim.scale.animateTo(cfg.scale, promoteSpec) }
                     launch { anim.rotationZ.animateTo(cfg.rotationZ, promoteSpec) }
                     launch { anim.translationX.animateTo(idleX, promoteSpec) }
@@ -315,10 +360,7 @@ internal class DeckState {
             }
         }
 
-        dragX = 0f
-        dragY = 0f
-        rotationY = 0f
-        hasPassedThreshold = false
+        swipedKey = null
         isAnimating = false
     }
 }
