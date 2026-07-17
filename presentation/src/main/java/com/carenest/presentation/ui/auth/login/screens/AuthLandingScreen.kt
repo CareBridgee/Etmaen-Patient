@@ -1,4 +1,4 @@
-package com.carenest.presentation.auth.login.screens
+package com.carenest.presentation.ui.auth.login.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,11 +14,11 @@ import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.button.SocialButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.auth.login.LoginEvent
+import com.carenest.presentation.ui.auth.login.LoginIntent
 import com.carenest.designsystem.R as DR
 
 @Composable
-fun AuthLandingScreen(onEvent: (LoginEvent) -> Unit) {
+fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +65,7 @@ fun AuthLandingScreen(onEvent: (LoginEvent) -> Unit) {
         SocialButton(
             caption = "Continue with Phone",
             iconPainter = painterResource(id = DR.drawable.ic_call),
-            onClick = { onEvent(LoginEvent.ContinueWithPhoneClicked) }
+            onClick = { onEvent(LoginIntent.ContinueWithPhoneClicked) }
         )
         
         Spacer(modifier = Modifier.height(32.dp))

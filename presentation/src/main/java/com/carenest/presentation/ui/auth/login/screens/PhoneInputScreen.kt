@@ -1,4 +1,4 @@
-package com.carenest.presentation.auth.login.screens
+package com.carenest.presentation.ui.auth.login.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,17 +10,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.button.PrimaryButton
-import com.carenest.designsystem.components.textfield.PhoneInputField
+import com.carenest.presentation.ui.auth.login.components.PhoneInputField
 import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.auth.login.LoginEvent
-import com.carenest.presentation.auth.login.LoginState
-import com.carenest.presentation.auth.login.LoginStep
+import com.carenest.presentation.ui.auth.login.LoginIntent
+import com.carenest.presentation.ui.auth.login.LoginState
+import com.carenest.presentation.ui.auth.login.LoginStep
 import com.carenest.designsystem.R as DR
 
 @Composable
-fun PhoneInputScreen(state: LoginState, onEvent: (LoginEvent) -> Unit) {
+fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,7 +29,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginEvent) -> Unit) {
         BaseTopAppBar(
             title = "Join us via phone number",
             leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
-            onLeadingClick = { onEvent(LoginEvent.BackClicked) },
+            onLeadingClick = { onEvent(LoginIntent.BackClicked) },
             autoMirrorLeadingIcon = true
         )
         
@@ -58,7 +58,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginEvent) -> Unit) {
             
             PhoneInputField(
                 phone = state.phoneNumber,
-                onPhoneChange = { onEvent(LoginEvent.PhoneNumberChanged(it)) }
+                onPhoneChange = { onEvent(LoginIntent.PhoneNumberChanged(it)) }
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -79,7 +79,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginEvent) -> Unit) {
             
             PrimaryButton(
                 caption = "NEXT",
-                onClick = { onEvent(LoginEvent.RequestOtpClicked) },
+                onClick = { onEvent(LoginIntent.RequestOtpClicked) },
                 isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()
             )

@@ -1,4 +1,4 @@
-package com.carenest.presentation.auth.login
+package com.carenest.presentation.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,20 +13,20 @@ class LoginViewModel : ViewModel(),
     StateHolder<LoginState> by DefaultStateHolder(LoginState()),
     EffectPublisher<Unit> by DefaultEffectPublisher() {
 
-    fun onEvent(event: LoginEvent) {
+    fun onEvent(event: LoginIntent) {
         when (event) {
-            is LoginEvent.PhoneNumberChanged -> {
+            is LoginIntent.PhoneNumberChanged -> {
                 updateState { copy(phoneNumber = event.phone, errorMessage = null) }
             }
-            is LoginEvent.OtpCodeChanged -> {
+            is LoginIntent.OtpCodeChanged -> {
                 updateState { copy(otpCode = event.otp, errorMessage = null) }
             }
-            LoginEvent.ContinueWithPhoneClicked -> {
+            LoginIntent.ContinueWithPhoneClicked -> {
                 updateState { copy(currentStep = LoginStep.PHONE_INPUT) }
             }
-            LoginEvent.RequestOtpClicked -> requestOtp()
-            LoginEvent.VerifyOtpClicked -> verifyOtp()
-            LoginEvent.BackClicked -> handleBack()
+            LoginIntent.RequestOtpClicked -> requestOtp()
+            LoginIntent.VerifyOtpClicked -> verifyOtp()
+            LoginIntent.BackClicked -> handleBack()
         }
     }
 

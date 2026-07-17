@@ -21,10 +21,12 @@ import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
 import com.carenest.presentation.R
-import com.carenest.presentation.auth.login.screens.LoginScreen
-import com.carenest.presentation.auth.register.screens.RegisterScreen
+import com.carenest.presentation.ui.auth.login.screens.LoginScreen
+import com.carenest.presentation.ui.auth.register.screens.RegisterScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
+import com.carenest.presentation.ui.auth.login.LoginViewModel
+import com.carenest.presentation.ui.auth.register.RegisterViewModel
 import kotlin.collections.listOf
 
 @Composable
@@ -54,7 +56,7 @@ fun AppNav() {
         }
 
         entry<AppRoute.Login> {
-            val viewModel: com.carenest.presentation.auth.login.LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+            val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
             LoginScreen(
                 viewModel = viewModel,
                 onNavigateToRegister = { backStack.add(AppRoute.Register) }
@@ -62,7 +64,7 @@ fun AppNav() {
         }
 
         entry<AppRoute.Register> {
-            val viewModel: com.carenest.presentation.auth.register.RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+            val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
             RegisterScreen(
                 viewModel = viewModel,
                 onNavigateHome = { replaceWith(AppRoute.Splash) } // Placeholder for Home
