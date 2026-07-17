@@ -79,18 +79,14 @@ private fun RatingHeader(
             modifier = Modifier.padding(bottom = Theme.spacing.small),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            var iconTint = Theme.colors.amber
             repeat(5) { index ->
                 val starLevel = index + 1
-                val icon = if (averageRating >= starLevel) {
-                    iconTint = Theme.colors.amber
-                    Icons.Filled.Star
+                val (icon, iconTint) = if (averageRating >= starLevel) {
+                    Icons.Filled.Star to Theme.colors.amber
                 } else if (averageRating > index && averageRating < starLevel) {
-                    iconTint = Theme.colors.amber
-                    Icons.Filled.Star
+                    Icons.Filled.Star to Theme.colors.amber
                 } else {
-                    iconTint = Theme.colors.onDisable
-                    Icons.Outlined.Star
+                    Icons.Outlined.Star to Theme.colors.onDisable
                 }
 
                 Icon(
