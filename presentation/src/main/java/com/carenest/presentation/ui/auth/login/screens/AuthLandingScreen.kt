@@ -55,13 +55,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
             iconPainter = painterResource(id = DR.drawable.ic_google),
             onClick = { /* Simulated */ }
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        SocialButton(
-            caption = stringResource(R.string.auth_continue_apple),
-            iconPainter = painterResource(id = DR.drawable.ic_bank),
-            onClick = { /* Simulated */ }
-        )
+
         Spacer(modifier = Modifier.height(16.dp))
         
         SocialButton(
