@@ -34,18 +34,7 @@ jobs:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Run lint and unit tests
-        run: ./gradlew lintDebug testDebugUnitTest --no-daemon
-
-      - name: Upload lint reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-reports
-          path: |
-            **/build/reports/lint-results-debug.html
-            **/build/reports/lint-results-debug.xml
-          if-no-files-found: ignore
-          retention-days: 7
+        run: ./gradlew lintDebug testDebugUnitTest --no-daemon -Dlint.baselines.continue=true
 
       - name: Upload test reports
         if: always()

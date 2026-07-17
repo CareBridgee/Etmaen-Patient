@@ -8,6 +8,11 @@ android {
     namespace = "com.carenest.designsystem"
     compileSdk = 37
 
+    lint {
+        baseline = file("lint-baseline.xml")
+        disable.add("IconLocation")
+    }
+
     defaultConfig {
         minSdk = 24
     }

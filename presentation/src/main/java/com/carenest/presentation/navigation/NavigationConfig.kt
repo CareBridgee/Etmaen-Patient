@@ -2,20 +2,24 @@ package com.carenest.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.serialization.SavedStateConfiguration
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-
-/**
- * Navigation 3 stores destination objects in the back stack instead of
- * String routes. To restore the navigation stack after process death or
- * configuration changes, every AppRoute must be registered here.
- */
+import kotlinx.serialization.serializer
+import kotlin.reflect.KClass
 
 object NavigationConfig {
 
+    @OptIn(InternalSerializationApi::class)
+    private fun <T : NavKey> PolymorphicModuleBuilder<NavKey>.serializableSubclass(kClass: KClass<T>) {
+        subclass(kClass, kClass.serializer())
+    }
+
     val serializer = SerializersModule {
         polymorphic(NavKey::class) {
-            subclass(AppRoute.Splash::class ,AppRoute.Splash.serializer())
+            serializableSubclass(AppRoute.Splash::class)
+            serializableSubclass(AppRoute.OnBoarding::class)
             subclass(AppRoute.Login::class ,AppRoute.Login.serializer())
             subclass(AppRoute.Register::class ,AppRoute.Register.serializer())
         }

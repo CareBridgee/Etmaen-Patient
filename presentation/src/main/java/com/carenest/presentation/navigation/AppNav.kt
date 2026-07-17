@@ -20,25 +20,29 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
+import com.carenest.designsystem.theme.SpTheme
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.auth.login.screens.LoginScreen
 import com.carenest.presentation.ui.auth.register.screens.RegisterScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
+import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
+import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.auth.login.LoginViewModel
 import com.carenest.presentation.ui.auth.register.RegisterViewModel
 import kotlin.collections.listOf
 
 @Composable
 fun AppNav() {
+    SpTheme {
+        val initialRoute: NavKey = AppRoute.Splash
 
-    val initialRoute: NavKey = AppRoute.Splash
+        val backStack = rememberNavBackStack(
+            savedStateConfiguration,
+            initialRoute
+        )
 
-    val backStack = rememberNavBackStack(
-        savedStateConfiguration,
-        initialRoute
-    )
-
+        val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
     /**
      * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
      */
@@ -51,9 +55,16 @@ fun AppNav() {
 
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
 
-        entry<AppRoute.Splash> {
-            // TODO: Add SplashScreen
-        }
+            entry<AppRoute.Splash> {
+                SplashScreen(
+                    onNavigateToOnBoarding = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.OnBoarding)
+                        }
+                    }
+                )
+            }
 
         entry<AppRoute.Login> {
             val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
@@ -72,87 +83,102 @@ fun AppNav() {
         }
 
     }
+            entry<AppRoute.OnBoarding> {
+                OnBoardingScreen(
+                    onNavigateToHome = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Splash)
+                        }
+                    },
+                )
+            }
 
-    /**
-     * Main destinations that will appear in the Bottom Navigation.
-     * Add routes here after creating the main application screens.
-     */
-    val bottomNavRoutes = remember {
-        listOf<AppRoute>(
-            // AppRoute.Home,
-            // AppRoute.Bookings,
-            // AppRoute.Profile
-        )
-    }
+        }
 
-    val currentRoute = backStack.lastOrNull()
-    val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-    val shouldShowBottomBar = currentRoute in bottomNavRoutes
+        val bottomNavRoutes = remember {
+            listOf<AppRoute>(
+                // AppRoute.Home,
+                // AppRoute.Bookings,
+                // AppRoute.Profile
+            )
+        }
 
-    fun onBottomNavItemSelected(index: Int) {
-        val targetRoute = bottomNavRoutes[index]
+        val currentRoute = backStack.lastOrNull()
+        val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
+        val shouldShowBottomBar = currentRoute in bottomNavRoutes
 
-        if (currentRoute != targetRoute) {
-            Snapshot.withMutableSnapshot {
-                backStack.clear()
-                backStack.add(targetRoute)
+        fun onBottomNavItemSelected(index: Int) {
+            val targetRoute = bottomNavRoutes[index]
+
+            if (currentRoute != targetRoute) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(targetRoute)
+                }
             }
         }
-    }
+
+        fun replaceWith(route: NavKey) {
+            Snapshot.withMutableSnapshot {
+                backStack.clear()
+                backStack.add(route)
+            }
+        }
 
 
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { paddingValues ->
-
-        Box(
+        Scaffold(
             modifier = Modifier.fillMaxSize()
-        ) {
-            NavDisplay<NavKey>(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .then(
-                        if (shouldShowBottomBar) Modifier
-                        else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                    ),
-                entries = rememberDecoratedNavEntries(
-                    backStack = backStack,
-                    entryProvider = entryProvider,
-                    entryDecorators = listOf(
-                        rememberSaveableStateHolderNavEntryDecorator(),
-                        rememberViewModelStoreNavEntryDecorator()
-                    )
-                ),
-                onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-            )
+        ) { paddingValues ->
 
-            if (shouldShowBottomBar) {
-                SPBottomNavigation(
-                    items = listOf(
-                        BottomNavItem(
-                            stringResource(R.string.nav_home),
-                            RD.drawable.ic_home
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                NavDisplay<NavKey>(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (shouldShowBottomBar) Modifier
+                            else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                         ),
-                        BottomNavItem(
-                            stringResource(R.string.nav_booking),
-                            RD.drawable.ic_booking
-                        ),
-                        BottomNavItem(
-                            stringResource(R.string.nav_services),
-                            RD.drawable.ic_services
-                        ),
-                        BottomNavItem(
-                            stringResource(R.string.nav_profile),
-                            RD.drawable.ic_profile
+                    entries = rememberDecoratedNavEntries(
+                        backStack = backStack,
+                        entryProvider = entryProvider,
+                        entryDecorators = listOf(
+                            rememberSaveableStateHolderNavEntryDecorator(),
+                            rememberViewModelStoreNavEntryDecorator()
                         )
                     ),
-                    selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
-                    onItemSelected = { index -> onBottomNavItemSelected(index) },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = paddingValues.calculateBottomPadding()),
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                 )
+
+                if (shouldShowBottomBar) {
+                    SPBottomNavigation(
+                        items = listOf(
+                            BottomNavItem(
+                                stringResource(R.string.nav_home),
+                                RD.drawable.ic_home
+                            ),
+                            BottomNavItem(
+                                stringResource(R.string.nav_booking),
+                                RD.drawable.ic_booking
+                            ),
+                            BottomNavItem(
+                                stringResource(R.string.nav_services),
+                                RD.drawable.ic_services
+                            ),
+                            BottomNavItem(
+                                stringResource(R.string.nav_profile),
+                                RD.drawable.ic_profile
+                            )
+                        ),
+                        selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                        onItemSelected = { index -> onBottomNavItemSelected(index) },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = paddingValues.calculateBottomPadding()),
+                    )
+                }
             }
         }
     }

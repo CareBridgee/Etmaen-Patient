@@ -1,5 +1,8 @@
 <resources>
-    <string name="rating_reviews_suffix">%1$d Reviews</string>
+    <plurals name="rating_reviews_suffix">
+        <item quantity="one">%1$d Review</item>
+        <item quantity="other">%1$d Reviews</item>
+    </plurals>
     <string name="address_edit">Edit</string>
     <string name="quantity_label">Quantity</string>
     <string name="login_required_msg">Login required</string>
@@ -34,7 +37,10 @@
     <string name="action_withdraw">Withdraw</string>
     <string name="earnings_total_title">Total Earnings (This Month)</string>
     <string name="earnings_vs_last_month">%1$d%% vs last month</string>
-    <string name="earnings_jobs_suffix">%1$d Jobs</string>
+    <plurals name="earnings_jobs_suffix">
+        <item quantity="one">%1$d Job</item>
+        <item quantity="other">%1$d Jobs</item>
+    </plurals>
     <string name="transactions_title">Transaction History</string>
     <string name="transactions_statement">Statement</string>
     <string name="transactions_all_services">All Services</string>
