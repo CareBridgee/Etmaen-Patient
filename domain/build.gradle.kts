@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
 }
 
@@ -24,6 +26,10 @@ dependencies {
 
     // Dates used in domain models
     api(libs.kotlinx.datetime)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     // Unit tests
     testImplementation(libs.junit)
