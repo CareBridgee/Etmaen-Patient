@@ -31,13 +31,13 @@ import com.carenest.designsystem.theme.Theme
 
 @Composable
 fun OrderSummaryItemCard(
+    modifier: Modifier = Modifier,
     imageUrl: String? = null,
     imagePainter: Painter? = null,
     name: String,
     specs: String,
     quantity: Int,
     priceFormatted: String,
-    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -122,12 +122,12 @@ private fun OrderSummaryItemCardPreview() {
                 .padding(Theme.spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
-            com.carenest.designsystem.components.cards.OrderSummaryItemCard(
+            OrderSummaryItemCard(
                 imagePainter = painterResource(com.carenest.designsystem.R.drawable.img_placeholder),
                 name = "Soft Knit Sweater",
                 specs = "Cream / M",
                 quantity = 2,
-                priceFormatted = "\$98.00",
+                priceFormatted = "$98.00",
             )
         }
     }

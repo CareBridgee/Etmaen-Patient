@@ -12,4 +12,7 @@ sealed interface AppRoute : NavKey {
      @Serializable
      data object Splash : AppRoute
 
+     @Serializable
+     data object OnBoarding : AppRoute
+
 }
