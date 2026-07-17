@@ -43,17 +43,16 @@ fun AppNav() {
         )
 
         val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
-    /**
-     * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
-     */
-    fun replaceWith(route: NavKey) {
-        Snapshot.withMutableSnapshot {
-            backStack.clear()
-            backStack.add(route)
-        }
-    }
+            /**
+             * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
+             */
+            fun replaceWith(route: NavKey) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(route)
+                }
+            }
 
-    val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
 
             entry<AppRoute.Splash> {
                 SplashScreen(
@@ -66,23 +65,23 @@ fun AppNav() {
                 )
             }
 
-        entry<AppRoute.Login> {
-            val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-            LoginScreen(
-                viewModel = viewModel,
-                onNavigateToRegister = { backStack.add(AppRoute.Register) }
-            )
-        }
+            entry<AppRoute.Login> {
+                val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+                LoginScreen(
+                    viewModel = viewModel,
+                    onNavigateToRegister = { backStack.add(AppRoute.Register) }
+                )
+            }
 
-        entry<AppRoute.Register> {
-            val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-            RegisterScreen(
-                viewModel = viewModel,
-                onNavigateHome = { replaceWith(AppRoute.Splash) } // Placeholder for Home
-            )
-        }
+            entry<AppRoute.Register> {
+                val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+                RegisterScreen(
+                    viewModel = viewModel,
+                    onNavigateHome = { replaceWith(AppRoute.Splash) } // Placeholder for Home
+                )
+            }
 
-    }
+
             entry<AppRoute.OnBoarding> {
                 OnBoardingScreen(
                     onNavigateToHome = {
@@ -118,14 +117,6 @@ fun AppNav() {
                 }
             }
         }
-
-        fun replaceWith(route: NavKey) {
-            Snapshot.withMutableSnapshot {
-                backStack.clear()
-                backStack.add(route)
-            }
-        }
-
 
         Scaffold(
             modifier = Modifier.fillMaxSize()
