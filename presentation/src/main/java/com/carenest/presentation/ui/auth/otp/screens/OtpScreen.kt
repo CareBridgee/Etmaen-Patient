@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.presentation.ui.auth.login.components.OtpTextField
-import com.carenest.designsystem.components.topbar.BaseTopAppBar
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -54,33 +54,28 @@ internal fun OtpScreenContent(
     state: OtpState,
     onEvent: (OtpIntent) -> Unit
 ) {
+    ScreenTopBar(
+        title = "",
+        showLeadingIcon = true,
+        onLeadingClick = { onEvent(OtpIntent.BackClicked) }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BaseTopAppBar(
-            title = "",
-            leadingIcon = painterResource(id = DR.drawable.ic_arrow_back),
-            onLeadingClick = { onEvent(OtpIntent.BackClicked) },
-            autoMirrorLeadingIcon = true
-        )
+        Spacer(modifier = Modifier.height(24.dp))
         
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            BasicText(
-                text = stringResource(R.string.otp_title),
-                style = Theme.typography.display.copy(
-                    color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Bold
-                )
+        BasicText(
+            text = stringResource(R.string.otp_title),
+            style = Theme.typography.display.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold
             )
+        )
             
             Spacer(modifier = Modifier.height(16.dp))
             BasicText(
@@ -122,7 +117,6 @@ internal fun OtpScreenContent(
                 text = stringResource(R.string.otp_resend_timer),
                 style = Theme.typography.body.large.copy(color = Theme.colors.primary)
             )
-        }
     }
 }
 
