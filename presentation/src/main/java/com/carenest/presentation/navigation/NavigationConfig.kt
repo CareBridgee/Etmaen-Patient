@@ -20,9 +20,9 @@ object NavigationConfig {
         polymorphic(NavKey::class) {
             serializableSubclass(AppRoute.Splash::class)
             serializableSubclass(AppRoute.OnBoarding::class)
-            subclass(AppRoute.Login::class ,AppRoute.Login.serializer())
-            subclass(AppRoute.Register::class ,AppRoute.Register.serializer())
-            subclass(AppRoute.Otp::class ,AppRoute.Otp.serializer())
+            serializableSubclass(AppRoute.Login::class)
+            serializableSubclass(AppRoute.Register::class)
+            serializableSubclass(AppRoute.Otp::class)
         }
     }
 
