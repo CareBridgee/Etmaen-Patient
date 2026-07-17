@@ -47,18 +47,18 @@ internal fun BaseButton(
     Row(
         modifier = modifier
             .height(
-                58.dp
+                58.dp,
             )
             .border(
                 width = 1.dp,
                 shape = RoundedCornerShape(14.dp),
-                color = borderColor
+                color = borderColor,
             )
             .clip(RoundedCornerShape(14.dp))
             .background(backGroundColor)
-            .noRippleClickable(onClick = { if (!isDisabled && !isLoading) onClick() }),
+            .noRippleClickable { if (!isDisabled && !isLoading) onClick() },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         if (isLoading) {
             loadingView?.invoke()
@@ -89,7 +89,7 @@ internal fun BaseButton(
             }
             @Composable
             fun Gap() {
-                if (caption != null && iconPainter != null) {
+                if ((caption != null) && (iconPainter != null)) {
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }

@@ -35,7 +35,7 @@ fun EmptyState(
     accentColor: Color = Theme.colors.primary,
     actionLabel: String? = null,
     onActionClick: (() -> Unit)? = null,
-    actionIcon: ImageVector? = null
+    actionIcon: ImageVector? = null,
 ) {
     Column(
         modifier = modifier
@@ -107,7 +107,7 @@ fun EmptyState(
             textAlign = TextAlign.Center
         )
 
-        if (actionLabel != null && onActionClick != null) {
+        if ((actionLabel != null) && (onActionClick != null)) {
             Spacer(Modifier.height(28.dp))
             Button(
                 onClick = onActionClick,

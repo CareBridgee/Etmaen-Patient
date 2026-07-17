@@ -5,6 +5,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 // ─── Spring constants ───────────────────────────────────────────────────────
@@ -67,7 +67,7 @@ internal fun idleTranslationXPx(
     if (position == 0) return 0f
     val cosR = cos(rotationZDeg * DEG_TO_RAD).toFloat()
     val halfW = cardWidthPx / 2f
-    return if (position % 2 == 1) {
+    return if ((position % 2) == 1) {
         -halfW + (halfW * scale) * cosR
     } else {
         halfW - (halfW * scale) * cosR
@@ -79,7 +79,7 @@ internal fun idleTranslationXPx(
 /**
  * Per-card animated properties — each key tracks its own visual state independently.
  * [Animatable] is used for spring-based settling/promotion; the public
- * [translationXState] and [translationYState] vars are used for direct synchronous
+ * [repulsionX] and [repulsionY] vars are used for direct synchronous
  * updates during drag (background repulsion), falling back to the Animatable value
  * when no drag is active.
  */
@@ -96,7 +96,7 @@ internal class CardAnimState(config: StackPositionConfig, initialXPx: Float) {
     // The graphicsLayer reads these instead of the Animatable values while dragging.
     var repulsionX by mutableFloatStateOf(initialXPx)
     var repulsionY by mutableFloatStateOf(0f)
-    var isDragging by mutableStateOf(false)
+    var isDragging by mutableStateOf(value = false)
 }
 
 // ─── DeckState ───────────────────────────────────────────────────────────────
@@ -118,7 +118,7 @@ internal class DeckState {
     var hasPassedThreshold by mutableStateOf(false)
 
     // Config mirrored from the composable each composition.
-    var maxVisibleCards by mutableStateOf(4)
+    var maxVisibleCards by mutableIntStateOf(4)
     var maxRotationY by mutableFloatStateOf(38f)
     var swipeThresholdFraction by mutableFloatStateOf(0.20f)
 
@@ -220,7 +220,7 @@ internal class DeckState {
     /**
      * Settle the top card back to its idle position after a cancelled drag.
      */
-    suspend fun settleBack(scope: CoroutineScope) {
+    suspend fun settleBack() {
         val topKey = internalOrder.firstOrNull() ?: return
         val topAnim = animStateFor(topKey) ?: return
         val settleSpec = spring<Float>(dampingRatio = SETTLE_SPRING_DAMPING, stiffness = SETTLE_SPRING_STIFFNESS)
@@ -271,15 +271,11 @@ internal class DeckState {
      * the remaining cards into their new stack positions.
      *
      * @param direction committed swipe direction.
-     * @param velocityX fling velocity on X axis (px/s).
-     * @param velocityY fling velocity on Y axis (px/s).
      */
     suspend fun commitSwipe(
         scope: CoroutineScope,
         direction: SwipeDirection,
-        velocityX: Float,
-        velocityY: Float,
-        onRotate: () -> Unit = {}
+        onRotate: () -> Unit = {},
     ) {
         isAnimating = true
 
