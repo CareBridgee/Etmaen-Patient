@@ -108,18 +108,18 @@ fun OnBoardingContent(
             Spacer(Modifier.height(32.dp))
 
             val currentPage = state.pages.getOrNull(state.currentPageIndex)
-            if (currentPage != null) {
+            currentPage?.let { page ->
                 AnimatedContent(
-                    targetState = currentPage,
+                    targetState = page,
                     transitionSpec = { fadeIn() togetherWith fadeOut() },
                     label = "pageText",
-                ) { page ->
+                ) { targetPage ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         BasicText(
-                            text = page.title,
+                            text = targetPage.title,
                             style = Theme.typography.displayMedium.copy(
                                 color = Theme.colors.primaryFont,
                                 fontWeight = FontWeight.Bold,
@@ -128,7 +128,7 @@ fun OnBoardingContent(
                             modifier = Modifier.fillMaxWidth(),
                         )
                         BasicText(
-                            text = page.description,
+                            text = targetPage.description,
                             style = Theme.typography.body.medium.copy(
                                 color = Theme.colors.secondaryFont,
                                 textAlign = TextAlign.Center,

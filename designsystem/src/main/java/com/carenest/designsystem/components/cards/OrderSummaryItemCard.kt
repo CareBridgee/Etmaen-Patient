@@ -122,12 +122,12 @@ private fun OrderSummaryItemCardPreview() {
                 .padding(Theme.spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
-            com.carenest.designsystem.components.cards.OrderSummaryItemCard(
+            OrderSummaryItemCard(
                 imagePainter = painterResource(com.carenest.designsystem.R.drawable.img_placeholder),
                 name = "Soft Knit Sweater",
                 specs = "Cream / M",
                 quantity = 2,
-                priceFormatted = "\$98.00",
+                priceFormatted = "$98.00",
             )
         }
     }
