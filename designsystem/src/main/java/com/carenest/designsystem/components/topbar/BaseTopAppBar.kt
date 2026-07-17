@@ -3,7 +3,9 @@ package com.carenest.designsystem.components.topbar
 import com.carenest.designsystem.theme.Theme
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +52,7 @@ fun BaseTopAppBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .background(Theme.colors.backGround)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
