@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="nav_home">الرئيسية</string>
+  <string name="nav_booking">الحجوزات</string>
+  <string name="nav_services">الخدمات</string>
+  <string name="nav_profile">الملف الشخصي</string>
+  <!-- Auth Landing -->
+  <string name="auth_title">كير كونيكت</string>
+  <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
+  <string name="auth_continue_google">المتابعة باستخدام Google</string>
+  <string name="auth_continue_apple">المتابعة باستخدام Apple</string>
+  <string name="auth_continue_phone">المتابعة باستخدام رقم الهاتف</string>
+  <string name="auth_terms_agreement">الانضمام إلى تطبيقنا يعني موافقتك على شروط الاستخدام وسياسة الخصوصية</string>
+  <!-- Phone Input -->
+  <string name="phone_input_topbar_title">انضم إلينا عبر رقم الهاتف</string>
+  <string name="phone_input_subtitle">سنرسل رمزاً في رسالة نصية للتحقق من هاتفك.</string>
+  <string name="phone_input_label">رقم الهاتف</string>
+  <string name="phone_input_carrier_charges">قد يتم تطبيق رسوم شركة الاتصالات على الرسائل القصيرة.</string>
+  <string name="phone_input_next_btn">التالي</string>
+  <!-- OTP -->
+  <string name="otp_title">التحقق من الهاتف</string>
+  <string name="otp_subtitle">لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
+  <string name="otp_verify_btn">تحقق</string>
+  <string name="otp_resend_timer">إعادة إرسال الرمز خلال 00:30</string>
+  <!-- Welcome -->
+  <string name="welcome_topbar_title">كير كونيكت</string>
+  <string name="welcome_title">مرحباً بك في كير كونيكت</string>
+  <string name="welcome_subtitle">حسابك جاهز! لتقديم أفضل دعم ممكن، نقترح إكمال ملفك الصحي.</string>
+  <string name="welcome_complete_profile_btn">إكمال الملف الصحي\n(موصى به)</string>
+  <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك الشخصي لاحقاً</string>
+  <string name="welcome_skip_warning">قد يحد تخطي هذا من دقة التقييم بالذكاء الاصطناعي وتطابق الممرضين. بياناتك مشفرة ومحمية.</string>
+  <!-- Personal Info -->
+  <string name="personal_info_step">الخطوة 1 من 2</string>
+  <string name="personal_info_step_title">التفاصيل الشخصية</string>
+  <string name="personal_info_title">المعلومات الشخصية</string>
+  <string name="personal_info_first_name_title">الاسم الأول</string>
+  <string name="personal_info_first_name_hint">جين</string>
+  <string name="personal_info_last_name_title">اسم العائلة</string>
+  <string name="personal_info_last_name_hint">دو</string>
+  <string name="personal_info_dob_title">تاريخ الميلاد</string>
+  <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
+  <string name="personal_info_gender_title">الجنس</string>
+  <string name="personal_info_gender_male">ذكر</string>
+  <string name="personal_info_gender_female">أنثى</string>
+  <string name="personal_info_continue_btn">متابعة</string>
+  <!-- OnBoarding -->
+  <string name="onboarding_title">كير نيست</string>
+  <string name="onboarding_skip">تخطي</string>
+  <string name="onboarding_get_started">ابدأ الآن</string>
+  <string name="onboarding_next">التالي ←</string>
+  <string name="app_name_careconnect">CareConnect</string>
+  <string name="app_name_healthcare">الرعاية الصحية</string>
+  <string name="app_auth_description">Reassuring care for you and your loved ones</string>
+  <string name="phone_header_brand">الرعاية الآمنة</string>
+  <string name="phone_otp_method_title">اختر كيف تريد تلقي رمز التحقق الخاص بك</string>
+  <string name="phone_otp_sms_title">رسالة نصية</string>
+  <string name="phone_otp_sms_subtitle">تلقي رمز التحقق عبر رسالة نصية</string>
+  <string name="phone_otp_whatsapp_title">واتساب</string>
+  <string name="phone_otp_whatsapp_subtitle">تلقي رمز التحقق بأمان عبر واتساب</string>
+  <string name="phone_continue_btn">متابعة</string>
+  <string name="phone_input_secure_care_desc">يتم استخدام رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
+  <string name="phone_input_via_whatsapp">عبر واتساب</string>
+  <string name="phone_input_via_sms">عبر رسالة نصية</string>
+</resources>

@@ -1,11 +1,16 @@
 package com.carenest.presentation.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +25,17 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
+import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.presentation.R
+import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
+import androidx.compose.ui.res.painterResource
+import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
+import com.carenest.presentation.ui.auth.otp.OtpScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -39,6 +49,16 @@ fun AppNav() {
         )
 
         val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
+            /**
+             * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
+             */
+            fun replaceWith(route: NavKey) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(route)
+                }
+            }
+
 
             entry<AppRoute.Splash> {
                 SplashScreen(
@@ -51,12 +71,31 @@ fun AppNav() {
                 )
             }
 
+            entry<AppRoute.Login> {
+                LoginScreen(
+                    onNavigateToOtp = { phone, method -> backStack.add(AppRoute.Otp(phone, method)) }
+                )
+            }
+
+            entry<AppRoute.Otp> { entry ->
+                OtpScreen(
+                    onNavigateToHome = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Splash) // Assuming Splash navigates to Home
+                        }
+                    },
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                )
+            }
+
+
             entry<AppRoute.OnBoarding> {
                 OnBoardingScreen(
                     onNavigateToHome = {
                         Snapshot.withMutableSnapshot {
                             backStack.clear()
-                            backStack.add(AppRoute.Splash)
+                            backStack.add(AppRoute.Login)
                         }
                     },
                 )
@@ -87,28 +126,42 @@ fun AppNav() {
             }
         }
 
-        fun replaceWith(route: NavKey) {
-            Snapshot.withMutableSnapshot {
-                backStack.clear()
-                backStack.add(route)
-            }
-        }
+        val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
 
+        CompositionLocalProvider(LocalTopBarState provides topBarState) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
+                containerColor = Theme.colors.backGround,
+                contentWindowInsets = WindowInsets(0),
+                topBar = {
+                    val config = topBarState.value
+                    if (config.title != null) {
+                        BaseTopAppBar(
+                            title = config.title,
+                            leadingIcon = if (config.showLeadingIcon) {
+                                config.leadingIcon ?: painterResource(id = RD.drawable.ic_arrow_back)
+                            } else null,
+                            onLeadingClick = config.onLeadingClick,
+                            autoMirrorLeadingIcon = true,
+                            modifier = Modifier.statusBarsPadding()
+                        )
+                    }
+                }
+            ) { paddingValues ->
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize()
-        ) { paddingValues ->
-
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                NavDisplay<NavKey>(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .then(
-                            if (shouldShowBottomBar) Modifier
-                            else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                        ),
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    NavDisplay<NavKey>(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .then(
+                                if (shouldShowBottomBar) Modifier
+                                else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                            ),
                     entries = rememberDecoratedNavEntries(
                         backStack = backStack,
                         entryProvider = entryProvider,
@@ -146,6 +199,7 @@ fun AppNav() {
                             .align(Alignment.BottomCenter)
                             .padding(bottom = paddingValues.calculateBottomPadding()),
                     )
+                }
                 }
             }
         }

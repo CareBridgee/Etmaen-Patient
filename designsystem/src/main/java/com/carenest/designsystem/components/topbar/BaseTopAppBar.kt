@@ -3,7 +3,9 @@ package com.carenest.designsystem.components.topbar
 import com.carenest.designsystem.theme.Theme
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,7 +43,7 @@ fun BaseTopAppBar(
     actions: List<TopBarAction> = emptyList(),
     actionSpacing: Dp = 8.dp,
     titleStyle: TextStyle = Theme.typography.title.copy(
-        color = Theme.colors.primaryFont,
+        color = Theme.colors.primary,
         fontWeight = FontWeight.Bold,
     ),
     border: BorderStroke? = null,

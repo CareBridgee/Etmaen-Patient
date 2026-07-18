@@ -45,7 +45,8 @@ data class ColorScheme(
     val errorContainer: Color,
     val onErrorContainer: Color,
     val track: Color,
-    val divider: Color
+    val divider: Color,
+    val cardBackground: Color
 )
 
 val lightColors = ColorScheme(
@@ -90,7 +91,8 @@ val lightColors = ColorScheme(
     errorContainer = Color(0xFFFFEBEE),
     onErrorContainer = Color(0xFFD32F2F),
     track = Color(0xFFEBEBEB),
-    divider = Color(0xFFF0F0F0)
+    divider = Color(0xFFF0F0F0),
+    cardBackground = Color(0xFFF4F6F6)
 )
 
 val darkColors = ColorScheme(
@@ -135,7 +137,8 @@ val darkColors = ColorScheme(
     errorContainer = Color(0xFF2D0A0A),
     onErrorContainer = Color(0xFFE57373),
     track = Color(0xFF2C2C2C),
-    divider = Color(0xFF2C2C2C)
+    divider = Color(0xFF2C2C2C),
+    cardBackground = Color(0xFF2C2C2C)
 )
 
 internal val localSPColorScheme = staticCompositionLocalOf { darkColors }

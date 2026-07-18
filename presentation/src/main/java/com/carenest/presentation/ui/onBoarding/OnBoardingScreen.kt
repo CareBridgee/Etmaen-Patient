@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +36,10 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.onBoarding.components.OnBoardingCard
+import com.carenest.presentation.ui.onBoarding.components.OnBoardingCard
 import com.carenest.presentation.ui.onBoarding.components.OnBoardingPageIndicator
+import com.carenest.presentation.R
+import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
 fun OnBoardingScreen(
@@ -62,6 +66,8 @@ fun OnBoardingContent(
     onIntent: (OnBoardingIntent) -> Unit,
 ) {
     val cardStackState = rememberSwipingCardStackState()
+
+    HideTopBar()
 
     Box(
         modifier = Modifier
@@ -148,7 +154,7 @@ fun OnBoardingContent(
 
             Spacer(Modifier.weight(1f))
 
-            val buttonLabel = if (state.isLastPage) "Get Started" else "Next →"
+            val buttonLabel = if (state.isLastPage) stringResource(R.string.onboarding_get_started) else stringResource(R.string.onboarding_next)
 
             PrimaryButton(
                 caption = buttonLabel,
@@ -175,7 +181,7 @@ private fun OnBoardingTopBar(
 ) {
     Box(modifier = modifier) {
         BasicText(
-            text = "CareNest",
+            text = stringResource(R.string.onboarding_title),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primary,
                 fontWeight = FontWeight.Bold,
@@ -183,7 +189,7 @@ private fun OnBoardingTopBar(
             modifier = Modifier.align(Alignment.CenterStart),
         )
         BasicText(
-            text = "Skip",
+            text = stringResource(R.string.onboarding_skip),
             style = Theme.typography.body.medium.copy(
                 color = Theme.colors.secondaryFont,
                 fontWeight = FontWeight.Medium,
