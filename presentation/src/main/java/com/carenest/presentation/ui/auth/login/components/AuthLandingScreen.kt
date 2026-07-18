@@ -1,16 +1,14 @@
-package com.carenest.presentation.ui.auth.login.screens
+package com.carenest.presentation.ui.auth.login.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,7 +40,9 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
         
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Box(
                 modifier = Modifier
@@ -63,10 +63,9 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
                         contentScale = ContentScale.Fit
                     )
 
-                    Spacer(modifier = Modifier.width(18.dp))
 
                     Column(
-                        verticalArrangement = Arrangement.spacedBy((-4).dp),
+                        verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start
                     ) {
 
@@ -82,7 +81,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
                         BasicText(
                             text = stringResource(R.string.app_name_healthcare),
                             style = Theme.typography.title.copy(
-                                color = Theme.colors.primaryFont,
+                                color = Theme.colors.primary,
                                 fontWeight = FontWeight.Normal,
                                 textAlign = TextAlign.Start
                             )
@@ -104,17 +103,6 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
                     backgroundColor = Theme.colors.backGround,
                     contentColor = Theme.colors.primaryFont,
                     borderColor = Theme.colors.hint.copy(alpha = 0.3f)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                SocialButton(
-                    caption = stringResource(R.string.auth_continue_apple),
-                    iconPainter = painterResource(id = DR.drawable.ic_bank), // fallback for apple
-                    onClick = { /* Simulated */ },
-                    backgroundColor = Theme.colors.primaryFont,
-                    contentColor = Theme.colors.backGround,
-                    iconTint = Theme.colors.backGround
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

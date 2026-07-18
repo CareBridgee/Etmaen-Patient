@@ -1,13 +1,11 @@
-package com.carenest.presentation.ui.auth.register.screens
+package com.carenest.presentation.ui.auth.register
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.carenest.presentation.ui.auth.register.RegisterIntent
-import com.carenest.presentation.ui.auth.register.RegisterState
-import com.carenest.presentation.ui.auth.register.RegisterStep
-import com.carenest.presentation.ui.auth.register.RegisterViewModel
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.ui.auth.register.screens.PersonalInfoScreen
+import com.carenest.presentation.ui.auth.register.screens.WelcomeScreen
 
 @Composable
 fun RegisterScreen(

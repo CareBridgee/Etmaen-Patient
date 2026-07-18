@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.auth.register.screens
+package com.carenest.presentation.ui.auth.register.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.auth.login.screens
+package com.carenest.presentation.ui.auth.login.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,10 +19,6 @@ import com.carenest.presentation.ui.auth.login.LoginIntent
 import com.carenest.presentation.ui.auth.login.LoginState
 import com.carenest.presentation.ui.auth.login.LoginStep
 import com.carenest.presentation.R
-import com.carenest.presentation.ui.auth.login.components.ContinueButton
-import com.carenest.presentation.ui.auth.login.components.OtpMethodSelector
-import com.carenest.presentation.ui.auth.login.components.PhoneNumberSection
-import com.carenest.presentation.ui.auth.login.components.SecureCareInfoCard
 
 @Composable
 fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {

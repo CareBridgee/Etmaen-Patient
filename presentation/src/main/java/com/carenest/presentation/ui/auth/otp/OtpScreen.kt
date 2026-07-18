@@ -1,14 +1,15 @@
-package com.carenest.presentation.ui.auth.otp.screens
+package com.carenest.presentation.ui.auth.otp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,12 +22,7 @@ import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.ui.auth.otp.OtpEffect
-import com.carenest.presentation.ui.auth.otp.OtpIntent
-import com.carenest.presentation.ui.auth.otp.OtpState
-import com.carenest.presentation.ui.auth.otp.OtpViewModel
 import com.carenest.presentation.R
-import com.carenest.designsystem.R as DR
 
 @Composable
 fun OtpScreen(
@@ -64,6 +60,7 @@ internal fun OtpScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

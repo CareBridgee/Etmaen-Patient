@@ -1,17 +1,13 @@
-package com.carenest.presentation.ui.auth.login.screens
+package com.carenest.presentation.ui.auth.login
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.carenest.presentation.ui.auth.login.LoginIntent
-import com.carenest.presentation.ui.auth.login.LoginState
-import com.carenest.presentation.ui.auth.login.LoginStep
-import com.carenest.presentation.ui.auth.login.LoginViewModel
-import com.carenest.presentation.ui.auth.login.LoginEffect
 import com.carenest.presentation.core.mvi.ObserveEffect
 
-import com.carenest.presentation.ui.auth.login.OtpDeliveryMethod
+import com.carenest.presentation.ui.auth.login.components.AuthLandingScreen
+import com.carenest.presentation.ui.auth.login.components.PhoneInputScreen
 
 @Composable
 fun LoginScreen(
