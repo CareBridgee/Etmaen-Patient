@@ -56,6 +56,10 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
             PhoneNumberSection(
                 phone = state.phoneNumber,
                 onPhoneChange = { onEvent(LoginIntent.PhoneNumberChanged(it)) },
+                selectedCountry = state.selectedCountry,
+                isDropdownExpanded = state.isCountryDropdownExpanded,
+                onCountryClick = { onEvent(LoginIntent.ToggleCountryDropdown) },
+                onCountrySelect = { onEvent(LoginIntent.CountryCodeChanged(it)) },
                 errorMessage = state.errorMessage
             )
 

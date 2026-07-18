@@ -13,10 +13,16 @@ import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 
+import com.carenest.presentation.ui.auth.login.Country
+
 @Composable
 fun PhoneNumberSection(
     phone: String,
     onPhoneChange: (String) -> Unit,
+    selectedCountry: Country,
+    isDropdownExpanded: Boolean,
+    onCountryClick: () -> Unit,
+    onCountrySelect: (Country) -> Unit,
     errorMessage: String?
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -31,7 +37,11 @@ fun PhoneNumberSection(
 
         PhoneInputField(
             phone = phone,
-            onPhoneChange = onPhoneChange
+            onPhoneChange = onPhoneChange,
+            selectedCountry = selectedCountry,
+            isDropdownExpanded = isDropdownExpanded,
+            onCountryClick = onCountryClick,
+            onCountrySelect = onCountrySelect
         )
 
         Spacer(modifier = Modifier.height(8.dp))
