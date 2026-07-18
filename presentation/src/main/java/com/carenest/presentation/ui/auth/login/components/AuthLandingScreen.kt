@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.button.SocialButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -47,7 +48,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(0.5f),
                 contentAlignment = Alignment.Center
             ) {
                 Row(
@@ -88,6 +89,34 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
                         )
                     }
                 }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .weight(0.3f)
+                ,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                BasicText(
+                    text = stringResource(R.string.app_name_careconnect),
+                    style = Theme.typography.display.copy(
+                        color = Theme.colors.primary,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Start
+                    )
+                )
+
+                BasicText(
+                    text = stringResource(R.string.app_auth_description),
+                    style = Theme.typography.title.copy(
+                        fontSize = 16.sp,
+                        color = Theme.colors.primary,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center
+                    )
+                )
             }
 
             Column(

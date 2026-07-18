@@ -50,6 +50,7 @@
   <string name="onboarding_next">Next</string>
   <string name="app_name_careconnect">CareConnect</string>
   <string name="app_name_healthcare">Healthcare</string>
+  <string name="app_auth_description">Reassuring care for you and your loved ones</string>
   <string name="phone_header_brand">Secure Care</string>
   <string name="phone_otp_method_title">Choose how you\'d like to receive your verification code</string>
   <string name="phone_otp_sms_title">SMS</string>

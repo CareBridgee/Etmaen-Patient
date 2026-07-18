@@ -50,6 +50,7 @@
   <string name="onboarding_next">التالي ←</string>
   <string name="app_name_careconnect">CareConnect</string>
   <string name="app_name_healthcare">الرعاية الصحية</string>
+  <string name="app_auth_description">Reassuring care for you and your loved ones</string>
   <string name="phone_header_brand">الرعاية الآمنة</string>
   <string name="phone_otp_method_title">اختر كيف تريد تلقي رمز التحقق الخاص بك</string>
   <string name="phone_otp_sms_title">رسالة نصية</string>
