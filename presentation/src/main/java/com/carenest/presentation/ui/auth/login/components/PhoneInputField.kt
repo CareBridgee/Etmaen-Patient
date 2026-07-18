@@ -71,7 +71,7 @@ fun PhoneInputField(
             BasicTextField(
                 value = phone,
                 onValueChange = { 
-                    if (it.length <= 15 && it.all { char -> char.isDigit() || char.isWhitespace() || char == '-' }) {
+                    if (it.length <= 11 && it.all { char -> char.isDigit() || char.isWhitespace() || char == '-' }) {
                         onPhoneChange(it)
                     }
                 },
