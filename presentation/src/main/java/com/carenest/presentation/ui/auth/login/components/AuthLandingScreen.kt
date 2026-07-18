@@ -60,34 +60,10 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
                     Image(
                         painter = painterResource(DR.drawable.auth_logo),
                         contentDescription = null,
-                        modifier = Modifier.size(120.dp),
+                        modifier = Modifier.size(200.dp),
                         contentScale = ContentScale.Fit
                     )
 
-
-                    Column(
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.Start
-                    ) {
-
-                        BasicText(
-                            text = stringResource(R.string.app_name_careconnect),
-                            style = Theme.typography.display.copy(
-                                color = Theme.colors.primary,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Start
-                            )
-                        )
-
-                        BasicText(
-                            text = stringResource(R.string.app_name_healthcare),
-                            style = Theme.typography.title.copy(
-                                color = Theme.colors.primary,
-                                fontWeight = FontWeight.Normal,
-                                textAlign = TextAlign.Start
-                            )
-                        )
-                    }
                 }
             }
 
