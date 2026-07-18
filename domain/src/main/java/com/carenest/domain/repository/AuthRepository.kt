@@ -1,0 +1,9 @@
+package com.carenest.domain.repository
+
+
+import com.carenest.domain.model.auth.AuthResult
+
+interface AuthRepository {
+    suspend fun loginWithPhone(phoneNumber: String): Result<Unit>
+    suspend fun verifyOtp(phoneNumber: String, otp: String): Result<AuthResult>
+}
