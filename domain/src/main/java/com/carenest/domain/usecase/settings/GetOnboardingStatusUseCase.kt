@@ -1,4 +1,4 @@
-package com.carenest.domain.usecase
+package com.carenest.domain.usecase.settings
 
 import com.carenest.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow

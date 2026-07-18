@@ -1,4 +1,4 @@
-package com.carenest.data.source.remote
+package com.carenest.data.source.remote.datasource
 
 import com.carenest.data.source.remote.service.CarelyApiService
 
