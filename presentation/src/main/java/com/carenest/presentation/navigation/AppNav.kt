@@ -1,11 +1,11 @@
 package com.carenest.presentation.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -28,18 +28,14 @@ import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
 import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.presentation.R
-import com.carenest.presentation.ui.auth.login.screens.LoginScreen
-import com.carenest.presentation.ui.auth.register.screens.RegisterScreen
+import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
-import com.carenest.presentation.navigation.TopBarConfiguration
-import com.carenest.presentation.navigation.LocalTopBarState
 import androidx.compose.ui.res.painterResource
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
-import com.carenest.presentation.ui.auth.otp.screens.OtpScreen
-import com.carenest.presentation.ui.auth.register.RegisterViewModel
+import com.carenest.presentation.ui.auth.otp.OtpScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -134,7 +130,9 @@ fun AppNav() {
 
         CompositionLocalProvider(LocalTopBarState provides topBarState) {
             Scaffold(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
                 containerColor = Theme.colors.backGround,
                 contentWindowInsets = WindowInsets(0),
                 topBar = {
