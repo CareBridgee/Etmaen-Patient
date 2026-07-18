@@ -43,7 +43,7 @@ fun BaseTopAppBar(
     actions: List<TopBarAction> = emptyList(),
     actionSpacing: Dp = 8.dp,
     titleStyle: TextStyle = Theme.typography.title.copy(
-        color = Theme.colors.primaryFont,
+        color = Theme.colors.primary,
         fontWeight = FontWeight.Bold,
     ),
     border: BorderStroke? = null,
