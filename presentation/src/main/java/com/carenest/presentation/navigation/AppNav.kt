@@ -79,10 +79,11 @@ fun AppNav() {
 
             entry<AppRoute.Otp> { entry ->
                 OtpScreen(
+                    entry = entry,
                     onNavigateToHome = {
                         Snapshot.withMutableSnapshot {
                             backStack.clear()
-                            backStack.add(AppRoute.Splash) // Assuming Splash navigates to Home
+                            backStack.add(AppRoute.Splash)
                         }
                     },
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
