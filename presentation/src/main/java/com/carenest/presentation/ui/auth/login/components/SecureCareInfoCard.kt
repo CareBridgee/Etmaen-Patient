@@ -1,5 +1,6 @@
 package com.carenest.presentation.ui.auth.login.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +27,7 @@ import com.carenest.designsystem.R as DR
 fun SecureCareInfoCard() {
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = Color.White,
+        color = Theme.colors.surface,
         modifier = Modifier.fillMaxWidth(),
         shadowElevation = 2.dp
     ) {
@@ -33,20 +35,12 @@ fun SecureCareInfoCard() {
             modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primary.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = DR.drawable.secure_care),
-                    contentDescription = "Secure Care",
-                    tint = Theme.colors.primary,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
+            Image(
+                painter = painterResource(DR.drawable.secure_care),
+                contentDescription = null,
+                modifier = Modifier.size(60.dp),
+                contentScale = ContentScale.Fit
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 

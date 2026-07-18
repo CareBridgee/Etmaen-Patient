@@ -26,7 +26,7 @@ fun SquareOptionCard(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) Theme.colors.primary.copy(alpha = 0.05f) else Color(0xFFF4F6F6)
+    val backgroundColor = if (isSelected) Theme.colors.primary.copy(alpha = 0.05f) else Theme.colors.cardBackground
     val borderColor = if (isSelected) Theme.colors.primary else Color.Transparent
 
     Surface(
