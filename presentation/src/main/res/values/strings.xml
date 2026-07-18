@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="nav_home">Home</string>
   <string name="nav_booking">Booking</string>
@@ -47,7 +47,7 @@
   <string name="onboarding_title">CareNest</string>
   <string name="onboarding_skip">Skip</string>
   <string name="onboarding_get_started">Get Started</string>
-  <string name="onboarding_next">Next â†’</string>
+  <string name="onboarding_next">Next</string>
   <string name="app_name_careconnect">CareConnect</string>
   <string name="app_name_healthcare">Healthcare</string>
   <string name="phone_header_brand">Secure Care</string>

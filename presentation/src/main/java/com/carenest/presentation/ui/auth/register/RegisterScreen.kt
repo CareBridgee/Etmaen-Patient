@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.ui.auth.register.screens.PersonalInfoScreen
-import com.carenest.presentation.ui.auth.register.screens.WelcomeScreen
+import com.carenest.presentation.ui.auth.register.components.PersonalInfoScreen
+import com.carenest.presentation.ui.auth.register.components.WelcomeScreen
 
 @Composable
 fun RegisterScreen(

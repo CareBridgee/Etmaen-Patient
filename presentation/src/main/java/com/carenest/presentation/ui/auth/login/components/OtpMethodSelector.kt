@@ -23,7 +23,7 @@ fun OtpMethodSelector(
         SquareOptionCard(
             modifier = Modifier.weight(1f),
             title = stringResource(id = R.string.phone_input_via_whatsapp),
-            iconRes = DR.drawable.ic_call, // Assuming generic message icon is mapped
+            iconRes = DR.drawable.whatsapp, 
             isSelected = selectedMethod == OtpDeliveryMethod.WHATSAPP,
             onClick = { onMethodSelect(OtpDeliveryMethod.WHATSAPP) }
         )
@@ -31,7 +31,7 @@ fun OtpMethodSelector(
         SquareOptionCard(
             modifier = Modifier.weight(1f),
             title = stringResource(id = R.string.phone_input_via_sms),
-            iconRes = DR.drawable.ic_search, // Assuming generic lock icon is mapped
+            iconRes = DR.drawable.comment_sms,
             isSelected = selectedMethod == OtpDeliveryMethod.SMS,
             onClick = { onMethodSelect(OtpDeliveryMethod.SMS) }
         )

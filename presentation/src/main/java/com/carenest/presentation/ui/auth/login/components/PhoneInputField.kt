@@ -40,7 +40,7 @@ fun PhoneInputField(
             contentAlignment = Alignment.Center
         ) {
             BasicText(
-                text = "🇺🇸 +1", // Hardcoded for preview matching
+                text = "\uD83C\uDDEA\uD83C\uDDEC +20", // Hardcoded for preview matching
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont
                 )
