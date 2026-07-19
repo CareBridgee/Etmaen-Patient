@@ -12,11 +12,10 @@ data class OtpState(
     val phoneNumber: String = "",
     val otpCode: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val isSuccess: Boolean = false
+    val errorMessage: String? = null
 )
 
 sealed interface OtpEffect {
-    data object NavigateToHome : OtpEffect
+    data object NavigateToRegistration : OtpEffect
     data object NavigateBack : OtpEffect
 }

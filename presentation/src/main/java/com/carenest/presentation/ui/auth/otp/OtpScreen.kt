@@ -43,13 +43,9 @@ fun OtpScreen(
         viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
     }
 
-    androidx.compose.runtime.LaunchedEffect(entry.phone) {
-        viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
-    }
-
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is OtpEffect.NavigateToHome -> onVerificationSuccess()
+            is OtpEffect.NavigateToRegistration -> onVerificationSuccess()
             is OtpEffect.NavigateBack -> onNavigateBack()
         }
     }
