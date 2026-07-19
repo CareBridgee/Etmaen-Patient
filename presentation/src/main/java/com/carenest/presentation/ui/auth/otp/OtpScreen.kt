@@ -1,10 +1,15 @@
 package com.carenest.presentation.ui.auth.otp
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,20 +22,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
-import com.carenest.presentation.ui.auth.login.components.OtpTextField
-import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.R
+import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.navigation.AppRoute
+import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.presentation.ui.auth.login.components.OtpTextField
 
 @Composable
 fun OtpScreen(
+    entry: AppRoute.Otp,
     viewModel: OtpViewModel = hiltViewModel(),
     onVerificationSuccess: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(entry.phone) {
+        viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
+    }
+
+    androidx.compose.runtime.LaunchedEffect(entry.phone) {
+        viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {

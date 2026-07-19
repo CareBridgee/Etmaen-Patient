@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.auth.login.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,11 +23,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
+import com.carenest.presentation.ui.auth.login.Country
+import com.carenest.presentation.ui.auth.login.countries
 
 @Composable
 fun PhoneInputField(
     phone: String,
     onPhoneChange: (String) -> Unit,
+    selectedCountry: Country,
+    isDropdownExpanded: Boolean,
+    onCountryClick: () -> Unit,
+    onCountrySelect: (Country) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -36,15 +46,36 @@ fun PhoneInputField(
                 .height(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(Theme.colors.surface)
+                .clickable { onCountryClick() }
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
             BasicText(
-                text = "\uD83C\uDDEA\uD83C\uDDEC +20", // Hardcoded for preview matching
+                text = "${selectedCountry.flag} ${selectedCountry.code}",
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont
                 )
             )
+
+            DropdownMenu(
+                expanded = isDropdownExpanded,
+                onDismissRequest = { onCountryClick() },
+                modifier = Modifier.background(Theme.colors.surface)
+            ) {
+                countries.forEach { country ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "${country.flag} ${country.name} (${country.code})",
+                                style = Theme.typography.body.medium.copy(
+                                    color = Theme.colors.primaryFont
+                                )
+                            )
+                        },
+                        onClick = { onCountrySelect(country) }
+                    )
+                }
+            }
         }
         
         Spacer(modifier = Modifier.width(12.dp))

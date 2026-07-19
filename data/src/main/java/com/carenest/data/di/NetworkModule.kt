@@ -45,7 +45,7 @@ object NetworkModule {
                 level = LogLevel.BODY
             }
 
-            install(authenticationplugin)
+//            install(authenticationplugin)
 
             defaultRequest {
                 url(BuildConfig.base_url)

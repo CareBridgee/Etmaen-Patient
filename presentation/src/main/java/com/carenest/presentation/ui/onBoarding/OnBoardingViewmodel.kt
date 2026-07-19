@@ -2,7 +2,7 @@ package com.carenest.presentation.ui.onBoarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.carenest.domain.usecase.UpdateOnboardingStatusUseCase
+import com.carenest.domain.usecase.settings.UpdateOnboardingStatusUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
