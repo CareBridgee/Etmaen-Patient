@@ -26,9 +26,6 @@
   <string name="otp_subtitle">أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
   <string name="otp_verify_btn">تحقق</string>
   <string name="otp_resend_timer">إعادة إرسال الرمز خلال 00:30</string>
-  <string name="verification_success_title">تم التحقق بنجاح</string>
-  <string name="verification_success_description">تم التحقق من رقم هاتفك وأصبح حسابك جاهزاً.</string>
-  <string name="verification_success_continue">متابعة</string>
 
   <!-- Welcome -->
   <string name="welcome_topbar_title">كير كونيكت</string>
@@ -46,7 +43,7 @@
   <string name="welcome_feature_verified">موثق</string>
 
   <!-- Personal Info -->
-  <string name="personal_info_step">الخطوة 1 من 9</string>
+  <string name="registration_progress_label">التسجيل</string>
   <string name="personal_info_step_title">التفاصيل الشخصية</string>
   <string name="personal_info_title">المعلومات الشخصية</string>
   <string name="personal_info_first_name_title">الاسم الأول</string>

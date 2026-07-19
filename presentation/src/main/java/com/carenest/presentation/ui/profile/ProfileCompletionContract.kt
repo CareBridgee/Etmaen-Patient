@@ -2,7 +2,6 @@ package com.carenest.presentation.ui.profile
 
 enum class ProfileStep {
     Welcome,
-    PersonalInfo,
     BasicHealthInfo,
     MedicalConditions,
     Allergies
@@ -10,12 +9,6 @@ enum class ProfileStep {
 
 data class ProfileCompletionState(
     val currentStep: ProfileStep = ProfileStep.Welcome,
-    val firstName: String = "",
-    val lastName: String = "",
-    val dateOfBirth: String = "",
-    val nationalId: String = "",
-    val gender: String = "",
-    val accountType: String = "",
     val height: String = "170",
     val weight: String = "65",
     val bloodType: String = "",
@@ -28,12 +21,6 @@ data class ProfileCompletionState(
 )
 
 sealed interface ProfileCompletionIntent {
-    data class FirstNameChanged(val firstName: String) : ProfileCompletionIntent
-    data class LastNameChanged(val lastName: String) : ProfileCompletionIntent
-    data class DateOfBirthChanged(val dateOfBirth: String) : ProfileCompletionIntent
-    data class NationalIdChanged(val nationalId: String) : ProfileCompletionIntent
-    data class GenderChanged(val gender: String) : ProfileCompletionIntent
-    data class AccountTypeChanged(val accountType: String) : ProfileCompletionIntent
     data class HeightChanged(val height: String) : ProfileCompletionIntent
     data class WeightChanged(val weight: String) : ProfileCompletionIntent
     data class BloodTypeChanged(val bloodType: String) : ProfileCompletionIntent

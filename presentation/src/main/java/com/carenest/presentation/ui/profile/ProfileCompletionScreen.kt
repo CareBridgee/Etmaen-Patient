@@ -8,7 +8,6 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.profile.steps.AllergiesScreen
 import com.carenest.presentation.ui.profile.steps.BasicHealthInfoScreen
 import com.carenest.presentation.ui.profile.steps.MedicalConditionsScreen
-import com.carenest.presentation.ui.profile.steps.PersonalInfoScreen
 import com.carenest.presentation.ui.profile.steps.WelcomeScreen
 
 @Composable
@@ -31,32 +30,6 @@ fun ProfileCompletionScreen(
             onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
             onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) },
             onSkip = { viewModel.onEvent(ProfileCompletionIntent.SkipClicked) }
-        )
-        ProfileStep.PersonalInfo -> PersonalInfoScreen(
-            firstName = state.firstName,
-            lastName = state.lastName,
-            dateOfBirth = state.dateOfBirth,
-            nationalId = state.nationalId,
-            gender = state.gender,
-            accountType = state.accountType,
-            onFirstNameChange = {
-                viewModel.onEvent(ProfileCompletionIntent.FirstNameChanged(it))
-            },
-            onLastNameChange = {
-                viewModel.onEvent(ProfileCompletionIntent.LastNameChanged(it))
-            },
-            onDateOfBirthChange = {
-                viewModel.onEvent(ProfileCompletionIntent.DateOfBirthChanged(it))
-            },
-            onNationalIdChange = {
-                viewModel.onEvent(ProfileCompletionIntent.NationalIdChanged(it))
-            },
-            onGenderChange = { viewModel.onEvent(ProfileCompletionIntent.GenderChanged(it)) },
-            onAccountTypeChange = {
-                viewModel.onEvent(ProfileCompletionIntent.AccountTypeChanged(it))
-            },
-            onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
-            onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) }
         )
         ProfileStep.BasicHealthInfo -> BasicHealthInfoScreen(
             height = state.height,

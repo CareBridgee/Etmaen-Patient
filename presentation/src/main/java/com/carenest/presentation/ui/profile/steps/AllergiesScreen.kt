@@ -73,7 +73,7 @@ fun AllergiesScreen(
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
-            ProfileProgressIndicator(step = 4, title = stringResource(R.string.allergies_progress_title))
+            ProfileProgressIndicator(step = 3, title = stringResource(R.string.allergies_progress_title))
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 BasicText(

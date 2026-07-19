@@ -76,7 +76,7 @@ fun BasicHealthInfoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ProfileProgressIndicator(
-                step = 2,
+                step = 1,
                 title = stringResource(R.string.basic_health_title),
             )
 

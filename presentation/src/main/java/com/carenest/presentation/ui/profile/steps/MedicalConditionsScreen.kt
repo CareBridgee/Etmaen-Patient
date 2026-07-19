@@ -82,7 +82,7 @@ fun MedicalConditionsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ProfileProgressIndicator(
-                step = 3,
+                step = 2,
                 title = stringResource(R.string.medical_conditions_progress_title)
             )
 

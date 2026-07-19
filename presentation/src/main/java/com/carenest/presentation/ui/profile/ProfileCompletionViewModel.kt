@@ -12,24 +12,6 @@ class ProfileCompletionViewModel : ViewModel(),
 
     fun onEvent(event: ProfileCompletionIntent) {
         when (event) {
-            is ProfileCompletionIntent.FirstNameChanged -> updateState {
-                copy(firstName = event.firstName)
-            }
-            is ProfileCompletionIntent.LastNameChanged -> updateState {
-                copy(lastName = event.lastName)
-            }
-            is ProfileCompletionIntent.DateOfBirthChanged -> updateState {
-                copy(dateOfBirth = event.dateOfBirth)
-            }
-            is ProfileCompletionIntent.NationalIdChanged -> updateState {
-                copy(nationalId = event.nationalId)
-            }
-            is ProfileCompletionIntent.GenderChanged -> updateState {
-                copy(gender = event.gender)
-            }
-            is ProfileCompletionIntent.AccountTypeChanged -> updateState {
-                copy(accountType = event.accountType)
-            }
             is ProfileCompletionIntent.HeightChanged -> updateState {
                 copy(height = event.height)
             }
@@ -79,8 +61,7 @@ class ProfileCompletionViewModel : ViewModel(),
     private fun navigateBack() {
         when (currentState.currentStep) {
             ProfileStep.Welcome -> sendEffect(ProfileCompletionEffect.NavigateBack)
-            ProfileStep.PersonalInfo -> moveTo(ProfileStep.Welcome)
-            ProfileStep.BasicHealthInfo -> moveTo(ProfileStep.PersonalInfo)
+            ProfileStep.BasicHealthInfo -> moveTo(ProfileStep.Welcome)
             ProfileStep.MedicalConditions -> moveTo(ProfileStep.BasicHealthInfo)
             ProfileStep.Allergies -> moveTo(ProfileStep.MedicalConditions)
         }
@@ -88,8 +69,7 @@ class ProfileCompletionViewModel : ViewModel(),
 
     private fun navigateForward() {
         when (currentState.currentStep) {
-            ProfileStep.Welcome -> moveTo(ProfileStep.PersonalInfo)
-            ProfileStep.PersonalInfo -> moveTo(ProfileStep.BasicHealthInfo)
+            ProfileStep.Welcome -> moveTo(ProfileStep.BasicHealthInfo)
             ProfileStep.BasicHealthInfo -> moveTo(ProfileStep.MedicalConditions)
             ProfileStep.MedicalConditions -> moveTo(ProfileStep.Allergies)
             ProfileStep.Allergies -> sendEffect(ProfileCompletionEffect.NavigateToHome)

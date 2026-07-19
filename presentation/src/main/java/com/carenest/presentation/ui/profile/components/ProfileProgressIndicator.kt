@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 
-private const val ProfileStepCount = 9
+private const val ProfileStepCount = 8
 
 @Composable
 fun ProfileProgressIndicator(

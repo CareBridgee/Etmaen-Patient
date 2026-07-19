@@ -22,9 +22,6 @@
   <string name="otp_subtitle">We\'ve sent a 6-digit code to your phone number %1$s</string>
   <string name="otp_verify_btn">VERIFY</string>
   <string name="otp_resend_timer">Resend code in 00:30</string>
-  <string name="verification_success_title">Verification Successful</string>
-  <string name="verification_success_description">Your phone number has been verified. Your account is ready.</string>
-  <string name="verification_success_continue">Continue</string>
   <!-- Welcome -->
   <string name="welcome_topbar_title">CareConnect</string>
   <string name="welcome_title">Welcome to CareConnect</string>
@@ -40,7 +37,7 @@
   <string name="welcome_feature_fast">Fast</string>
   <string name="welcome_feature_verified">Verified</string>
   <!-- Personal Info -->
-  <string name="personal_info_step">Step 1 of 9</string>
+  <string name="registration_progress_label">Registration</string>
   <string name="personal_info_step_title">Personal Details</string>
   <string name="personal_info_title">Personal Info</string>
   <string name="personal_info_first_name_title">First name</string>
