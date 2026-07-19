@@ -78,7 +78,6 @@ fun BasicHealthInfoScreen(
             ProfileProgressIndicator(
                 step = 2,
                 title = stringResource(R.string.basic_health_title),
-                showHealthProfileHeading = true
             )
 
             HealthIntroCard()
