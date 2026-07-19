@@ -22,12 +22,7 @@ object NavigationConfig {
             serializableSubclass(AppRoute.OnBoarding::class)
             serializableSubclass(AppRoute.Login::class)
             serializableSubclass(AppRoute.Otp::class)
-            serializableSubclass(AppRoute.VerificationSuccess::class)
-            serializableSubclass(AppRoute.ProfileWelcome::class)
-            serializableSubclass(AppRoute.ProfilePersonalInfo::class)
-            serializableSubclass(AppRoute.ProfileBasicHealth::class)
-            serializableSubclass(AppRoute.ProfileMedicalConditions::class)
-            serializableSubclass(AppRoute.ProfileAllergies::class)
+            serializableSubclass(AppRoute.ProfileCompletion::class)
         }
     }
 
