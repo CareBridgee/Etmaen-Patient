@@ -114,6 +114,62 @@
   <string name="allergies_other_title">أنواع حساسية أخرى</string>
   <string name="allergies_other_hint">أدخل أي حساسية بيئية أو موسمية أو أنواع حساسية أخرى...</string>
 
+  <!-- Current Medications -->
+  <string name="current_medications_progress" formatted="false">مكتمل بنسبة 50٪</string>
+  <string name="current_medications_title">الأدوية الحالية</string>
+  <string name="current_medications_description">يرجى إدراج جميع الأدوية التي تتناولها حاليًا، مع الجرعة ومعدل التكرار إن أمكن.</string>
+  <string name="current_medications_none_title">لا توجد أدوية حالية</string>
+  <string name="current_medications_none_description">لا أتناول أي أدوية موصوفة</string>
+  <string name="current_medications_hint">اسم الدواء (مثال: ليسينوبريل 10 ملغ)</string>
+  <string name="current_medications_delete">حذف الدواء</string>
+  <string name="current_medications_add">إضافة دواء</string>
+
+  <!-- Medical History -->
+  <string name="medical_history_title">التاريخ الطبي</string>
+  <string name="medical_history_surgeries">العمليات الجراحية السابقة</string>
+  <string name="medical_history_surgeries_subtitle">اختياري • اذكر العملية والسنة</string>
+  <string name="medical_history_surgeries_hint">مثال: استئصال الزائدة (2015)، استبدال الركبة (2021)…</string>
+  <string name="medical_history_hospitalizations">مرات دخول المستشفى السابقة</string>
+  <string name="medical_history_hospitalizations_subtitle">اختياري • اذكر السبب والمدة</string>
+  <string name="medical_history_hospitalizations_hint">مثال: علاج التهاب رئوي (2019، 5 أيام)…</string>
+  <string name="medical_history_info">تساعد هذه المعلومات فريق الرعاية لدينا على إعداد خطة مساعدة أكثر تخصيصًا لك.</string>
+
+  <!-- Mobility Status -->
+  <string name="mobility_progress_title">حالة الحركة</string>
+  <string name="mobility_title">كيف هي قدرة المريض على الحركة؟</string>
+  <string name="mobility_description">يساعدنا ذلك على توفير المعدات والأخصائي المناسبين للزيارات المنزلية.</string>
+  <string name="mobility_independent">مستقل</string>
+  <string name="mobility_independent_description">يتحرك بحرية دون أي مساعدة</string>
+  <string name="mobility_needs_assistance">يحتاج إلى مساعدة</string>
+  <string name="mobility_needs_assistance_description">يحتاج إلى مساعدة جسدية من شخص آخر</string>
+  <string name="mobility_walking_aid">يستخدم أداة للمشي</string>
+  <string name="mobility_walking_aid_description">عصا أو مشاية أو عكازات</string>
+  <string name="mobility_wheelchair">يستخدم كرسيًا متحركًا</string>
+  <string name="mobility_wheelchair_description">يعتمد على كرسي متحرك يدوي أو كهربائي</string>
+  <string name="mobility_bedridden">طريح الفراش</string>
+  <string name="mobility_bedridden_description">ملازم للفراش معظم اليوم</string>
+  <string name="mobility_notes_title">ملاحظات إضافية (اختياري)</string>
+  <string name="mobility_notes_hint">مثال: سقوط عرضي أو ضعف في أحد الأطراف…</string>
+
+  <!-- Emergency Contact -->
+  <string name="emergency_contact_progress_title">جهة اتصال للطوارئ</string>
+  <string name="emergency_contact_title">جهة اتصال للطوارئ</string>
+  <string name="emergency_contact_description">بمن ينبغي أن نتصل في حالة الطوارئ؟ تساعدنا هذه المعلومات على ضمان سلامتك أثناء زيارات الرعاية.</string>
+  <string name="emergency_contact_name">اسم جهة الاتصال</string>
+  <string name="emergency_contact_name_hint">الاسم القانوني الكامل</string>
+  <string name="emergency_contact_relationship">صلة القرابة</string>
+  <string name="emergency_contact_relationship_hint">اختر صلة القرابة</string>
+  <string name="emergency_contact_phone">رقم الهاتف</string>
+  <string name="emergency_contact_phone_hint">0100 000 0000</string>
+  <string name="emergency_contact_security">بياناتك مشفرة ولا تتم مشاركتها إلا مع المتخصصين الطبيين أثناء جلسات الرعاية النشطة.</string>
+  <string name="emergency_contact_continue">المتابعة إلى الخطوة الأخيرة</string>
+  <string name="relationship_spouse">الزوج أو الزوجة</string>
+  <string name="relationship_parent">أحد الوالدين</string>
+  <string name="relationship_sibling">أخ أو أخت</string>
+  <string name="relationship_adult_child">ابن أو ابنة بالغة</string>
+  <string name="relationship_friend_neighbor">صديق أو جار</string>
+  <string name="relationship_other">أخرى</string>
+
   <!-- OnBoarding -->
   <string name="onboarding_title">كير نيست</string>
   <string name="onboarding_skip">تخطي</string>
