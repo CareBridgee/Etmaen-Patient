@@ -1,0 +1,347 @@
+package com.carenest.presentation.ui.auth.registration
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.button.SegmentedControl
+import com.carenest.designsystem.components.textfield.CustomTextField
+import com.carenest.designsystem.theme.SpTheme
+import com.carenest.designsystem.theme.Theme
+import com.carenest.presentation.R
+import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.navigation.ScreenTopBar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
+@Composable
+fun RegistrationScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToWelcome: () -> Unit,
+    viewModel: RegistrationViewModel = viewModel()
+) {
+    val state by viewModel.state.collectAsState()
+
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            RegistrationEffect.NavigateBack -> onNavigateBack()
+            RegistrationEffect.NavigateToWelcome -> onNavigateToWelcome()
+        }
+    }
+
+    RegistrationScreenContent(
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+internal fun RegistrationScreenContent(
+    state: RegistrationState,
+    onEvent: (RegistrationIntent) -> Unit
+) {
+    var showDatePicker by rememberSaveable { mutableStateOf(false) }
+
+    ScreenTopBar(
+        title = stringResource(R.string.welcome_topbar_title),
+        showLeadingIcon = true,
+        onLeadingClick = { onEvent(RegistrationIntent.BackClicked) }
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+    ) {
+        RegistrationProgressHeader()
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(5.dp, RoundedCornerShape(22.dp))
+                .clip(RoundedCornerShape(22.dp))
+                .background(Theme.colors.surface)
+                .padding(20.dp)
+        ) {
+            BasicText(
+                text = stringResource(R.string.personal_info_title),
+                style = Theme.typography.title.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                CustomTextField(
+                    text = state.firstName,
+                    onTextChange = {
+                        onEvent(RegistrationIntent.FirstNameChanged(it))
+                    },
+                    title = stringResource(R.string.personal_info_first_name_title),
+                    hint = stringResource(R.string.personal_info_first_name_hint),
+                    singleLine = true,
+                    fieldHeight = 48.dp,
+                    containerColor = Theme.colors.disable,
+                    modifier = Modifier.weight(1f)
+                )
+                CustomTextField(
+                    text = state.lastName,
+                    onTextChange = {
+                        onEvent(RegistrationIntent.LastNameChanged(it))
+                    },
+                    title = stringResource(R.string.personal_info_last_name_title),
+                    hint = stringResource(R.string.personal_info_last_name_hint),
+                    singleLine = true,
+                    fieldHeight = 48.dp,
+                    containerColor = Theme.colors.disable,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CustomTextField(
+                text = state.dateOfBirth,
+                onTextChange = {
+                    onEvent(RegistrationIntent.DateOfBirthChanged(it))
+                },
+                title = stringResource(R.string.personal_info_dob_title),
+                hint = stringResource(R.string.personal_info_dob_hint),
+                trailingIcon = rememberVectorPainter(Icons.Outlined.CalendarMonth),
+                onClickTrailingIcon = { showDatePicker = true },
+                singleLine = true,
+                fieldHeight = 48.dp,
+                containerColor = Theme.colors.disable,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CustomTextField(
+                text = state.nationalId,
+                onTextChange = {
+                    onEvent(
+                        RegistrationIntent.NationalIdChanged(
+                            it.filter(Char::isDigit).take(16)
+                        )
+                    )
+                },
+                title = stringResource(R.string.personal_info_national_id_title),
+                hint = stringResource(R.string.personal_info_national_id_hint),
+                singleLine = true,
+                fieldHeight = 48.dp,
+                containerColor = Theme.colors.disable,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            BasicText(
+                text = stringResource(R.string.personal_info_gender_title),
+                style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            val genderOptions = listOf(
+                stringResource(R.string.personal_info_gender_male),
+                stringResource(R.string.personal_info_gender_female)
+            )
+            SegmentedControl(
+                items = genderOptions,
+                selectedIndex = genderOptions.indexOf(state.gender),
+                onItemSelected = {
+                    onEvent(RegistrationIntent.GenderChanged(genderOptions[it]))
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            BasicText(
+                text = stringResource(R.string.personal_info_account_type_title),
+                style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            val accountTypes = listOf(
+                stringResource(R.string.personal_info_account_type_family),
+                stringResource(R.string.personal_info_account_type_personal)
+            )
+            SegmentedControl(
+                items = accountTypes,
+                selectedIndex = accountTypes.indexOf(state.accountType),
+                onItemSelected = {
+                    onEvent(RegistrationIntent.AccountTypeChanged(accountTypes[it]))
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PrimaryButton(
+                caption = stringResource(R.string.personal_info_continue_btn),
+                onClick = { onEvent(RegistrationIntent.ContinueClicked) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = parseDateOfBirth(state.dateOfBirth)
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { selectedDate ->
+                            onEvent(
+                                RegistrationIntent.DateOfBirthChanged(
+                                    formatDateOfBirth(selectedDate)
+                                )
+                            )
+                        }
+                        showDatePicker = false
+                    },
+                    enabled = datePickerState.selectedDateMillis != null,
+                    colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.primary)
+                ) {
+                    Text(stringResource(R.string.personal_info_date_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDatePicker = false },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.primary)
+                ) {
+                    Text(stringResource(R.string.personal_info_date_cancel))
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = Theme.colors.surface,
+                    titleContentColor = Theme.colors.primaryFont,
+                    headlineContentColor = Theme.colors.primaryFont,
+                    weekdayContentColor = Theme.colors.secondaryFont,
+                    dayContentColor = Theme.colors.primaryFont,
+                    selectedDayContainerColor = Theme.colors.primary,
+                    selectedDayContentColor = Theme.colors.onPrimary,
+                    todayContentColor = Theme.colors.primary,
+                    todayDateBorderColor = Theme.colors.primary
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun RegistrationProgressHeader() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            BasicText(
+                text = stringResource(R.string.registration_progress_label),
+                style = Theme.typography.body.small.copy(
+                    color = Theme.colors.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+            BasicText(
+                text = stringResource(R.string.personal_info_step_title),
+                style = Theme.typography.body.small.copy(color = Theme.colors.hint)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(5.dp)
+                .clip(RoundedCornerShape(100.dp))
+                .background(Theme.colors.success)
+        )
+    }
+}
+
+private const val DateOfBirthPattern = "MM/dd/yyyy"
+
+private fun parseDateOfBirth(value: String): Long? = runCatching {
+    dateOfBirthFormatter().parse(value)?.time
+}.getOrNull()
+
+private fun formatDateOfBirth(dateMillis: Long): String =
+    dateOfBirthFormatter().format(Date(dateMillis))
+
+private fun dateOfBirthFormatter() = SimpleDateFormat(DateOfBirthPattern, Locale.US).apply {
+    isLenient = false
+    timeZone = TimeZone.getTimeZone("UTC")
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RegistrationScreenPreview() {
+    SpTheme {
+        RegistrationScreenContent(
+            state = RegistrationState(
+                firstName = "Jane",
+                lastName = "Doe",
+                dateOfBirth = "01/15/1990",
+                gender = "Female"
+            ),
+            onEvent = {}
+        )
+    }
+}
