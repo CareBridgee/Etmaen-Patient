@@ -66,7 +66,7 @@ fun RegisterScreen(
         }
     }
 
-    RegistrationScreenContent(
+    RegisterScreenContent(
         state = state,
         onEvent = viewModel::onEvent
     )
@@ -74,7 +74,7 @@ fun RegisterScreen(
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-internal fun RegistrationScreenContent(
+internal fun RegisterScreenContent(
     state: RegisterState,
     onEvent: (RegisterIntent) -> Unit
 ) {
@@ -93,7 +93,7 @@ internal fun RegistrationScreenContent(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        RegistrationProgressHeader()
+        RegisterProgressHeader()
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -285,7 +285,7 @@ internal fun RegistrationScreenContent(
 }
 
 @Composable
-private fun RegistrationProgressHeader() {
+private fun RegisterProgressHeader() {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -332,9 +332,9 @@ private fun dateOfBirthFormatter() = SimpleDateFormat(DateOfBirthPattern, Locale
 
 @Preview(showBackground = true)
 @Composable
-private fun RegistrationScreenPreview() {
+private fun RegisterScreenPreview() {
     SpTheme {
-        RegistrationScreenContent(
+        RegisterScreenContent(
             state = RegisterState(
                 firstName = "Jane",
                 lastName = "Doe",
