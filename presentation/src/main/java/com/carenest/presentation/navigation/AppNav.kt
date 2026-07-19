@@ -36,6 +36,12 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
+import com.carenest.presentation.ui.auth.otp.VerificationSuccessScreen
+import com.carenest.presentation.ui.profile.allergies.AllergiesScreen
+import com.carenest.presentation.ui.profile.basichealth.BasicHealthInfoScreen
+import com.carenest.presentation.ui.profile.medicalconditions.MedicalConditionsScreen
+import com.carenest.presentation.ui.profile.personalinfo.PersonalInfoScreen
+import com.carenest.presentation.ui.profile.welcome.WelcomeScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -77,18 +83,58 @@ fun AppNav() {
                 )
             }
 
-            entry<AppRoute.Otp> { entry ->
+            entry<AppRoute.Otp> {
                 OtpScreen(
-                    onNavigateToHome = {
-                        Snapshot.withMutableSnapshot {
-                            backStack.clear()
-                            backStack.add(AppRoute.Splash) // Assuming Splash navigates to Home
-                        }
+                    onVerificationSuccess = {
+                        replaceWith(AppRoute.VerificationSuccess)
                     },
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
 
+            entry<AppRoute.VerificationSuccess> {
+                VerificationSuccessScreen(
+                    onContinue = { replaceWith(AppRoute.ProfileWelcome) }
+                )
+            }
+
+            entry<AppRoute.ProfileWelcome> {
+                WelcomeScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToPersonalInfo = { backStack.add(AppRoute.ProfilePersonalInfo) },
+                    onSkip = { }
+                )
+            }
+
+            entry<AppRoute.ProfilePersonalInfo> {
+                PersonalInfoScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToBasicHealth = { backStack.add(AppRoute.ProfileBasicHealth) }
+                )
+            }
+
+            entry<AppRoute.ProfileBasicHealth> {
+                BasicHealthInfoScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToMedicalConditions = {
+                        backStack.add(AppRoute.ProfileMedicalConditions)
+                    }
+                )
+            }
+
+            entry<AppRoute.ProfileMedicalConditions> {
+                MedicalConditionsScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToAllergies = { backStack.add(AppRoute.ProfileAllergies) }
+                )
+            }
+
+            entry<AppRoute.ProfileAllergies> {
+                AllergiesScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onContinueToRemainingProfile = { }
+                )
+            }
 
             entry<AppRoute.OnBoarding> {
                 OnBoardingScreen(
