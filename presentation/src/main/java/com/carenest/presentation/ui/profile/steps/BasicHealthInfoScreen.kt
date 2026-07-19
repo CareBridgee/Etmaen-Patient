@@ -72,8 +72,11 @@ fun BasicHealthInfoScreen(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(
+                    horizontal = Theme.spacing.space20,
+                    vertical = Theme.spacing.medium
+                ),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
         ) {
             ProfileProgressIndicator(
                 step = 1,
@@ -84,7 +87,7 @@ fun BasicHealthInfoScreen(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12)
             ) {
                 MeasurementCard(
                     label = stringResource(R.string.basic_health_height),
@@ -123,8 +126,8 @@ private fun HealthIntroCard() {
             .shadow(5.dp, RoundedCornerShape(22.dp))
             .clip(RoundedCornerShape(22.dp))
             .background(Theme.colors.surface)
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(Theme.spacing.space20),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space14),
         verticalAlignment = Alignment.Top
     ) {
         Box(
@@ -141,7 +144,7 @@ private fun HealthIntroCard() {
                 modifier = Modifier.size(24.dp)
             )
         }
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
             BasicText(
                 text = stringResource(R.string.basic_health_title),
                 style = Theme.typography.title.copy(
@@ -174,8 +177,8 @@ private fun MeasurementCard(
             .shadow(4.dp, RoundedCornerShape(20.dp))
             .clip(RoundedCornerShape(20.dp))
             .background(Theme.colors.surface)
-            .padding(18.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(Theme.spacing.space18),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
     ) {
         BasicText(
             text = label,
@@ -193,7 +196,7 @@ private fun MeasurementCard(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(Theme.spacing.small))
             BasicText(
                 text = unit,
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont)
@@ -216,8 +219,8 @@ private fun BloodTypeCard(
             .shadow(4.dp, RoundedCornerShape(22.dp))
             .clip(RoundedCornerShape(22.dp))
             .background(Theme.colors.surface)
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(Theme.spacing.space20),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
     ) {
         BasicText(
             text = stringResource(R.string.basic_health_blood_type),
@@ -234,7 +237,7 @@ private fun BloodTypeCard(
                     .clip(RoundedCornerShape(14.dp))
                     .background(Theme.colors.disable)
                     .clickable { expanded = true }
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = Theme.spacing.medium),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

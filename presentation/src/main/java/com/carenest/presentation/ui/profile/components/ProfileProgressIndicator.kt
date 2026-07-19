@@ -58,7 +58,7 @@ fun ProfileProgressIndicator(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.small))
 
         Box(
             modifier = Modifier

@@ -78,15 +78,15 @@ fun MedicalConditionsScreen(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(Theme.spacing.medium),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
         ) {
             ProfileProgressIndicator(
                 step = 2,
                 title = stringResource(R.string.medical_conditions_progress_title)
             )
 
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.space6)) {
                 BasicText(
                     text = stringResource(R.string.medical_conditions_title),
                     style = Theme.typography.title.copy(
@@ -104,11 +104,11 @@ fun MedicalConditionsScreen(
                 )
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)) {
                 conditions.chunked(2).forEach { rowConditions ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12)
                     ) {
                         rowConditions.forEach { condition ->
                             ConditionCard(
@@ -125,7 +125,7 @@ fun MedicalConditionsScreen(
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 BasicText(
                     text = stringResource(R.string.medical_conditions_other_title),
                     style = Theme.typography.title.copy(
@@ -168,7 +168,10 @@ private fun ConditionCard(
             .background(backgroundColor)
             .border(1.dp, borderColor, RoundedCornerShape(10.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 10.dp),
+            .padding(
+                horizontal = Theme.spacing.space14,
+                vertical = Theme.spacing.space10
+            ),
         verticalArrangement = Arrangement.Center
     ) {
         Icon(

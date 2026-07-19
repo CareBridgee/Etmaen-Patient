@@ -63,12 +63,15 @@ fun WelcomeScreen(
             .fillMaxSize()
             .background(Theme.colors.backGround)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 28.dp),
+            .padding(
+                horizontal = Theme.spacing.space20,
+                vertical = Theme.spacing.space28
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         WelcomeHero()
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.space36))
 
         BasicText(
             text = stringResource(R.string.welcome_title),
@@ -79,7 +82,7 @@ fun WelcomeScreen(
             )
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.space12))
 
         BasicText(
             text = stringResource(R.string.welcome_subtitle),
@@ -88,10 +91,10 @@ fun WelcomeScreen(
                 textAlign = TextAlign.Center,
                 lineHeight = 24.sp
             ),
-            modifier = Modifier.padding(horizontal = 18.dp)
+            modifier = Modifier.padding(horizontal = Theme.spacing.space18)
         )
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.space36))
 
         WelcomeActionCard(
             title = stringResource(R.string.welcome_complete_profile_title),
@@ -103,7 +106,7 @@ fun WelcomeScreen(
             onClick = onContinue
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.medium))
 
         WelcomeActionCard(
             title = stringResource(R.string.welcome_skip_title),
@@ -116,15 +119,15 @@ fun WelcomeScreen(
             onClick = onSkip
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.space28))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(14.dp))
                 .background(Theme.colors.cardBackground)
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(Theme.spacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
             verticalAlignment = Alignment.Top
         ) {
             Icon(
@@ -143,7 +146,7 @@ fun WelcomeScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -154,7 +157,7 @@ fun WelcomeScreen(
             WelcomeFeature(Icons.Outlined.VerifiedUser, stringResource(R.string.welcome_feature_verified))
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.large))
     }
 }
 
@@ -203,13 +206,13 @@ private fun WelcomeActionCard(
             .background(containerColor)
             .border(2.dp, borderColor, RoundedCornerShape(24.dp))
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = 24.dp, vertical = 24.dp),
+            .padding(Theme.spacing.large),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12)
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)
         ) {
             BasicText(
                 text = title,
@@ -240,7 +243,7 @@ private fun WelcomeActionCard(
 private fun WelcomeFeature(icon: ImageVector, label: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
     ) {
         Box(
             modifier = Modifier

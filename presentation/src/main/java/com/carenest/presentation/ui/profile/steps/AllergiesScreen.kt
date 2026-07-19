@@ -70,12 +70,15 @@ fun AllergiesScreen(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(22.dp)
+                .padding(
+                    horizontal = Theme.spacing.space20,
+                    vertical = Theme.spacing.medium
+                ),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.space22)
         ) {
             ProfileProgressIndicator(step = 3, title = stringResource(R.string.allergies_progress_title))
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 BasicText(
                     text = stringResource(R.string.allergies_title),
                     style = Theme.typography.displayMedium.copy(
@@ -100,7 +103,7 @@ fun AllergiesScreen(
 
             Column(
                 modifier = Modifier.alpha(if (hasNoKnownAllergies) 0.45f else 1f),
-                verticalArrangement = Arrangement.spacedBy(22.dp)
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.space22)
             ) {
                 AllergyCategory(
                     title = stringResource(R.string.allergies_drug_title),
@@ -147,8 +150,8 @@ private fun NoKnownAllergiesCard(checked: Boolean, onCheckedChange: () -> Unit) 
             .background(Theme.colors.cardBackground)
             .border(1.dp, Theme.colors.onDisable.copy(alpha = 0.45f), RoundedCornerShape(16.dp))
             .clickable(onClick = onCheckedChange)
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(Theme.spacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -194,9 +197,9 @@ private fun AllergyCategory(
     enabled: Boolean,
     onOptionClick: (String) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -214,8 +217,8 @@ private fun AllergyCategory(
             )
         }
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
         ) {
             options.forEach { option ->
                 AllergyChip(
@@ -247,7 +250,10 @@ private fun AllergyChip(
             .background(backgroundColor)
             .border(1.dp, borderColor, RoundedCornerShape(100.dp))
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 9.dp),
+            .padding(
+                horizontal = Theme.spacing.medium,
+                vertical = Theme.spacing.space9
+            ),
         style = Theme.typography.body.small.copy(
             color = contentColor,
             fontWeight = FontWeight.Medium,

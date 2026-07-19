@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.button.ButtonIconPosition
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SecondaryButton
@@ -25,8 +24,11 @@ fun ProfileScreenNavigation(
         modifier = modifier
             .fillMaxWidth()
             .background(Theme.colors.backGround)
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(
+                horizontal = Theme.spacing.space20,
+                vertical = Theme.spacing.space12
+            ),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)
     ) {
         SecondaryButton(
             caption = stringResource(R.string.profile_back),
