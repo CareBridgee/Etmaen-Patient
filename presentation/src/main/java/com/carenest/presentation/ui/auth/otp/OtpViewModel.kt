@@ -1,32 +1,28 @@
 package com.carenest.presentation.ui.auth.otp
 
-import androidx.lifecycle.SavedStateHandle
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.usecase.auth.VerifyOtpUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OtpViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    private val verifyOtpUseCase: VerifyOtpUseCase
 ) : ViewModel(),
     StateHolder<OtpState> by DefaultStateHolder(OtpState()),
     EffectPublisher<OtpEffect> by DefaultEffectPublisher() {
 
-    init {
-        // Assume phone number is passed via navigation
-        val phone = savedStateHandle.get<String>("phone") ?: ""
-        updateState { copy(phoneNumber = phone) }
-    }
 
     fun onEvent(event: OtpIntent) {
         when (event) {
+            is OtpIntent.PhoneNumberChanged -> updateState { copy(phoneNumber = event.phone) }
             is OtpIntent.OtpCodeChanged -> updateState { copy(otpCode = event.otp, errorMessage = null) }
             OtpIntent.VerifyOtpClicked -> verifyOtp()
             OtpIntent.BackClicked -> sendEffect(OtpEffect.NavigateBack)
@@ -42,18 +38,25 @@ class OtpViewModel @Inject constructor(
 
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
-            delay(1500) // Mock network delay
+
+            val digitsOnly = currentState.phoneNumber.replace(Regex("[^0-9]"), "")
+            val sanitizedPhone = "+$digitsOnly"
+            Log.d("OtpViewModel", "Verifying OTP for phone: $sanitizedPhone")
             
-            if (currentState.otpCode == "123456") {
-                updateState { 
-                    copy(isLoading = false, isSuccess = true) 
+            val result = verifyOtpUseCase(sanitizedPhone, currentState.otpCode)
+            
+            updateState { copy(isLoading = false) }
+
+            result.fold(
+                onSuccess = { authResult ->
+                    // TODO: Save tokens to DataStore/EncryptedSharedPreferences
+                    updateState { copy(isSuccess = true) }
+                    sendEffect(OtpEffect.NavigateToHome)
+                },
+                onFailure = { error ->
+                    updateState { copy(errorMessage = error.message ?: "Verification failed") }
                 }
-                sendEffect(OtpEffect.NavigateToHome)
-            } else {
-                updateState { 
-                    copy(isLoading = false, errorMessage = "Invalid OTP code. Try 123456") 
-                }
-            }
+            )
         }
     }
 }

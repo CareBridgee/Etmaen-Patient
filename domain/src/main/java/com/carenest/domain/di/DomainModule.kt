@@ -1,8 +1,11 @@
 package com.carenest.domain.di
 
+import com.carenest.domain.repository.AuthRepository
 import com.carenest.domain.repository.SettingsRepository
-import com.carenest.domain.usecase.GetOnboardingStatusUseCase
-import com.carenest.domain.usecase.UpdateOnboardingStatusUseCase
+import com.carenest.domain.usecase.auth.LoginWithPhoneUseCase
+import com.carenest.domain.usecase.auth.VerifyOtpUseCase
+import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
+import com.carenest.domain.usecase.settings.UpdateOnboardingStatusUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,5 +30,21 @@ object DomainModule {
         settingsRepository: SettingsRepository
     ): UpdateOnboardingStatusUseCase {
         return UpdateOnboardingStatusUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginWithPhoneUseCase(
+        authRepository: AuthRepository
+    ): LoginWithPhoneUseCase {
+        return LoginWithPhoneUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVerifyOtpUseCase(
+        authRepository: AuthRepository
+    ): VerifyOtpUseCase {
+        return VerifyOtpUseCase(authRepository)
     }
 }
