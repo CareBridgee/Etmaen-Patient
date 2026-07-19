@@ -30,7 +30,7 @@
   <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك الشخصي لاحقاً</string>
   <string name="welcome_skip_warning">قد يحد تخطي هذا من دقة التقييم بالذكاء الاصطناعي وتطابق الممرضين. بياناتك مشفرة ومحمية.</string>
   <!-- Personal Info -->
-  <string name="personal_info_step">الخطوة 1 من 2</string>
+  <string name="personal_info_step">الخطوة 1 من 9</string>
   <string name="personal_info_step_title">التفاصيل الشخصية</string>
   <string name="personal_info_title">المعلومات الشخصية</string>
   <string name="personal_info_first_name_title">الاسم الأول</string>

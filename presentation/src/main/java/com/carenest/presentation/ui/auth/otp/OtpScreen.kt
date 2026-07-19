@@ -27,14 +27,14 @@ import com.carenest.presentation.R
 @Composable
 fun OtpScreen(
     viewModel: OtpViewModel = hiltViewModel(),
-    onNavigateToHome: () -> Unit,
+    onVerificationSuccess: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is OtpEffect.NavigateToHome -> onNavigateToHome()
+            is OtpEffect.NavigateToHome -> onVerificationSuccess()
             is OtpEffect.NavigateBack -> onNavigateBack()
         }
     }

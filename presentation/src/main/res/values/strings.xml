@@ -22,15 +22,25 @@
   <string name="otp_subtitle">We\'ve sent a 6-digit code to your phone number %1$s</string>
   <string name="otp_verify_btn">VERIFY</string>
   <string name="otp_resend_timer">Resend code in 00:30</string>
+  <string name="verification_success_title">Verification Successful</string>
+  <string name="verification_success_description">Your phone number has been verified. Your account is ready.</string>
+  <string name="verification_success_continue">Continue</string>
   <!-- Welcome -->
   <string name="welcome_topbar_title">CareConnect</string>
   <string name="welcome_title">Welcome to CareConnect</string>
   <string name="welcome_subtitle">Your account is ready! To provide the best possible support, we suggest completing your health profile.</string>
   <string name="welcome_complete_profile_btn">Complete Health Profile\n(RECOMMENDED)</string>
   <string name="welcome_skip_btn">Skip for Now\nSet up your profile later</string>
+  <string name="welcome_complete_profile_title">Complete Health Profile</string>
+  <string name="welcome_recommended">(RECOMMENDED)</string>
+  <string name="welcome_skip_title">Skip for Now</string>
+  <string name="welcome_skip_subtitle">Set up your profile later</string>
   <string name="welcome_skip_warning">Skipping this may limit AI assessment accuracy and nurse matching. Your data is encrypted and protected.</string>
+  <string name="welcome_feature_secure">Secure</string>
+  <string name="welcome_feature_fast">Fast</string>
+  <string name="welcome_feature_verified">Verified</string>
   <!-- Personal Info -->
-  <string name="personal_info_step">Step 1 of 2</string>
+  <string name="personal_info_step">Step 1 of 9</string>
   <string name="personal_info_step_title">Personal Details</string>
   <string name="personal_info_title">Personal Info</string>
   <string name="personal_info_first_name_title">First name</string>
@@ -39,10 +49,59 @@
   <string name="personal_info_last_name_hint">Doe</string>
   <string name="personal_info_dob_title">Date of birth</string>
   <string name="personal_info_dob_hint">mm/dd/yyyy</string>
+  <string name="personal_info_date_confirm">OK</string>
+  <string name="personal_info_date_cancel">Cancel</string>
+  <string name="personal_info_national_id_title">National ID</string>
+  <string name="personal_info_national_id_hint">0000000000000000</string>
   <string name="personal_info_gender_title">Gender</string>
   <string name="personal_info_gender_male">Male</string>
   <string name="personal_info_gender_female">Female</string>
+  <string name="personal_info_account_type_title">Account Type</string>
+  <string name="personal_info_account_type_family">Family</string>
+  <string name="personal_info_account_type_personal">Personal</string>
   <string name="personal_info_continue_btn">Continue</string>
+  <!-- Profile Completion -->
+  <string name="profile_step_format">Step %1$d of %2$d</string>
+  <string name="profile_onboarding_label">ONBOARDING</string>
+  <string name="profile_health_profile">Health Profile</string>
+  <string name="profile_back">Back</string>
+  <string name="profile_continue">Continue  ›</string>
+  <!-- Basic Health Info -->
+  <string name="basic_health_title">Basic Health Info</string>
+  <string name="basic_health_description">Providing these details helps our specialists prepare a personalized care plan tailored to your physical requirements.</string>
+  <string name="basic_health_height">Height</string>
+  <string name="basic_health_weight">Weight</string>
+  <string name="basic_health_cm">cm</string>
+  <string name="basic_health_kg">kg</string>
+  <string name="basic_health_blood_type">Blood Type</string>
+  <string name="basic_health_blood_type_hint">Select your type</string>
+  <string name="basic_health_blood_types">A+,A−,B+,B−,AB+,AB−,O+,O−</string>
+  <string name="basic_health_blood_type_note">ⓘ  Emergency responders need this in critical situations.</string>
+  <!-- Medical Conditions -->
+  <string name="medical_conditions_progress_title">Medical Conditions</string>
+  <string name="medical_conditions_title">Any existing conditions?</string>
+  <string name="medical_conditions_description">Select all that apply to help us provide more personalized care for your needs.</string>
+  <string name="condition_diabetes">Diabetes</string>
+  <string name="condition_hypertension">Hypertension</string>
+  <string name="condition_heart_disease">Heart Disease</string>
+  <string name="condition_asthma">Asthma</string>
+  <string name="condition_copd">COPD</string>
+  <string name="condition_epilepsy">Epilepsy</string>
+  <string name="condition_liver_disease">Liver Disease</string>
+  <string name="medical_conditions_other_title">≋  Other Diseases</string>
+  <string name="medical_conditions_other_hint">Enter environmental, seasonal, or other specific diseases...</string>
+  <!-- Allergies -->
+  <string name="allergies_progress_title">Allergies</string>
+  <string name="allergies_title">Allergies &amp; Sensitivities</string>
+  <string name="allergies_description">Please specify any allergies to ensure your care plan is safe and effective.</string>
+  <string name="allergies_none_title">No known allergies</string>
+  <string name="allergies_none_description">I don\'t have any drug or food allergies</string>
+  <string name="allergies_drug_title">Drug Allergies</string>
+  <string name="allergies_drug_options">Penicillin,Sulfa Drugs,Aspirin,Ibuprofen,Lidocaine,Codeine,Latex</string>
+  <string name="allergies_food_title">Food Allergies</string>
+  <string name="allergies_food_options">Peanuts,Shellfish,Dairy,Eggs,Soy,Tree Nuts,Wheat/Gluten</string>
+  <string name="allergies_other_title">Other Allergies</string>
+  <string name="allergies_other_hint">Enter environmental, seasonal, or other specific allergies...</string>
   <!-- OnBoarding -->
   <string name="onboarding_title">CareNest</string>
   <string name="onboarding_skip">Skip</string>
