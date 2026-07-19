@@ -36,7 +36,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
-import com.carenest.presentation.ui.auth.registration.RegistrationScreen
+import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import kotlin.collections.listOf
 
@@ -83,14 +83,16 @@ fun AppNav() {
                 OtpScreen(
                     entry = route,
                     onVerificationSuccess = {
-                        backStack.add(AppRoute.Registration)
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Register)
+                        }
                     },
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
-
-            entry<AppRoute.Registration> {
-                RegistrationScreen(
+            entry<AppRoute.Register> {
+                RegisterScreen(
                     onNavigateBack = {
                         if (backStack.size > 1) backStack.removeLastOrNull()
                     },

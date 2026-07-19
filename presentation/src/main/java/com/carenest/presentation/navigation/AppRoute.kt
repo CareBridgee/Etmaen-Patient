@@ -22,7 +22,7 @@ sealed interface AppRoute : NavKey {
      data class Otp(val phone: String, val method: com.carenest.presentation.ui.auth.login.OtpDeliveryMethod = com.carenest.presentation.ui.auth.login.OtpDeliveryMethod.SMS) : AppRoute
 
      @Serializable
-     data object Registration : AppRoute
+     data object Register : AppRoute
 
      @Serializable
      data object ProfileCompletion : AppRoute
