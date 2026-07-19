@@ -1,13 +1,18 @@
 package com.carenest.presentation.ui.profile
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.profile.steps.AllergiesScreen
 import com.carenest.presentation.ui.profile.steps.BasicHealthInfoScreen
+import com.carenest.presentation.ui.profile.steps.CurrentMedicationsScreen
+import com.carenest.presentation.ui.profile.steps.EmergencyContactScreen
 import com.carenest.presentation.ui.profile.steps.MedicalConditionsScreen
+import com.carenest.presentation.ui.profile.steps.MedicalHistoryScreen
+import com.carenest.presentation.ui.profile.steps.MobilityStatusScreen
 import com.carenest.presentation.ui.profile.steps.WelcomeScreen
 
 @Composable
@@ -74,5 +79,68 @@ fun ProfileCompletionScreen(
             onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
             onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) }
         )
+        ProfileStep.CurrentMedications -> CurrentMedicationsScreen(
+            hasNoCurrentMedications = state.hasNoCurrentMedications,
+            medications = state.currentMedications,
+            onNoCurrentMedicationsToggle = {
+                viewModel.onEvent(ProfileCompletionIntent.NoCurrentMedicationsToggled)
+            },
+            onMedicationChange = { index, medication ->
+                viewModel.onEvent(
+                    ProfileCompletionIntent.MedicationChanged(index, medication)
+                )
+            },
+            onAddMedication = {
+                viewModel.onEvent(ProfileCompletionIntent.MedicationAdded)
+            },
+            onRemoveMedication = {
+                viewModel.onEvent(ProfileCompletionIntent.MedicationRemoved(it))
+            },
+            onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
+            onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) }
+        )
+        ProfileStep.MedicalHistory -> MedicalHistoryScreen(
+            previousSurgeries = state.previousSurgeries,
+            previousHospitalizations = state.previousHospitalizations,
+            onPreviousSurgeriesChange = {
+                viewModel.onEvent(ProfileCompletionIntent.PreviousSurgeriesChanged(it))
+            },
+            onPreviousHospitalizationsChange = {
+                viewModel.onEvent(ProfileCompletionIntent.PreviousHospitalizationsChanged(it))
+            },
+            onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
+            onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) }
+        )
+        ProfileStep.MobilityStatus -> MobilityStatusScreen(
+            selectedStatus = state.mobilityStatus,
+            additionalNotes = state.mobilityNotes,
+            onStatusSelected = {
+                viewModel.onEvent(ProfileCompletionIntent.MobilityStatusSelected(it))
+            },
+            onAdditionalNotesChange = {
+                viewModel.onEvent(ProfileCompletionIntent.MobilityNotesChanged(it))
+            },
+            onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
+            onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) }
+        )
+        ProfileStep.EmergencyContact -> EmergencyContactScreen(
+            contactName = state.emergencyContactName,
+            relationship = state.emergencyRelationship,
+            phoneNumber = state.emergencyPhoneNumber,
+            onContactNameChange = {
+                viewModel.onEvent(ProfileCompletionIntent.EmergencyContactNameChanged(it))
+            },
+            onRelationshipSelected = {
+                viewModel.onEvent(ProfileCompletionIntent.EmergencyRelationshipSelected(it))
+            },
+            onPhoneNumberChange = {
+                viewModel.onEvent(ProfileCompletionIntent.EmergencyPhoneNumberChanged(it))
+            },
+            onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
+            onContinue = { viewModel.onEvent(ProfileCompletionIntent.ContinueClicked) }
+        )
+        ProfileStep.FinalStep -> LaunchedEffect(Unit) {
+            viewModel.onEvent(ProfileCompletionIntent.ContinueClicked)
+        }
     }
 }
