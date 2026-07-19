@@ -1,8 +1,8 @@
 package com.carenest.presentation.ui.profile
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.profile.steps.AllergiesScreen
@@ -16,8 +16,7 @@ fun ProfileCompletionScreen(
     onNavigateToHome: () -> Unit,
     viewModel: ProfileCompletionViewModel = viewModel()
 ) {
-    val state by viewModel.state.collectAsState()
-
+    val state by viewModel.state.collectAsStateWithLifecycle()
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             ProfileCompletionEffect.NavigateBack -> onNavigateBack()

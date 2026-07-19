@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.auth.registration
+package com.carenest.presentation.ui.auth.register
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,17 +52,17 @@ import java.util.Locale
 import java.util.TimeZone
 
 @Composable
-fun RegistrationScreen(
+fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onNavigateToWelcome: () -> Unit,
-    viewModel: RegistrationViewModel = viewModel()
+    viewModel: RegisterViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            RegistrationEffect.NavigateBack -> onNavigateBack()
-            RegistrationEffect.NavigateToWelcome -> onNavigateToWelcome()
+            RegisterEffect.NavigateBack -> onNavigateBack()
+            RegisterEffect.NavigateToWelcome -> onNavigateToWelcome()
         }
     }
 
@@ -75,15 +75,15 @@ fun RegistrationScreen(
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 internal fun RegistrationScreenContent(
-    state: RegistrationState,
-    onEvent: (RegistrationIntent) -> Unit
+    state: RegisterState,
+    onEvent: (RegisterIntent) -> Unit
 ) {
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
         showLeadingIcon = true,
-        onLeadingClick = { onEvent(RegistrationIntent.BackClicked) }
+        onLeadingClick = { onEvent(RegisterIntent.BackClicked) }
     )
 
     Column(
@@ -122,7 +122,7 @@ internal fun RegistrationScreenContent(
                 CustomTextField(
                     text = state.firstName,
                     onTextChange = {
-                        onEvent(RegistrationIntent.FirstNameChanged(it))
+                        onEvent(RegisterIntent.FirstNameChanged(it))
                     },
                     title = stringResource(R.string.personal_info_first_name_title),
                     hint = stringResource(R.string.personal_info_first_name_hint),
@@ -134,7 +134,7 @@ internal fun RegistrationScreenContent(
                 CustomTextField(
                     text = state.lastName,
                     onTextChange = {
-                        onEvent(RegistrationIntent.LastNameChanged(it))
+                        onEvent(RegisterIntent.LastNameChanged(it))
                     },
                     title = stringResource(R.string.personal_info_last_name_title),
                     hint = stringResource(R.string.personal_info_last_name_hint),
@@ -150,7 +150,7 @@ internal fun RegistrationScreenContent(
             CustomTextField(
                 text = state.dateOfBirth,
                 onTextChange = {
-                    onEvent(RegistrationIntent.DateOfBirthChanged(it))
+                    onEvent(RegisterIntent.DateOfBirthChanged(it))
                 },
                 title = stringResource(R.string.personal_info_dob_title),
                 hint = stringResource(R.string.personal_info_dob_hint),
@@ -168,7 +168,7 @@ internal fun RegistrationScreenContent(
                 text = state.nationalId,
                 onTextChange = {
                     onEvent(
-                        RegistrationIntent.NationalIdChanged(
+                        RegisterIntent.NationalIdChanged(
                             it.filter(Char::isDigit).take(16)
                         )
                     )
@@ -197,7 +197,7 @@ internal fun RegistrationScreenContent(
                 items = genderOptions,
                 selectedIndex = genderOptions.indexOf(state.gender),
                 onItemSelected = {
-                    onEvent(RegistrationIntent.GenderChanged(genderOptions[it]))
+                    onEvent(RegisterIntent.GenderChanged(genderOptions[it]))
                 }
             )
 
@@ -217,7 +217,7 @@ internal fun RegistrationScreenContent(
                 items = accountTypes,
                 selectedIndex = accountTypes.indexOf(state.accountType),
                 onItemSelected = {
-                    onEvent(RegistrationIntent.AccountTypeChanged(accountTypes[it]))
+                    onEvent(RegisterIntent.AccountTypeChanged(accountTypes[it]))
                 }
             )
 
@@ -225,7 +225,7 @@ internal fun RegistrationScreenContent(
 
             PrimaryButton(
                 caption = stringResource(R.string.personal_info_continue_btn),
-                onClick = { onEvent(RegistrationIntent.ContinueClicked) },
+                onClick = { onEvent(RegisterIntent.ContinueClicked) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -244,7 +244,7 @@ internal fun RegistrationScreenContent(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { selectedDate ->
                             onEvent(
-                                RegistrationIntent.DateOfBirthChanged(
+                                RegisterIntent.DateOfBirthChanged(
                                     formatDateOfBirth(selectedDate)
                                 )
                             )
@@ -335,7 +335,7 @@ private fun dateOfBirthFormatter() = SimpleDateFormat(DateOfBirthPattern, Locale
 private fun RegistrationScreenPreview() {
     SpTheme {
         RegistrationScreenContent(
-            state = RegistrationState(
+            state = RegisterState(
                 firstName = "Jane",
                 lastName = "Doe",
                 dateOfBirth = "01/15/1990",
