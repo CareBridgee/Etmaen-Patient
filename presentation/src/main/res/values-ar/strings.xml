@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
   <string name="nav_home">الرئيسية</string>
   <string name="nav_booking">الحجوزات</string>
   <string name="nav_services">الخدمات</string>
   <string name="nav_profile">الملف الشخصي</string>
+
   <!-- Auth Landing -->
   <string name="auth_title">كير كونيكت</string>
   <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
@@ -11,38 +13,107 @@
   <string name="auth_continue_apple">المتابعة باستخدام Apple</string>
   <string name="auth_continue_phone">المتابعة باستخدام رقم الهاتف</string>
   <string name="auth_terms_agreement">الانضمام إلى تطبيقنا يعني موافقتك على شروط الاستخدام وسياسة الخصوصية</string>
+
   <!-- Phone Input -->
   <string name="phone_input_topbar_title">انضم إلينا عبر رقم الهاتف</string>
-  <string name="phone_input_subtitle">سنرسل رمزاً في رسالة نصية للتحقق من هاتفك.</string>
+  <string name="phone_input_subtitle">سنرسل رمزاً للتحقق من رقم هاتفك.</string>
   <string name="phone_input_label">رقم الهاتف</string>
-  <string name="phone_input_carrier_charges">قد يتم تطبيق رسوم شركة الاتصالات على الرسائل القصيرة.</string>
+  <string name="phone_input_carrier_charges">قد تطبق شركة الاتصالات رسوماً على الرسائل النصية.</string>
   <string name="phone_input_next_btn">التالي</string>
+
   <!-- OTP -->
   <string name="otp_title">التحقق من الهاتف</string>
-  <string name="otp_subtitle">لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
+  <string name="otp_subtitle">أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
   <string name="otp_verify_btn">تحقق</string>
   <string name="otp_resend_timer">إعادة إرسال الرمز خلال 00:30</string>
+
   <!-- Welcome -->
   <string name="welcome_topbar_title">كير كونيكت</string>
   <string name="welcome_title">مرحباً بك في كير كونيكت</string>
   <string name="welcome_subtitle">حسابك جاهز! لتقديم أفضل دعم ممكن، نقترح إكمال ملفك الصحي.</string>
   <string name="welcome_complete_profile_btn">إكمال الملف الصحي\n(موصى به)</string>
-  <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك الشخصي لاحقاً</string>
-  <string name="welcome_skip_warning">قد يحد تخطي هذا من دقة التقييم بالذكاء الاصطناعي وتطابق الممرضين. بياناتك مشفرة ومحمية.</string>
+  <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك لاحقاً</string>
+  <string name="welcome_complete_profile_title">إكمال الملف الصحي</string>
+  <string name="welcome_recommended">(موصى به)</string>
+  <string name="welcome_skip_title">تخطي الآن</string>
+  <string name="welcome_skip_subtitle">إعداد ملفك لاحقاً</string>
+  <string name="welcome_skip_warning">قد يؤدي تخطي هذه الخطوة إلى تقليل دقة التقييم بالذكاء الاصطناعي ومطابقة الممرضين. بياناتك مشفرة ومحمية.</string>
+  <string name="welcome_feature_secure">آمن</string>
+  <string name="welcome_feature_fast">سريع</string>
+  <string name="welcome_feature_verified">موثق</string>
+
   <!-- Personal Info -->
-  <string name="personal_info_step">الخطوة 1 من 2</string>
+  <string name="registration_progress_label">التسجيل</string>
   <string name="personal_info_step_title">التفاصيل الشخصية</string>
   <string name="personal_info_title">المعلومات الشخصية</string>
   <string name="personal_info_first_name_title">الاسم الأول</string>
-  <string name="personal_info_first_name_hint">جين</string>
+  <string name="personal_info_first_name_hint">الاسم الأول</string>
   <string name="personal_info_last_name_title">اسم العائلة</string>
-  <string name="personal_info_last_name_hint">دو</string>
+  <string name="personal_info_last_name_hint">اسم العائلة</string>
   <string name="personal_info_dob_title">تاريخ الميلاد</string>
   <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
-  <string name="personal_info_gender_title">الجنس</string>
+  <string name="personal_info_date_confirm">تأكيد</string>
+  <string name="personal_info_date_cancel">إلغاء</string>
+  <string name="personal_info_national_id_title">الرقم القومي</string>
+  <string name="personal_info_national_id_hint">0000000000000000</string>
+  <string name="personal_info_gender_title">النوع</string>
   <string name="personal_info_gender_male">ذكر</string>
   <string name="personal_info_gender_female">أنثى</string>
+  <string name="personal_info_account_type_title">نوع الحساب</string>
+  <string name="personal_info_account_type_family">عائلي</string>
+  <string name="personal_info_account_type_personal">شخصي</string>
   <string name="personal_info_continue_btn">متابعة</string>
+
+  <!-- Profile Completion -->
+  <string name="profile_step_format">الخطوة %1$d من %2$d</string>
+  <string name="profile_onboarding_label">إعداد الحساب</string>
+  <string name="profile_health_profile">الملف الصحي</string>
+  <string name="profile_back">رجوع</string>
+  <string name="profile_continue">متابعة  ‹</string>
+
+  <!-- Basic Health Info -->
+  <string name="basic_health_title">المعلومات الصحية الأساسية</string>
+  <string name="basic_health_description">تساعد هذه التفاصيل المختصين لدينا على إعداد خطة رعاية مخصصة تناسب احتياجاتك الجسدية.</string>
+  <string name="basic_health_height">الطول</string>
+  <string name="basic_health_weight">الوزن</string>
+  <string name="basic_health_cm">سم</string>
+  <string name="basic_health_kg">كجم</string>
+  <string name="basic_health_blood_type">فصيلة الدم</string>
+  <string name="basic_health_blood_type_hint">اختر فصيلة الدم</string>
+  <string name="basic_health_blood_types">A+,A−,B+,B−,AB+,AB−,O+,O−</string>
+  <string name="basic_health_blood_type_note">ⓘ يحتاج مقدمو خدمات الطوارئ إلى هذه المعلومة في الحالات الحرجة.</string>
+
+  <!-- Medical Conditions -->
+  <string name="medical_conditions_progress_title">الحالات المرضية</string>
+  <string name="medical_conditions_title">هل لديك أي حالات مرضية؟</string>
+  <string name="medical_conditions_description">حدد جميع الحالات التي تنطبق عليك لمساعدتنا في تقديم رعاية أكثر تخصيصاً لاحتياجاتك.</string>
+  <string name="condition_diabetes">السكري</string>
+  <string name="condition_hypertension">ارتفاع ضغط الدم</string>
+  <string name="condition_heart_disease">أمراض القلب</string>
+  <string name="condition_asthma">الربو</string>
+  <string name="condition_copd">الانسداد الرئوي المزمن</string>
+  <string name="condition_epilepsy">الصرع</string>
+  <string name="condition_liver_disease">أمراض الكبد</string>
+  <string name="medical_conditions_other_title">≋ أمراض أخرى</string>
+  <string name="medical_conditions_other_hint">أدخل أي أمراض بيئية أو موسمية أو حالات مرضية أخرى...</string>
+
+  <!-- Allergies -->
+  <string name="allergies_progress_title">الحساسية</string>
+  <string name="allergies_title">الحساسية والحساسيات</string>
+  <string name="allergies_description">يرجى تحديد أي أنواع حساسية لضمان أن تكون خطة الرعاية آمنة وفعالة.</string>
+  <string name="allergies_none_title">لا توجد حساسية معروفة</string>
+  <string name="allergies_none_description">لا أعاني من حساسية تجاه الأدوية أو الأطعمة</string>
+  <string name="allergies_drug_title">حساسية الأدوية</string>
+
+  <!-- Keep English commas because the UI code uses split(",") -->
+  <string name="allergies_drug_options">البنسلين,أدوية السلفا,الأسبرين,الإيبوبروفين,الليدوكايين,الكودايين,اللاتكس</string>
+
+  <string name="allergies_food_title">حساسية الطعام</string>
+  <string name="allergies_food_options">الفول السوداني,المحار,منتجات الألبان,البيض,الصويا,المكسرات,القمح/الجلوتين</string>
+
+  <string name="allergies_other_title">أنواع حساسية أخرى</string>
+  <string name="allergies_other_hint">أدخل أي حساسية بيئية أو موسمية أو أنواع حساسية أخرى...</string>
+
   <!-- OnBoarding -->
   <string name="onboarding_title">كير نيست</string>
   <string name="onboarding_skip">تخطي</string>
@@ -50,15 +121,16 @@
   <string name="onboarding_next">التالي ←</string>
   <string name="app_name_careconnect">CareConnect</string>
   <string name="app_name_healthcare">الرعاية الصحية</string>
-  <string name="app_auth_description">Reassuring care for you and your loved ones</string>
+  <string name="app_auth_description">رعاية مطمئنة لك ولأحبائك</string>
   <string name="phone_header_brand">الرعاية الآمنة</string>
-  <string name="phone_otp_method_title">اختر كيف تريد تلقي رمز التحقق الخاص بك</string>
+  <string name="phone_otp_method_title">اختر الطريقة التي تريد تلقي رمز التحقق من خلالها</string>
   <string name="phone_otp_sms_title">رسالة نصية</string>
-  <string name="phone_otp_sms_subtitle">تلقي رمز التحقق عبر رسالة نصية</string>
+  <string name="phone_otp_sms_subtitle">استلام رمز التحقق عبر رسالة نصية</string>
   <string name="phone_otp_whatsapp_title">واتساب</string>
-  <string name="phone_otp_whatsapp_subtitle">تلقي رمز التحقق بأمان عبر واتساب</string>
+  <string name="phone_otp_whatsapp_subtitle">استلام رمز التحقق بأمان عبر واتساب</string>
   <string name="phone_continue_btn">متابعة</string>
-  <string name="phone_input_secure_care_desc">يتم استخدام رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
+  <string name="phone_input_secure_care_desc">يستخدم رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
   <string name="phone_input_via_whatsapp">عبر واتساب</string>
   <string name="phone_input_via_sms">عبر رسالة نصية</string>
+
 </resources>

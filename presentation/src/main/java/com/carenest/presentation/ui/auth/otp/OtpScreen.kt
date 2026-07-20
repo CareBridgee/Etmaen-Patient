@@ -34,7 +34,7 @@ import com.carenest.presentation.ui.auth.login.components.OtpTextField
 fun OtpScreen(
     entry: AppRoute.Otp,
     viewModel: OtpViewModel = hiltViewModel(),
-    onNavigateToHome: () -> Unit,
+    onVerificationSuccess: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -43,13 +43,9 @@ fun OtpScreen(
         viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
     }
 
-    androidx.compose.runtime.LaunchedEffect(entry.phone) {
-        viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
-    }
-
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is OtpEffect.NavigateToHome -> onNavigateToHome()
+            is OtpEffect.NavigateToRegistration -> onVerificationSuccess()
             is OtpEffect.NavigateBack -> onNavigateBack()
         }
     }

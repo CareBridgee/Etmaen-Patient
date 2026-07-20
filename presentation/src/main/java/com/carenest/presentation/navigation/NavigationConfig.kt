@@ -21,8 +21,10 @@ object NavigationConfig {
             serializableSubclass(AppRoute.Splash::class)
             serializableSubclass(AppRoute.OnBoarding::class)
             serializableSubclass(AppRoute.Login::class)
-            serializableSubclass(AppRoute.Register::class)
             serializableSubclass(AppRoute.Otp::class)
+            serializableSubclass(AppRoute.Register::class)
+            serializableSubclass(AppRoute.ProfileCompletion::class)
+            serializableSubclass(AppRoute.Home::class)
         }
     }
 
