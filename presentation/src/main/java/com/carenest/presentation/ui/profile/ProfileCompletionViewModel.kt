@@ -50,6 +50,59 @@ class ProfileCompletionViewModel : ViewModel(),
             is ProfileCompletionIntent.OtherAllergiesChanged -> updateState {
                 copy(hasNoKnownAllergies = false, otherAllergies = event.allergies)
             }
+            ProfileCompletionIntent.NoCurrentMedicationsToggled -> updateState {
+                val noCurrentMedications = !hasNoCurrentMedications
+                copy(
+                    hasNoCurrentMedications = noCurrentMedications,
+                    currentMedications = if (noCurrentMedications) emptyList() else listOf("")
+                )
+            }
+            ProfileCompletionIntent.MedicationAdded -> updateState {
+                if (hasNoCurrentMedications) this else copy(
+                    currentMedications = currentMedications + ""
+                )
+            }
+            is ProfileCompletionIntent.MedicationChanged -> updateState {
+                if (hasNoCurrentMedications || event.index !in currentMedications.indices) {
+                    this
+                } else {
+                    copy(
+                        currentMedications = currentMedications.toMutableList().apply {
+                            this[event.index] = event.medication
+                        }
+                    )
+                }
+            }
+            is ProfileCompletionIntent.MedicationRemoved -> updateState {
+                if (hasNoCurrentMedications || event.index !in currentMedications.indices) {
+                    this
+                } else {
+                    copy(currentMedications = currentMedications.filterIndexed { index, _ ->
+                        index != event.index
+                    })
+                }
+            }
+            is ProfileCompletionIntent.PreviousSurgeriesChanged -> updateState {
+                copy(previousSurgeries = event.surgeries)
+            }
+            is ProfileCompletionIntent.PreviousHospitalizationsChanged -> updateState {
+                copy(previousHospitalizations = event.hospitalizations)
+            }
+            is ProfileCompletionIntent.MobilityStatusSelected -> updateState {
+                copy(mobilityStatus = event.status)
+            }
+            is ProfileCompletionIntent.MobilityNotesChanged -> updateState {
+                copy(mobilityNotes = event.notes)
+            }
+            is ProfileCompletionIntent.EmergencyContactNameChanged -> updateState {
+                copy(emergencyContactName = event.name)
+            }
+            is ProfileCompletionIntent.EmergencyRelationshipSelected -> updateState {
+                copy(emergencyRelationship = event.relationship)
+            }
+            is ProfileCompletionIntent.EmergencyPhoneNumberChanged -> updateState {
+                copy(emergencyPhoneNumber = event.phoneNumber)
+            }
             ProfileCompletionIntent.BackClicked -> navigateBack()
             ProfileCompletionIntent.ContinueClicked -> navigateForward()
             ProfileCompletionIntent.SkipClicked -> {
@@ -64,6 +117,11 @@ class ProfileCompletionViewModel : ViewModel(),
             ProfileStep.BasicHealthInfo -> moveTo(ProfileStep.Welcome)
             ProfileStep.MedicalConditions -> moveTo(ProfileStep.BasicHealthInfo)
             ProfileStep.Allergies -> moveTo(ProfileStep.MedicalConditions)
+            ProfileStep.CurrentMedications -> moveTo(ProfileStep.Allergies)
+            ProfileStep.MedicalHistory -> moveTo(ProfileStep.CurrentMedications)
+            ProfileStep.MobilityStatus -> moveTo(ProfileStep.MedicalHistory)
+            ProfileStep.EmergencyContact -> moveTo(ProfileStep.MobilityStatus)
+            ProfileStep.FinalStep -> moveTo(ProfileStep.EmergencyContact)
         }
     }
 
@@ -72,7 +130,12 @@ class ProfileCompletionViewModel : ViewModel(),
             ProfileStep.Welcome -> moveTo(ProfileStep.BasicHealthInfo)
             ProfileStep.BasicHealthInfo -> moveTo(ProfileStep.MedicalConditions)
             ProfileStep.MedicalConditions -> moveTo(ProfileStep.Allergies)
-            ProfileStep.Allergies -> sendEffect(ProfileCompletionEffect.NavigateToHome)
+            ProfileStep.Allergies -> moveTo(ProfileStep.CurrentMedications)
+            ProfileStep.CurrentMedications -> moveTo(ProfileStep.MedicalHistory)
+            ProfileStep.MedicalHistory -> moveTo(ProfileStep.MobilityStatus)
+            ProfileStep.MobilityStatus -> moveTo(ProfileStep.EmergencyContact)
+            ProfileStep.EmergencyContact -> moveTo(ProfileStep.FinalStep)
+            ProfileStep.FinalStep -> sendEffect(ProfileCompletionEffect.NavigateToHome)
         }
     }
 

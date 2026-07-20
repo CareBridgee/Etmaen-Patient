@@ -99,6 +99,58 @@
   <string name="allergies_food_options">Peanuts,Shellfish,Dairy,Eggs,Soy,Tree Nuts,Wheat/Gluten</string>
   <string name="allergies_other_title">Other Allergies</string>
   <string name="allergies_other_hint">Enter environmental, seasonal, or other specific allergies...</string>
+  <!-- Current Medications -->
+  <string name="current_medications_progress" formatted="false">50% Complete</string>
+  <string name="current_medications_title">Current Medications</string>
+  <string name="current_medications_description">Please list all medications you are currently taking, including dosage and frequency if possible.</string>
+  <string name="current_medications_none_title">No current medications</string>
+  <string name="current_medications_none_description">I am not taking any prescribed drugs</string>
+  <string name="current_medications_hint">Medication name (e.g. Lisinopril 10mg)</string>
+  <string name="current_medications_delete">Delete medication</string>
+  <string name="current_medications_add">Add Medication</string>
+  <!-- Medical History -->
+  <string name="medical_history_title">Medical History</string>
+  <string name="medical_history_surgeries">Previous Surgeries</string>
+  <string name="medical_history_surgeries_subtitle">Optional • List procedure and year</string>
+  <string name="medical_history_surgeries_hint">e.g. Appendectomy (2015), Knee Replacement (2021)…</string>
+  <string name="medical_history_hospitalizations">Previous Hospitalizations</string>
+  <string name="medical_history_hospitalizations_subtitle">Optional • Mention reason and duration</string>
+  <string name="medical_history_hospitalizations_hint">e.g. Pneumonia treatment (2019, 5 days)…</string>
+  <string name="medical_history_info">Providing this information helps our care team prepare a more personalized assistance plan for you.</string>
+  <!-- Mobility Status -->
+  <string name="mobility_progress_title">Mobility Status</string>
+  <string name="mobility_title">How is the patient\'s mobility?</string>
+  <string name="mobility_description">This helps us assign the right equipment and specialist for the home visits.</string>
+  <string name="mobility_independent">Independent</string>
+  <string name="mobility_independent_description">Moves freely without any assistance</string>
+  <string name="mobility_needs_assistance">Needs Assistance</string>
+  <string name="mobility_needs_assistance_description">Requires a person\'s physical help</string>
+  <string name="mobility_walking_aid">Uses Walking Aid</string>
+  <string name="mobility_walking_aid_description">Cane, walker, or crutches</string>
+  <string name="mobility_wheelchair">Wheelchair User</string>
+  <string name="mobility_wheelchair_description">Relies on manual or electric wheelchair</string>
+  <string name="mobility_bedridden">Bedridden</string>
+  <string name="mobility_bedridden_description">Confined to bed for most of the day</string>
+  <string name="mobility_notes_title">ADDITIONAL NOTES (OPTIONAL)</string>
+  <string name="mobility_notes_hint">e.g., occasional falls, specific limb weakness…</string>
+  <!-- Emergency Contact -->
+  <string name="emergency_contact_progress_title">Emergency Contact</string>
+  <string name="emergency_contact_title">Emergency Contact</string>
+  <string name="emergency_contact_description">Who should we contact in case of an emergency? This information helps us ensure your safety during care visits.</string>
+  <string name="emergency_contact_name">Contact Name</string>
+  <string name="emergency_contact_name_hint">Full legal name</string>
+  <string name="emergency_contact_relationship">Relationship</string>
+  <string name="emergency_contact_relationship_hint">Select relationship</string>
+  <string name="emergency_contact_phone">Phone Number</string>
+  <string name="emergency_contact_phone_hint">(555) 000-0000</string>
+  <string name="emergency_contact_security">Your data is encrypted and only shared with medical professionals during active care sessions.</string>
+  <string name="emergency_contact_continue">Continue to Final Step</string>
+  <string name="relationship_spouse">Spouse</string>
+  <string name="relationship_parent">Parent</string>
+  <string name="relationship_sibling">Sibling</string>
+  <string name="relationship_adult_child">Adult Child</string>
+  <string name="relationship_friend_neighbor">Friend / Neighbor</string>
+  <string name="relationship_other">Other</string>
   <!-- OnBoarding -->
   <string name="onboarding_title">CareNest</string>
   <string name="onboarding_skip">Skip</string>
