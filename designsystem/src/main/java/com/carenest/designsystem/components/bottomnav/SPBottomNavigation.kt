@@ -2,10 +2,10 @@ package com.carenest.designsystem.components.bottomnav
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -15,6 +15,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -173,7 +174,7 @@ private fun SPBottomNavigationItem(
         label = "bottomNavIconScale",
     )
 
-    Row(
+    Column(
         modifier = modifier
             .fillMaxHeight()
             .selectable(
@@ -184,8 +185,8 @@ private fun SPBottomNavigationItem(
                 onClick = onClick,
             )
             .padding(vertical = Theme.spacing.extraSmall),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painterResource(item.iconRes),
@@ -201,18 +202,18 @@ private fun SPBottomNavigationItem(
         AnimatedVisibility(
             visible = isSelected,
             enter = fadeIn(animationSpec = tween(durationMillis = 140)) +
-                expandHorizontally(
-                    animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing),
-                    expandFrom = Alignment.Start,
+                slideInVertically(
+                    animationSpec = tween(durationMillis = 160, easing = FastOutSlowInEasing),
+                    initialOffsetY = { fullHeight -> fullHeight / 3 },
                 ),
             exit = fadeOut(animationSpec = tween(durationMillis = 100)) +
-                shrinkHorizontally(
-                    animationSpec = tween(durationMillis = 140, easing = FastOutSlowInEasing),
-                    shrinkTowards = Alignment.Start,
+                slideOutVertically(
+                    animationSpec = tween(durationMillis = 120, easing = FastOutSlowInEasing),
+                    targetOffsetY = { fullHeight -> fullHeight / 3 },
                 ),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Spacer(modifier = Modifier.width(Theme.spacing.extraSmall))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(2.dp))
                 BasicText(
                     text = item.label,
                     maxLines = 1,
