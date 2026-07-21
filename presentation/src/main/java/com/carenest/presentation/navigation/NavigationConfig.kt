@@ -25,6 +25,8 @@ object NavigationConfig {
             serializableSubclass(AppRoute.Register::class)
             serializableSubclass(AppRoute.ProfileCompletion::class)
             serializableSubclass(AppRoute.Home::class)
+            serializableSubclass(AppRoute.Services::class)
+            serializableSubclass(AppRoute.ServiceDetails::class)
         }
     }
 

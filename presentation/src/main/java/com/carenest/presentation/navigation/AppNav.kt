@@ -38,6 +38,8 @@ import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
+import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
+import com.carenest.presentation.ui.services.list.ServicesScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -113,6 +115,18 @@ fun AppNav() {
                 HideTopBar()
             }
 
+            entry<AppRoute.Services> {
+                ServicesScreen(
+                    onNavigateToDetails = { backStack.add(AppRoute.ServiceDetails) },
+                )
+            }
+
+            entry<AppRoute.ServiceDetails> {
+                ServiceDetailsScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+            }
+
             entry<AppRoute.OnBoarding> {
                 OnBoardingScreen(
                     onNavigateToHome = {
@@ -128,9 +142,8 @@ fun AppNav() {
 
         val bottomNavRoutes = remember {
             listOf<AppRoute>(
-                // AppRoute.Home,
-                // AppRoute.Bookings,
-                // AppRoute.Profile
+                AppRoute.Home,
+                AppRoute.Services,
             )
         }
 
@@ -139,7 +152,7 @@ fun AppNav() {
         val shouldShowBottomBar = currentRoute in bottomNavRoutes
 
         fun onBottomNavItemSelected(index: Int) {
-            val targetRoute = bottomNavRoutes[index]
+            val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
 
             if (currentRoute != targetRoute) {
                 Snapshot.withMutableSnapshot {
@@ -204,12 +217,12 @@ fun AppNav() {
                                 RD.drawable.ic_home
                             ),
                             BottomNavItem(
-                                stringResource(R.string.nav_booking),
-                                RD.drawable.ic_booking
-                            ),
-                            BottomNavItem(
                                 stringResource(R.string.nav_services),
                                 RD.drawable.ic_services
+                            ),
+                            BottomNavItem(
+                                stringResource(R.string.nav_booking),
+                                RD.drawable.ic_booking
                             ),
                             BottomNavItem(
                                 stringResource(R.string.nav_profile),
