@@ -72,7 +72,7 @@ fun SPBottomNavigation(
         Theme.colors.primaryVariant
     }
     val shadowElevation = if (isDarkTheme) 3.dp else 4.dp
-    val navShape = RoundedCornerShape(42.dp)
+    val navShape = RoundedCornerShape(38.dp)
 
     Box(
         modifier = modifier
@@ -80,13 +80,13 @@ fun SPBottomNavigation(
             .padding(
                 start = Theme.spacing.medium,
                 end = Theme.spacing.medium,
-                bottom = Theme.spacing.space12,
+                bottom = Theme.spacing.space20,
             ),
     ) {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(82.dp)
+                .height(76.dp)
                 .shadow(elevation = shadowElevation, shape = navShape, clip = false)
                 .clip(navShape)
                 .background(containerColor),
@@ -112,7 +112,7 @@ fun SPBottomNavigation(
                     .fillMaxHeight()
                     .padding(
                         horizontal = Theme.spacing.space6,
-                        vertical = Theme.spacing.space9,
+                        vertical = Theme.spacing.space10,
                     )
                     .clip(RoundedCornerShape(percent = 50))
                     .background(indicatorColor),
@@ -178,7 +178,7 @@ private fun SPBottomNavigationItem(
                 role = Role.Tab,
                 onClick = onClick,
             )
-            .padding(vertical = Theme.spacing.small),
+            .padding(vertical = Theme.spacing.space6),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -234,7 +234,7 @@ private fun BottomNavigationPreview(isDarkTheme: Boolean) {
 @Preview(
     name = "Patient Bottom Navigation - Light",
     widthDp = 390,
-    heightDp = 138,
+    heightDp = 144,
     showBackground = true,
 )
 @Composable
@@ -245,7 +245,7 @@ private fun BottomNavigationLightPreview() {
 @Preview(
     name = "Patient Bottom Navigation - Dark",
     widthDp = 390,
-    heightDp = 138,
+    heightDp = 144,
     showBackground = true,
 )
 @Composable
