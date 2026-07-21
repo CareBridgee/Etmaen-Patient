@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessibilityNew
@@ -26,6 +28,7 @@ import androidx.compose.material.icons.outlined.Healing
 import androidx.compose.material.icons.outlined.MedicalServices
 import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.Icon
@@ -318,33 +321,51 @@ private fun CareCoordinatorCard(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(190.dp)
-            .clip(Theme.shapes.large)
-            .background(Theme.colors.onPrimaryVariant)
+            .height(208.dp)
+            .clip(RoundedCornerShape(28.dp))
+            .background(Color(0xFF8FE8F0))
             .clickable(onClick = onClick)
-            .padding(Theme.spacing.large),
     ) {
+        Icon(
+            imageVector = Icons.Outlined.SupportAgent,
+            contentDescription = null,
+            tint = Theme.colors.primaryVariant.copy(alpha = 0.14f),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = 24.dp, y = 18.dp)
+                .size(128.dp),
+        )
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = Theme.spacing.large,
+                    top = Theme.spacing.extraLarge,
+                    end = Theme.spacing.large,
+                    bottom = Theme.spacing.large,
+                ),
         ) {
             BasicText(
                 text = stringResource(R.string.services_consultation_title),
-                style = Theme.typography.body.large.copy(
+                style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.SemiBold,
                 ),
             )
+            Spacer(Modifier.height(Theme.spacing.space12))
             BasicText(
                 text = stringResource(R.string.services_consultation_subtitle),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
-                modifier = Modifier.fillMaxWidth(0.78f),
+                modifier = Modifier.fillMaxWidth(0.9f),
             )
+            Spacer(Modifier.height(Theme.spacing.space14))
             Box(
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .height(48.dp)
+                    .clip(Theme.shapes.large)
                     .background(Theme.colors.primary)
-                    .padding(horizontal = Theme.spacing.space20, vertical = Theme.spacing.small),
+                    .padding(horizontal = Theme.spacing.space20),
+                contentAlignment = Alignment.Center,
             ) {
                 BasicText(
                     text = stringResource(R.string.services_consultation_button),
@@ -352,14 +373,6 @@ private fun CareCoordinatorCard(onClick: () -> Unit) {
                 )
             }
         }
-        Icon(
-            imageVector = Icons.Outlined.MedicalServices,
-            contentDescription = null,
-            tint = Theme.colors.primaryVariant.copy(alpha = 0.16f),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .size(92.dp),
-        )
     }
 }
 
