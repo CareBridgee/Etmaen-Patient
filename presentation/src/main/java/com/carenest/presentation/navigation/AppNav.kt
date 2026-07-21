@@ -117,12 +117,15 @@ fun AppNav() {
 
             entry<AppRoute.Services> {
                 ServicesScreen(
-                    onNavigateToDetails = { backStack.add(AppRoute.ServiceDetails) },
+                    onNavigateToDetails = { category ->
+                        backStack.add(AppRoute.ServiceDetails(category))
+                    },
                 )
             }
 
-            entry<AppRoute.ServiceDetails> {
+            entry<AppRoute.ServiceDetails> { route ->
                 ServiceDetailsScreen(
+                    category = route.category,
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                 )
             }

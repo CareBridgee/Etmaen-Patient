@@ -18,8 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.Schedule
@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +46,6 @@ import com.carenest.designsystem.components.button.ButtonIconPosition
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.designsystem.util.autoMirror
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -54,16 +54,22 @@ import com.carenest.presentation.ui.services.components.ServiceChecklistItem
 import com.carenest.presentation.ui.services.components.ServiceInformationNote
 import com.carenest.presentation.ui.services.components.ServiceMetricCard
 import com.carenest.presentation.ui.services.components.ServiceSurfaceCard
+import com.carenest.presentation.ui.services.list.ServiceCategory
 import com.carenest.designsystem.R as RD
 
 @Composable
 fun ServiceDetailsScreen(
+    category: ServiceCategory,
     onNavigateBack: () -> Unit,
     onShareService: () -> Unit = {},
     onRequestService: () -> Unit = {},
     viewModel: ServiceDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(category) {
+        viewModel.onEvent(ServiceDetailsIntent.CategoryReceived(category))
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -115,7 +121,7 @@ private fun IvHydrationDetails(onEvent: (ServiceDetailsIntent) -> Unit) {
                 PrimaryButton(
                     caption = stringResource(R.string.service_details_request_button),
                     onClick = { onEvent(ServiceDetailsIntent.RequestServiceClicked) },
-                    iconPainter = rememberVectorPainter(Icons.Outlined.ArrowForward),
+                    iconPainter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ArrowForward),
                     iconPosition = ButtonIconPosition.End,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -226,10 +232,9 @@ private fun ServiceDetailsTopBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TopBarAction(
-            icon = rememberVectorPainter(Icons.Outlined.ArrowBack),
+            icon = rememberVectorPainter(Icons.AutoMirrored.Outlined.ArrowBack),
             contentDescription = stringResource(R.string.service_details_back),
             onClick = onBack,
-            modifier = Modifier.autoMirror(),
         )
         BasicText(
             text = stringResource(R.string.service_details_title),

@@ -2,6 +2,7 @@ package com.carenest.presentation.ui.services.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,34 +27,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
-import com.carenest.designsystem.util.noRippleClickable
 
 @Composable
 fun ServiceCategoryCard(
     title: String,
     subtitle: String,
     icon: Painter,
-    selected: Boolean,
     height: androidx.compose.ui.unit.Dp,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val containerColor = if (selected) Theme.colors.primaryVariant else Theme.colors.surface
-    val titleColor = if (selected) Theme.colors.onPrimary else Theme.colors.primaryFont
-    val subtitleColor = if (selected) {
-        Theme.colors.onPrimary.copy(alpha = 0.78f)
-    } else {
-        Theme.colors.secondaryFont
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
             .shadow(2.dp, Theme.shapes.large)
             .clip(Theme.shapes.large)
-            .background(containerColor)
-            .noRippleClickable(onClick)
+            .background(Theme.colors.surface)
+            .clickable(onClick = onClick)
             .padding(Theme.spacing.medium),
         verticalArrangement = Arrangement.Center,
     ) {
@@ -61,16 +52,13 @@ fun ServiceCategoryCard(
             modifier = Modifier
                 .size(44.dp)
                 .clip(Theme.shapes.medium)
-                .background(
-                    if (selected) Theme.colors.onPrimary.copy(alpha = 0.18f)
-                    else Theme.colors.primaryContainer
-                ),
+                .background(Theme.colors.primaryContainer),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 painter = icon,
                 contentDescription = null,
-                tint = if (selected) Theme.colors.onPrimary else Theme.colors.primaryVariant,
+                tint = Theme.colors.primaryVariant,
                 modifier = Modifier.size(24.dp),
             )
         }
@@ -80,8 +68,8 @@ fun ServiceCategoryCard(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             style = Theme.typography.body.medium.copy(
-                color = titleColor,
-                fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Normal,
             ),
         )
         Spacer(Modifier.height(2.dp))
@@ -89,7 +77,7 @@ fun ServiceCategoryCard(
             text = subtitle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            style = Theme.typography.body.small.copy(color = subtitleColor),
+            style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
         )
     }
 }

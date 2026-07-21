@@ -2,6 +2,7 @@ package com.carenest.presentation.ui.services.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
@@ -45,7 +47,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
@@ -96,8 +97,10 @@ internal fun ServicesScreenContent(
         CategoryPresentation(ServiceCategory.IV_DRIP, R.string.services_iv_drip, R.string.services_iv_drip_subtitle, Icons.Outlined.MedicalServices),
         CategoryPresentation(ServiceCategory.VACCINATIONS, R.string.services_vaccinations, R.string.services_vaccinations_subtitle, Icons.Outlined.Vaccines),
     ).associateBy(CategoryPresentation::category)
+    val listState = rememberLazyListState()
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
@@ -144,7 +147,6 @@ internal fun ServicesScreenContent(
                 Spacer(Modifier.height(Theme.spacing.space12))
                 CategoryGrid(
                     categories = categories,
-                    selectedCategory = state.selectedCategory,
                     onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it)) },
                 )
             }
@@ -199,7 +201,6 @@ private fun GreetingHeader() {
 @Composable
 private fun CategoryGrid(
     categories: Map<ServiceCategory, CategoryPresentation>,
-    selectedCategory: ServiceCategory,
     onCategoryClick: (ServiceCategory) -> Unit,
 ) {
     val left = listOf(
@@ -220,8 +221,8 @@ private fun CategoryGrid(
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
         verticalAlignment = Alignment.Top,
     ) {
-        CategoryColumn(left, categories, selectedCategory, onCategoryClick, Modifier.weight(1f))
-        CategoryColumn(right, categories, selectedCategory, onCategoryClick, Modifier.weight(1f))
+        CategoryColumn(left, categories, onCategoryClick, Modifier.weight(1f))
+        CategoryColumn(right, categories, onCategoryClick, Modifier.weight(1f))
     }
 }
 
@@ -229,7 +230,6 @@ private fun CategoryGrid(
 private fun CategoryColumn(
     items: List<Pair<ServiceCategory, androidx.compose.ui.unit.Dp>>,
     categories: Map<ServiceCategory, CategoryPresentation>,
-    selectedCategory: ServiceCategory,
     onCategoryClick: (ServiceCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -240,7 +240,6 @@ private fun CategoryColumn(
                 title = stringResource(presentation.title),
                 subtitle = stringResource(presentation.subtitle),
                 icon = rememberVectorPainter(presentation.icon),
-                selected = selectedCategory == category,
                 height = height,
                 onClick = { onCategoryClick(category) },
             )
@@ -256,7 +255,7 @@ private fun ChronicCareCard(onClick: () -> Unit) {
             .height(118.dp)
             .clip(Theme.shapes.large)
             .background(Theme.colors.primaryVariant)
-            .noRippleClickable(onClick)
+            .clickable(onClick = onClick)
             .padding(Theme.spacing.large),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -322,7 +321,7 @@ private fun CareCoordinatorCard(onClick: () -> Unit) {
             .height(190.dp)
             .clip(Theme.shapes.large)
             .background(Theme.colors.onPrimaryVariant)
-            .noRippleClickable(onClick)
+            .clickable(onClick = onClick)
             .padding(Theme.spacing.large),
     ) {
         Column(

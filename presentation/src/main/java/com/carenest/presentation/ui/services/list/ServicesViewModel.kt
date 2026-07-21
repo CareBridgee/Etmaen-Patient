@@ -21,7 +21,6 @@ class ServicesViewModel @Inject constructor() :
             }
 
             is ServicesIntent.CategoryClicked -> {
-                updateState { copy(selectedCategory = event.category) }
                 sendEffect(ServicesEffect.NavigateToDetails(event.category))
             }
 

@@ -1,5 +1,8 @@
 package com.carenest.presentation.ui.services.list
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class ServiceCategory {
     GENERAL_NURSING,
     INJECTION,
@@ -14,7 +17,6 @@ enum class ServiceCategory {
 
 data class ServicesState(
     val searchQuery: String = "",
-    val selectedCategory: ServiceCategory = ServiceCategory.GENERAL_NURSING,
 )
 
 sealed interface ServicesIntent {

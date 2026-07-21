@@ -16,6 +16,9 @@ class ServiceDetailsViewModel @Inject constructor() :
 
     fun onEvent(event: ServiceDetailsIntent) {
         when (event) {
+            is ServiceDetailsIntent.CategoryReceived -> updateState {
+                copy(category = event.category)
+            }
             ServiceDetailsIntent.BackClicked -> sendEffect(ServiceDetailsEffect.NavigateBack)
             ServiceDetailsIntent.ShareClicked -> sendEffect(ServiceDetailsEffect.ShareService)
             ServiceDetailsIntent.RequestServiceClicked -> {
