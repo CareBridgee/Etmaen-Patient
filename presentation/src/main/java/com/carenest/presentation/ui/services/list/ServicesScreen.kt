@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
@@ -318,18 +319,30 @@ private fun ChronicCareCard(onClick: () -> Unit) {
 
 @Composable
 private fun CareCoordinatorCard(onClick: () -> Unit) {
+    val isDarkTheme = Theme.colors.backGround.luminance() < 0.5f
+    val containerColor = if (isDarkTheme) {
+        Theme.colors.primaryContainer
+    } else {
+        Color(0xFF8FE8F0)
+    }
+    val illustrationColor = if (isDarkTheme) {
+        Theme.colors.onPrimaryContainer.copy(alpha = 0.3f)
+    } else {
+        Theme.colors.primaryVariant.copy(alpha = 0.14f)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(208.dp)
             .clip(RoundedCornerShape(28.dp))
-            .background(Color(0xFF8FE8F0))
+            .background(containerColor)
             .clickable(onClick = onClick)
     ) {
         Icon(
             imageVector = Icons.Outlined.SupportAgent,
             contentDescription = null,
-            tint = Theme.colors.primaryVariant.copy(alpha = 0.14f),
+            tint = illustrationColor,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .offset(x = 24.dp, y = 18.dp)
