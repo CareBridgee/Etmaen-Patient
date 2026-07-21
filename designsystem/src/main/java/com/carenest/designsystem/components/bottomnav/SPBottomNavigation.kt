@@ -1,6 +1,11 @@
 package com.carenest.designsystem.components.bottomnav
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,7 +15,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -42,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.R
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -72,7 +77,7 @@ fun SPBottomNavigation(
         Theme.colors.primaryVariant
     }
     val shadowElevation = if (isDarkTheme) 3.dp else 4.dp
-    val navShape = RoundedCornerShape(38.dp)
+    val navShape = RoundedCornerShape(34.dp)
 
     Box(
         modifier = modifier
@@ -86,7 +91,7 @@ fun SPBottomNavigation(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(76.dp)
+                .height(68.dp)
                 .shadow(elevation = shadowElevation, shape = navShape, clip = false)
                 .clip(navShape)
                 .background(containerColor),
@@ -111,7 +116,7 @@ fun SPBottomNavigation(
                     .width(itemWidth)
                     .fillMaxHeight()
                     .padding(
-                        horizontal = Theme.spacing.space6,
+                        horizontal = Theme.spacing.extraSmall,
                         vertical = Theme.spacing.space10,
                     )
                     .clip(RoundedCornerShape(percent = 50))
@@ -168,7 +173,7 @@ private fun SPBottomNavigationItem(
         label = "bottomNavIconScale",
     )
 
-    Column(
+    Row(
         modifier = modifier
             .fillMaxHeight()
             .selectable(
@@ -178,9 +183,9 @@ private fun SPBottomNavigationItem(
                 role = Role.Tab,
                 onClick = onClick,
             )
-            .padding(vertical = Theme.spacing.space6),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+            .padding(vertical = Theme.spacing.extraSmall),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             painter = painterResource(item.iconRes),
@@ -193,15 +198,33 @@ private fun SPBottomNavigationItem(
                     scaleY = iconScale
                 },
         )
-        Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
-        BasicText(
-            text = item.label,
-            maxLines = 1,
-            style = Theme.typography.body.small.copy(
-                color = contentColor,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-            ),
-        )
+        AnimatedVisibility(
+            visible = isSelected,
+            enter = fadeIn(animationSpec = tween(durationMillis = 140)) +
+                expandHorizontally(
+                    animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing),
+                    expandFrom = Alignment.Start,
+                ),
+            exit = fadeOut(animationSpec = tween(durationMillis = 100)) +
+                shrinkHorizontally(
+                    animationSpec = tween(durationMillis = 140, easing = FastOutSlowInEasing),
+                    shrinkTowards = Alignment.Start,
+                ),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.width(Theme.spacing.extraSmall))
+                BasicText(
+                    text = item.label,
+                    maxLines = 1,
+                    style = Theme.typography.body.small.copy(
+                        color = contentColor,
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                )
+            }
+        }
     }
 }
 
@@ -234,7 +257,7 @@ private fun BottomNavigationPreview(isDarkTheme: Boolean) {
 @Preview(
     name = "Patient Bottom Navigation - Light",
     widthDp = 390,
-    heightDp = 144,
+    heightDp = 132,
     showBackground = true,
 )
 @Composable
@@ -245,7 +268,7 @@ private fun BottomNavigationLightPreview() {
 @Preview(
     name = "Patient Bottom Navigation - Dark",
     widthDp = 390,
-    heightDp = 144,
+    heightDp = 132,
     showBackground = true,
 )
 @Composable
