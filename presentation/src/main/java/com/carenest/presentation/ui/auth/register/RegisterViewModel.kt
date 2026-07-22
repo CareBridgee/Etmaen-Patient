@@ -5,8 +5,13 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel(),
+@HiltViewModel
+class RegisterViewModel @Inject constructor() : ViewModel(),
     StateHolder<RegisterState> by DefaultStateHolder(RegisterState()),
     EffectPublisher<RegisterEffect> by DefaultEffectPublisher() {
 

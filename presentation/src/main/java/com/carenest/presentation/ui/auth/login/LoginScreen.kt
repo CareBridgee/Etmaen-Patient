@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.ui.tooling.preview.Preview
+import com.carenest.designsystem.theme.SpTheme
 import com.carenest.presentation.core.mvi.ObserveEffect
 
 import com.carenest.presentation.ui.auth.login.components.AuthLandingScreen
@@ -36,5 +38,16 @@ internal fun LoginScreenContent(
     when (state.currentStep) {
         LoginStep.LANDING -> AuthLandingScreen(onEvent)
         LoginStep.PHONE_INPUT -> PhoneInputScreen(state, onEvent)
+    }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    SpTheme {
+        LoginScreenContent(
+            state = LoginState(),
+            onEvent = {}
+        )
     }
 }

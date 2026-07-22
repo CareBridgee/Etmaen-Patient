@@ -37,7 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SegmentedControl
 import com.carenest.designsystem.components.textfield.CustomTextField
@@ -55,7 +55,8 @@ import java.util.TimeZone
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onNavigateToWelcome: () -> Unit,
-    viewModel: RegisterViewModel = viewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
+    onNavigateHome: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 

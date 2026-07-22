@@ -1,16 +1,26 @@
 package com.carenest.presentation.ui.auth.otp
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PhoneAndroid
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,6 +45,7 @@ fun OtpScreen(
     entry: AppRoute.Otp,
     viewModel: OtpViewModel = hiltViewModel(),
     onVerificationSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit = {},
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -46,6 +57,7 @@ fun OtpScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is OtpEffect.NavigateToRegistration -> onVerificationSuccess()
+            is OtpEffect.NavigateToRegister -> onNavigateToRegister()
             is OtpEffect.NavigateBack -> onNavigateBack()
         }
     }
@@ -62,7 +74,7 @@ internal fun OtpScreenContent(
     onEvent: (OtpIntent) -> Unit
 ) {
     ScreenTopBar(
-        title = "",
+        title = stringResource(R.string.otp_app_name),
         showLeadingIcon = true,
         onLeadingClick = { onEvent(OtpIntent.BackClicked) }
     )
@@ -71,60 +83,123 @@ internal fun OtpScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        BasicText(
-            text = stringResource(R.string.otp_title),
-            style = Theme.typography.display.copy(
-                color = Theme.colors.primaryFont,
-                fontWeight = FontWeight.Bold
-            )
-        )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            BasicText(
-                text = stringResource(R.string.otp_subtitle, state.phoneNumber),
-                style = Theme.typography.body.large.copy(
-                    color = Theme.colors.primaryFont,
-                    textAlign = TextAlign.Center
-                ),
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            OtpTextField(
-                otpValue = state.otpCode,
-                onOtpValueChange = { onEvent(OtpIntent.OtpCodeChanged(it)) }
-            )
-            
-            if (state.errorMessage != null) {
-                Spacer(modifier = Modifier.height(16.dp))
-                BasicText(
-                    text = state.errorMessage,
-                    style = Theme.typography.body.medium.copy(color = Theme.colors.error)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Hero Icon
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .background(
+                        color = Theme.colors.primary.copy(alpha = 0.1f),
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.PhoneAndroid,
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(40.dp)
                 )
             }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            PrimaryButton(
-                caption = stringResource(R.string.otp_verify_btn),
-                onClick = { onEvent(OtpIntent.VerifyOtpClicked) },
-                isLoading = state.isLoading,
-                modifier = Modifier.fillMaxWidth()
-            )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
+            BasicText(
+                text = stringResource(R.string.otp_title),
+                style = Theme.typography.display.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Theme.colors.primaryFont,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            BasicText(
+                text = stringResource(
+                    R.string.otp_subtitle,
+                    state.phoneNumber
+                ),
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = Theme.typography.body.large.copy(
+                    color = Theme.colors.secondaryFont,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Theme.colors.surface
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                )
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    OtpTextField(
+                        otpValue = state.otpCode,
+                        onOtpValueChange = {
+                            onEvent(OtpIntent.OtpCodeChanged(it))
+                        }
+                    )
+
+                    if (state.errorMessage != null) {
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        BasicText(
+                            text = state.errorMessage,
+                            style = Theme.typography.body.medium.copy(
+                                color = Theme.colors.error,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    PrimaryButton(
+                        caption = stringResource(R.string.otp_verify_btn),
+                        onClick = {
+                            onEvent(OtpIntent.VerifyOtpClicked)
+                        },
+                        isLoading = state.isLoading,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             BasicText(
                 text = stringResource(R.string.otp_resend_timer),
-                style = Theme.typography.body.large.copy(color = Theme.colors.primary)
+                style = Theme.typography.body.large.copy(
+                    color = Theme.colors.primary,
+                    textAlign = TextAlign.Center
+                )
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
     }
 }
 
@@ -135,7 +210,7 @@ private fun OtpScreenPreview() {
         OtpScreenContent(
             state = OtpState(
                 phoneNumber = "+1 555 000 0000",
-                otpCode = "123"
+                otpCode = ""
             ),
             onEvent = {}
         )

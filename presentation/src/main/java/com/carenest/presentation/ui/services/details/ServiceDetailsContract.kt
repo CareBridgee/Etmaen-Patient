@@ -1,6 +1,6 @@
 package com.carenest.presentation.ui.services.details
 
-import com.carenest.presentation.ui.services.list.ServiceCategory
+import com.carenest.domain.model.home.ServiceCategory
 
 data class ServiceDetailsState(
     val category: ServiceCategory = ServiceCategory.IV_DRIP,

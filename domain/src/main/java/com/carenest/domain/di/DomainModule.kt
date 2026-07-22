@@ -6,6 +6,10 @@ import com.carenest.domain.usecase.auth.LoginWithPhoneUseCase
 import com.carenest.domain.usecase.auth.VerifyOtpUseCase
 import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
 import com.carenest.domain.usecase.settings.UpdateOnboardingStatusUseCase
+import com.carenest.domain.repository.HomeRepository
+import com.carenest.domain.usecase.home.GetServicesUseCase
+import com.carenest.domain.usecase.home.GetUpcomingBookingUseCase
+import com.carenest.domain.usecase.home.GetUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,4 +51,29 @@ object DomainModule {
     ): VerifyOtpUseCase {
         return VerifyOtpUseCase(authRepository)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetUserUseCase(
+        homeRepository: HomeRepository
+    ): GetUserUseCase {
+        return GetUserUseCase(homeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetServicesUseCase(
+        homeRepository: HomeRepository
+    ): GetServicesUseCase {
+        return GetServicesUseCase(homeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetUpcomingBookingUseCase(
+        homeRepository: HomeRepository
+    ): GetUpcomingBookingUseCase {
+        return GetUpcomingBookingUseCase(homeRepository)
+    }
 }
+

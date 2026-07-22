@@ -39,7 +39,11 @@ import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
+import com.carenest.domain.model.home.ServiceCategory
 import com.carenest.presentation.ui.services.list.ServicesScreen
+import com.carenest.presentation.ui.home.HomeScreen
+import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.profile.ProfileScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -67,10 +71,7 @@ fun AppNav() {
             entry<AppRoute.Splash> {
                 SplashScreen(
                     onNavigateToOnBoarding = {
-                        Snapshot.withMutableSnapshot {
-                            backStack.clear()
-                            backStack.add(AppRoute.OnBoarding)
-                        }
+                        replaceWith(AppRoute.OnBoarding)
                     }
                 )
             }
@@ -90,9 +91,13 @@ fun AppNav() {
                             backStack.add(AppRoute.Register)
                         }
                     },
+                    onNavigateToRegister = {
+                        backStack.add(AppRoute.Register)
+                    },
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
+
             entry<AppRoute.Register> {
                 RegisterScreen(
                     onNavigateBack = {
@@ -100,6 +105,9 @@ fun AppNav() {
                     },
                     onNavigateToWelcome = {
                         replaceWith(AppRoute.ProfileCompletion)
+                    },
+                    onNavigateHome = {
+                        replaceWith(AppRoute.Home)
                     }
                 )
             }
@@ -112,7 +120,26 @@ fun AppNav() {
             }
 
             entry<AppRoute.Home> {
-                HideTopBar()
+                HomeScreen(
+                    onNavigateToServices = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Services)
+                        }
+                    },
+                    onNavigateToBookings = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Bookings)
+                        }
+                    },
+                    onNavigateToAIChat = {
+                        // AI Chat navigation placeholder
+                    },
+                    onNavigateToServiceDetails = { category ->
+                        backStack.add(AppRoute.ServiceDetails(category))
+                    }
+                )
             }
 
             entry<AppRoute.Services> {
@@ -133,12 +160,17 @@ fun AppNav() {
             entry<AppRoute.OnBoarding> {
                 OnBoardingScreen(
                     onNavigateToHome = {
-                        Snapshot.withMutableSnapshot {
-                            backStack.clear()
-                            backStack.add(AppRoute.Login)
-                        }
+                        replaceWith(AppRoute.Login)
                     },
                 )
+            }
+
+            entry<AppRoute.Bookings> {
+                BookingsScreen()
+            }
+
+            entry<AppRoute.Profile> {
+                ProfileScreen()
             }
 
         }
@@ -147,6 +179,8 @@ fun AppNav() {
             listOf<AppRoute>(
                 AppRoute.Home,
                 AppRoute.Services,
+                AppRoute.Bookings,
+                AppRoute.Profile
             )
         }
 
@@ -226,10 +260,6 @@ fun AppNav() {
                             BottomNavItem(
                                 stringResource(R.string.nav_booking),
                                 RD.drawable.ic_bottom_nav_bookings
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_booking),
-                                RD.drawable.ic_booking
                             ),
                             BottomNavItem(
                                 stringResource(R.string.nav_profile),
