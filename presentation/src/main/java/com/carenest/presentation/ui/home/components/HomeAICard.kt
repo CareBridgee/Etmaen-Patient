@@ -39,8 +39,8 @@ fun HomeAICard(
 ) {
     val gradientBrush = Brush.linearGradient(
         colors = listOf(
-            Color(0xFF006C7A),
-            Color(0xFF004D56)
+            Theme.colors.primary,
+            Theme.colors.primaryVariant
         )
     )
 

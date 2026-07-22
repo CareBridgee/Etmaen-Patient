@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.R as RD
+import com.carenest.presentation.R
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun HomeSearchBar(
@@ -20,7 +22,7 @@ fun HomeSearchBar(
     CustomTextField(
         text = query,
         onTextChange = onQueryChange,
-        hint = "Search services, symptoms...",
+        hint = stringResource(R.string.home_search_hint),
         leadingIcon = painterResource(id = RD.drawable.ic_search),
         leadingIconColor = Theme.colors.hint,
         containerColor = Theme.colors.surface,

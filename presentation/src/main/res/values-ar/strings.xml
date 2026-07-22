@@ -255,6 +255,8 @@
   <string name="home_services_search_empty_desc">حاول البحث عن خدمة أو عرض آخر.</string>
   <string name="home_services_empty_title">لا توجد خدمات متاحة</string>
   <string name="home_services_empty_desc">ستظهر الخدمات هنا عندما تكون متاحة.</string>
+  <string name="home_search_hint">البحث عن خدمات، أعراض...</string>
+  <string name="otp_app_name">CareConnect</string>
 
   <string name="home_error_title">حدث خطأ ما</string>
   <string name="home_error_default_desc">فشل في تحميل محتوى الصفحة الرئيسية. يرجى المحاولة مرة أخرى.</string>

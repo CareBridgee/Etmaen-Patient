@@ -35,16 +35,19 @@ import com.carenest.presentation.ui.home.components.HomeSearchBar
 import com.carenest.presentation.ui.home.components.HomeServicesGrid
 import com.carenest.presentation.ui.home.components.HomeShimmerLoading
 
+import com.carenest.designsystem.components.toast.ToastHost
+import com.carenest.designsystem.components.toast.rememberToastState
+
 @Composable
 fun HomeScreen(
-    onNavigateToServices: () -> Unit = {},
-    onNavigateToServiceDetails: (com.carenest.domain.model.home.ServiceCategory) -> Unit = {},
-    onNavigateToBookings: () -> Unit = {},
-    onNavigateToAIChat: () -> Unit = {},
+    onNavigateToServices: () -> Unit,
+    onNavigateToServiceDetails: (com.carenest.domain.model.home.ServiceCategory) -> Unit,
+    onNavigateToBookings: () -> Unit,
+    onNavigateToAIChat: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
+    val toastState = rememberToastState()
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -53,15 +56,18 @@ fun HomeScreen(
             HomeEffect.NavigateToBookings -> onNavigateToBookings()
             HomeEffect.NavigateToAIChat -> onNavigateToAIChat()
             is HomeEffect.ShowToast -> {
-                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                toastState.show(effect.message, effect.type)
             }
         }
     }
 
-    HomeScreenContent(
-        state = state,
-        onEvent = viewModel::onEvent
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        HomeScreenContent(
+            state = state,
+            onEvent = viewModel::onEvent
+        )
+        ToastHost(state = toastState)
+    }
 }
 
 @Composable

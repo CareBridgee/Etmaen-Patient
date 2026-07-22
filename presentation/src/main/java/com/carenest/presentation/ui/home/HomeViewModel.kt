@@ -39,7 +39,7 @@ class HomeViewModel @Inject constructor(
             HomeIntent.StartAIChatClicked -> sendEffect(HomeEffect.NavigateToAIChat)
             HomeIntent.ViewAllServicesClicked -> sendEffect(HomeEffect.NavigateToServices)
             is HomeIntent.ServiceClicked -> {
-                if (event.service.id == "more_services") {
+                if (event.service.category == com.carenest.domain.model.home.ServiceCategory.MORE_SERVICES) {
                     sendEffect(HomeEffect.NavigateToServices)
                 } else {
                     sendEffect(HomeEffect.NavigateToServiceDetails(event.service.category))
@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
                     val topServices = services.take(5).toMutableList()
                     topServices.add(
                         com.carenest.domain.model.home.HealthcareService(
-                            id = "more_services",
+                            id = com.carenest.domain.model.home.ServiceCategory.MORE_SERVICES.name,
                             name = "More Services",
                             iconResName = "ic_services",
                             category = com.carenest.domain.model.home.ServiceCategory.MORE_SERVICES
@@ -121,7 +121,7 @@ class HomeViewModel @Inject constructor(
             val topServices = services.take(5).toMutableList()
             topServices.add(
                 com.carenest.domain.model.home.HealthcareService(
-                    id = "more_services",
+                    id = com.carenest.domain.model.home.ServiceCategory.MORE_SERVICES.name,
                     name = "More Services",
                     iconResName = "ic_services",
                     category = com.carenest.domain.model.home.ServiceCategory.MORE_SERVICES

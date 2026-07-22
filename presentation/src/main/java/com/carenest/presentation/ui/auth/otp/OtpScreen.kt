@@ -74,7 +74,7 @@ internal fun OtpScreenContent(
     onEvent: (OtpIntent) -> Unit
 ) {
     ScreenTopBar(
-        title = "CareConnect",
+        title = stringResource(R.string.otp_app_name),
         showLeadingIcon = true,
         onLeadingClick = { onEvent(OtpIntent.BackClicked) }
     )

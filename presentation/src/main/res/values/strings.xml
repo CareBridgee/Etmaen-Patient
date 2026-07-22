@@ -235,6 +235,8 @@
   <string name="home_services_search_empty_desc">Try searching for another service or symptom.</string>
   <string name="home_services_empty_title">No services available</string>
   <string name="home_services_empty_desc">Services will appear here when available.</string>
+  <string name="home_search_hint">Search services, symptoms...</string>
+  <string name="otp_app_name">CareConnect</string>
 
   <string name="home_error_title">Something went wrong</string>
   <string name="home_error_default_desc">Failed to load home content. Please try again.</string>

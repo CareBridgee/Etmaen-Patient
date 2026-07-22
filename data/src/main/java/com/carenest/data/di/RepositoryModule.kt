@@ -15,6 +15,8 @@ import dagger.hilt.components.SingletonComponent
 
 import com.carenest.data.repository.HomeRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
+import com.carenest.data.source.local.datasource.home.HomeDatasource
+import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,6 +41,8 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideAuthDatasource(authDatasourceImpl: AuthDatasourceImpl): AuthDatasource
 
+    @Binds
+    abstract fun provideHomeDatasource(homeDatasourceImpl: HomeFakeDatasourceImpl): HomeDatasource
 
     //endregion
 }
