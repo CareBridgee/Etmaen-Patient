@@ -217,11 +217,15 @@ fun AppNav() {
                         items = listOf(
                             BottomNavItem(
                                 stringResource(R.string.nav_home),
-                                RD.drawable.ic_home
+                                RD.drawable.ic_bottom_nav_home
                             ),
                             BottomNavItem(
                                 stringResource(R.string.nav_services),
-                                RD.drawable.ic_services
+                                RD.drawable.ic_bottom_nav_services
+                            ),
+                            BottomNavItem(
+                                stringResource(R.string.nav_booking),
+                                RD.drawable.ic_bottom_nav_bookings
                             ),
                             BottomNavItem(
                                 stringResource(R.string.nav_booking),
@@ -229,7 +233,7 @@ fun AppNav() {
                             ),
                             BottomNavItem(
                                 stringResource(R.string.nav_profile),
-                                RD.drawable.ic_profile
+                                RD.drawable.ic_bottom_nav_profile
                             )
                         ),
                         selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
