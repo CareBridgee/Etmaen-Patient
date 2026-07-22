@@ -13,12 +13,18 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 
+import androidx.compose.foundation.layout.statusBarsPadding
+import com.carenest.presentation.navigation.HideTopBar
+
 @Composable
 fun ProfileScreen() {
+    HideTopBar()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.colors.backGround),
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         Text(

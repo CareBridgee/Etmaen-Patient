@@ -267,4 +267,19 @@
 
   <!-- Profile Screen -->
   <string name="profile_screen_title">شاشة الملف الشخصي</string>
+
+  <!-- Choose Patient Screen -->
+  <string name="choose_patient_title">اختيار المريض</string>
+  <string name="choose_patient_description">لمن نقوم بالتقييم اليوم؟ يساعدنا هذا في تقديم توصيات صحية محددة.</string>
+  <string name="add_family_member">إضافة فرد من العائلة</string>
+  <string name="add_family_member_info">إضافة أفراد العائلة يتيح لك إدارة خطط الرعاية الخاصة بهم، وتتبع المواعيد الطبية، والحصول على تقييمات صحية مخصصة تناسب أعمارهم وتاريخهم الطبي.</string>
+  <string name="continue_with_assessment">متابعة التقييم</string>
+
+  <!-- AI Chat Screen -->
+  <string name="ai_health_assistant">المساعد الصحي الذكي</string>
+  <string name="online_ready">متصل وجاهز للمساعدة</string>
+  <string name="recommended_service">موصى به</string>
+  <string name="ask_health_profile">اسأل عن ملفك الصحي...</string>
+  <string name="book_now">احجز الآن</string>
+  <string name="view_service">عرض الخدمة</string>
 </resources>

@@ -37,10 +37,15 @@ sealed interface AppRoute : NavKey {
      @Serializable
      data class ServiceDetails(val category: ServiceCategory) : AppRoute
 
-
      @Serializable
      data object Bookings : AppRoute
 
      @Serializable
      data object Profile : AppRoute
+
+     @Serializable
+     data object ChoosePatient : AppRoute
+
+     @Serializable
+     data class AIChat(val patientId: String) : AppRoute
 }

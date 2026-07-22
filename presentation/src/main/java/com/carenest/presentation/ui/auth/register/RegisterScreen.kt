@@ -165,24 +165,6 @@ internal fun RegisterScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            CustomTextField(
-                text = state.nationalId,
-                onTextChange = {
-                    onEvent(
-                        RegisterIntent.NationalIdChanged(
-                            it.filter(Char::isDigit).take(16)
-                        )
-                    )
-                },
-                title = stringResource(R.string.personal_info_national_id_title),
-                hint = stringResource(R.string.personal_info_national_id_hint),
-                singleLine = true,
-                fieldHeight = 48.dp,
-                containerColor = Theme.colors.disable,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             BasicText(
                 text = stringResource(R.string.personal_info_gender_title),
@@ -203,27 +185,7 @@ internal fun RegisterScreenContent(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            BasicText(
-                text = stringResource(R.string.personal_info_account_type_title),
-                style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            val accountTypes = listOf(
-                stringResource(R.string.personal_info_account_type_family),
-                stringResource(R.string.personal_info_account_type_personal)
-            )
-            SegmentedControl(
-                items = accountTypes,
-                selectedIndex = accountTypes.indexOf(state.accountType),
-                onItemSelected = {
-                    onEvent(RegisterIntent.AccountTypeChanged(accountTypes[it]))
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
+            
             PrimaryButton(
                 caption = stringResource(R.string.personal_info_continue_btn),
                 onClick = { onEvent(RegisterIntent.ContinueClicked) },

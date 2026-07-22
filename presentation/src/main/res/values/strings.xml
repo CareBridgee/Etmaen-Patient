@@ -247,4 +247,19 @@
 
   <!-- Profile Screen -->
   <string name="profile_screen_title">Profile Screen</string>
+
+  <!-- Choose Patient Screen -->
+  <string name="choose_patient_title">Choose Patient</string>
+  <string name="choose_patient_description">Who are we assessing today? This helps us provide specific health recommendations.</string>
+  <string name="add_family_member">Add Family Member</string>
+  <string name="add_family_member_info">Adding family members allows you to manage their care plans, track medical appointments, and receive personalized health assessments tailored to their specific age and medical history.</string>
+  <string name="continue_with_assessment">Continue with Assessment</string>
+
+  <!-- AI Chat Screen -->
+  <string name="ai_health_assistant">AI Health Assistant</string>
+  <string name="online_ready">Online &amp; Ready to help</string>
+  <string name="recommended_service">RECOMMENDED</string>
+  <string name="ask_health_profile">Ask about your health profile...</string>
+  <string name="book_now">Book Now</string>
+  <string name="view_service">View Service</string>
 </resources>

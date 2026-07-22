@@ -44,6 +44,8 @@ import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
+import com.carenest.presentation.ui.aichat.chat.AIChatScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -134,7 +136,7 @@ fun AppNav() {
                         }
                     },
                     onNavigateToAIChat = {
-                        // AI Chat navigation placeholder
+                        backStack.add(AppRoute.ChoosePatient)
                     },
                     onNavigateToServiceDetails = { category ->
                         backStack.add(AppRoute.ServiceDetails(category))
@@ -171,6 +173,36 @@ fun AppNav() {
 
             entry<AppRoute.Profile> {
                 ProfileScreen()
+            }
+            
+            entry<AppRoute.ChoosePatient> {
+                ChoosePatientScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToChat = { patientId ->
+                        backStack.add(AppRoute.AIChat(patientId))
+                    }
+                )
+            }
+
+            entry<AppRoute.AIChat> { route ->
+                AIChatScreen(
+                    patientId = route.patientId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToBookings = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Bookings)
+                        }
+                    },
+                    onNavigateToServiceDetails = { categoryStr ->
+                        try {
+                            val category = ServiceCategory.valueOf(categoryStr)
+                            backStack.add(AppRoute.ServiceDetails(category))
+                        } catch (e: Exception) {
+                            // Invalid category
+                        }
+                    }
+                )
             }
 
         }
