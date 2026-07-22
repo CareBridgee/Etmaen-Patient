@@ -169,4 +169,53 @@
   <string name="phone_input_secure_care_desc">Your number is used only for verification and secure coordination of services.</string>
   <string name="phone_input_via_whatsapp">via WhatsApp</string>
   <string name="phone_input_via_sms">via SMS</string>
+  <!-- Services -->
+  <string name="services_greeting">Good morning, Elena</string>
+  <string name="services_greeting_subtitle">Find the care you need today</string>
+  <string name="services_search_hint">Search services (e.g. Injection)</string>
+  <string name="services_categories_title">Service Categories</string>
+  <string name="services_categories_subtitle">Expert care delivered to your doorstep</string>
+  <string name="services_general_nursing">General Nursing</string>
+  <string name="services_general_nursing_subtitle">Routine checks &amp; wellness</string>
+  <string name="services_injection">Injection</string>
+  <string name="services_injection_subtitle">Home dosage</string>
+  <string name="services_physical_therapy">Physical Therapy</string>
+  <string name="services_physical_therapy_subtitle">Mobility aid</string>
+  <string name="services_wound_care">Wound Care</string>
+  <string name="services_wound_care_subtitle">Post-surgery</string>
+  <string name="services_post_natal">Post-Natal</string>
+  <string name="services_post_natal_subtitle">Mother &amp; baby</string>
+  <string name="services_elderly_care">Elderly Care</string>
+  <string name="services_elderly_care_subtitle">Daily support</string>
+  <string name="services_iv_drip">IV Drip</string>
+  <string name="services_iv_drip_subtitle">Hydration therapy</string>
+  <string name="services_vaccinations">Vaccinations</string>
+  <string name="services_vaccinations_subtitle">All age groups</string>
+  <string name="services_chronic_care_title">Chronic Care</string>
+  <string name="services_chronic_care_subtitle">Diabetes, Hypertension &amp; more</string>
+  <string name="services_consultation_title">Not sure what you need?</string>
+  <string name="services_consultation_subtitle">Chat with our care coordinator for a personalized recommendation.</string>
+  <string name="services_consultation_button">Consult Now</string>
+
+  <!-- Service Details -->
+  <string name="service_details_title">Service Details</string>
+  <string name="service_details_back">Back</string>
+  <string name="service_details_share">Share</string>
+  <string name="service_details_clinical_grade">Clinical Grade</string>
+  <string name="service_details_service_title">IV Hydration Therapy</string>
+  <string name="service_details_service_subtitle">Personalized hydration and vitamin infusion.</string>
+  <string name="service_details_average_price">Average price</string>
+  <string name="service_details_price">$189.00</string>
+  <string name="service_details_duration">Duration</string>
+  <string name="service_details_duration_value">45–60 min</string>
+  <string name="service_details_about_title">About this service</string>
+  <string name="service_details_about_body">Our IV therapy is administered by certified medical professionals in the comfort of your home. This treatment rapidly restores fluid balance and delivers essential vitamins directly into your bloodstream for maximum absorption.</string>
+  <string name="service_details_included_title">What\'s included</string>
+  <string name="service_details_included_nurse">In-home travel &amp; setup by a Registered Nurse</string>
+  <string name="service_details_included_monitoring">Vital signs monitoring and health screening</string>
+  <string name="service_details_included_solution">1000ml Saline / Lactated Ringer solution</string>
+  <string name="service_details_included_booster">Custom vitamin booster (B-Complex + Vitamin C)</string>
+  <string name="service_details_included_supplies">Disposable high-quality medical supplies</string>
+  <string name="service_details_information_note">Please note: A brief health questionnaire is required before the arrival of your specialist to ensure safety.</string>
+  <string name="service_details_request_button">Request This Service</string>
 </resources>

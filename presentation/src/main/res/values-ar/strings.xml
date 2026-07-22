@@ -189,4 +189,53 @@
   <string name="phone_input_via_whatsapp">عبر واتساب</string>
   <string name="phone_input_via_sms">عبر رسالة نصية</string>
 
+  <!-- Services -->
+  <string name="services_greeting">صباح الخير، إيلينا</string>
+  <string name="services_greeting_subtitle">ابحثي عن الرعاية التي تحتاجينها اليوم</string>
+  <string name="services_search_hint">ابحثي عن خدمة (مثال: حقن)</string>
+  <string name="services_categories_title">فئات الخدمات</string>
+  <string name="services_categories_subtitle">رعاية متخصصة تصلك حتى باب المنزل</string>
+  <string name="services_general_nursing">التمريض العام</string>
+  <string name="services_general_nursing_subtitle">فحوصات دورية ورعاية صحية</string>
+  <string name="services_injection">الحقن</string>
+  <string name="services_injection_subtitle">إعطاء الجرعات في المنزل</string>
+  <string name="services_physical_therapy">العلاج الطبيعي</string>
+  <string name="services_physical_therapy_subtitle">دعم الحركة</string>
+  <string name="services_wound_care">العناية بالجروح</string>
+  <string name="services_wound_care_subtitle">رعاية ما بعد الجراحة</string>
+  <string name="services_post_natal">رعاية ما بعد الولادة</string>
+  <string name="services_post_natal_subtitle">للأم والطفل</string>
+  <string name="services_elderly_care">رعاية كبار السن</string>
+  <string name="services_elderly_care_subtitle">دعم يومي</string>
+  <string name="services_iv_drip">المحاليل الوريدية</string>
+  <string name="services_iv_drip_subtitle">علاج الترطيب</string>
+  <string name="services_vaccinations">التطعيمات</string>
+  <string name="services_vaccinations_subtitle">لكل الفئات العمرية</string>
+  <string name="services_chronic_care_title">رعاية الأمراض المزمنة</string>
+  <string name="services_chronic_care_subtitle">السكري وضغط الدم والمزيد</string>
+  <string name="services_consultation_title">لستِ متأكدة مما تحتاجينه؟</string>
+  <string name="services_consultation_subtitle">تحدثي مع منسق الرعاية للحصول على توصية تناسب احتياجاتك.</string>
+  <string name="services_consultation_button">استشيري الآن</string>
+
+  <!-- Service Details -->
+  <string name="service_details_title">تفاصيل الخدمة</string>
+  <string name="service_details_back">رجوع</string>
+  <string name="service_details_share">مشاركة</string>
+  <string name="service_details_clinical_grade">معايير طبية</string>
+  <string name="service_details_service_title">العلاج بالترطيب الوريدي</string>
+  <string name="service_details_service_subtitle">محلول ترطيب وفيتامينات مخصص لاحتياجاتك.</string>
+  <string name="service_details_average_price">متوسط السعر</string>
+  <string name="service_details_price">189.00 دولار</string>
+  <string name="service_details_duration">المدة</string>
+  <string name="service_details_duration_value">45–60 دقيقة</string>
+  <string name="service_details_about_title">عن هذه الخدمة</string>
+  <string name="service_details_about_body">يقدم العلاج الوريدي متخصصون طبيون معتمدون في راحة منزلك. يساعد هذا العلاج على استعادة توازن السوائل سريعاً ويوصل الفيتامينات الأساسية مباشرة إلى مجرى الدم لتحقيق أقصى استفادة.</string>
+  <string name="service_details_included_title">ما تشمله الخدمة</string>
+  <string name="service_details_included_nurse">انتقال الممرض المسجل إلى المنزل وتجهيز الخدمة</string>
+  <string name="service_details_included_monitoring">مراقبة المؤشرات الحيوية والفحص الصحي</string>
+  <string name="service_details_included_solution">1000 مل من المحلول الملحي أو محلول رينجر اللاكتاتي</string>
+  <string name="service_details_included_booster">جرعة فيتامينات مخصصة (فيتامينات ب المركبة + فيتامين ج)</string>
+  <string name="service_details_included_supplies">مستلزمات طبية عالية الجودة للاستخدام مرة واحدة</string>
+  <string name="service_details_information_note">يرجى ملاحظة أن استبياناً صحياً مختصراً مطلوب قبل وصول المتخصص لضمان السلامة.</string>
+  <string name="service_details_request_button">اطلبي هذه الخدمة</string>
 </resources>

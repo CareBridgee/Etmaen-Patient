@@ -1,6 +1,7 @@
 package com.carenest.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.carenest.presentation.ui.services.list.ServiceCategory
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,5 +30,11 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data object Home : AppRoute
+
+     @Serializable
+     data object Services : AppRoute
+
+     @Serializable
+     data class ServiceDetails(val category: ServiceCategory) : AppRoute
 
 }
