@@ -245,7 +245,7 @@
   <string name="home_ai_description">صف الأعراض الخاصة بك، واحصل على مطابقة فورية مع المتخصصين.</string>
   <string name="home_ai_start_chat">ابدأ المحادثة</string>
   
-  <string name="home_bookings_title">حجوزاتي</string>
+  <string name="home_history_title">حجوزاتي</string>
   <string name="home_bookings_manage">إدارة</string>
   <string name="home_bookings_empty">لا توجد حجوزات قادمة</string>
 

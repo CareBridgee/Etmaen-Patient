@@ -47,7 +47,7 @@ fun HomeBookingCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.home_bookings_title),
+                text = stringResource(R.string.home_history_title),
                 style = Theme.typography.body.large.copy(
                     fontWeight = FontWeight.Bold,
                     color = Theme.colors.primaryFont,

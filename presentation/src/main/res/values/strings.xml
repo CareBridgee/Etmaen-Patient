@@ -225,7 +225,7 @@
   <string name="home_ai_description">Describe your symptoms, get matched instantly with specialists.</string>
   <string name="home_ai_start_chat">Start Chat</string>
   
-  <string name="home_bookings_title">My Bookings</string>
+  <string name="home_history_title">History</string>
   <string name="home_bookings_manage">Manage</string>
   <string name="home_bookings_empty">No upcoming bookings</string>
 
