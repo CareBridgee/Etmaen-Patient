@@ -54,7 +54,7 @@ import com.carenest.presentation.ui.services.components.ServiceChecklistItem
 import com.carenest.presentation.ui.services.components.ServiceInformationNote
 import com.carenest.presentation.ui.services.components.ServiceMetricCard
 import com.carenest.presentation.ui.services.components.ServiceSurfaceCard
-import com.carenest.presentation.ui.services.list.ServiceCategory
+import com.carenest.domain.model.home.ServiceCategory
 import com.carenest.designsystem.R as RD
 
 @Composable

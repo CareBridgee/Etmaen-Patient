@@ -17,5 +17,6 @@ data class OtpState(
 
 sealed interface OtpEffect {
     data object NavigateToRegistration : OtpEffect
+    data object NavigateToRegister : OtpEffect
     data object NavigateBack : OtpEffect
 }

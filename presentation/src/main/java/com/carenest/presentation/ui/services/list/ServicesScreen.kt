@@ -57,12 +57,8 @@ import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.ui.services.components.ServiceCategoryCard
 import com.carenest.designsystem.R as RD
 
-private data class CategoryPresentation(
-    val category: ServiceCategory,
-    val title: Int,
-    val subtitle: Int,
-    val icon: ImageVector,
-)
+import com.carenest.domain.model.home.HealthcareService
+import com.carenest.domain.model.home.ServiceCategory
 
 @Composable
 fun ServicesScreen(
@@ -91,16 +87,6 @@ internal fun ServicesScreenContent(
 ) {
     HideTopBar()
 
-    val categories = listOf(
-        CategoryPresentation(ServiceCategory.GENERAL_NURSING, R.string.services_general_nursing, R.string.services_general_nursing_subtitle, Icons.Outlined.MedicalServices),
-        CategoryPresentation(ServiceCategory.INJECTION, R.string.services_injection, R.string.services_injection_subtitle, Icons.Outlined.Vaccines),
-        CategoryPresentation(ServiceCategory.PHYSICAL_THERAPY, R.string.services_physical_therapy, R.string.services_physical_therapy_subtitle, Icons.Outlined.Healing),
-        CategoryPresentation(ServiceCategory.WOUND_CARE, R.string.services_wound_care, R.string.services_wound_care_subtitle, Icons.Outlined.MonitorHeart),
-        CategoryPresentation(ServiceCategory.POST_NATAL, R.string.services_post_natal, R.string.services_post_natal_subtitle, Icons.Outlined.ChildCare),
-        CategoryPresentation(ServiceCategory.ELDERLY_CARE, R.string.services_elderly_care, R.string.services_elderly_care_subtitle, Icons.Outlined.AccessibilityNew),
-        CategoryPresentation(ServiceCategory.IV_DRIP, R.string.services_iv_drip, R.string.services_iv_drip_subtitle, Icons.Outlined.MedicalServices),
-        CategoryPresentation(ServiceCategory.VACCINATIONS, R.string.services_vaccinations, R.string.services_vaccinations_subtitle, Icons.Outlined.Vaccines),
-    ).associateBy(CategoryPresentation::category)
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -150,8 +136,8 @@ internal fun ServicesScreenContent(
                 )
                 Spacer(Modifier.height(Theme.spacing.space12))
                 CategoryGrid(
-                    categories = categories,
-                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it)) },
+                    services = state.filteredServices,
+                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.category)) },
                 )
             }
         }
@@ -204,48 +190,53 @@ private fun GreetingHeader() {
 
 @Composable
 private fun CategoryGrid(
-    categories: Map<ServiceCategory, CategoryPresentation>,
-    onCategoryClick: (ServiceCategory) -> Unit,
+    services: List<HealthcareService>,
+    onCategoryClick: (HealthcareService) -> Unit,
 ) {
-    val left = listOf(
-        ServiceCategory.GENERAL_NURSING to 198.dp,
-        ServiceCategory.WOUND_CARE to 116.dp,
-        ServiceCategory.ELDERLY_CARE to 116.dp,
-        ServiceCategory.VACCINATIONS to 116.dp,
-    )
-    val right = listOf(
-        ServiceCategory.INJECTION to 116.dp,
-        ServiceCategory.PHYSICAL_THERAPY to 116.dp,
-        ServiceCategory.POST_NATAL to 116.dp,
-        ServiceCategory.IV_DRIP to 116.dp,
-    )
+    val left = mutableListOf<Pair<HealthcareService, androidx.compose.ui.unit.Dp>>()
+    val right = mutableListOf<Pair<HealthcareService, androidx.compose.ui.unit.Dp>>()
+
+    services.forEachIndexed { index, service ->
+        // Create masonry effect by varying heights
+        val height = if ((index % 4 == 0) || (index % 4 == 3)) 198.dp else 116.dp
+        if (index % 2 == 0) {
+            left.add(service to height)
+        } else {
+            right.add(service to height)
+        }
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
         verticalAlignment = Alignment.Top,
     ) {
-        CategoryColumn(left, categories, onCategoryClick, Modifier.weight(1f))
-        CategoryColumn(right, categories, onCategoryClick, Modifier.weight(1f))
+        CategoryColumn(left, onCategoryClick, Modifier.weight(1f))
+        CategoryColumn(right, onCategoryClick, Modifier.weight(1f))
     }
 }
 
 @Composable
 private fun CategoryColumn(
-    items: List<Pair<ServiceCategory, androidx.compose.ui.unit.Dp>>,
-    categories: Map<ServiceCategory, CategoryPresentation>,
-    onCategoryClick: (ServiceCategory) -> Unit,
+    items: List<Pair<HealthcareService, androidx.compose.ui.unit.Dp>>,
+    onCategoryClick: (HealthcareService) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)) {
-        items.forEach { (category, height) ->
-            val presentation = requireNotNull(categories[category])
+        items.forEach { (service, height) ->
+            val iconRes = when (service.iconResName) {
+                "ic_syringe" -> RD.drawable.ic_syringe
+                "ic_pill" -> RD.drawable.ic_pill
+                "ic_physical_therapy" -> RD.drawable.ic_physical_therapy
+                "ic_services" -> RD.drawable.ic_services
+                else -> RD.drawable.ic_heart_beat
+            }
             ServiceCategoryCard(
-                title = stringResource(presentation.title),
-                subtitle = stringResource(presentation.subtitle),
-                icon = rememberVectorPainter(presentation.icon),
+                title = service.name,
+                subtitle = "Professional care", // Fallback generic subtitle
+                icon = painterResource(id = iconRes),
                 height = height,
-                onClick = { onCategoryClick(category) },
+                onClick = { onCategoryClick(service) },
             )
         }
     }

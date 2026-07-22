@@ -1,22 +1,12 @@
 package com.carenest.presentation.ui.services.list
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-enum class ServiceCategory {
-    GENERAL_NURSING,
-    INJECTION,
-    PHYSICAL_THERAPY,
-    WOUND_CARE,
-    POST_NATAL,
-    ELDERLY_CARE,
-    IV_DRIP,
-    VACCINATIONS,
-    CHRONIC_CARE,
-}
+import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.domain.model.home.HealthcareService
 
 data class ServicesState(
     val searchQuery: String = "",
+    val services: List<HealthcareService> = emptyList(),
+    val filteredServices: List<HealthcareService> = emptyList()
 )
 
 sealed interface ServicesIntent {

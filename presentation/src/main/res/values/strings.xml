@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="nav_home">Home</string>
   <string name="nav_booking">Bookings</string>
@@ -218,4 +218,31 @@
   <string name="service_details_included_supplies">Disposable high-quality medical supplies</string>
   <string name="service_details_information_note">Please note: A brief health questionnaire is required before the arrival of your specialist to ensure safety.</string>
   <string name="service_details_request_button">Request This Service</string>
+
+  <!-- Home Screen -->
+  <string name="home_ai_powered">AI POWERED</string>
+  <string name="home_ai_title">AI Health Assessment</string>
+  <string name="home_ai_description">Describe your symptoms, get matched instantly with specialists.</string>
+  <string name="home_ai_start_chat">Start Chat</string>
+  
+  <string name="home_bookings_title">My Bookings</string>
+  <string name="home_bookings_manage">Manage</string>
+  <string name="home_bookings_empty">No upcoming bookings</string>
+
+  <string name="home_services_title">Healthcare Services</string>
+  <string name="home_services_view_all">View All</string>
+  <string name="home_services_search_empty_title">No services found</string>
+  <string name="home_services_search_empty_desc">Try searching for another service or symptom.</string>
+  <string name="home_services_empty_title">No services available</string>
+  <string name="home_services_empty_desc">Services will appear here when available.</string>
+
+  <string name="home_error_title">Something went wrong</string>
+  <string name="home_error_default_desc">Failed to load home content. Please try again.</string>
+  <string name="home_error_retry">Retry</string>
+
+  <!-- Bookings Screen -->
+  <string name="bookings_screen_title">Bookings Screen</string>
+
+  <!-- Profile Screen -->
+  <string name="profile_screen_title">Profile Screen</string>
 </resources>

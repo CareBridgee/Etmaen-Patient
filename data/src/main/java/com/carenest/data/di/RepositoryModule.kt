@@ -13,6 +13,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
+import com.carenest.data.repository.HomeRepositoryImpl
+import com.carenest.domain.repository.HomeRepository
+
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
@@ -24,6 +27,8 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideAuthRepositoryImpl(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
 
+    @Binds
+    abstract fun provideHomeRepositoryImpl(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 
     //endregion
 
