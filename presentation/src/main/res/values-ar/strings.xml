@@ -267,4 +267,22 @@
 
   <!-- Profile Screen -->
   <string name="profile_screen_title">شاشة الملف الشخصي</string>
+
+  <string name="request_status">حالة الطلب</string>
+
+  <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
+
+  <string name="searching_describtion">
+نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.
+</string>
+
+  <string name="nurse_active">ممرضون نشطون بالقرب منك</string>
+
+  <string name="decline">رفض</string>
+
+  <string name="accept">قبول</string>
+
+  <string name="km">كم</string>
+
+  <string name="reviews">تقييمًا</string>
 </resources>

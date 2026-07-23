@@ -247,4 +247,15 @@
 
   <!-- Profile Screen -->
   <string name="profile_screen_title">Profile Screen</string>
+
+  <!-- Search For Nurse -->
+  <string name="request_status">Request Status</string>
+  <string name="searching_for_available">"Searching for an available nurse…</string>
+  <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.
+</string>
+  <string name="nurse_active"> nurses active nearby</string>
+  <string name="decline">Decline</string>
+  <string name="accept">Accept</string>
+  <string name="km">km</string>
+  <string name="reviews">reviews</string>
 </resources>
