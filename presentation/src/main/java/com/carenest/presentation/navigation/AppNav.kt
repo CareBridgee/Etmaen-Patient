@@ -44,6 +44,7 @@ import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -173,6 +174,14 @@ fun AppNav() {
                 ProfileScreen()
             }
 
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                       replaceWith(AppRoute.AcceptOffer)
+                    }
+                )
+            }
         }
 
         val bottomNavRoutes = remember {
