@@ -246,4 +246,26 @@
 
   <!-- Profile Screen -->
   <string name="profile_screen_title">Profile Screen</string>
+
+  <!-- Complete Profile Validation -->
+  <string name="validation_required">This field is required</string>
+  <string name="validation_invalid_name">Use letters, spaces, apostrophes, or hyphens only</string>
+  <string name="validation_name_length">Enter between 2 and 50 characters</string>
+  <string name="validation_invalid_date">Enter a valid date in MM/DD/YYYY format</string>
+  <string name="validation_future_date">Date of birth cannot be in the future</string>
+  <string name="validation_date_too_old">Enter a realistic date of birth</string>
+  <string name="validation_invalid_number">Enter a valid number</string>
+  <string name="validation_height_range">Height must be between 30 and 250 cm</string>
+  <string name="validation_weight_range">Weight must be between 1 and 500 kg</string>
+  <string name="validation_blood_type">Select a valid blood type</string>
+  <string name="validation_text_too_long_100">Maximum 100 characters</string>
+  <string name="validation_text_too_long_500">Maximum 500 characters</string>
+  <string name="validation_text_too_long_1000">Maximum 1000 characters</string>
+  <string name="validation_allergy_selection">Select an allergy, enter another allergy, or choose no known allergies</string>
+  <string name="validation_medication_selection">Add at least one medication or choose no current medications</string>
+  <string name="validation_medication_name">Enter the medication name</string>
+  <string name="validation_mobility_required">Select a mobility status</string>
+  <string name="validation_emergency_name_length">Enter a contact name between 2 and 100 characters</string>
+  <string name="validation_invalid_phone">Enter a valid phone number with 7 to 15 digits</string>
+
 </resources>

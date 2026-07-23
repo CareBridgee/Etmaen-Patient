@@ -6,6 +6,9 @@ import com.carenest.domain.model.profile.EmergencyContact
 import com.carenest.domain.model.profile.LocalMedicationEntry
 import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileLocalDraft
+import com.carenest.presentation.ui.profile.validation.MedicationValidationErrors
+import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.presentation.ui.profile.validation.ProfileValidationError
 
 enum class ProfileStep {
     Welcome, BasicHealthInfo, MedicalConditions, Allergies, CurrentMedications,
@@ -39,6 +42,8 @@ data class ProfileCompletionState(
     val isSubmitting: Boolean = false,
     val initialized: Boolean = false,
     val errorMessage: String? = null,
+    val validationErrors: Map<ProfileField, ProfileValidationError> = emptyMap(),
+    val medicationValidationErrors: Map<String, MedicationValidationErrors> = emptyMap(),
     val loadedSteps: Set<ProfileStep> = emptySet(),
     val height: String = "170",
     val weight: String = "65",

@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.profile.steps
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,9 @@ fun BasicHealthInfoScreen(
     height: String,
     weight: String,
     bloodType: String,
+    heightError: String? = null,
+    weightError: String? = null,
+    bloodTypeError: String? = null,
     onHeightChange: (String) -> Unit,
     onWeightChange: (String) -> Unit,
     onBloodTypeChange: (String) -> Unit,
@@ -95,6 +99,7 @@ fun BasicHealthInfoScreen(
                     value = height,
                     unit = stringResource(R.string.basic_health_cm),
                     onValueChange = onHeightChange,
+                    errorMessage = heightError,
                     modifier = Modifier.weight(1f)
                 )
                 MeasurementCard(
@@ -102,12 +107,14 @@ fun BasicHealthInfoScreen(
                     value = weight,
                     unit = stringResource(R.string.basic_health_kg),
                     onValueChange = onWeightChange,
+                    errorMessage = weightError,
                     modifier = Modifier.weight(1f)
                 )
             }
 
             BloodTypeCard(
                 selectedBloodType = bloodType,
+                errorMessage = bloodTypeError,
                 onBloodTypeSelected = onBloodTypeChange
             )
         }
@@ -173,6 +180,7 @@ private fun MeasurementCard(
     value: String,
     unit: String,
     onValueChange: (String) -> Unit,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -197,6 +205,8 @@ private fun MeasurementCard(
                 singleLine = true,
                 fieldHeight = 52.dp,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = errorMessage != null,
+                errorMessage = errorMessage,
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.size(Theme.spacing.small))
@@ -211,6 +221,7 @@ private fun MeasurementCard(
 @Composable
 private fun BloodTypeCard(
     selectedBloodType: String,
+    errorMessage: String? = null,
     onBloodTypeSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -239,6 +250,10 @@ private fun BloodTypeCard(
                     .height(56.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(Theme.colors.disable)
+                    .then(
+                        if (errorMessage != null) Modifier.border(1.dp, Theme.colors.error, RoundedCornerShape(14.dp))
+                        else Modifier
+                    )
                     .clickable { expanded = true }
                     .padding(horizontal = Theme.spacing.medium),
                 verticalAlignment = Alignment.CenterVertically,
@@ -272,6 +287,12 @@ private fun BloodTypeCard(
                     )
                 }
             }
+        }
+        errorMessage?.let {
+            BasicText(
+                text = it,
+                style = Theme.typography.body.small.copy(color = Theme.colors.error)
+            )
         }
         BasicText(
             text = stringResource(R.string.basic_health_blood_type_note),

@@ -56,6 +56,8 @@ private data class MobilityOption(
 fun MobilityStatusScreen(
     selectedStatus: MobilityStatus?,
     additionalNotes: String,
+    statusError: String? = null,
+    notesError: String? = null,
     onStatusSelected: (MobilityStatus) -> Unit,
     onAdditionalNotesChange: (String) -> Unit,
     onBack: () -> Unit,
@@ -146,6 +148,12 @@ fun MobilityStatusScreen(
                         onClick = { onStatusSelected(option.status) }
                     )
                 }
+                statusError?.let {
+                    BasicText(
+                        text = it,
+                        style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                    )
+                }
             }
 
             Column(
@@ -177,6 +185,8 @@ fun MobilityStatusScreen(
                     fieldVerticalAlignment = Alignment.Top,
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
+                    isError = notesError != null,
+                    errorMessage = notesError,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -185,7 +195,7 @@ fun MobilityStatusScreen(
         ProfileScreenNavigation(
             onBack = onBack,
             onContinue = onContinue,
-            continueEnabled = selectedStatus != null && !isSubmitting,
+            continueEnabled = !isSubmitting,
             isLoading = isSubmitting
         )
     }

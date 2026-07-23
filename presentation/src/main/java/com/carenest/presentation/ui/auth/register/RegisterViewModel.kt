@@ -10,6 +10,8 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.presentation.ui.profile.validation.ProfileInputValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -60,16 +62,32 @@ class RegisterViewModel @Inject constructor(
     fun onEvent(event: RegisterIntent) {
         when (event) {
             is RegisterIntent.FirstNameChanged -> updateState {
-                copy(firstName = event.firstName, errorMessage = null)
+                copy(
+                    firstName = event.firstName.take(50),
+                    errorMessage = null,
+                    validationErrors = validationErrors - ProfileField.FirstName
+                )
             }
             is RegisterIntent.LastNameChanged -> updateState {
-                copy(lastName = event.lastName, errorMessage = null)
+                copy(
+                    lastName = event.lastName.take(50),
+                    errorMessage = null,
+                    validationErrors = validationErrors - ProfileField.LastName
+                )
             }
             is RegisterIntent.DateOfBirthChanged -> updateState {
-                copy(dateOfBirth = event.dateOfBirth, errorMessage = null)
+                copy(
+                    dateOfBirth = event.dateOfBirth.take(10),
+                    errorMessage = null,
+                    validationErrors = validationErrors - ProfileField.DateOfBirth
+                )
             }
             is RegisterIntent.GenderChanged -> updateState {
-                copy(gender = event.gender, errorMessage = null)
+                copy(
+                    gender = event.gender,
+                    errorMessage = null,
+                    validationErrors = validationErrors - ProfileField.Gender
+                )
             }
             RegisterIntent.BackClicked -> sendEffect(RegisterEffect.NavigateBack)
             RegisterIntent.ContinueClicked -> submitPersonalInfo()
@@ -81,13 +99,22 @@ class RegisterViewModel @Inject constructor(
         val profileId = currentState.profileId ?: return updateState {
             copy(errorMessage = "Profile information is unavailable. Please try again.")
         }
+        val validationErrors = ProfileInputValidator.personalInfo(
+            currentState.firstName,
+            currentState.lastName,
+            currentState.dateOfBirth,
+            currentState.gender
+        )
+        if (validationErrors.isNotEmpty()) {
+            return updateState {
+                copy(validationErrors = validationErrors, errorMessage = null)
+            }
+        }
+
         val firstName = currentState.firstName.trim()
         val lastName = currentState.lastName.trim()
-        val dateOfBirth = currentState.dateOfBirth.toBackendDate()
-        val gender = currentState.gender.takeIf { it in setOf("MALE", "FEMALE") }
-        if (firstName.isBlank() || lastName.isBlank() || dateOfBirth == null || gender == null) {
-            return updateState { copy(errorMessage = "Enter your name, date of birth, and gender") }
-        }
+        val dateOfBirth = requireNotNull(currentState.dateOfBirth.toBackendDate())
+        val gender = currentState.gender
         updateState { copy(isSubmitting = true, errorMessage = null) }
         viewModelScope.launch {
             updatePersonalInfo(
@@ -95,7 +122,13 @@ class RegisterViewModel @Inject constructor(
                 PersonalInfoUpdate(firstName, lastName, dateOfBirth, gender)
             ).fold(
                 onSuccess = {
-                    updateState { copy(isSubmitting = false) }
+                    updateState {
+                        copy(
+                            isSubmitting = false,
+                            validationErrors = emptyMap(),
+                            errorMessage = null
+                        )
+                    }
                     sendEffect(RegisterEffect.NavigateToWelcome)
                 },
                 onFailure = {

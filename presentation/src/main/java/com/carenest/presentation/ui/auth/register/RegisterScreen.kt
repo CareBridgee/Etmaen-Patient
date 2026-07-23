@@ -45,6 +45,8 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.presentation.ui.profile.validation.localizedMessage
 import com.carenest.presentation.navigation.ScreenTopBar
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -129,6 +131,8 @@ internal fun RegisterScreenContent(
                     singleLine = true,
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
+                    isError = state.validationErrors[ProfileField.FirstName] != null,
+                    errorMessage = state.validationErrors[ProfileField.FirstName].localizedMessage(),
                     modifier = Modifier.weight(1f)
                 )
                 CustomTextField(
@@ -141,6 +145,8 @@ internal fun RegisterScreenContent(
                     singleLine = true,
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
+                    isError = state.validationErrors[ProfileField.LastName] != null,
+                    errorMessage = state.validationErrors[ProfileField.LastName].localizedMessage(),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -159,6 +165,8 @@ internal fun RegisterScreenContent(
                 singleLine = true,
                 fieldHeight = 48.dp,
                 containerColor = Theme.colors.disable,
+                isError = state.validationErrors[ProfileField.DateOfBirth] != null,
+                errorMessage = state.validationErrors[ProfileField.DateOfBirth].localizedMessage(),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -182,6 +190,10 @@ internal fun RegisterScreenContent(
                     onEvent(RegisterIntent.GenderChanged(genderValues[it]))
                 }
             )
+            state.validationErrors[ProfileField.Gender].localizedMessage()?.let { validationMessage ->
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(text = validationMessage, color = Theme.colors.error)
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.profile.steps
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,9 @@ fun EmergencyContactScreen(
     phoneNumber: String,
     dataLoaded: Boolean = true,
     editingUnavailable: Boolean = false,
+    contactNameError: String? = null,
+    relationshipError: String? = null,
+    phoneNumberError: String? = null,
     onContactNameChange: (String) -> Unit,
     onRelationshipSelected: (EmergencyRelationship) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
@@ -133,6 +137,8 @@ fun EmergencyContactScreen(
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
                     enabled = dataLoaded && !editingUnavailable,
+                    isError = contactNameError != null,
+                    errorMessage = contactNameError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -140,6 +146,7 @@ fun EmergencyContactScreen(
                 RelationshipDropdown(
                     relationship = relationship,
                     enabled = dataLoaded && !editingUnavailable,
+                    errorMessage = relationshipError,
                     onRelationshipSelected = onRelationshipSelected
                 )
 
@@ -153,6 +160,8 @@ fun EmergencyContactScreen(
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
                     enabled = dataLoaded && !editingUnavailable,
+                    isError = phoneNumberError != null,
+                    errorMessage = phoneNumberError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -209,6 +218,7 @@ fun EmergencyContactScreen(
 private fun RelationshipDropdown(
     relationship: EmergencyRelationship?,
     enabled: Boolean,
+    errorMessage: String? = null,
     onRelationshipSelected: (EmergencyRelationship) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -230,6 +240,13 @@ private fun RelationshipDropdown(
                     .height(56.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(Theme.colors.cardBackground)
+                    .then(
+                        if (errorMessage != null) {
+                            Modifier.border(1.dp, Theme.colors.error, RoundedCornerShape(14.dp))
+                        } else {
+                            Modifier
+                        }
+                    )
                     .clickable(enabled = enabled) { expanded = true }
                     .padding(horizontal = Theme.spacing.medium),
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
@@ -284,6 +301,12 @@ private fun RelationshipDropdown(
                     )
                 }
             }
+        }
+        errorMessage?.let {
+            BasicText(
+                text = it,
+                style = Theme.typography.body.small.copy(color = Theme.colors.error)
+            )
         }
     }
 }

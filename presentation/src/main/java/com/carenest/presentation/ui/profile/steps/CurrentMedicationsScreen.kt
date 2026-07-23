@@ -42,11 +42,15 @@ import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
 import com.carenest.domain.model.profile.LocalMedicationEntry
+import com.carenest.presentation.ui.profile.validation.MedicationValidationErrors
+import com.carenest.presentation.ui.profile.validation.localizedMessage
 
 @Composable
 fun CurrentMedicationsScreen(
     hasNoCurrentMedications: Boolean,
     medications: List<LocalMedicationEntry>,
+    selectionError: String? = null,
+    medicationErrors: Map<String, MedicationValidationErrors> = emptyMap(),
     onNoCurrentMedicationsToggle: () -> Unit,
     onMedicationNameChange: (Int, String) -> Unit,
     onMedicationDosageChange: (Int, String) -> Unit,
@@ -104,6 +108,12 @@ fun CurrentMedicationsScreen(
                 checked = hasNoCurrentMedications,
                 onCheckedChange = onNoCurrentMedicationsToggle
             )
+            selectionError?.let {
+                BasicText(
+                    text = it,
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                )
+            }
 
             Column(
                 modifier = Modifier.alpha(if (hasNoCurrentMedications) 0.4f else 1f),
@@ -112,6 +122,7 @@ fun CurrentMedicationsScreen(
                 medications.forEachIndexed { index, medication ->
                     MedicationEntry(
                         medication = medication,
+                        validationErrors = medicationErrors[medication.localId],
                         enabled = !hasNoCurrentMedications,
                         onNameChange = { onMedicationNameChange(index, it) },
                         onDosageChange = { onMedicationDosageChange(index, it) },
@@ -121,7 +132,7 @@ fun CurrentMedicationsScreen(
                 }
 
                 AddMedicationButton(
-                    enabled = !hasNoCurrentMedications,
+                    enabled = !hasNoCurrentMedications && medications.size < MAX_MEDICATIONS,
                     onClick = onAddMedication
                 )
             }
@@ -182,6 +193,7 @@ private fun NoCurrentMedicationsCard(
 @Composable
 private fun MedicationEntry(
     medication: LocalMedicationEntry,
+    validationErrors: MedicationValidationErrors? = null,
     enabled: Boolean,
     onNameChange: (String) -> Unit,
     onDosageChange: (String) -> Unit,
@@ -208,6 +220,8 @@ private fun MedicationEntry(
                 enabled = enabled,
                 borderColor = Theme.colors.surfaceVariant,
                 containerColor = Theme.colors.cardBackground,
+                isError = validationErrors?.name != null,
+                errorMessage = validationErrors?.name.localizedMessage(),
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
@@ -228,6 +242,8 @@ private fun MedicationEntry(
                 onTextChange = onDosageChange,
                 hint = stringResource(R.string.current_medications_dosage_hint),
                 enabled = enabled,
+                isError = validationErrors?.dosage != null,
+                errorMessage = validationErrors?.dosage.localizedMessage(),
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
@@ -236,6 +252,8 @@ private fun MedicationEntry(
                 onTextChange = onFrequencyChange,
                 hint = stringResource(R.string.current_medications_frequency_hint),
                 enabled = enabled,
+                isError = validationErrors?.frequency != null,
+                errorMessage = validationErrors?.frequency.localizedMessage(),
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
@@ -249,6 +267,7 @@ private fun AddMedicationButton(enabled: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .alpha(if (enabled) 1f else 0.4f)
             .clip(RoundedCornerShape(16.dp))
             .border(
                 width = 1.dp,
@@ -275,6 +294,8 @@ private fun AddMedicationButton(enabled: Boolean, onClick: () -> Unit) {
         )
     }
 }
+
+private const val MAX_MEDICATIONS = 10
 
 @Preview(showBackground = true)
 @Composable

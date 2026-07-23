@@ -266,4 +266,26 @@
 
   <!-- Profile Screen -->
   <string name="profile_screen_title">شاشة الملف الشخصي</string>
+
+  <!-- Complete Profile Validation -->
+  <string name="validation_required">هذا الحقل مطلوب</string>
+  <string name="validation_invalid_name">استخدم حروفًا ومسافات وشرطة أو فاصلة علوية فقط</string>
+  <string name="validation_name_length">أدخل من حرفين إلى 50 حرفًا</string>
+  <string name="validation_invalid_date">أدخل تاريخًا صحيحًا بصيغة شهر/يوم/سنة</string>
+  <string name="validation_future_date">لا يمكن أن يكون تاريخ الميلاد في المستقبل</string>
+  <string name="validation_date_too_old">أدخل تاريخ ميلاد واقعيًا</string>
+  <string name="validation_invalid_number">أدخل رقمًا صحيحًا</string>
+  <string name="validation_height_range">يجب أن يكون الطول بين 30 و250 سم</string>
+  <string name="validation_weight_range">يجب أن يكون الوزن بين 1 و500 كجم</string>
+  <string name="validation_blood_type">اختر فصيلة دم صحيحة</string>
+  <string name="validation_text_too_long_100">الحد الأقصى 100 حرف</string>
+  <string name="validation_text_too_long_500">الحد الأقصى 500 حرف</string>
+  <string name="validation_text_too_long_1000">الحد الأقصى 1000 حرف</string>
+  <string name="validation_allergy_selection">اختر حساسية أو اكتب حساسية أخرى أو أكد عدم وجود حساسية معروفة</string>
+  <string name="validation_medication_selection">أضف دواءً واحدًا على الأقل أو اختر عدم وجود أدوية حالية</string>
+  <string name="validation_medication_name">أدخل اسم الدواء</string>
+  <string name="validation_mobility_required">اختر حالة الحركة</string>
+  <string name="validation_emergency_name_length">أدخل اسم جهة اتصال من حرفين إلى 100 حرف</string>
+  <string name="validation_invalid_phone">أدخل رقم هاتف صحيحًا يحتوي على 7 إلى 15 رقمًا</string>
+
 </resources>

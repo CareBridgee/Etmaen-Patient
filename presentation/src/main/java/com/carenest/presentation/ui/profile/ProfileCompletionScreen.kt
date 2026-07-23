@@ -18,6 +18,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.profile.steps.*
+import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.presentation.ui.profile.validation.localizedMessage
 
 @Composable
 fun ProfileCompletionScreen(
@@ -52,6 +54,9 @@ fun ProfileCompletionScreen(
                 height = state.height,
                 weight = state.weight,
                 bloodType = state.bloodType,
+                heightError = state.validationErrors[ProfileField.Height].localizedMessage(),
+                weightError = state.validationErrors[ProfileField.Weight].localizedMessage(),
+                bloodTypeError = state.validationErrors[ProfileField.BloodType].localizedMessage(),
                 onHeightChange = { viewModel.onEvent(ProfileCompletionIntent.HeightChanged(it)) },
                 onWeightChange = { viewModel.onEvent(ProfileCompletionIntent.WeightChanged(it)) },
                 onBloodTypeChange = { viewModel.onEvent(ProfileCompletionIntent.BloodTypeChanged(it)) },
@@ -63,6 +68,7 @@ fun ProfileCompletionScreen(
                 conditions = state.conditionCatalog,
                 selectedConditionKeys = state.selectedConditionKeys,
                 otherConditions = state.otherConditions,
+                otherConditionsError = state.validationErrors[ProfileField.OtherConditions].localizedMessage(),
                 onConditionToggle = { viewModel.onEvent(ProfileCompletionIntent.ConditionToggled(it)) },
                 onOtherConditionsChange = { viewModel.onEvent(ProfileCompletionIntent.OtherConditionsChanged(it)) },
                 onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
@@ -74,6 +80,8 @@ fun ProfileCompletionScreen(
                 allergies = state.allergyCatalog,
                 selectedAllergyKeys = state.selectedAllergyKeys,
                 otherAllergies = state.otherAllergies,
+                selectionError = state.validationErrors[ProfileField.AllergiesSelection].localizedMessage(),
+                otherAllergiesError = state.validationErrors[ProfileField.OtherAllergies].localizedMessage(),
                 onNoKnownAllergiesToggle = { viewModel.onEvent(ProfileCompletionIntent.NoKnownAllergiesToggled) },
                 onAllergyToggle = { viewModel.onEvent(ProfileCompletionIntent.AllergyToggled(it)) },
                 onOtherAllergiesChange = { viewModel.onEvent(ProfileCompletionIntent.OtherAllergiesChanged(it)) },
@@ -84,6 +92,8 @@ fun ProfileCompletionScreen(
             ProfileStep.CurrentMedications -> CurrentMedicationsScreen(
                 hasNoCurrentMedications = state.hasNoCurrentMedications,
                 medications = state.currentMedications,
+                selectionError = state.validationErrors[ProfileField.MedicationsSelection].localizedMessage(),
+                medicationErrors = state.medicationValidationErrors,
                 onNoCurrentMedicationsToggle = { viewModel.onEvent(ProfileCompletionIntent.NoCurrentMedicationsToggled) },
                 onMedicationNameChange = { index, value ->
                     viewModel.onEvent(ProfileCompletionIntent.MedicationNameChanged(index, value))
@@ -103,6 +113,9 @@ fun ProfileCompletionScreen(
             ProfileStep.MedicalHistory -> MedicalHistoryScreen(
                 previousSurgeries = state.previousSurgeries,
                 previousHospitalizations = state.previousHospitalizations,
+                previousSurgeriesError = state.validationErrors[ProfileField.PreviousSurgeries].localizedMessage(),
+                previousHospitalizationsError =
+                    state.validationErrors[ProfileField.PreviousHospitalizations].localizedMessage(),
                 onPreviousSurgeriesChange = { viewModel.onEvent(ProfileCompletionIntent.PreviousSurgeriesChanged(it)) },
                 onPreviousHospitalizationsChange = { viewModel.onEvent(ProfileCompletionIntent.PreviousHospitalizationsChanged(it)) },
                 onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
@@ -112,6 +125,8 @@ fun ProfileCompletionScreen(
             ProfileStep.MobilityStatus -> MobilityStatusScreen(
                 selectedStatus = state.mobilityStatus,
                 additionalNotes = state.mobilityNotes,
+                statusError = state.validationErrors[ProfileField.MobilityStatus].localizedMessage(),
+                notesError = state.validationErrors[ProfileField.MobilityNotes].localizedMessage(),
                 onStatusSelected = { viewModel.onEvent(ProfileCompletionIntent.MobilityStatusSelected(it)) },
                 onAdditionalNotesChange = { viewModel.onEvent(ProfileCompletionIntent.MobilityNotesChanged(it)) },
                 onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },
@@ -124,6 +139,12 @@ fun ProfileCompletionScreen(
                 phoneNumber = state.emergencyPhoneNumber,
                 dataLoaded = state.emergencyContactsLoaded,
                 editingUnavailable = state.emergencyContacts.size > 1 && state.emergencyContactId == null,
+                contactNameError =
+                    state.validationErrors[ProfileField.EmergencyContactName].localizedMessage(),
+                relationshipError =
+                    state.validationErrors[ProfileField.EmergencyRelationship].localizedMessage(),
+                phoneNumberError =
+                    state.validationErrors[ProfileField.EmergencyPhoneNumber].localizedMessage(),
                 onContactNameChange = { viewModel.onEvent(ProfileCompletionIntent.EmergencyContactNameChanged(it)) },
                 onRelationshipSelected = { viewModel.onEvent(ProfileCompletionIntent.EmergencyRelationshipSelected(it)) },
                 onPhoneNumberChange = { viewModel.onEvent(ProfileCompletionIntent.EmergencyPhoneNumberChanged(it)) },

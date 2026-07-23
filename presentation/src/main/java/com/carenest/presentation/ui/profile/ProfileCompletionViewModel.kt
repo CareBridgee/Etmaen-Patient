@@ -9,6 +9,9 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.presentation.ui.profile.validation.ProfileInputValidator
+import com.carenest.presentation.ui.profile.validation.ProfileValidationError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -41,60 +44,93 @@ class ProfileCompletionViewModel @Inject constructor(
 
     fun onEvent(event: ProfileCompletionIntent) {
         when (event) {
-            is ProfileCompletionIntent.HeightChanged -> edit { copy(height = event.height) }
-            is ProfileCompletionIntent.WeightChanged -> edit { copy(weight = event.weight) }
-            is ProfileCompletionIntent.BloodTypeChanged -> edit { copy(bloodType = event.bloodType) }
+            is ProfileCompletionIntent.HeightChanged -> edit(ProfileField.Height) {
+                copy(height = event.height.filter(Char::isDigit).take(3))
+            }
+            is ProfileCompletionIntent.WeightChanged -> edit(ProfileField.Weight) {
+                copy(weight = event.weight.filter(Char::isDigit).take(3))
+            }
+            is ProfileCompletionIntent.BloodTypeChanged -> edit(ProfileField.BloodType) {
+                copy(bloodType = event.bloodType.replace('−', '-'))
+            }
             is ProfileCompletionIntent.ConditionToggled -> edit {
                 copy(selectedConditionKeys = selectedConditionKeys.toggle(event.localKey))
             }
-            is ProfileCompletionIntent.OtherConditionsChanged -> edit { copy(otherConditions = event.conditions) }
-            ProfileCompletionIntent.NoKnownAllergiesToggled -> edit {
+            is ProfileCompletionIntent.OtherConditionsChanged -> edit(ProfileField.OtherConditions) {
+                copy(otherConditions = event.conditions.take(500))
+            }
+            ProfileCompletionIntent.NoKnownAllergiesToggled -> edit(ProfileField.AllergiesSelection) {
                 val none = !hasNoKnownAllergies
                 copy(
                     hasNoKnownAllergies = none,
                     selectedAllergyKeys = if (none) emptySet() else selectedAllergyKeys,
-                    otherAllergies = if (none) "" else otherAllergies
+                    otherAllergies = if (none) "" else otherAllergies,
+                    validationErrors = validationErrors - ProfileField.OtherAllergies
                 )
             }
-            is ProfileCompletionIntent.AllergyToggled -> edit {
+            is ProfileCompletionIntent.AllergyToggled -> edit(ProfileField.AllergiesSelection) {
                 copy(
                     hasNoKnownAllergies = false,
                     selectedAllergyKeys = selectedAllergyKeys.toggle(event.localKey)
                 )
             }
-            is ProfileCompletionIntent.OtherAllergiesChanged -> edit {
-                copy(hasNoKnownAllergies = false, otherAllergies = event.allergies)
+            is ProfileCompletionIntent.OtherAllergiesChanged -> edit(
+                ProfileField.OtherAllergies,
+                ProfileField.AllergiesSelection
+            ) {
+                copy(hasNoKnownAllergies = false, otherAllergies = event.allergies.take(500))
             }
-            ProfileCompletionIntent.NoCurrentMedicationsToggled -> edit {
+            ProfileCompletionIntent.NoCurrentMedicationsToggled -> edit(ProfileField.MedicationsSelection) {
                 val none = !hasNoCurrentMedications
                 copy(
                     hasNoCurrentMedications = none,
-                    currentMedications = if (none) emptyList() else listOf(blankMedication())
+                    currentMedications = if (none) emptyList() else listOf(blankMedication()),
+                    medicationValidationErrors = emptyMap()
                 )
             }
-            ProfileCompletionIntent.MedicationAdded -> edit {
-                if (hasNoCurrentMedications) this else copy(currentMedications = currentMedications + blankMedication())
-            }
-            is ProfileCompletionIntent.MedicationNameChanged -> updateMedication(event.index) { copy(name = event.value) }
-            is ProfileCompletionIntent.MedicationDosageChanged -> updateMedication(event.index) { copy(dosage = event.value) }
-            is ProfileCompletionIntent.MedicationFrequencyChanged -> updateMedication(event.index) { copy(frequency = event.value) }
-            is ProfileCompletionIntent.MedicationRemoved -> edit {
-                if (event.index !in currentMedications.indices) this else copy(
-                    currentMedications = currentMedications.filterIndexed { index, _ -> index != event.index }
+            ProfileCompletionIntent.MedicationAdded -> edit(ProfileField.MedicationsSelection) {
+                if (hasNoCurrentMedications || currentMedications.size >= MAX_MEDICATIONS) this else copy(
+                    currentMedications = currentMedications + blankMedication()
                 )
             }
-            is ProfileCompletionIntent.PreviousSurgeriesChanged -> edit { copy(previousSurgeries = event.surgeries) }
-            is ProfileCompletionIntent.PreviousHospitalizationsChanged -> edit {
-                copy(previousHospitalizations = event.hospitalizations)
+            is ProfileCompletionIntent.MedicationNameChanged -> updateMedication(event.index, MedicationField.Name) {
+                copy(name = event.value.take(100))
             }
-            is ProfileCompletionIntent.MobilityStatusSelected -> edit { copy(mobilityStatus = event.status) }
-            is ProfileCompletionIntent.MobilityNotesChanged -> edit { copy(mobilityNotes = event.notes) }
-            is ProfileCompletionIntent.EmergencyContactNameChanged -> edit { copy(emergencyContactName = event.name) }
-            is ProfileCompletionIntent.EmergencyRelationshipSelected -> edit {
+            is ProfileCompletionIntent.MedicationDosageChanged -> updateMedication(event.index, MedicationField.Dosage) {
+                copy(dosage = event.value.take(100))
+            }
+            is ProfileCompletionIntent.MedicationFrequencyChanged -> updateMedication(event.index, MedicationField.Frequency) {
+                copy(frequency = event.value.take(100))
+            }
+            is ProfileCompletionIntent.MedicationRemoved -> edit(ProfileField.MedicationsSelection) {
+                if (event.index !in currentMedications.indices) this else {
+                    val removedId = currentMedications[event.index].localId
+                    copy(
+                        currentMedications = currentMedications.filterIndexed { index, _ -> index != event.index },
+                        medicationValidationErrors = medicationValidationErrors - removedId
+                    )
+                }
+            }
+            is ProfileCompletionIntent.PreviousSurgeriesChanged -> edit(ProfileField.PreviousSurgeries) {
+                copy(previousSurgeries = event.surgeries.take(1000))
+            }
+            is ProfileCompletionIntent.PreviousHospitalizationsChanged -> edit(ProfileField.PreviousHospitalizations) {
+                copy(previousHospitalizations = event.hospitalizations.take(1000))
+            }
+            is ProfileCompletionIntent.MobilityStatusSelected -> edit(ProfileField.MobilityStatus) {
+                copy(mobilityStatus = event.status)
+            }
+            is ProfileCompletionIntent.MobilityNotesChanged -> edit(ProfileField.MobilityNotes) {
+                copy(mobilityNotes = event.notes.take(500))
+            }
+            is ProfileCompletionIntent.EmergencyContactNameChanged -> edit(ProfileField.EmergencyContactName) {
+                copy(emergencyContactName = event.name.take(100))
+            }
+            is ProfileCompletionIntent.EmergencyRelationshipSelected -> edit(ProfileField.EmergencyRelationship) {
                 copy(emergencyRelationship = event.relationship)
             }
-            is ProfileCompletionIntent.EmergencyPhoneNumberChanged -> edit {
-                copy(emergencyPhoneNumber = event.phoneNumber)
+            is ProfileCompletionIntent.EmergencyPhoneNumberChanged -> edit(ProfileField.EmergencyPhoneNumber) {
+                copy(emergencyPhoneNumber = event.phoneNumber.filter { it.isDigit() || it in "+ -" }.take(20))
             }
             ProfileCompletionIntent.BackClicked -> navigateBack()
             ProfileCompletionIntent.ContinueClicked -> continueFlow()
@@ -165,17 +201,23 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitBasicHealth() {
-        val height = currentState.height.toDoubleOrNull()
-        val weight = currentState.weight.toDoubleOrNull()
-        val bloodType = currentState.bloodType.replace('−', '-')
-        if (height == null || !height.isFinite() || height <= 0 ||
-            weight == null || !weight.isFinite() || weight <= 0 || bloodType !in BLOOD_TYPES
-        ) return showError("Enter a valid height, weight, and blood type")
+        val snapshot = currentState
+        val errors = ProfileInputValidator.basicHealth(snapshot.height, snapshot.weight, snapshot.bloodType)
+        if (errors.isNotEmpty()) return showValidationErrors(BASIC_HEALTH_FIELDS, errors)
+
+        val height = snapshot.height.toDouble()
+        val weight = snapshot.weight.toDouble()
+        val bloodType = snapshot.bloodType.replace('−', '-').trim()
         val profileId = requireProfileId() ?: return
         launchSubmission {
             updateBasicHealth(profileId, BasicHealthUpdate(height, weight, bloodType)).fold(
                 onSuccess = { profile ->
-                    updateState { hydrateProfile(profile).copy(isSubmitting = false) }
+                    updateState {
+                        hydrateProfile(profile).copy(
+                            isSubmitting = false,
+                            validationErrors = validationErrors - BASIC_HEALTH_FIELDS
+                        )
+                    }
                     moveTo(ProfileStep.MedicalConditions)
                 },
                 onFailure = ::finishFailure
@@ -184,12 +226,15 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitMedicalConditions() {
+        val snapshot = currentState
+        val errors = ProfileInputValidator.medicalConditions(snapshot.otherConditions)
+        if (errors.isNotEmpty()) return showValidationErrors(MEDICAL_CONDITION_FIELDS, errors)
+
         val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val snapshot = currentState
         val draft = snapshot.localDraft.copy(
             selectedConditionKeys = snapshot.selectedConditionKeys,
-            otherConditions = snapshot.otherConditions
+            otherConditions = snapshot.otherConditions.trim()
         )
         launchSubmission {
             saveProfileDraft(userKey, draft).getOrElse { finishFailure(it); return@launchSubmission }
@@ -202,6 +247,8 @@ class ProfileCompletionViewModel @Inject constructor(
                 copy(
                     isSubmitting = false,
                     localDraft = draft,
+                    otherConditions = draft.otherConditions,
+                    validationErrors = validationErrors - MEDICAL_CONDITION_FIELDS,
                     originalConditionBackendIds = sync.getOrNull() ?: originalConditionBackendIds
                 )
             }
@@ -210,13 +257,20 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitAllergies() {
+        val snapshot = currentState
+        val errors = ProfileInputValidator.allergies(
+            snapshot.hasNoKnownAllergies,
+            snapshot.selectedAllergyKeys,
+            snapshot.otherAllergies
+        )
+        if (errors.isNotEmpty()) return showValidationErrors(ALLERGY_FIELDS, errors)
+
         val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val snapshot = currentState
         val selectedKeys = if (snapshot.hasNoKnownAllergies) emptySet() else snapshot.selectedAllergyKeys
         val draft = snapshot.localDraft.copy(
             selectedAllergyKeys = selectedKeys,
-            otherAllergies = if (snapshot.hasNoKnownAllergies) "" else snapshot.otherAllergies,
+            otherAllergies = if (snapshot.hasNoKnownAllergies) "" else snapshot.otherAllergies.trim(),
             noKnownAllergiesConfirmed = snapshot.hasNoKnownAllergies
         )
         launchSubmission {
@@ -227,6 +281,8 @@ class ProfileCompletionViewModel @Inject constructor(
                     isSubmitting = false,
                     localDraft = draft,
                     selectedAllergyKeys = selectedKeys,
+                    otherAllergies = draft.otherAllergies,
+                    validationErrors = validationErrors - ALLERGY_FIELDS,
                     originalAllergyBackendIds = sync.getOrNull() ?: originalAllergyBackendIds
                 )
             }
@@ -235,13 +291,35 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitMedications() {
+        val snapshot = currentState
+        val validation = ProfileInputValidator.medications(
+            snapshot.hasNoCurrentMedications,
+            snapshot.currentMedications
+        )
+        if (!validation.isValid) {
+            updateState {
+                copy(
+                    validationErrors = (validationErrors - MEDICATION_FIELDS) + validation.fieldErrors,
+                    medicationValidationErrors = validation.entryErrors,
+                    errorMessage = null
+                )
+            }
+            return
+        }
+
         val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val snapshot = currentState
         val entries = if (snapshot.hasNoCurrentMedications) emptyList() else {
             snapshot.currentMedications
                 .filter { it.name.isNotBlank() || it.dosage.isNotBlank() || it.frequency.isNotBlank() }
-                .map { it.copy(syncState = if (it.backendMedicationId == null) SyncState.LOCAL_ONLY else SyncState.PENDING) }
+                .map {
+                    it.copy(
+                        name = it.name.trim(),
+                        dosage = it.dosage.trim(),
+                        frequency = it.frequency.trim(),
+                        syncState = if (it.backendMedicationId == null) SyncState.LOCAL_ONLY else SyncState.PENDING
+                    )
+                }
         }
         val draft = snapshot.localDraft.copy(
             medications = entries,
@@ -265,6 +343,8 @@ class ProfileCompletionViewModel @Inject constructor(
                     isSubmitting = false,
                     localDraft = storedDraft,
                     currentMedications = storedEntries,
+                    validationErrors = validationErrors - MEDICATION_FIELDS,
+                    medicationValidationErrors = emptyMap(),
                     originalMedicationBackendIds = if (sync.isSuccess) {
                         storedEntries.mapNotNull { it.backendMedicationId }.toSet()
                     } else originalMedicationBackendIds
@@ -275,15 +355,28 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitMedicalHistory() {
-        val profileId = requireProfileId() ?: return
         val snapshot = currentState
+        val errors = ProfileInputValidator.medicalHistory(
+            snapshot.previousSurgeries,
+            snapshot.previousHospitalizations
+        )
+        if (errors.isNotEmpty()) return showValidationErrors(MEDICAL_HISTORY_FIELDS, errors)
+
+        val profileId = requireProfileId() ?: return
+        val surgeries = snapshot.previousSurgeries.trim()
+        val hospitalizations = snapshot.previousHospitalizations.trim()
         launchSubmission {
             updateMedicalHistory(
                 profileId,
-                MedicalHistoryUpdate(snapshot.previousSurgeries, snapshot.previousHospitalizations)
+                MedicalHistoryUpdate(surgeries, hospitalizations)
             ).fold(
                 onSuccess = { profile ->
-                    updateState { hydrateProfile(profile).copy(isSubmitting = false) }
+                    updateState {
+                        hydrateProfile(profile).copy(
+                            isSubmitting = false,
+                            validationErrors = validationErrors - MEDICAL_HISTORY_FIELDS
+                        )
+                    }
                     moveTo(ProfileStep.MobilityStatus)
                 },
                 onFailure = ::finishFailure
@@ -292,25 +385,40 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitMobility() {
-        val status = currentState.mobilityStatus ?: return showError("Select a mobility status")
+        val snapshot = currentState
+        val errors = ProfileInputValidator.mobility(snapshot.mobilityStatus, snapshot.mobilityNotes)
+        if (errors.isNotEmpty()) return showValidationErrors(MOBILITY_FIELDS, errors)
+
+        val status = requireNotNull(snapshot.mobilityStatus)
         val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val snapshot = currentState
+        val trimmedNotes = snapshot.mobilityNotes.trim()
         val pendingDraft = snapshot.localDraft.copy(
             pendingMobilityStatus = status.wireValue(),
-            pendingMobilityNotes = snapshot.mobilityNotes
+            pendingMobilityNotes = trimmedNotes
         )
         launchSubmission {
             saveProfileDraft(userKey, pendingDraft).getOrElse { finishFailure(it); return@launchSubmission }
-            val result = updateMobility(profileId, MobilityUpdate(status.wireValue(), snapshot.mobilityNotes))
+            val result = updateMobility(profileId, MobilityUpdate(status.wireValue(), trimmedNotes))
             if (result.isSuccess) {
                 val cleared = pendingDraft.copy(pendingMobilityStatus = null, pendingMobilityNotes = null)
                 saveProfileDraft(userKey, cleared)
                 updateState {
-                    hydrateProfile(result.getOrThrow()).copy(isSubmitting = false, localDraft = cleared)
+                    hydrateProfile(result.getOrThrow()).copy(
+                        isSubmitting = false,
+                        localDraft = cleared,
+                        validationErrors = validationErrors - MOBILITY_FIELDS
+                    )
                 }
             } else {
-                updateState { copy(isSubmitting = false, localDraft = pendingDraft) }
+                updateState {
+                    copy(
+                        isSubmitting = false,
+                        localDraft = pendingDraft,
+                        mobilityNotes = trimmedNotes,
+                        validationErrors = validationErrors - MOBILITY_FIELDS
+                    )
+                }
             }
             moveTo(ProfileStep.EmergencyContact)
         }
@@ -324,15 +432,20 @@ class ProfileCompletionViewModel @Inject constructor(
         if (currentState.emergencyContacts.size > 1 && currentState.emergencyContactId == null) {
             return finishHealthOnboarding()
         }
-        val name = currentState.emergencyContactName.trim()
-        val phone = currentState.emergencyPhoneNumber.trim()
-        if (name.isBlank() || name.length > 100 || !PHONE_REGEX.matches(phone)) {
-            return showError("Enter a valid emergency contact name and phone number")
-        }
-        val relationship = currentState.emergencyRelationship?.wireValue()
-        if ((relationship?.length ?: 0) > 100) return showError("Emergency relationship is too long")
+
+        val snapshot = currentState
+        val errors = ProfileInputValidator.emergencyContact(
+            snapshot.emergencyContactName,
+            snapshot.emergencyRelationship,
+            snapshot.emergencyPhoneNumber
+        )
+        if (errors.isNotEmpty()) return showValidationErrors(EMERGENCY_FIELDS, errors)
+
+        val name = snapshot.emergencyContactName.trim()
+        val phone = snapshot.emergencyPhoneNumber.trim()
+        val relationship = requireNotNull(snapshot.emergencyRelationship).wireValue()
         val profileId = requireProfileId() ?: return
-        val contactId = currentState.emergencyContactId
+        val contactId = snapshot.emergencyContactId
         launchSubmission {
             saveEmergencyContact(
                 profileId,
@@ -344,7 +457,11 @@ class ProfileCompletionViewModel @Inject constructor(
                         copy(
                             isSubmitting = false,
                             emergencyContactId = saved.id,
-                            emergencyContacts = emergencyContacts.filterNot { it.id == saved.id } + saved
+                            emergencyContactName = saved.contactName,
+                            emergencyRelationship = saved.relationship?.toEmergencyRelationship(),
+                            emergencyPhoneNumber = saved.phoneNumber,
+                            emergencyContacts = emergencyContacts.filterNot { it.id == saved.id } + saved,
+                            validationErrors = validationErrors - EMERGENCY_FIELDS
                         )
                     }
                     finishHealthOnboarding()
@@ -538,6 +655,16 @@ class ProfileCompletionViewModel @Inject constructor(
 
     private fun showError(message: String) = updateState { copy(errorMessage = message) }
 
+    private fun showValidationErrors(
+        sectionFields: Set<ProfileField>,
+        errors: Map<ProfileField, ProfileValidationError>
+    ) = updateState {
+        copy(
+            validationErrors = (validationErrors - sectionFields) + errors,
+            errorMessage = null
+        )
+    }
+
     private fun requireProfileId(): String? = currentState.profileId ?: run {
         showError("Profile information is unavailable")
         null
@@ -548,18 +675,42 @@ class ProfileCompletionViewModel @Inject constructor(
         null
     }
 
-    private fun edit(transform: ProfileCompletionState.() -> ProfileCompletionState) =
-        updateState { transform().copy(errorMessage = null) }
+    private fun edit(
+        vararg fields: ProfileField,
+        transform: ProfileCompletionState.() -> ProfileCompletionState
+    ) = updateState {
+        val updated = transform()
+        updated.copy(
+            errorMessage = null,
+            validationErrors = updated.validationErrors - fields.toSet()
+        )
+    }
 
     private fun updateMedication(
         index: Int,
+        field: MedicationField,
         transform: LocalMedicationEntry.() -> LocalMedicationEntry
-    ) = edit {
-        if (index !in currentMedications.indices) this else copy(
+    ) = updateState {
+        if (index !in currentMedications.indices) return@updateState this
+        val entry = currentMedications[index]
+        val updatedErrors = medicationValidationErrors.toMutableMap()
+        val currentErrors = updatedErrors[entry.localId]
+        if (currentErrors != null) {
+            val cleared = when (field) {
+                MedicationField.Name -> currentErrors.copy(name = null)
+                MedicationField.Dosage -> currentErrors.copy(dosage = null)
+                MedicationField.Frequency -> currentErrors.copy(frequency = null)
+            }
+            if (cleared.isEmpty) updatedErrors.remove(entry.localId) else updatedErrors[entry.localId] = cleared
+        }
+        copy(
             hasNoCurrentMedications = false,
             currentMedications = currentMedications.toMutableList().apply {
                 this[index] = this[index].transform()
-            }
+            },
+            errorMessage = null,
+            validationErrors = validationErrors - ProfileField.MedicationsSelection,
+            medicationValidationErrors = updatedErrors
         )
     }
 
@@ -583,10 +734,7 @@ class ProfileCompletionViewModel @Inject constructor(
             emergencyContactId = editable?.id,
             emergencyContactName = editable?.contactName.orEmpty(),
             emergencyRelationship = editable?.relationship?.toEmergencyRelationship(),
-            emergencyPhoneNumber = editable?.phoneNumber.orEmpty(),
-            errorMessage = if (contacts.size > 1) {
-                "Multiple emergency contacts exist; select a contact before editing. Editing is unavailable in this screen."
-            } else errorMessage
+            emergencyPhoneNumber = editable?.phoneNumber.orEmpty()
         )
     }
 
@@ -595,8 +743,21 @@ class ProfileCompletionViewModel @Inject constructor(
     private fun Double.displayNumber() = if (this % 1.0 == 0.0) toInt().toString() else toString()
 
     private companion object {
-        val BLOOD_TYPES = setOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
-        val PHONE_REGEX = Regex("^\\+?[0-9\\s\\-]{7,20}$")
+        const val MAX_MEDICATIONS = 10
+        val BASIC_HEALTH_FIELDS = setOf(ProfileField.Height, ProfileField.Weight, ProfileField.BloodType)
+        val MEDICAL_CONDITION_FIELDS = setOf(ProfileField.OtherConditions)
+        val ALLERGY_FIELDS = setOf(ProfileField.AllergiesSelection, ProfileField.OtherAllergies)
+        val MEDICATION_FIELDS = setOf(ProfileField.MedicationsSelection)
+        val MEDICAL_HISTORY_FIELDS = setOf(
+            ProfileField.PreviousSurgeries,
+            ProfileField.PreviousHospitalizations
+        )
+        val MOBILITY_FIELDS = setOf(ProfileField.MobilityStatus, ProfileField.MobilityNotes)
+        val EMERGENCY_FIELDS = setOf(
+            ProfileField.EmergencyContactName,
+            ProfileField.EmergencyRelationship,
+            ProfileField.EmergencyPhoneNumber
+        )
         val REMOTE_STEPS = setOf(
             ProfileStep.MedicalConditions,
             ProfileStep.Allergies,
@@ -604,7 +765,10 @@ class ProfileCompletionViewModel @Inject constructor(
             ProfileStep.EmergencyContact
         )
     }
+
 }
+
+private enum class MedicationField { Name, Dosage, Frequency }
 
 private fun temporaryDebugProfile(profileId: String) = Profile(
     id = profileId,

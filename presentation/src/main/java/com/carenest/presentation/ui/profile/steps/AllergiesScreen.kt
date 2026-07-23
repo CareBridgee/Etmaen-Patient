@@ -50,6 +50,8 @@ fun AllergiesScreen(
     allergies: List<ProfileAllergyOption>,
     selectedAllergyKeys: Set<String>,
     otherAllergies: String,
+    selectionError: String? = null,
+    otherAllergiesError: String? = null,
     onNoKnownAllergiesToggle: () -> Unit,
     onAllergyToggle: (String) -> Unit,
     onOtherAllergiesChange: (String) -> Unit,
@@ -102,6 +104,12 @@ fun AllergiesScreen(
                 checked = hasNoKnownAllergies,
                 onCheckedChange = onNoKnownAllergiesToggle
             )
+            selectionError?.let {
+                BasicText(
+                    text = it,
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                )
+            }
 
             Column(
                 modifier = Modifier.alpha(if (hasNoKnownAllergies) 0.45f else 1f),
@@ -139,6 +147,8 @@ fun AllergiesScreen(
                     enabled = !hasNoKnownAllergies,
                     fieldHeight = 96.dp,
                     fieldVerticalAlignment = Alignment.Top,
+                    isError = otherAllergiesError != null,
+                    errorMessage = otherAllergiesError,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

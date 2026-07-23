@@ -50,6 +50,7 @@ fun MedicalConditionsScreen(
     conditions: List<ProfileCatalogOption>,
     selectedConditionKeys: Set<String>,
     otherConditions: String,
+    otherConditionsError: String? = null,
     onConditionToggle: (String) -> Unit,
     onOtherConditionsChange: (String) -> Unit,
     onBack: () -> Unit,
@@ -140,6 +141,8 @@ fun MedicalConditionsScreen(
                     hint = stringResource(R.string.medical_conditions_other_hint),
                     fieldHeight = 88.dp,
                     fieldVerticalAlignment = Alignment.Top,
+                    isError = otherConditionsError != null,
+                    errorMessage = otherConditionsError,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
