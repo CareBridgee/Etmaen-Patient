@@ -256,7 +256,10 @@ class ProfileCompletionViewModel @Inject constructor(
                 }
             }
             val storedDraft = draft.copy(medications = storedEntries)
-            saveProfileDraft(userKey, storedDraft)
+            saveProfileDraft(userKey, storedDraft).getOrElse {
+                finishFailure(it)
+                return@launchSubmission
+            }
             updateState {
                 copy(
                     isSubmitting = false,
@@ -375,13 +378,10 @@ class ProfileCompletionViewModel @Inject constructor(
         if (currentState.isInitializing || currentState.isSubmitting) return
         val userKey = requireUserKey() ?: return
         launchSubmission {
-            markOnboardingHandled(userKey).fold(
-                onSuccess = {
-                    updateState { copy(isSubmitting = false) }
-                    sendEffect(ProfileCompletionEffect.NavigateToHome)
-                },
-                onFailure = ::finishFailure
-            )
+            // The handled flag is best-effort local state. It must never block Skip or final navigation.
+            markOnboardingHandled(userKey)
+            updateState { copy(isSubmitting = false) }
+            sendEffect(ProfileCompletionEffect.NavigateToHome)
         }
     }
 

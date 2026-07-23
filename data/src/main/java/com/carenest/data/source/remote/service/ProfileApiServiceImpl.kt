@@ -13,6 +13,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.path
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -122,15 +123,24 @@ class ProfileApiServiceImpl @Inject constructor(
 
     private suspend inline fun <reified T> execute(
         noinline block: HttpRequestBuilder.() -> Unit
-    ): Result<T> = runCatching {
+    ): Result<T> = try {
         val response = httpClient.request(block)
         if (response.status != HttpStatusCode.OK) throw response.toProfileException()
-        response.body<T>()
+        Result.success(response.body<T>())
+    } catch (cancellation: CancellationException) {
+        throw cancellation
+    } catch (error: Throwable) {
+        Result.failure(error)
     }
 
-    private suspend fun executeUnit(block: HttpRequestBuilder.() -> Unit): Result<Unit> = runCatching {
+    private suspend fun executeUnit(block: HttpRequestBuilder.() -> Unit): Result<Unit> = try {
         val response = httpClient.request(block)
         if (response.status != HttpStatusCode.OK) throw response.toProfileException()
+        Result.success(Unit)
+    } catch (cancellation: CancellationException) {
+        throw cancellation
+    } catch (error: Throwable) {
+        Result.failure(error)
     }
 
     private suspend fun io.ktor.client.statement.HttpResponse.toProfileException(): ProfileApiException {

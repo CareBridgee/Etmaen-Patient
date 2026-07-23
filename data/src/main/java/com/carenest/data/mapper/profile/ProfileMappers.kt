@@ -65,7 +65,7 @@ internal fun ProfileMedicationResponseDto.toDomain() = ProfileMedication(
 
 internal fun EmergencyContactResponseDto.toDomain() = EmergencyContact(
     id = id.requiredUuid("emergency contact id"),
-    profileId = profileId.requiredUuid("emergency contact profile id"),
+    profileId = profileId.optionalUuid("emergency contact profile id"),
     contactName = contactName.requiredText("emergency contact name"),
     relationship = relationship,
     phoneNumber = phoneNumber.requiredText("emergency contact phone number")
@@ -82,9 +82,21 @@ private fun String?.requiredUuid(label: String): String {
 private fun String?.requiredText(label: String): String =
     this?.takeIf(String::isNotBlank) ?: throw ProfileException("Backend returned a missing $label")
 
-private fun String?.toAllergyType(): AllergyType = runCatching {
-    AllergyType.valueOf(requiredText("allergy type"))
-}.getOrElse { throw ProfileException("Backend returned an unsupported allergy type") }
+private fun String?.optionalUuid(label: String): String? {
+    val value = this?.trim()?.takeIf(String::isNotEmpty) ?: return null
+    if (runCatching { UUID.fromString(value) }.isFailure) {
+        throw ProfileException("Backend returned an invalid $label")
+    }
+    return value
+}
+
+private fun String?.toAllergyType(): AllergyType = when (
+    this?.trim()?.uppercase()?.replace('-', '_')?.replace(' ', '_')
+) {
+    "DRUG", "DRUG_ALLERGY" -> AllergyType.DRUG
+    "FOOD", "FOOD_ALLERGY" -> AllergyType.FOOD
+    else -> AllergyType.OTHER
+}
 
 private fun String.normalizedCatalogKey(): String =
     trim().lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-')

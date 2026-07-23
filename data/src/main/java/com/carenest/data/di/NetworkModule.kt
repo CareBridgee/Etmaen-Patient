@@ -24,6 +24,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.Url
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -103,16 +104,20 @@ internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: Carenest
                 BearerTokens(accessToken, newRefreshToken)
             }
             sendWithoutRequest { request ->
-                val path = request.url.build().encodedPath
-                path.startsWith("/api/v1/") && path !in PUBLIC_AUTH_PATHS
+                val requestUrl = request.url.build()
+                requestUrl.host == BACKEND_HOST &&
+                    requestUrl.encodedPath.startsWith("/api/v1/") &&
+                    requestUrl.encodedPath !in PUBLIC_AUTH_PATHS
             }
         }
     }
 }
 
+private val BACKEND_HOST = Url(BuildConfig.base_url).host
+
 private val PUBLIC_AUTH_PATHS = setOf(
-        "/api/v1/auth/login",
-        "/api/v1/auth/verify-otp",
+    "/api/v1/auth/login",
+    "/api/v1/auth/verify-otp",
     "/api/v1/auth/refresh"
 )
 

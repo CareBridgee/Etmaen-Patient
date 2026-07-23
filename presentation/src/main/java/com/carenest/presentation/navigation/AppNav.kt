@@ -105,9 +105,6 @@ fun AppNav() {
                     },
                     onNavigateToWelcome = {
                         replaceWith(AppRoute.ProfileCompletion)
-                    },
-                    onNavigateHome = {
-                        replaceWith(AppRoute.Home)
                     }
                 )
             }

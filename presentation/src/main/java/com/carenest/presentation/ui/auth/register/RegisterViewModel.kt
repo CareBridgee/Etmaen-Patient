@@ -78,7 +78,9 @@ class RegisterViewModel @Inject constructor(
 
     private fun submitPersonalInfo() {
         if (currentState.isInitializing || currentState.isSubmitting) return
-        val profileId = currentState.profileId ?: return
+        val profileId = currentState.profileId ?: return updateState {
+            copy(errorMessage = "Profile information is unavailable. Please try again.")
+        }
         val firstName = currentState.firstName.trim()
         val lastName = currentState.lastName.trim()
         val dateOfBirth = currentState.dateOfBirth.toBackendDate()

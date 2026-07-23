@@ -202,10 +202,16 @@ class ProfileRepositoryImpl @Inject constructor(
         remove: suspend (String) -> Result<Unit>
     ): Result<Set<String>> {
         for (id in (selectedBackendIds - originalBackendIds).sorted()) {
-            add(id).getOrElse { return Result.failure(it) }
+            val error = add(id).exceptionOrNull()
+            if (error != null && !error.hasHttpStatus(409)) {
+                return Result.failure(error)
+            }
         }
         for (id in (originalBackendIds - selectedBackendIds).sorted()) {
-            remove(id).getOrElse { return Result.failure(it) }
+            val error = remove(id).exceptionOrNull()
+            if (error != null && !error.hasHttpStatus(404)) {
+                return Result.failure(error)
+            }
         }
         return Result.success(selectedBackendIds)
     }
@@ -219,6 +225,9 @@ private fun Throwable.toDomainFailure(): Throwable = when (this) {
 
 private fun <T> Result<T>.profileFailure(): Result<T> =
     exceptionOrNull()?.let { Result.failure(it.toDomainFailure()) } ?: this
+
+private fun Throwable.hasHttpStatus(statusCode: Int): Boolean =
+    (this as? ProfileException)?.statusCode == statusCode
 
 private fun String.normalizedCatalogKey(): String =
     trim().lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-')
