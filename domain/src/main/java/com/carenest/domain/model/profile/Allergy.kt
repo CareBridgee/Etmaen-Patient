@@ -3,8 +3,7 @@ package com.carenest.domain.model.profile
 enum class AllergyType { DRUG, FOOD, OTHER }
 
 data class Allergy(
-    val localKey: String,
-    val backendId: String,
+    val id: String,
     val name: String,
     val type: AllergyType
 )

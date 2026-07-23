@@ -2,28 +2,27 @@ package com.carenest.presentation.ui.profile
 
 import com.carenest.domain.model.profile.AllergyType
 import com.carenest.domain.model.profile.EmergencyContact
-import com.carenest.domain.model.profile.LocalMedicationEntry
+import com.carenest.domain.model.profile.EmergencyRelationship
+import com.carenest.domain.model.profile.MedicationInput
+import com.carenest.domain.model.profile.MedicationValidationErrors
+import com.carenest.domain.model.profile.MobilityStatus
 import com.carenest.domain.model.profile.Profile
-import com.carenest.domain.model.profile.ProfileLocalDraft
-import com.carenest.presentation.ui.profile.validation.MedicationValidationErrors
-import com.carenest.presentation.ui.profile.validation.ProfileField
-import com.carenest.presentation.ui.profile.validation.ProfileValidationError
+import com.carenest.domain.model.profile.ProfileField
+import com.carenest.domain.model.profile.ProfileValidationError
+
 
 enum class ProfileStep {
     Welcome, BasicHealthInfo, MedicalConditions, Allergies, CurrentMedications,
     MedicalHistory, MobilityStatus, EmergencyContact, FinalStep
 }
 
-enum class MobilityStatus { Independent, NeedsAssistance, UsesWalkingAid, WheelchairUser, Bedridden }
-enum class EmergencyRelationship { Spouse, Parent, Sibling, AdultChild, FriendOrNeighbor, Other }
-
 data class ProfileCatalogOption(
-    val localKey: String,
+    val id: String,
     val label: String
 )
 
 data class ProfileAllergyOption(
-    val localKey: String,
+    val id: String,
     val label: String,
     val type: AllergyType
 )
@@ -32,8 +31,6 @@ data class ProfileCompletionState(
     val currentStep: ProfileStep = ProfileStep.Welcome,
     val profile: Profile? = null,
     val profileId: String? = null,
-    val userKey: String? = null,
-    val localDraft: ProfileLocalDraft = ProfileLocalDraft(),
     val isInitializing: Boolean = true,
     val isLoadingStep: Boolean = false,
     val isSubmitting: Boolean = false,
@@ -46,16 +43,16 @@ data class ProfileCompletionState(
     val weight: String = "65",
     val bloodType: String = "",
     val conditionCatalog: List<ProfileCatalogOption> = emptyList(),
-    val selectedConditionKeys: Set<String> = emptySet(),
+    val selectedConditionIds: Set<String> = emptySet(),
     val originalConditionBackendIds: Set<String> = emptySet(),
     val otherConditions: String = "",
     val hasNoKnownAllergies: Boolean = false,
     val allergyCatalog: List<ProfileAllergyOption> = emptyList(),
-    val selectedAllergyKeys: Set<String> = emptySet(),
+    val selectedAllergyIds: Set<String> = emptySet(),
     val originalAllergyBackendIds: Set<String> = emptySet(),
     val otherAllergies: String = "",
     val hasNoCurrentMedications: Boolean = false,
-    val currentMedications: List<LocalMedicationEntry> = emptyList(),
+    val currentMedications: List<MedicationInput> = emptyList(),
     val previousSurgeries: String = "",
     val previousHospitalizations: String = "",
     val mobilityStatus: MobilityStatus? = null,
@@ -72,10 +69,10 @@ sealed interface ProfileCompletionIntent {
     data class HeightChanged(val height: String) : ProfileCompletionIntent
     data class WeightChanged(val weight: String) : ProfileCompletionIntent
     data class BloodTypeChanged(val bloodType: String) : ProfileCompletionIntent
-    data class ConditionToggled(val localKey: String) : ProfileCompletionIntent
+    data class ConditionToggled(val id: String) : ProfileCompletionIntent
     data class OtherConditionsChanged(val conditions: String) : ProfileCompletionIntent
     data object NoKnownAllergiesToggled : ProfileCompletionIntent
-    data class AllergyToggled(val localKey: String) : ProfileCompletionIntent
+    data class AllergyToggled(val id: String) : ProfileCompletionIntent
     data class OtherAllergiesChanged(val allergies: String) : ProfileCompletionIntent
     data object NoCurrentMedicationsToggled : ProfileCompletionIntent
     data object MedicationAdded : ProfileCompletionIntent
@@ -86,7 +83,9 @@ sealed interface ProfileCompletionIntent {
     data class MobilityStatusSelected(val status: MobilityStatus) : ProfileCompletionIntent
     data class MobilityNotesChanged(val notes: String) : ProfileCompletionIntent
     data class EmergencyContactNameChanged(val name: String) : ProfileCompletionIntent
-    data class EmergencyRelationshipSelected(val relationship: EmergencyRelationship) : ProfileCompletionIntent
+    data class EmergencyRelationshipSelected(
+        val relationship: EmergencyRelationship
+    ) : ProfileCompletionIntent
     data class EmergencyPhoneNumberChanged(val phoneNumber: String) : ProfileCompletionIntent
     data object BackClicked : ProfileCompletionIntent
     data object ContinueClicked : ProfileCompletionIntent

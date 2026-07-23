@@ -1,7 +1,7 @@
 package com.carenest.presentation.ui.auth.register
 
-import com.carenest.presentation.ui.profile.validation.ProfileField
-import com.carenest.presentation.ui.profile.validation.ProfileValidationError
+import com.carenest.domain.model.profile.ProfileField
+import com.carenest.domain.model.profile.ProfileValidationError
 
 data class RegisterState(
     val firstName: String = "",

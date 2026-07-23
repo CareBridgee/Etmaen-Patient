@@ -48,7 +48,7 @@ import com.carenest.domain.model.profile.AllergyType
 fun AllergiesScreen(
     hasNoKnownAllergies: Boolean,
     allergies: List<ProfileAllergyOption>,
-    selectedAllergyKeys: Set<String>,
+    selectedAllergyIds: Set<String>,
     otherAllergies: String,
     selectionError: String? = null,
     otherAllergiesError: String? = null,
@@ -119,7 +119,7 @@ fun AllergiesScreen(
                     title = stringResource(R.string.allergies_drug_title),
                     icon = Icons.Outlined.Medication,
                     options = allergies.filter { it.type == AllergyType.DRUG },
-                    selectedOptions = selectedAllergyKeys,
+                    selectedOptions = selectedAllergyIds,
                     enabled = !hasNoKnownAllergies,
                     onOptionClick = onAllergyToggle
                 )
@@ -127,7 +127,7 @@ fun AllergiesScreen(
                     title = stringResource(R.string.allergies_food_title),
                     icon = Icons.Outlined.Restaurant,
                     options = allergies.filter { it.type == AllergyType.FOOD },
-                    selectedOptions = selectedAllergyKeys,
+                    selectedOptions = selectedAllergyIds,
                     enabled = !hasNoKnownAllergies,
                     onOptionClick = onAllergyToggle
                 )
@@ -135,7 +135,7 @@ fun AllergiesScreen(
                     title = stringResource(R.string.allergies_other_title),
                     icon = Icons.Outlined.HealthAndSafety,
                     options = allergies.filter { it.type == AllergyType.OTHER },
-                    selectedOptions = selectedAllergyKeys,
+                    selectedOptions = selectedAllergyIds,
                     enabled = !hasNoKnownAllergies,
                     onOptionClick = onAllergyToggle
                 )
@@ -245,9 +245,9 @@ private fun AllergyCategory(
             options.forEach { option ->
                 AllergyChip(
                     text = option.label,
-                    selected = option.localKey in selectedOptions,
+                    selected = option.id in selectedOptions,
                     enabled = enabled,
-                    onClick = { onOptionClick(option.localKey) }
+                    onClick = { onOptionClick(option.id) }
                 )
             }
         }
@@ -291,10 +291,10 @@ private fun AllergiesScreenPreview() {
         AllergiesScreen(
             hasNoKnownAllergies = false,
             allergies = listOf(
-                ProfileAllergyOption("penicillin", "Penicillin", AllergyType.DRUG),
-                ProfileAllergyOption("peanuts", "Peanuts", AllergyType.FOOD)
+                ProfileAllergyOption("allergy-1", "Penicillin", AllergyType.DRUG),
+                ProfileAllergyOption("allergy-2", "Peanuts", AllergyType.FOOD)
             ),
-            selectedAllergyKeys = setOf("penicillin"),
+            selectedAllergyIds = setOf("allergy-1"),
             otherAllergies = "",
             onNoKnownAllergiesToggle = {},
             onAllergyToggle = {},

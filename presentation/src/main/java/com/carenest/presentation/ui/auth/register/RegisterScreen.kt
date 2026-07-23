@@ -45,7 +45,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.domain.model.profile.ProfileField
 import com.carenest.presentation.ui.profile.validation.localizedMessage
 import com.carenest.presentation.navigation.ScreenTopBar
 import java.text.SimpleDateFormat

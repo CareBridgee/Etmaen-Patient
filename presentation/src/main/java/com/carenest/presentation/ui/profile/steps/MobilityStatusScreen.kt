@@ -41,7 +41,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.MobilityStatus
+import com.carenest.domain.model.profile.MobilityStatus
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
 

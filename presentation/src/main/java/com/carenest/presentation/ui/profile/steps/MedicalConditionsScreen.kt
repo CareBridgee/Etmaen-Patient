@@ -48,7 +48,7 @@ private data class ConditionOption(val label: String, val icon: ImageVector)
 @Composable
 fun MedicalConditionsScreen(
     conditions: List<ProfileCatalogOption>,
-    selectedConditionKeys: Set<String>,
+    selectedConditionIds: Set<String>,
     otherConditions: String,
     otherConditionsError: String? = null,
     onConditionToggle: (String) -> Unit,
@@ -115,8 +115,8 @@ fun MedicalConditionsScreen(
                         rowConditions.forEach { (catalogItem, condition) ->
                             ConditionCard(
                                 option = condition,
-                                selected = catalogItem.localKey in selectedConditionKeys,
-                                onClick = { onConditionToggle(catalogItem.localKey) },
+                                selected = catalogItem.id in selectedConditionIds,
+                                onClick = { onConditionToggle(catalogItem.id) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -203,10 +203,10 @@ private fun MedicalConditionsScreenPreview() {
     SpTheme {
         MedicalConditionsScreen(
             conditions = listOf(
-                ProfileCatalogOption("hypertension", "Hypertension"),
-                ProfileCatalogOption("asthma", "Asthma")
+                ProfileCatalogOption("condition-2", "Hypertension"),
+                ProfileCatalogOption("condition-4", "Asthma")
             ),
-            selectedConditionKeys = setOf("hypertension", "asthma"),
+            selectedConditionIds = setOf("condition-1", "condition-2"),
             otherConditions = "",
             onConditionToggle = {},
             onOtherConditionsChange = {},

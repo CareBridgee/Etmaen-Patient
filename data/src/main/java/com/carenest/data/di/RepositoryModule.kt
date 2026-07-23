@@ -19,8 +19,6 @@ import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.data.source.local.datasource.home.HomeDatasource
 import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
-import com.carenest.data.source.local.profile.LocalProfileDraftDataSource
-import com.carenest.data.source.local.profile.LocalProfileDraftDataSourceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -50,11 +48,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideHomeDatasource(homeDatasourceImpl: HomeFakeDatasourceImpl): HomeDatasource
-
-    @Binds
-    abstract fun provideLocalProfileDraftDataSource(
-        dataSource: LocalProfileDraftDataSourceImpl
-    ): LocalProfileDraftDataSource
 
     //endregion
 }

@@ -1,19 +1,10 @@
 package com.carenest.domain.model.profile
 
-data class Medication(
-    val localKey: String,
-    val backendId: String?,
-    val name: String,
-    val source: CatalogSource,
-    val syncState: SyncState
-)
-
-data class ProfileMedication(
-    val medicationId: String,
-    val medicationName: String
-)
-
-data class MedicationsData(
-    val catalog: List<Medication>,
-    val saved: List<ProfileMedication>
+/**
+ * UI-only medication entry used until the backend supports manual medication names.
+ * It is intentionally not persisted and has no backend identifier or sync state.
+ */
+data class MedicationInput(
+    val id: String,
+    val name: String = ""
 )

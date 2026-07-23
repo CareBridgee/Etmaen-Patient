@@ -1,6 +1,15 @@
 package com.carenest.domain.repository
 
-import com.carenest.domain.model.profile.*
+import com.carenest.domain.model.profile.Allergy
+import com.carenest.domain.model.profile.BasicHealthUpdate
+import com.carenest.domain.model.profile.EmergencyContact
+import com.carenest.domain.model.profile.EmergencyContactInput
+import com.carenest.domain.model.profile.MedicalCondition
+import com.carenest.domain.model.profile.MedicalHistoryUpdate
+import com.carenest.domain.model.profile.PersonalInfoUpdate
+import com.carenest.domain.model.profile.Profile
+import com.carenest.domain.model.profile.ProfileAllergy
+import com.carenest.domain.model.profile.ProfileMedicalCondition
 
 interface ProfileRepository {
     suspend fun getDefaultProfile(): Result<Profile>
@@ -13,7 +22,7 @@ interface ProfileRepository {
     suspend fun syncProfileMedicalConditions(
         profileId: String,
         originalBackendIds: Set<String>,
-        selectedLocalKeys: Set<String>
+        selectedBackendIds: Set<String>
     ): Result<Set<String>>
 
     suspend fun getAllergyCatalog(): Result<List<Allergy>>
@@ -21,14 +30,16 @@ interface ProfileRepository {
     suspend fun syncProfileAllergies(
         profileId: String,
         originalBackendIds: Set<String>,
-        selectedLocalKeys: Set<String>
+        selectedBackendIds: Set<String>
     ): Result<Set<String>>
 
     suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>>
-    suspend fun createEmergencyContact(profileId: String, input: EmergencyContactInput): Result<EmergencyContact>
-    suspend fun updateEmergencyContact(emergencyContactId: String, input: EmergencyContactInput): Result<EmergencyContact>
-
-    suspend fun loadLocalDraft(userId: String): Result<ProfileLocalDraft>
-    suspend fun saveLocalDraft(userId: String, draft: ProfileLocalDraft): Result<Unit>
-    suspend fun markHealthProfileOnboardingHandled(userId: String): Result<Unit>
+    suspend fun createEmergencyContact(
+        profileId: String,
+        input: EmergencyContactInput
+    ): Result<EmergencyContact>
+    suspend fun updateEmergencyContact(
+        emergencyContactId: String,
+        input: EmergencyContactInput
+    ): Result<EmergencyContact>
 }

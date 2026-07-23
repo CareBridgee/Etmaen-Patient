@@ -48,7 +48,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.EmergencyRelationship
+import com.carenest.domain.model.profile.EmergencyRelationship
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
 

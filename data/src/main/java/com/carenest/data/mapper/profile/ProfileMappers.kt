@@ -1,7 +1,19 @@
 package com.carenest.data.mapper.profile
 
-import com.carenest.data.source.remote.dto.profile.*
-import com.carenest.domain.model.profile.*
+import com.carenest.data.source.remote.dto.profile.AllergyDto
+import com.carenest.data.source.remote.dto.profile.EmergencyContactResponseDto
+import com.carenest.data.source.remote.dto.profile.MedicalConditionDto
+import com.carenest.data.source.remote.dto.profile.ProfileAllergyResponseDto
+import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionResponseDto
+import com.carenest.data.source.remote.dto.profile.ProfileResponseDto
+import com.carenest.domain.model.profile.Allergy
+import com.carenest.domain.model.profile.AllergyType
+import com.carenest.domain.model.profile.EmergencyContact
+import com.carenest.domain.model.profile.MedicalCondition
+import com.carenest.domain.model.profile.Profile
+import com.carenest.domain.model.profile.ProfileAllergy
+import com.carenest.domain.model.profile.ProfileException
+import com.carenest.domain.model.profile.ProfileMedicalCondition
 import java.util.UUID
 
 internal fun ProfileResponseDto.toDomain(): Profile = Profile(
@@ -22,8 +34,7 @@ internal fun ProfileResponseDto.toDomain(): Profile = Profile(
 )
 
 internal fun MedicalConditionDto.toDomain() = MedicalCondition(
-    localKey = name.requiredText("medical condition name").normalizedCatalogKey(),
-    backendId = id.requiredUuid("medical condition id"),
+    id = id.requiredUuid("medical condition id"),
     name = name.requiredText("medical condition name"),
     description = description
 )
@@ -34,8 +45,7 @@ internal fun ProfileMedicalConditionResponseDto.toDomain() = ProfileMedicalCondi
 )
 
 internal fun AllergyDto.toDomain() = Allergy(
-    localKey = name.requiredText("allergy name").normalizedCatalogKey(),
-    backendId = id.requiredUuid("allergy id"),
+    id = id.requiredUuid("allergy id"),
     name = name.requiredText("allergy name"),
     type = type.toAllergyType()
 )
@@ -80,6 +90,3 @@ private fun String?.toAllergyType(): AllergyType = when (
     "FOOD", "FOOD_ALLERGY" -> AllergyType.FOOD
     else -> AllergyType.OTHER
 }
-
-private fun String.normalizedCatalogKey(): String =
-    trim().lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-')

@@ -35,18 +35,18 @@ import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.domain.model.profile.LocalMedicationEntry
+import com.carenest.domain.model.profile.MedicationInput
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
-import com.carenest.presentation.ui.profile.validation.MedicationValidationErrors
+import com.carenest.domain.model.profile.MedicationValidationErrors
 import com.carenest.presentation.ui.profile.validation.localizedMessage
 
 @Composable
 fun CurrentMedicationsScreen(
     hasNoCurrentMedications: Boolean,
-    medications: List<LocalMedicationEntry>,
+    medications: List<MedicationInput>,
     selectionError: String? = null,
     medicationErrors: Map<String, MedicationValidationErrors> = emptyMap(),
     onNoCurrentMedicationsToggle: () -> Unit,
@@ -118,7 +118,7 @@ fun CurrentMedicationsScreen(
                 medications.forEachIndexed { index, medication ->
                     MedicationEntry(
                         medication = medication,
-                        validationErrors = medicationErrors[medication.localId],
+                        validationErrors = medicationErrors[medication.id],
                         enabled = !hasNoCurrentMedications,
                         onNameChange = { onMedicationNameChange(index, it) },
                         onRemove = { onRemoveMedication(index) }
@@ -186,7 +186,7 @@ private fun NoCurrentMedicationsCard(
 
 @Composable
 private fun MedicationEntry(
-    medication: LocalMedicationEntry,
+    medication: MedicationInput,
     validationErrors: MedicationValidationErrors? = null,
     enabled: Boolean,
     onNameChange: (String) -> Unit,
@@ -269,7 +269,7 @@ private fun CurrentMedicationsScreenPreview() {
     SpTheme {
         CurrentMedicationsScreen(
             hasNoCurrentMedications = false,
-            medications = listOf(LocalMedicationEntry("preview", name = "Lisinopril 10mg")),
+            medications = listOf(MedicationInput("preview", name = "Lisinopril 10mg")),
             onNoCurrentMedicationsToggle = {},
             onMedicationNameChange = { _, _ -> },
             onAddMedication = {},

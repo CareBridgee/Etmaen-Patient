@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.profile.steps.*
-import com.carenest.presentation.ui.profile.validation.ProfileField
+import com.carenest.domain.model.profile.ProfileField
 import com.carenest.presentation.ui.profile.validation.localizedMessage
 
 @Composable
@@ -66,7 +66,7 @@ fun ProfileCompletionScreen(
             )
             ProfileStep.MedicalConditions -> MedicalConditionsScreen(
                 conditions = state.conditionCatalog,
-                selectedConditionKeys = state.selectedConditionKeys,
+                selectedConditionIds = state.selectedConditionIds,
                 otherConditions = state.otherConditions,
                 otherConditionsError = state.validationErrors[ProfileField.OtherConditions].localizedMessage(),
                 onConditionToggle = { viewModel.onEvent(ProfileCompletionIntent.ConditionToggled(it)) },
@@ -78,7 +78,7 @@ fun ProfileCompletionScreen(
             ProfileStep.Allergies -> AllergiesScreen(
                 hasNoKnownAllergies = state.hasNoKnownAllergies,
                 allergies = state.allergyCatalog,
-                selectedAllergyKeys = state.selectedAllergyKeys,
+                selectedAllergyIds = state.selectedAllergyIds,
                 otherAllergies = state.otherAllergies,
                 selectionError = state.validationErrors[ProfileField.AllergiesSelection].localizedMessage(),
                 otherAllergiesError = state.validationErrors[ProfileField.OtherAllergies].localizedMessage(),
