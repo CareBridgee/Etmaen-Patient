@@ -59,7 +59,8 @@ fun MobilityStatusScreen(
     onStatusSelected: (MobilityStatus) -> Unit,
     onAdditionalNotesChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -184,7 +185,8 @@ fun MobilityStatusScreen(
         ProfileScreenNavigation(
             onBack = onBack,
             onContinue = onContinue,
-            continueEnabled = selectedStatus != null
+            continueEnabled = selectedStatus != null && !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }

@@ -46,7 +46,8 @@ fun MedicalHistoryScreen(
     onPreviousSurgeriesChange: (String) -> Unit,
     onPreviousHospitalizationsChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -127,7 +128,9 @@ fun MedicalHistoryScreen(
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }

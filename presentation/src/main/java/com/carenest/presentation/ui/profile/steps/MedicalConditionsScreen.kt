@@ -41,17 +41,20 @@ import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.presentation.ui.profile.ProfileCatalogOption
 
 private data class ConditionOption(val label: String, val icon: ImageVector)
 
 @Composable
 fun MedicalConditionsScreen(
-    selectedConditions: Set<String>,
+    conditions: List<ProfileCatalogOption>,
+    selectedConditionKeys: Set<String>,
     otherConditions: String,
     onConditionToggle: (String) -> Unit,
     onOtherConditionsChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -59,14 +62,10 @@ fun MedicalConditionsScreen(
         onLeadingClick = onBack
     )
 
-    val conditions = listOf(
-        ConditionOption(stringResource(R.string.condition_diabetes), Icons.Outlined.Bloodtype),
-        ConditionOption(stringResource(R.string.condition_hypertension), Icons.Outlined.MonitorHeart),
-        ConditionOption(stringResource(R.string.condition_heart_disease), Icons.Outlined.FavoriteBorder),
-        ConditionOption(stringResource(R.string.condition_asthma), Icons.Outlined.Air),
-        ConditionOption(stringResource(R.string.condition_copd), Icons.Outlined.HealthAndSafety),
-        ConditionOption(stringResource(R.string.condition_epilepsy), Icons.Outlined.Psychology),
-        ConditionOption(stringResource(R.string.condition_liver_disease), Icons.Outlined.MedicalServices)
+    val conditionIcons = listOf(
+        Icons.Outlined.Bloodtype, Icons.Outlined.MonitorHeart, Icons.Outlined.FavoriteBorder,
+        Icons.Outlined.Air, Icons.Outlined.HealthAndSafety, Icons.Outlined.Psychology,
+        Icons.Outlined.MedicalServices
     )
 
     Column(
@@ -105,16 +104,18 @@ fun MedicalConditionsScreen(
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)) {
-                conditions.chunked(2).forEach { rowConditions ->
+                conditions.mapIndexed { index, condition ->
+                    condition to ConditionOption(condition.label, conditionIcons[index % conditionIcons.size])
+                }.chunked(2).forEach { rowConditions ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12)
                     ) {
-                        rowConditions.forEach { condition ->
+                        rowConditions.forEach { (catalogItem, condition) ->
                             ConditionCard(
                                 option = condition,
-                                selected = condition.label in selectedConditions,
-                                onClick = { onConditionToggle(condition.label) },
+                                selected = catalogItem.localKey in selectedConditionKeys,
+                                onClick = { onConditionToggle(catalogItem.localKey) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -146,7 +147,9 @@ fun MedicalConditionsScreen(
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -196,7 +199,11 @@ private fun ConditionCard(
 private fun MedicalConditionsScreenPreview() {
     SpTheme {
         MedicalConditionsScreen(
-            selectedConditions = setOf("Hypertension", "Asthma"),
+            conditions = listOf(
+                ProfileCatalogOption("hypertension", "Hypertension", com.carenest.domain.model.profile.CatalogSource.FALLBACK),
+                ProfileCatalogOption("asthma", "Asthma", com.carenest.domain.model.profile.CatalogSource.FALLBACK)
+            ),
+            selectedConditionKeys = setOf("hypertension", "asthma"),
             otherConditions = "",
             onConditionToggle = {},
             onOtherConditionsChange = {},
