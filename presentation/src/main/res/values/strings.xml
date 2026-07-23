@@ -48,14 +48,9 @@
   <string name="personal_info_dob_hint">mm/dd/yyyy</string>
   <string name="personal_info_date_confirm">OK</string>
   <string name="personal_info_date_cancel">Cancel</string>
-  <string name="personal_info_national_id_title">National ID</string>
-  <string name="personal_info_national_id_hint">0000000000000000</string>
   <string name="personal_info_gender_title">Gender</string>
   <string name="personal_info_gender_male">Male</string>
   <string name="personal_info_gender_female">Female</string>
-  <string name="personal_info_account_type_title">Account Type</string>
-  <string name="personal_info_account_type_family">Family</string>
-  <string name="personal_info_account_type_personal">Personal</string>
   <string name="personal_info_continue_btn">Continue</string>
   <!-- Profile Completion -->
   <string name="profile_step_format">Step %1$d of %2$d</string>
@@ -106,6 +101,9 @@
   <string name="current_medications_none_title">No current medications</string>
   <string name="current_medications_none_description">I am not taking any prescribed drugs</string>
   <string name="current_medications_hint">Medication name (e.g. Lisinopril 10mg)</string>
+  <string name="current_medications_name_hint">Medication name</string>
+  <string name="current_medications_dosage_hint">Dosage</string>
+  <string name="current_medications_frequency_hint">Frequency</string>
   <string name="current_medications_delete">Delete medication</string>
   <string name="current_medications_add">Add Medication</string>
   <!-- Medical History -->
@@ -144,6 +142,7 @@
   <string name="emergency_contact_phone">Phone Number</string>
   <string name="emergency_contact_phone_hint">(555) 000-0000</string>
   <string name="emergency_contact_security">Your data is encrypted and only shared with medical professionals during active care sessions.</string>
+  <string name="emergency_contact_multiple_unavailable">Multiple emergency contacts are saved. Editing is unavailable here until contact selection is supported.</string>
   <string name="emergency_contact_continue">Continue to Final Step</string>
   <string name="relationship_spouse">Spouse</string>
   <string name="relationship_parent">Parent</string>

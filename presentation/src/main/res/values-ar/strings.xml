@@ -54,14 +54,9 @@
   <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
   <string name="personal_info_date_confirm">تأكيد</string>
   <string name="personal_info_date_cancel">إلغاء</string>
-  <string name="personal_info_national_id_title">الرقم القومي</string>
-  <string name="personal_info_national_id_hint">0000000000000000</string>
   <string name="personal_info_gender_title">النوع</string>
   <string name="personal_info_gender_male">ذكر</string>
   <string name="personal_info_gender_female">أنثى</string>
-  <string name="personal_info_account_type_title">نوع الحساب</string>
-  <string name="personal_info_account_type_family">عائلي</string>
-  <string name="personal_info_account_type_personal">شخصي</string>
   <string name="personal_info_continue_btn">متابعة</string>
 
   <!-- Profile Completion -->
@@ -121,6 +116,9 @@
   <string name="current_medications_none_title">لا توجد أدوية حالية</string>
   <string name="current_medications_none_description">لا أتناول أي أدوية موصوفة</string>
   <string name="current_medications_hint">اسم الدواء (مثال: ليسينوبريل 10 ملغ)</string>
+  <string name="current_medications_name_hint">اسم الدواء</string>
+  <string name="current_medications_dosage_hint">الجرعة</string>
+  <string name="current_medications_frequency_hint">معدل التكرار</string>
   <string name="current_medications_delete">حذف الدواء</string>
   <string name="current_medications_add">إضافة دواء</string>
 
@@ -162,6 +160,7 @@
   <string name="emergency_contact_phone">رقم الهاتف</string>
   <string name="emergency_contact_phone_hint">0100 000 0000</string>
   <string name="emergency_contact_security">بياناتك مشفرة ولا تتم مشاركتها إلا مع المتخصصين الطبيين أثناء جلسات الرعاية النشطة.</string>
+  <string name="emergency_contact_multiple_unavailable">تم حفظ عدة جهات اتصال للطوارئ. التعديل غير متاح هنا حتى يتم دعم اختيار جهة اتصال.</string>
   <string name="emergency_contact_continue">المتابعة إلى الخطوة الأخيرة</string>
   <string name="relationship_spouse">الزوج أو الزوجة</string>
   <string name="relationship_parent">أحد الوالدين</string>
