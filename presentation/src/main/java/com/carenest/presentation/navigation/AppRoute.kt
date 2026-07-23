@@ -43,4 +43,10 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data object Profile : AppRoute
+
+     @Serializable
+     data object RequestService : AppRoute
+
+     @Serializable
+     data object Map : AppRoute
 }

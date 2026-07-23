@@ -39,11 +39,12 @@ import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
-import com.carenest.domain.model.home.ServiceCategory
 import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.request_service.components.MapScreen
+import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -154,6 +155,9 @@ fun AppNav() {
                 ServiceDetailsScreen(
                     category = route.category,
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onRequestService = {
+                        backStack.add(AppRoute.RequestService)
+                    }
                 )
             }
 
@@ -171,6 +175,28 @@ fun AppNav() {
 
             entry<AppRoute.Profile> {
                 ProfileScreen()
+            }
+
+
+            entry<AppRoute.RequestService> {
+                RequestServiceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToMap = { backStack.add(AppRoute.Map) },
+                    onNavigateToEditProfile = { /* TODO */ },
+                    onNavigateToAddPatient = { /* TODO */ },
+                    onNavigateToServiceSelection = { /* TODO */ },
+                    onNavigateToAddressPicker = { /* TODO */ }
+                )
+            }
+
+            entry<AppRoute.Map> {
+                MapScreen(
+                    onLocationSelected = { lat, lon ->
+                        // Handle location selection
+                        if (backStack.size > 1) backStack.removeLastOrNull()
+                    },
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                )
             }
 
         }
