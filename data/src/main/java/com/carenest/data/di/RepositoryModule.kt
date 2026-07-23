@@ -14,9 +14,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
 import com.carenest.data.repository.HomeRepositoryImpl
+import com.carenest.data.repository.ProfileRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
+import com.carenest.domain.repository.ProfileRepository
 import com.carenest.data.source.local.datasource.home.HomeDatasource
 import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
+import com.carenest.data.source.local.profile.LocalProfileDraftDataSource
+import com.carenest.data.source.local.profile.LocalProfileDraftDataSourceImpl
+import com.carenest.data.source.local.profile.ProfileFallbackCatalogDataSource
+import com.carenest.data.source.local.profile.ProfileFallbackCatalogDataSourceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -32,6 +38,9 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideHomeRepositoryImpl(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 
+    @Binds
+    abstract fun provideProfileRepositoryImpl(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
+
     //endregion
 
     //region datasource
@@ -43,6 +52,16 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideHomeDatasource(homeDatasourceImpl: HomeFakeDatasourceImpl): HomeDatasource
+
+    @Binds
+    abstract fun provideProfileFallbackCatalogDataSource(
+        dataSource: ProfileFallbackCatalogDataSourceImpl
+    ): ProfileFallbackCatalogDataSource
+
+    @Binds
+    abstract fun provideLocalProfileDraftDataSource(
+        dataSource: LocalProfileDraftDataSourceImpl
+    ): LocalProfileDraftDataSource
 
     //endregion
 }
