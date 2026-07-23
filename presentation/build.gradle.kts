@@ -67,6 +67,7 @@ dependencies {
     // Android tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.bundles.mapbox)
 
     // Compose UI tests
     androidTestImplementation(platform(libs.androidx.compose.bom))
