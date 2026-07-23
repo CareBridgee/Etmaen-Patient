@@ -10,7 +10,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.coroutines.CancellationException
@@ -103,7 +102,7 @@ class ProfileApiServiceImpl @Inject constructor(
         noinline block: HttpRequestBuilder.() -> Unit
     ): Result<T> = try {
         val response = httpClient.request(block)
-        if (response.status != HttpStatusCode.OK) throw response.toProfileException()
+        if (response.status.value !in 200..299) throw response.toProfileException()
         Result.success(response.body<T>())
     } catch (cancellation: CancellationException) {
         throw cancellation
@@ -113,7 +112,7 @@ class ProfileApiServiceImpl @Inject constructor(
 
     private suspend fun executeUnit(block: HttpRequestBuilder.() -> Unit): Result<Unit> = try {
         val response = httpClient.request(block)
-        if (response.status != HttpStatusCode.OK) throw response.toProfileException()
+        if (response.status.value !in 200..299) throw response.toProfileException()
         Result.success(Unit)
     } catch (cancellation: CancellationException) {
         throw cancellation

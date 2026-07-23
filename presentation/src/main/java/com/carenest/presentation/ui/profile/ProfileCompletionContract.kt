@@ -37,7 +37,7 @@ data class ProfileCompletionState(
     val initialized: Boolean = false,
     val errorMessage: String? = null,
     val validationErrors: Map<ProfileField, ProfileValidationError> = emptyMap(),
-    val medicationValidationErrors: Map<String, MedicationValidationErrors> = emptyMap(),
+    val medicationValidationErrors: Map<Long, MedicationValidationErrors> = emptyMap(),
     val loadedSteps: Set<ProfileStep> = emptySet(),
     val height: String = "170",
     val weight: String = "65",

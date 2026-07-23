@@ -48,7 +48,7 @@ fun CurrentMedicationsScreen(
     hasNoCurrentMedications: Boolean,
     medications: List<MedicationInput>,
     selectionError: String? = null,
-    medicationErrors: Map<String, MedicationValidationErrors> = emptyMap(),
+    medicationErrors: Map<Long, MedicationValidationErrors> = emptyMap(),
     onNoCurrentMedicationsToggle: () -> Unit,
     onMedicationNameChange: (Int, String) -> Unit,
     onAddMedication: () -> Unit,
@@ -118,7 +118,7 @@ fun CurrentMedicationsScreen(
                 medications.forEachIndexed { index, medication ->
                     MedicationEntry(
                         medication = medication,
-                        validationErrors = medicationErrors[medication.id],
+                        validationErrors = medicationErrors[medication.uiKey],
                         enabled = !hasNoCurrentMedications,
                         onNameChange = { onMedicationNameChange(index, it) },
                         onRemove = { onRemoveMedication(index) }
@@ -269,7 +269,7 @@ private fun CurrentMedicationsScreenPreview() {
     SpTheme {
         CurrentMedicationsScreen(
             hasNoCurrentMedications = false,
-            medications = listOf(MedicationInput("preview", name = "Lisinopril 10mg")),
+            medications = listOf(MedicationInput(uiKey = 0L, name = "Lisinopril 10mg")),
             onNoCurrentMedicationsToggle = {},
             onMedicationNameChange = { _, _ -> },
             onAddMedication = {},

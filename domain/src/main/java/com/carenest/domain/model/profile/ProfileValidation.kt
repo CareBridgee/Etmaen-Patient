@@ -51,5 +51,5 @@ data class MedicationValidationErrors(
 
 class ProfileValidationException(
     val fieldErrors: Map<ProfileField, ProfileValidationError> = emptyMap(),
-    val medicationErrors: Map<String, MedicationValidationErrors> = emptyMap()
+    val medicationErrors: Map<Long, MedicationValidationErrors> = emptyMap()
 ) : IllegalArgumentException("Please correct the highlighted fields")

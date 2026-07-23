@@ -10,8 +10,14 @@ data class MedicalConditionDto(
 )
 
 @Serializable
-data class AllergyDto(
+data class ProfileMedicalConditionRequestDto(
+    val medicalConditionId: String
+)
+
+@Serializable
+data class ProfileMedicalConditionResponseDto(
     val id: String? = null,
-    val name: String? = null,
-    val type: String? = null
+    val profileId: String? = null,
+    val medicalConditionId: String? = null,
+    val conditionName: String? = null
 )

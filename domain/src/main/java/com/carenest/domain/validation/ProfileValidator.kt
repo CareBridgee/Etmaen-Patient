@@ -97,7 +97,7 @@ object ProfileValidator {
         if (hasNoCurrentMedications) return emptyList()
 
         val fieldErrors = mutableMapOf<ProfileField, ProfileValidationError>()
-        val entryErrors = mutableMapOf<String, MedicationValidationErrors>()
+        val entryErrors = mutableMapOf<Long, MedicationValidationErrors>()
         if (entries.isEmpty()) {
             fieldErrors[ProfileField.MedicationsSelection] = ProfileValidationError.MedicationSelectionRequired
         }
@@ -108,7 +108,7 @@ object ProfileValidator {
                 trimmed.length > 100 -> ProfileValidationError.TextTooLong100
                 else -> null
             }
-            if (error != null) entryErrors[entry.id] = MedicationValidationErrors(name = error)
+            if (error != null) entryErrors[entry.uiKey] = MedicationValidationErrors(name = error)
         }
         if (fieldErrors.isNotEmpty() || entryErrors.isNotEmpty()) {
             throw ProfileValidationException(fieldErrors, entryErrors)

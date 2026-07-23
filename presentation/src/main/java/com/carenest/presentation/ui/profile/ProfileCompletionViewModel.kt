@@ -28,7 +28,6 @@ import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -48,6 +47,8 @@ class ProfileCompletionViewModel @Inject constructor(
 ) : ViewModel(),
     StateHolder<ProfileCompletionState> by DefaultStateHolder(ProfileCompletionState()),
     EffectPublisher<ProfileCompletionEffect> by DefaultEffectPublisher() {
+
+    private var nextMedicationUiKey = 0L
 
     init {
         initialize()
@@ -113,12 +114,12 @@ class ProfileCompletionViewModel @Inject constructor(
                 if (event.index !in currentMedications.indices) {
                     this
                 } else {
-                    val removedId = currentMedications[event.index].id
+                    val removedKey = currentMedications[event.index].uiKey
                     copy(
                         currentMedications = currentMedications.filterIndexed { index, _ ->
                             index != event.index
                         },
-                        medicationValidationErrors = medicationValidationErrors - removedId
+                        medicationValidationErrors = medicationValidationErrors - removedKey
                     )
                 }
             }
@@ -582,12 +583,12 @@ class ProfileCompletionViewModel @Inject constructor(
         if (index !in currentMedications.indices) return@updateState this
         val entry = currentMedications[index]
         val updatedErrors = medicationValidationErrors.toMutableMap()
-        updatedErrors[entry.id]?.let { currentErrors ->
+        updatedErrors[entry.uiKey]?.let { currentErrors ->
             val cleared = currentErrors.copy(name = null)
             if (cleared.isEmpty) {
-                updatedErrors.remove(entry.id)
+                updatedErrors.remove(entry.uiKey)
             } else {
-                updatedErrors[entry.id] = cleared
+                updatedErrors[entry.uiKey] = cleared
             }
         }
         copy(
@@ -633,6 +634,9 @@ class ProfileCompletionViewModel @Inject constructor(
 
     private fun Double.displayNumber(): String =
         if (this % 1.0 == 0.0) toInt().toString() else toString()
+
+    private fun blankMedication(): MedicationInput =
+        MedicationInput(uiKey = nextMedicationUiKey++)
 
     private companion object {
         const val MAX_MEDICATIONS = 10
@@ -685,4 +689,4 @@ private fun temporaryDebugProfile(profileId: String) = Profile(
     previousHospitalizations = null
 )
 
-private fun blankMedication() = MedicationInput(id = "dummy-${UUID.randomUUID()}")
+
