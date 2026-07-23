@@ -1,8 +1,14 @@
 package com.carenest.presentation.ui.aichat.choosepatient
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +20,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,17 +49,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.carenest.designsystem.components.button.ButtonIconPosition
-import com.carenest.designsystem.components.button.PrimaryButton
+import androidx.compose.ui.tooling.preview.Preview
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.R
+import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.R as RD
+import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
-import com.carenest.presentation.ui.home.components.HomeGreetingBar
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun ChoosePatientScreen(
@@ -61,9 +75,20 @@ fun ChoosePatientScreen(
         }
     }
 
+    ChoosePatientContent(
+        state = state,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+fun ChoosePatientContent(
+    state: ChoosePatientState,
+    onEvent: (ChoosePatientEvent) -> Unit
+) {
     HideTopBar()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
@@ -71,146 +96,160 @@ fun ChoosePatientScreen(
     ) {
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(androidx.compose.foundation.rememberScrollState())
-                .padding(16.dp)
+                .fillMaxSize()
+                .padding(bottom = 88.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
         ) {
-            androidx.compose.material3.IconButton(
-                onClick = onNavigateBack,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = RD.drawable.ic_arrow_back),
-                    contentDescription = "Back",
-                    tint = Theme.colors.primaryFont
-                )
-            }
-            
-            HomeGreetingBar(
-                greetingText = stringResource(R.string.services_greeting), // "Good morning, Elena"
-                avatarUrl = null,
-                onNotificationClick = { }
-            )
-
             Spacer(modifier = Modifier.height(24.dp))
+            
+            GreetingSection()
+
+            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.choose_patient_title),
-                style = Theme.typography.display.copy(fontWeight = FontWeight.Bold),
+                style = Theme.typography.display.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp,
+                    letterSpacing = (-0.5).sp
+                ),
                 color = Theme.colors.primaryFont
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = stringResource(R.string.choose_patient_description),
-                style = Theme.typography.body.large,
+                style = Theme.typography.body.large.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp
+                ),
                 color = Theme.colors.secondaryFont
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Patients list
             state.patients.forEach { patient ->
                 PatientCard(
                     patient = patient,
-                    onClick = { viewModel.onEvent(ChoosePatientEvent.OnPatientSelected(patient.id)) }
+                    onClick = { onEvent(ChoosePatientEvent.OnPatientSelected(patient.id)) }
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Add Family Member Dashed Button
-            DashedButton(
-                text = stringResource(R.string.add_family_member),
-                onClick = { viewModel.onEvent(ChoosePatientEvent.OnAddFamilyMemberClicked) }
+            AddFamilyMemberCard(
+                onClick = { onEvent(ChoosePatientEvent.OnAddFamilyMemberClicked) }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // Info Box
-            InfoBox(
-                text = stringResource(R.string.add_family_member_info)
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
+            InfoCard()
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
 
         Box(
             modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(horizontal = 24.dp, vertical = 24.dp)
         ) {
-            PrimaryButton(
-                caption = stringResource(R.string.continue_with_assessment),
-                onClick = { viewModel.onEvent(ChoosePatientEvent.OnContinueClicked) },
-                modifier = Modifier.fillMaxWidth(),
-                iconPainter = painterResource(id = RD.drawable.ic_arrow),
-                iconPosition = ButtonIconPosition.End
+            BottomCTA(
+                onClick = { onEvent(ChoosePatientEvent.OnContinueClicked) }
             )
         }
     }
 }
 
 @Composable
-fun PatientCard(patient: PatientItem, onClick: () -> Unit) {
-    val backgroundColor = if (patient.isSelected) Theme.colors.primary.copy(alpha = 0.1f) else Theme.colors.surfaceVariant
-    val borderColor = if (patient.isSelected) Theme.colors.primary else Color.Transparent
-
+fun GreetingSection() {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(backgroundColor)
-            .border(1.dp, borderColor, RoundedCornerShape(12.dp))
-            .clickable { onClick() }
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Initials circle
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Theme.colors.primary.copy(alpha = 0.2f)),
+                .background(Theme.colors.primary.copy(alpha = 0.12f)),
             contentAlignment = Alignment.Center
         ) {
-            val initials = patient.name.split(" ").mapNotNull { it.firstOrNull()?.toString() }.take(2).joinToString("")
-            Text(
-                text = initials,
-                style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
-                color = Theme.colors.primary
-            )
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = patient.name,
-                style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
-                color = Theme.colors.primaryFont
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = patient.relationship,
-                style = Theme.typography.body.medium,
-                color = Theme.colors.secondaryFont
-            )
-        }
-
-        if (patient.isSelected) {
             Icon(
-                painter = painterResource(id = RD.drawable.ic_check),
-                contentDescription = "Selected",
+                painter = painterResource(id = RD.drawable.ic_profile),
+                contentDescription = null,
                 tint = Theme.colors.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(20.dp)
             )
-        } else {
+        }
+        Text(
+            text = "Good morning, Elena",
+            style = Theme.typography.body.large.copy(
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp
+            ),
+            color = Theme.colors.primary
+        )
+    }
+}
+
+@Composable
+fun PatientCard(
+    patient: PatientItem,
+    onClick: () -> Unit
+) {
+    val isSelected = patient.isSelected
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isSelected) Theme.colors.primary.copy(alpha = 0.06f) else Theme.colors.surface,
+        animationSpec = tween(300)
+    )
+    val elevation by animateDpAsState(
+        targetValue = if (isSelected) 6.dp else 2.dp,
+        animationSpec = tween(300)
+    )
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current,
+                onClick = onClick
+            ),
+        shape = RoundedCornerShape(24.dp),
+        color = backgroundColor,
+        shadowElevation = elevation
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            PatientAvatar(isSelected = isSelected)
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = patient.name,
+                    style = Theme.typography.body.large.copy(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp
+                    ),
+                    color = Theme.colors.primaryFont
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                RelationshipChip(
+                    relationship = patient.relationship,
+                    isSelected = isSelected
+                )
+            }
+            
             Icon(
                 painter = painterResource(id = RD.drawable.ic_chevron_right),
-                contentDescription = "Select",
+                contentDescription = null,
                 tint = Theme.colors.secondaryFont,
                 modifier = Modifier.size(24.dp)
             )
@@ -219,63 +258,237 @@ fun PatientCard(patient: PatientItem, onClick: () -> Unit) {
 }
 
 @Composable
-fun DashedButton(text: String, onClick: () -> Unit) {
-    val strokeColor = Theme.colors.secondaryFont
-    val dashPathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+fun PatientAvatar(isSelected: Boolean) {
+    val borderColor by animateColorAsState(
+        targetValue = if (isSelected) Theme.colors.primary else Color.Transparent,
+        animationSpec = tween(300)
+    )
+
+    Box(modifier = Modifier.size(64.dp)) {
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(CircleShape)
+                .background(Theme.colors.primary.copy(alpha = 0.12f))
+                .border(2.dp, borderColor, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = RD.drawable.ic_profile),
+                contentDescription = null,
+                tint = Theme.colors.primary,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(22.dp)
+                    .clip(CircleShape)
+                    .background(Theme.colors.surface)
+                    .padding(2.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(Theme.colors.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = Theme.colors.surface,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RelationshipChip(
+    relationship: String,
+    isSelected: Boolean
+) {
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isSelected) Theme.colors.primary else Theme.colors.primary.copy(alpha = 0.12f),
+        animationSpec = tween(300)
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (isSelected) Theme.colors.surface else Theme.colors.primary,
+        animationSpec = tween(300)
+    )
+    
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(backgroundColor)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = relationship,
+            style = Theme.typography.body.small.copy(
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp
+            ),
+            color = textColor
+        )
+    }
+}
+
+@Composable
+fun AddFamilyMemberCard(onClick: () -> Unit) {
+    val strokeColor = Theme.colors.secondaryFont.copy(alpha = 0.3f)
+    val dashPathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .clickable { onClick() },
+            .height(140.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current,
+                onClick = onClick
+            ),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
             drawRoundRect(
                 color = strokeColor,
-                style = Stroke(width = 2.dp.toPx(), pathEffect = dashPathEffect),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(12.dp.toPx(), 12.dp.toPx())
+                style = Stroke(width = 4.dp.toPx(), pathEffect = dashPathEffect),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(24.dp.toPx(), 24.dp.toPx())
             )
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = painterResource(id = RD.drawable.ic_add),
-                contentDescription = null,
-                tint = Theme.colors.primaryFont,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .background(Theme.colors.primary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.PersonAdd,
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = text,
-                style = Theme.typography.body.large.copy(fontWeight = FontWeight.Medium),
-                color = Theme.colors.primaryFont
+                text = stringResource(R.string.add_family_member),
+                style = Theme.typography.body.medium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
+                ),
+                color = Theme.colors.primary
             )
         }
     }
 }
 
 @Composable
-fun InfoBox(text: String) {
+fun InfoCard() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(Theme.colors.primary.copy(alpha = 0.1f))
-            .padding(16.dp),
+            .clip(RoundedCornerShape(24.dp))
+            .background(Theme.colors.primary.copy(alpha = 0.08f))
+            .padding(24.dp),
         verticalAlignment = Alignment.Top
     ) {
         Icon(
-            painter = painterResource(id = RD.drawable.ic_info),
-            contentDescription = "Info",
+            imageVector = Icons.Outlined.Info,
+            contentDescription = null,
             tint = Theme.colors.primary,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = text,
-            style = Theme.typography.body.medium,
-            color = Theme.colors.primary,
-            lineHeight = androidx.compose.ui.unit.TextUnit(20f, androidx.compose.ui.unit.TextUnitType.Sp)
+            text = stringResource(R.string.add_family_member_info),
+            style = Theme.typography.body.small.copy(
+                fontSize = 13.sp,
+                lineHeight = 20.sp
+            ),
+            color = Theme.colors.secondaryFont
         )
     }
 }
+
+@Composable
+fun BottomCTA(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp),
+        shape = RoundedCornerShape(32.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.continue_with_assessment),
+                style = Theme.typography.body.large.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
+                ),
+                color = Theme.colors.surface
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = Theme.colors.surface,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Light Mode")
+@Composable
+fun ChoosePatientScreenLightPreview() {
+    SpTheme(isDarkTheme = false) {
+        ChoosePatientContent(
+            state = ChoosePatientState(
+                patients = listOf(
+                    PatientItem("1", "Elena Rodriguez", "Self", false),
+                    PatientItem("2", "Robert Chen", "Dad", false),
+                    PatientItem("3", "Margaret Chen", "Mom", true)
+                )
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Dark Mode")
+@Composable
+fun ChoosePatientScreenDarkPreview() {
+    SpTheme(isDarkTheme = true) {
+        ChoosePatientContent(
+            state = ChoosePatientState(
+                patients = listOf(
+                    PatientItem("1", "Elena Rodriguez", "Self", true),
+                    PatientItem("2", "Robert Chen", "Dad", false),
+                    PatientItem("3", "Margaret Chen", "Mom", false)
+                )
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+
+
