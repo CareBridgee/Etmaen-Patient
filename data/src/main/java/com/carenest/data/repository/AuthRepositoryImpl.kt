@@ -2,8 +2,8 @@ package com.carenest.data.repository
 
 import com.carenest.data.mapper.toDomain
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
+import com.carenest.domain.model.Patient
 import com.carenest.domain.model.auth.AuthResult
-import com.carenest.domain.model.auth.User
 import com.carenest.domain.repository.AuthRepository
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class AuthRepositoryImpl @Inject constructor(
         val digitsOnly = phoneNumber.replace(Regex("[^0-9]"), "")
         if (digitsOnly.contains("0123456789") || phoneNumber.contains("0123456789")) {
             delay(300)
-            val mockUser = User(
+            val mockUser = Patient(
                 id = "usr_0123456789",
                 phoneNumber = phoneNumber,
                 firstName = "Elena",
@@ -43,7 +43,7 @@ class AuthRepositoryImpl @Inject constructor(
                 accessToken = "mock_access_token_0123456789",
                 refreshToken = "mock_refresh_token_0123456789",
                 expiresIn = 3600L,
-                user = mockUser
+                patient = mockUser
             )
             return Result.success(mockAuthResult)
         }
