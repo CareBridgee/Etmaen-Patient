@@ -165,25 +165,6 @@ internal fun RegisterScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            CustomTextField(
-                text = state.nationalId,
-                onTextChange = {
-                    onEvent(
-                        RegisterIntent.NationalIdChanged(
-                            it.filter(Char::isDigit).take(16)
-                        )
-                    )
-                },
-                title = stringResource(R.string.personal_info_national_id_title),
-                hint = stringResource(R.string.personal_info_national_id_hint),
-                singleLine = true,
-                fieldHeight = 48.dp,
-                containerColor = Theme.colors.disable,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             BasicText(
                 text = stringResource(R.string.personal_info_gender_title),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont)
@@ -194,31 +175,12 @@ internal fun RegisterScreenContent(
                 stringResource(R.string.personal_info_gender_male),
                 stringResource(R.string.personal_info_gender_female)
             )
+            val genderValues = listOf("MALE", "FEMALE")
             SegmentedControl(
                 items = genderOptions,
-                selectedIndex = genderOptions.indexOf(state.gender),
+                selectedIndex = genderValues.indexOf(state.gender),
                 onItemSelected = {
-                    onEvent(RegisterIntent.GenderChanged(genderOptions[it]))
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            BasicText(
-                text = stringResource(R.string.personal_info_account_type_title),
-                style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            val accountTypes = listOf(
-                stringResource(R.string.personal_info_account_type_family),
-                stringResource(R.string.personal_info_account_type_personal)
-            )
-            SegmentedControl(
-                items = accountTypes,
-                selectedIndex = accountTypes.indexOf(state.accountType),
-                onItemSelected = {
-                    onEvent(RegisterIntent.AccountTypeChanged(accountTypes[it]))
+                    onEvent(RegisterIntent.GenderChanged(genderValues[it]))
                 }
             )
 
@@ -227,8 +189,14 @@ internal fun RegisterScreenContent(
             PrimaryButton(
                 caption = stringResource(R.string.personal_info_continue_btn),
                 onClick = { onEvent(RegisterIntent.ContinueClicked) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isDisabled = state.isInitializing || state.isSubmitting,
+                isLoading = state.isInitializing || state.isSubmitting
             )
+            state.errorMessage?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = it, color = Theme.colors.error)
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -340,7 +308,8 @@ private fun RegisterScreenPreview() {
                 firstName = "Jane",
                 lastName = "Doe",
                 dateOfBirth = "01/15/1990",
-                gender = "Female"
+                gender = "FEMALE",
+                isInitializing = false
             ),
             onEvent = {}
         )
