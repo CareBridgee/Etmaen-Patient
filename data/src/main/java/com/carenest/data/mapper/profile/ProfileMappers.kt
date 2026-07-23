@@ -25,9 +25,7 @@ internal fun MedicalConditionDto.toDomain() = MedicalCondition(
     localKey = name.requiredText("medical condition name").normalizedCatalogKey(),
     backendId = id.requiredUuid("medical condition id"),
     name = name.requiredText("medical condition name"),
-    description = description,
-    source = CatalogSource.REMOTE,
-    syncState = SyncState.SYNCED
+    description = description
 )
 
 internal fun ProfileMedicalConditionResponseDto.toDomain() = ProfileMedicalCondition(
@@ -39,28 +37,13 @@ internal fun AllergyDto.toDomain() = Allergy(
     localKey = name.requiredText("allergy name").normalizedCatalogKey(),
     backendId = id.requiredUuid("allergy id"),
     name = name.requiredText("allergy name"),
-    type = type.toAllergyType(),
-    source = CatalogSource.REMOTE,
-    syncState = SyncState.SYNCED
+    type = type.toAllergyType()
 )
 
 internal fun ProfileAllergyResponseDto.toDomain() = ProfileAllergy(
     allergyId = allergyId.requiredUuid("allergy id"),
     allergyName = allergyName.requiredText("allergy name"),
     type = allergyType.toAllergyType()
-)
-
-internal fun MedicationDto.toDomain() = Medication(
-    localKey = name.requiredText("medication name").normalizedCatalogKey(),
-    backendId = id.requiredUuid("medication id"),
-    name = name.requiredText("medication name"),
-    source = CatalogSource.REMOTE,
-    syncState = SyncState.SYNCED
-)
-
-internal fun ProfileMedicationResponseDto.toDomain() = ProfileMedication(
-    medicationId = medicationId.requiredUuid("medication id"),
-    medicationName = medicationName.requiredText("medication name")
 )
 
 internal fun EmergencyContactResponseDto.toDomain() = EmergencyContact(

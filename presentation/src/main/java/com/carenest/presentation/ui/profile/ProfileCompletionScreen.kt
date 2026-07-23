@@ -98,12 +98,6 @@ fun ProfileCompletionScreen(
                 onMedicationNameChange = { index, value ->
                     viewModel.onEvent(ProfileCompletionIntent.MedicationNameChanged(index, value))
                 },
-                onMedicationDosageChange = { index, value ->
-                    viewModel.onEvent(ProfileCompletionIntent.MedicationDosageChanged(index, value))
-                },
-                onMedicationFrequencyChange = { index, value ->
-                    viewModel.onEvent(ProfileCompletionIntent.MedicationFrequencyChanged(index, value))
-                },
                 onAddMedication = { viewModel.onEvent(ProfileCompletionIntent.MedicationAdded) },
                 onRemoveMedication = { viewModel.onEvent(ProfileCompletionIntent.MedicationRemoved(it)) },
                 onBack = { viewModel.onEvent(ProfileCompletionIntent.BackClicked) },

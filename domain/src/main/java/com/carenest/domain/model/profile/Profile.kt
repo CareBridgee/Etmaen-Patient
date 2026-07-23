@@ -34,8 +34,3 @@ data class MedicalHistoryUpdate(
     val previousSurgeries: String,
     val previousHospitalizations: String
 )
-
-data class MobilityUpdate(
-    val mobilityStatus: String,
-    val mobilityNotes: String
-)

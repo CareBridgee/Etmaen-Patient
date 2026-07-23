@@ -18,11 +18,3 @@ import kotlinx.serialization.Serializable
     val allergyName: String? = null,
     val allergyType: String? = null
 )
-
-@Serializable data class ProfileMedicationRequestDto(val medicationId: String)
-@Serializable data class ProfileMedicationResponseDto(
-    val id: String? = null,
-    val profileId: String? = null,
-    val medicationId: String? = null,
-    val medicationName: String? = null
-)

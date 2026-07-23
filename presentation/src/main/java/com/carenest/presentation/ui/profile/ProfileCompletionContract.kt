@@ -1,7 +1,6 @@
 package com.carenest.presentation.ui.profile
 
 import com.carenest.domain.model.profile.AllergyType
-import com.carenest.domain.model.profile.CatalogSource
 import com.carenest.domain.model.profile.EmergencyContact
 import com.carenest.domain.model.profile.LocalMedicationEntry
 import com.carenest.domain.model.profile.Profile
@@ -20,15 +19,13 @@ enum class EmergencyRelationship { Spouse, Parent, Sibling, AdultChild, FriendOr
 
 data class ProfileCatalogOption(
     val localKey: String,
-    val label: String,
-    val source: CatalogSource
+    val label: String
 )
 
 data class ProfileAllergyOption(
     val localKey: String,
     val label: String,
-    val type: AllergyType,
-    val source: CatalogSource
+    val type: AllergyType
 )
 
 data class ProfileCompletionState(
@@ -58,9 +55,7 @@ data class ProfileCompletionState(
     val originalAllergyBackendIds: Set<String> = emptySet(),
     val otherAllergies: String = "",
     val hasNoCurrentMedications: Boolean = false,
-    val medicationCatalog: List<ProfileCatalogOption> = emptyList(),
     val currentMedications: List<LocalMedicationEntry> = emptyList(),
-    val originalMedicationBackendIds: Set<String> = emptySet(),
     val previousSurgeries: String = "",
     val previousHospitalizations: String = "",
     val mobilityStatus: MobilityStatus? = null,
@@ -85,8 +80,6 @@ sealed interface ProfileCompletionIntent {
     data object NoCurrentMedicationsToggled : ProfileCompletionIntent
     data object MedicationAdded : ProfileCompletionIntent
     data class MedicationNameChanged(val index: Int, val value: String) : ProfileCompletionIntent
-    data class MedicationDosageChanged(val index: Int, val value: String) : ProfileCompletionIntent
-    data class MedicationFrequencyChanged(val index: Int, val value: String) : ProfileCompletionIntent
     data class MedicationRemoved(val index: Int) : ProfileCompletionIntent
     data class PreviousSurgeriesChanged(val surgeries: String) : ProfileCompletionIntent
     data class PreviousHospitalizationsChanged(val hospitalizations: String) : ProfileCompletionIntent

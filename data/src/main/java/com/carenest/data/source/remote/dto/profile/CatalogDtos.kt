@@ -15,9 +15,3 @@ data class AllergyDto(
     val name: String? = null,
     val type: String? = null
 )
-
-@Serializable
-data class MedicationDto(
-    val id: String? = null,
-    val name: String? = null
-)

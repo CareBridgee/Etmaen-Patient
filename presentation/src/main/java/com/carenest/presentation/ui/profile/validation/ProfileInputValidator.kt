@@ -52,11 +52,9 @@ enum class ProfileValidationError {
 }
 
 data class MedicationValidationErrors(
-    val name: ProfileValidationError? = null,
-    val dosage: ProfileValidationError? = null,
-    val frequency: ProfileValidationError? = null
+    val name: ProfileValidationError? = null
 ) {
-    val isEmpty: Boolean get() = name == null && dosage == null && frequency == null
+    val isEmpty: Boolean get() = name == null
 }
 
 data class MedicationsValidationResult(
@@ -124,9 +122,7 @@ object ProfileInputValidator {
     ): MedicationsValidationResult {
         if (hasNoCurrentMedications) return MedicationsValidationResult()
 
-        val nonBlankEntries = entries.filter { entry ->
-            entry.name.isNotBlank() || entry.dosage.isNotBlank() || entry.frequency.isNotBlank()
-        }
+        val nonBlankEntries = entries.filter { entry -> entry.name.isNotBlank() }
         val fieldErrors = if (nonBlankEntries.isEmpty()) {
             mapOf(ProfileField.MedicationsSelection to ProfileValidationError.MedicationSelectionRequired)
         } else {
@@ -138,9 +134,7 @@ object ProfileInputValidator {
                     entry.name.isBlank() -> ProfileValidationError.MedicationNameRequired
                     entry.name.trim().length > 100 -> ProfileValidationError.TextTooLong100
                     else -> null
-                },
-                dosage = if (entry.dosage.trim().length > 100) ProfileValidationError.TextTooLong100 else null,
-                frequency = if (entry.frequency.trim().length > 100) ProfileValidationError.TextTooLong100 else null
+                }
             )
             if (errors.isEmpty) null else entry.localId to errors
         }.toMap()

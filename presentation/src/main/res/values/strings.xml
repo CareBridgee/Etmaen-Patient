@@ -102,8 +102,6 @@
   <string name="current_medications_none_description">I am not taking any prescribed drugs</string>
   <string name="current_medications_hint">Medication name (e.g. Lisinopril 10mg)</string>
   <string name="current_medications_name_hint">Medication name</string>
-  <string name="current_medications_dosage_hint">Dosage</string>
-  <string name="current_medications_frequency_hint">Frequency</string>
   <string name="current_medications_delete">Delete medication</string>
   <string name="current_medications_add">Add Medication</string>
   <!-- Medical History -->

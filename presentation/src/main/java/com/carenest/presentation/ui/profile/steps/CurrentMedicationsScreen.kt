@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.Medication
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -37,11 +35,11 @@ import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.model.profile.LocalMedicationEntry
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
-import com.carenest.domain.model.profile.LocalMedicationEntry
 import com.carenest.presentation.ui.profile.validation.MedicationValidationErrors
 import com.carenest.presentation.ui.profile.validation.localizedMessage
 
@@ -53,8 +51,6 @@ fun CurrentMedicationsScreen(
     medicationErrors: Map<String, MedicationValidationErrors> = emptyMap(),
     onNoCurrentMedicationsToggle: () -> Unit,
     onMedicationNameChange: (Int, String) -> Unit,
-    onMedicationDosageChange: (Int, String) -> Unit,
-    onMedicationFrequencyChange: (Int, String) -> Unit,
     onAddMedication: () -> Unit,
     onRemoveMedication: (Int) -> Unit,
     onBack: () -> Unit,
@@ -125,8 +121,6 @@ fun CurrentMedicationsScreen(
                         validationErrors = medicationErrors[medication.localId],
                         enabled = !hasNoCurrentMedications,
                         onNameChange = { onMedicationNameChange(index, it) },
-                        onDosageChange = { onMedicationDosageChange(index, it) },
-                        onFrequencyChange = { onMedicationFrequencyChange(index, it) },
                         onRemove = { onRemoveMedication(index) }
                     )
                 }
@@ -196,68 +190,40 @@ private fun MedicationEntry(
     validationErrors: MedicationValidationErrors? = null,
     enabled: Boolean,
     onNameChange: (String) -> Unit,
-    onDosageChange: (String) -> Unit,
-    onFrequencyChange: (String) -> Unit,
     onRemove: () -> Unit
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(4.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
             .background(Theme.colors.surface)
             .padding(Theme.spacing.extraSmall),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CustomTextField(
-                text = medication.name,
-                onTextChange = onNameChange,
-                hint = stringResource(R.string.current_medications_name_hint),
-                enabled = enabled,
-                borderColor = Theme.colors.surfaceVariant,
-                containerColor = Theme.colors.cardBackground,
-                isError = validationErrors?.name != null,
-                errorMessage = validationErrors?.name.localizedMessage(),
-                singleLine = true,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
-                contentDescription = stringResource(R.string.current_medications_delete),
-                tint = Theme.colors.error,
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .clickable(enabled = enabled, onClick = onRemove)
-                    .padding(Theme.spacing.space10)
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-            CustomTextField(
-                text = medication.dosage,
-                onTextChange = onDosageChange,
-                hint = stringResource(R.string.current_medications_dosage_hint),
-                enabled = enabled,
-                isError = validationErrors?.dosage != null,
-                errorMessage = validationErrors?.dosage.localizedMessage(),
-                singleLine = true,
-                modifier = Modifier.weight(1f)
-            )
-            CustomTextField(
-                text = medication.frequency,
-                onTextChange = onFrequencyChange,
-                hint = stringResource(R.string.current_medications_frequency_hint),
-                enabled = enabled,
-                isError = validationErrors?.frequency != null,
-                errorMessage = validationErrors?.frequency.localizedMessage(),
-                singleLine = true,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        CustomTextField(
+            text = medication.name,
+            onTextChange = onNameChange,
+            hint = stringResource(R.string.current_medications_name_hint),
+            enabled = enabled,
+            borderColor = Theme.colors.surfaceVariant,
+            containerColor = Theme.colors.cardBackground,
+            isError = validationErrors?.name != null,
+            errorMessage = validationErrors?.name.localizedMessage(),
+            singleLine = false,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            imageVector = Icons.Outlined.DeleteOutline,
+            contentDescription = stringResource(R.string.current_medications_delete),
+            tint = Theme.colors.error,
+            modifier = Modifier
+                .size(44.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .clickable(enabled = enabled, onClick = onRemove)
+                .padding(Theme.spacing.space10)
+        )
     }
 }
 
@@ -303,11 +269,9 @@ private fun CurrentMedicationsScreenPreview() {
     SpTheme {
         CurrentMedicationsScreen(
             hasNoCurrentMedications = false,
-            medications = listOf(LocalMedicationEntry("preview", name = "Lisinopril", dosage = "10 mg", frequency = "Once daily")),
+            medications = listOf(LocalMedicationEntry("preview", name = "Lisinopril 10mg")),
             onNoCurrentMedicationsToggle = {},
             onMedicationNameChange = { _, _ -> },
-            onMedicationDosageChange = { _, _ -> },
-            onMedicationFrequencyChange = { _, _ -> },
             onAddMedication = {},
             onRemoveMedication = {},
             onBack = {},

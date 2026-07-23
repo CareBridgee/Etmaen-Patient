@@ -1,12 +1,25 @@
 package com.carenest.data.repository
 
-import com.carenest.data.mapper.profile.*
-import com.carenest.data.source.remote.dto.profile.*
+import com.carenest.data.mapper.profile.toDomain
+import com.carenest.data.source.local.profile.LocalProfileDraftDataSource
+import com.carenest.data.source.remote.dto.profile.EmergencyContactRequestDto
+import com.carenest.data.source.remote.dto.profile.ProfileAllergyRequestDto
+import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionRequestDto
+import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
 import com.carenest.data.source.remote.service.ProfileApiException
 import com.carenest.data.source.remote.service.ProfileApiService
-import com.carenest.data.source.local.profile.LocalProfileDraftDataSource
-import com.carenest.data.source.local.profile.ProfileFallbackCatalogDataSource
-import com.carenest.domain.model.profile.*
+import com.carenest.domain.model.profile.Allergy
+import com.carenest.domain.model.profile.BasicHealthUpdate
+import com.carenest.domain.model.profile.EmergencyContact
+import com.carenest.domain.model.profile.EmergencyContactInput
+import com.carenest.domain.model.profile.MedicalCondition
+import com.carenest.domain.model.profile.MedicalHistoryUpdate
+import com.carenest.domain.model.profile.PersonalInfoUpdate
+import com.carenest.domain.model.profile.Profile
+import com.carenest.domain.model.profile.ProfileAllergy
+import com.carenest.domain.model.profile.ProfileException
+import com.carenest.domain.model.profile.ProfileLocalDraft
+import com.carenest.domain.model.profile.ProfileMedicalCondition
 import com.carenest.domain.repository.ProfileRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,12 +27,10 @@ import javax.inject.Singleton
 @Singleton
 class ProfileRepositoryImpl @Inject constructor(
     private val api: ProfileApiService,
-    private val fallbackCatalog: ProfileFallbackCatalogDataSource,
     private val localDrafts: LocalProfileDraftDataSource
 ) : ProfileRepository {
     private var conditionBackendIdsByKey: Map<String, String> = emptyMap()
     private var allergyBackendIdsByKey: Map<String, String> = emptyMap()
-    private var medicationBackendIdsByKey: Map<String, String> = emptyMap()
 
     override suspend fun getDefaultProfile(): Result<Profile> =
         api.getDefaultProfile().mapCatching { it.toDomain() }.profileFailure()
@@ -36,7 +47,14 @@ class ProfileRepositoryImpl @Inject constructor(
         )
 
     override suspend fun updateBasicHealth(profileId: String, update: BasicHealthUpdate): Result<Profile> =
-        updateProfile(profileId, ProfileRequestDto(height = update.height, weight = update.weight, bloodType = update.bloodType))
+        updateProfile(
+            profileId,
+            ProfileRequestDto(
+                height = update.height,
+                weight = update.weight,
+                bloodType = update.bloodType
+            )
+        )
 
     override suspend fun updateMedicalHistory(profileId: String, update: MedicalHistoryUpdate): Result<Profile> =
         updateProfile(
@@ -47,21 +65,18 @@ class ProfileRepositoryImpl @Inject constructor(
             )
         )
 
-    override suspend fun updateMobility(profileId: String, update: MobilityUpdate): Result<Profile> =
-        updateProfile(profileId, ProfileRequestDto(mobilityStatus = update.mobilityStatus, mobilityNotes = update.mobilityNotes))
-
     private suspend fun updateProfile(profileId: String, request: ProfileRequestDto): Result<Profile> =
         api.updateProfile(profileId, request)
             .mapCatching { it.toDomain() }
             .profileFailure()
 
-    override suspend fun getMedicalConditionCatalog(): Result<List<MedicalCondition>> {
-        val remote = api.getMedicalConditions().mapCatching { list -> list.map { it.toDomain() } }.getOrNull()
-        conditionBackendIdsByKey = remote.orEmpty().mapNotNull { item ->
-            item.backendId?.let { item.localKey to it }
-        }.toMap()
-        return Result.success(remote?.takeIf { it.isNotEmpty() } ?: fallbackCatalog.medicalConditions())
-    }
+    override suspend fun getMedicalConditionCatalog(): Result<List<MedicalCondition>> =
+        api.getMedicalConditions()
+            .mapCatching { list -> list.map { it.toDomain() } }
+            .profileFailure()
+            .onSuccess { catalog ->
+                conditionBackendIdsByKey = catalog.associate { it.localKey to it.backendId }
+            }
 
     override suspend fun getProfileMedicalConditions(profileId: String): Result<List<ProfileMedicalCondition>> =
         api.getProfileMedicalConditions(profileId)
@@ -78,7 +93,11 @@ class ProfileRepositoryImpl @Inject constructor(
         originalBackendIds: Set<String>,
         selectedLocalKeys: Set<String>
     ): Result<Set<String>> {
-        val selectedBackendIds = selectedLocalKeys.mapNotNull(conditionBackendIdsByKey::get).toSet()
+        val unresolvedKeys = selectedLocalKeys - conditionBackendIdsByKey.keys
+        if (unresolvedKeys.isNotEmpty()) {
+            return Result.failure(ProfileException("Some medical conditions are no longer available. Please reload and try again."))
+        }
+        val selectedBackendIds = selectedLocalKeys.mapTo(mutableSetOf(), conditionBackendIdsByKey::getValue)
         return syncRelations(
             originalBackendIds,
             selectedBackendIds,
@@ -91,13 +110,13 @@ class ProfileRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getAllergyCatalog(): Result<List<Allergy>> {
-        val remote = api.getAllergies().mapCatching { list -> list.map { it.toDomain() } }.getOrNull()
-        allergyBackendIdsByKey = remote.orEmpty().mapNotNull { item ->
-            item.backendId?.let { item.localKey to it }
-        }.toMap()
-        return Result.success(remote?.takeIf { it.isNotEmpty() } ?: fallbackCatalog.allergies())
-    }
+    override suspend fun getAllergyCatalog(): Result<List<Allergy>> =
+        api.getAllergies()
+            .mapCatching { list -> list.map { it.toDomain() } }
+            .profileFailure()
+            .onSuccess { catalog ->
+                allergyBackendIdsByKey = catalog.associate { it.localKey to it.backendId }
+            }
 
     override suspend fun getProfileAllergies(profileId: String): Result<List<ProfileAllergy>> =
         api.getProfileAllergies(profileId)
@@ -114,7 +133,11 @@ class ProfileRepositoryImpl @Inject constructor(
         originalBackendIds: Set<String>,
         selectedLocalKeys: Set<String>
     ): Result<Set<String>> {
-        val selectedBackendIds = selectedLocalKeys.mapNotNull(allergyBackendIdsByKey::get).toSet()
+        val unresolvedKeys = selectedLocalKeys - allergyBackendIdsByKey.keys
+        if (unresolvedKeys.isNotEmpty()) {
+            return Result.failure(ProfileException("Some allergies are no longer available. Please reload and try again."))
+        }
+        val selectedBackendIds = selectedLocalKeys.mapTo(mutableSetOf(), allergyBackendIdsByKey::getValue)
         return syncRelations(
             originalBackendIds,
             selectedBackendIds,
@@ -127,62 +150,26 @@ class ProfileRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getMedicationCatalog(): Result<List<Medication>> {
-        val remote = api.getMedications().mapCatching { list -> list.map { it.toDomain() } }.getOrNull()
-        medicationBackendIdsByKey = remote.orEmpty().mapNotNull { item ->
-            item.backendId?.let { item.localKey to it }
-        }.toMap()
-        return Result.success(remote?.takeIf { it.isNotEmpty() } ?: fallbackCatalog.medications())
-    }
-
-    override suspend fun getProfileMedications(profileId: String): Result<List<ProfileMedication>> =
-        api.getProfileMedications(profileId)
+    override suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>> =
+        api.getEmergencyContacts(profileId)
             .mapCatching { list -> list.map { it.toDomain() } }
             .profileFailure()
-            .onSuccess { saved ->
-                medicationBackendIdsByKey = medicationBackendIdsByKey + saved.associate {
-                    it.medicationName.normalizedCatalogKey() to it.medicationId
-                }
-            }
 
-    override suspend fun syncProfileMedications(
+    override suspend fun createEmergencyContact(
         profileId: String,
-        originalBackendIds: Set<String>,
-        entries: List<LocalMedicationEntry>
-    ): Result<List<LocalMedicationEntry>> {
-        val resolved = entries.map { entry ->
-            val backendId = entry.backendMedicationId
-                ?: medicationBackendIdsByKey[entry.name.normalizedCatalogKey()]
-            entry.copy(
-                backendMedicationId = backendId,
-                syncState = if (backendId == null) SyncState.LOCAL_ONLY else SyncState.PENDING
-            )
-        }
-        val selectedBackendIds = resolved.mapNotNull(LocalMedicationEntry::backendMedicationId).toSet()
-        return syncRelations(
-            originalBackendIds,
-            selectedBackendIds,
-            add = { id ->
-                api.addMedication(profileId, ProfileMedicationRequestDto(id))
-                    .mapCatching { it.toDomain() }
-                    .profileFailure()
-            },
-            remove = { id -> api.removeMedication(profileId, id).profileFailure() }
-        ).map {
-            resolved.map { entry ->
-                if (entry.backendMedicationId == null) entry else entry.copy(syncState = SyncState.SYNCED)
-            }
-        }
-    }
+        input: EmergencyContactInput
+    ): Result<EmergencyContact> =
+        api.createEmergencyContact(profileId, input.toDto())
+            .mapCatching { it.toDomain() }
+            .profileFailure()
 
-    override suspend fun getEmergencyContacts(profileId: String) =
-        api.getEmergencyContacts(profileId).mapCatching { list -> list.map { it.toDomain() } }.profileFailure()
-
-    override suspend fun createEmergencyContact(profileId: String, input: EmergencyContactInput) =
-        api.createEmergencyContact(profileId, input.toDto()).mapCatching { it.toDomain() }.profileFailure()
-
-    override suspend fun updateEmergencyContact(emergencyContactId: String, input: EmergencyContactInput) =
-        api.updateEmergencyContact(emergencyContactId, input.toDto()).mapCatching { it.toDomain() }.profileFailure()
+    override suspend fun updateEmergencyContact(
+        emergencyContactId: String,
+        input: EmergencyContactInput
+    ): Result<EmergencyContact> =
+        api.updateEmergencyContact(emergencyContactId, input.toDto())
+            .mapCatching { it.toDomain() }
+            .profileFailure()
 
     override suspend fun loadLocalDraft(userId: String): Result<ProfileLocalDraft> =
         runCatching { localDrafts.load(userId) }
@@ -193,7 +180,8 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun markHealthProfileOnboardingHandled(userId: String): Result<Unit> =
         runCatching { localDrafts.markOnboardingHandled(userId) }
 
-    private fun EmergencyContactInput.toDto() = EmergencyContactRequestDto(contactName, relationship, phoneNumber)
+    private fun EmergencyContactInput.toDto() =
+        EmergencyContactRequestDto(contactName, relationship, phoneNumber)
 
     private suspend fun syncRelations(
         originalBackendIds: Set<String>,
@@ -203,15 +191,11 @@ class ProfileRepositoryImpl @Inject constructor(
     ): Result<Set<String>> {
         for (id in (selectedBackendIds - originalBackendIds).sorted()) {
             val error = add(id).exceptionOrNull()
-            if (error != null && !error.hasHttpStatus(409)) {
-                return Result.failure(error)
-            }
+            if (error != null && !error.hasHttpStatus(409)) return Result.failure(error)
         }
         for (id in (originalBackendIds - selectedBackendIds).sorted()) {
             val error = remove(id).exceptionOrNull()
-            if (error != null && !error.hasHttpStatus(404)) {
-                return Result.failure(error)
-            }
+            if (error != null && !error.hasHttpStatus(404)) return Result.failure(error)
         }
         return Result.success(selectedBackendIds)
     }

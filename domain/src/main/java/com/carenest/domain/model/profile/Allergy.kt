@@ -4,11 +4,9 @@ enum class AllergyType { DRUG, FOOD, OTHER }
 
 data class Allergy(
     val localKey: String,
-    val backendId: String?,
+    val backendId: String,
     val name: String,
-    val type: AllergyType,
-    val source: CatalogSource,
-    val syncState: SyncState
+    val type: AllergyType
 )
 
 data class ProfileAllergy(

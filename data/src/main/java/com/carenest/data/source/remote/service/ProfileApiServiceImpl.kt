@@ -80,28 +80,6 @@ class ProfileApiServiceImpl @Inject constructor(
         url { path("api/v1/profiles/$profileId/allergies/$allergyId") }
     }
 
-    override suspend fun getMedications() = execute<List<MedicationDto>> {
-        method = HttpMethod.Get
-        url { path("api/v1/medications") }
-    }
-
-    override suspend fun getProfileMedications(profileId: String) = execute<List<ProfileMedicationResponseDto>> {
-        method = HttpMethod.Get
-        url { path("api/v1/profiles/$profileId/medications") }
-    }
-
-    override suspend fun addMedication(profileId: String, request: ProfileMedicationRequestDto) = execute<ProfileMedicationResponseDto> {
-        method = HttpMethod.Post
-        url { path("api/v1/profiles/$profileId/medications") }
-        contentType(ContentType.Application.Json)
-        setBody(request)
-    }
-
-    override suspend fun removeMedication(profileId: String, medicationId: String) = executeUnit {
-        method = HttpMethod.Delete
-        url { path("api/v1/profiles/$profileId/medications/$medicationId") }
-    }
-
     override suspend fun getEmergencyContacts(profileId: String) = execute<List<EmergencyContactResponseDto>> {
         method = HttpMethod.Get
         url { path("api/v1/profiles/$profileId/emergency-contacts") }

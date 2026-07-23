@@ -22,13 +22,10 @@ class ProfileCompletionViewModel @Inject constructor(
     private val getDefaultProfile: GetDefaultProfileUseCase,
     private val updateBasicHealth: UpdateBasicHealthUseCase,
     private val updateMedicalHistory: UpdateMedicalHistoryUseCase,
-    private val updateMobility: UpdateMobilityUseCase,
     private val loadMedicalConditions: LoadMedicalConditionsUseCase,
     private val syncMedicalConditions: SyncMedicalConditionsUseCase,
     private val loadAllergies: LoadAllergiesUseCase,
     private val syncAllergies: SyncAllergiesUseCase,
-    private val loadMedications: LoadMedicationsUseCase,
-    private val syncMedications: SyncMedicationsUseCase,
     private val loadEmergencyContacts: LoadEmergencyContactsUseCase,
     private val saveEmergencyContact: SaveEmergencyContactUseCase,
     private val loadProfileDraft: LoadProfileDraftUseCase,
@@ -93,14 +90,8 @@ class ProfileCompletionViewModel @Inject constructor(
                     currentMedications = currentMedications + blankMedication()
                 )
             }
-            is ProfileCompletionIntent.MedicationNameChanged -> updateMedication(event.index, MedicationField.Name) {
+            is ProfileCompletionIntent.MedicationNameChanged -> updateMedication(event.index) {
                 copy(name = event.value.take(100))
-            }
-            is ProfileCompletionIntent.MedicationDosageChanged -> updateMedication(event.index, MedicationField.Dosage) {
-                copy(dosage = event.value.take(100))
-            }
-            is ProfileCompletionIntent.MedicationFrequencyChanged -> updateMedication(event.index, MedicationField.Frequency) {
-                copy(frequency = event.value.take(100))
             }
             is ProfileCompletionIntent.MedicationRemoved -> edit(ProfileField.MedicationsSelection) {
                 if (event.index !in currentMedications.indices) this else {
@@ -163,16 +154,15 @@ class ProfileCompletionViewModel @Inject constructor(
                     .copy(
                         userKey = userKey,
                         localDraft = draft,
-                        selectedConditionKeys = draft.selectedConditionKeys,
                         otherConditions = draft.otherConditions,
-                        selectedAllergyKeys = draft.selectedAllergyKeys,
                         otherAllergies = draft.otherAllergies,
                         hasNoKnownAllergies = draft.noKnownAllergiesConfirmed,
-                        currentMedications = draft.medications,
+                        currentMedications = if (
+                            draft.noCurrentMedicationsConfirmed || draft.medications.isNotEmpty()
+                        ) draft.medications else listOf(blankMedication()),
                         hasNoCurrentMedications = draft.noCurrentMedicationsConfirmed,
-                        mobilityStatus = draft.pendingMobilityStatus?.toMobilityStatus()
-                            ?: profile.mobilityStatus?.toMobilityStatus(),
-                        mobilityNotes = draft.pendingMobilityNotes ?: profile.mobilityNotes.orEmpty()
+                        mobilityStatus = draft.pendingMobilityStatus?.toMobilityStatus(),
+                        mobilityNotes = draft.pendingMobilityNotes.orEmpty()
                     )
                     .hydrateContacts(contacts)
                     .copy(
@@ -232,24 +222,27 @@ class ProfileCompletionViewModel @Inject constructor(
 
         val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val draft = snapshot.localDraft.copy(
-            selectedConditionKeys = snapshot.selectedConditionKeys,
-            otherConditions = snapshot.otherConditions.trim()
-        )
+        val draft = snapshot.localDraft.copy(otherConditions = snapshot.otherConditions.trim())
         launchSubmission {
-            saveProfileDraft(userKey, draft).getOrElse { finishFailure(it); return@launchSubmission }
-            val sync = syncMedicalConditions(
+            val syncedIds = syncMedicalConditions(
                 profileId,
                 snapshot.originalConditionBackendIds,
                 snapshot.selectedConditionKeys
-            )
+            ).getOrElse {
+                finishFailure(it)
+                return@launchSubmission
+            }
+            saveProfileDraft(userKey, draft).getOrElse {
+                finishFailure(it)
+                return@launchSubmission
+            }
             updateState {
                 copy(
                     isSubmitting = false,
                     localDraft = draft,
                     otherConditions = draft.otherConditions,
                     validationErrors = validationErrors - MEDICAL_CONDITION_FIELDS,
-                    originalConditionBackendIds = sync.getOrNull() ?: originalConditionBackendIds
+                    originalConditionBackendIds = syncedIds
                 )
             }
             moveTo(ProfileStep.Allergies)
@@ -269,13 +262,22 @@ class ProfileCompletionViewModel @Inject constructor(
         val userKey = requireUserKey() ?: return
         val selectedKeys = if (snapshot.hasNoKnownAllergies) emptySet() else snapshot.selectedAllergyKeys
         val draft = snapshot.localDraft.copy(
-            selectedAllergyKeys = selectedKeys,
             otherAllergies = if (snapshot.hasNoKnownAllergies) "" else snapshot.otherAllergies.trim(),
             noKnownAllergiesConfirmed = snapshot.hasNoKnownAllergies
         )
         launchSubmission {
-            saveProfileDraft(userKey, draft).getOrElse { finishFailure(it); return@launchSubmission }
-            val sync = syncAllergies(profileId, snapshot.originalAllergyBackendIds, selectedKeys)
+            val syncedIds = syncAllergies(
+                profileId,
+                snapshot.originalAllergyBackendIds,
+                selectedKeys
+            ).getOrElse {
+                finishFailure(it)
+                return@launchSubmission
+            }
+            saveProfileDraft(userKey, draft).getOrElse {
+                finishFailure(it)
+                return@launchSubmission
+            }
             updateState {
                 copy(
                     isSubmitting = false,
@@ -283,7 +285,7 @@ class ProfileCompletionViewModel @Inject constructor(
                     selectedAllergyKeys = selectedKeys,
                     otherAllergies = draft.otherAllergies,
                     validationErrors = validationErrors - ALLERGY_FIELDS,
-                    originalAllergyBackendIds = sync.getOrNull() ?: originalAllergyBackendIds
+                    originalAllergyBackendIds = syncedIds
                 )
             }
             moveTo(ProfileStep.CurrentMedications)
@@ -307,47 +309,30 @@ class ProfileCompletionViewModel @Inject constructor(
             return
         }
 
-        val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val entries = if (snapshot.hasNoCurrentMedications) emptyList() else {
+        val entries = if (snapshot.hasNoCurrentMedications) {
+            emptyList()
+        } else {
             snapshot.currentMedications
-                .filter { it.name.isNotBlank() || it.dosage.isNotBlank() || it.frequency.isNotBlank() }
-                .map {
-                    it.copy(
-                        name = it.name.trim(),
-                        dosage = it.dosage.trim(),
-                        frequency = it.frequency.trim(),
-                        syncState = if (it.backendMedicationId == null) SyncState.LOCAL_ONLY else SyncState.PENDING
-                    )
-                }
+                .filter { it.name.isNotBlank() }
+                .map { it.copy(name = it.name.trim()) }
         }
         val draft = snapshot.localDraft.copy(
             medications = entries,
             noCurrentMedicationsConfirmed = snapshot.hasNoCurrentMedications
         )
         launchSubmission {
-            saveProfileDraft(userKey, draft).getOrElse { finishFailure(it); return@launchSubmission }
-            val sync = syncMedications(profileId, snapshot.originalMedicationBackendIds, entries)
-            val storedEntries = sync.getOrElse {
-                entries.map { entry ->
-                    if (entry.backendMedicationId == null) entry else entry.copy(syncState = SyncState.FAILED)
-                }
-            }
-            val storedDraft = draft.copy(medications = storedEntries)
-            saveProfileDraft(userKey, storedDraft).getOrElse {
+            saveProfileDraft(userKey, draft).getOrElse {
                 finishFailure(it)
                 return@launchSubmission
             }
             updateState {
                 copy(
                     isSubmitting = false,
-                    localDraft = storedDraft,
-                    currentMedications = storedEntries,
+                    localDraft = draft,
+                    currentMedications = entries,
                     validationErrors = validationErrors - MEDICATION_FIELDS,
-                    medicationValidationErrors = emptyMap(),
-                    originalMedicationBackendIds = if (sync.isSuccess) {
-                        storedEntries.mapNotNull { it.backendMedicationId }.toSet()
-                    } else originalMedicationBackendIds
+                    medicationValidationErrors = emptyMap()
                 )
             }
             moveTo(ProfileStep.MedicalHistory)
@@ -390,35 +375,24 @@ class ProfileCompletionViewModel @Inject constructor(
         if (errors.isNotEmpty()) return showValidationErrors(MOBILITY_FIELDS, errors)
 
         val status = requireNotNull(snapshot.mobilityStatus)
-        val profileId = requireProfileId() ?: return
         val userKey = requireUserKey() ?: return
-        val trimmedNotes = snapshot.mobilityNotes.trim()
-        val pendingDraft = snapshot.localDraft.copy(
+        val draft = snapshot.localDraft.copy(
             pendingMobilityStatus = status.wireValue(),
-            pendingMobilityNotes = trimmedNotes
+            pendingMobilityNotes = snapshot.mobilityNotes.trim()
         )
         launchSubmission {
-            saveProfileDraft(userKey, pendingDraft).getOrElse { finishFailure(it); return@launchSubmission }
-            val result = updateMobility(profileId, MobilityUpdate(status.wireValue(), trimmedNotes))
-            if (result.isSuccess) {
-                val cleared = pendingDraft.copy(pendingMobilityStatus = null, pendingMobilityNotes = null)
-                saveProfileDraft(userKey, cleared)
-                updateState {
-                    hydrateProfile(result.getOrThrow()).copy(
-                        isSubmitting = false,
-                        localDraft = cleared,
-                        validationErrors = validationErrors - MOBILITY_FIELDS
-                    )
-                }
-            } else {
-                updateState {
-                    copy(
-                        isSubmitting = false,
-                        localDraft = pendingDraft,
-                        mobilityNotes = trimmedNotes,
-                        validationErrors = validationErrors - MOBILITY_FIELDS
-                    )
-                }
+            saveProfileDraft(userKey, draft).getOrElse {
+                finishFailure(it)
+                return@launchSubmission
+            }
+            updateState {
+                copy(
+                    isSubmitting = false,
+                    localDraft = draft,
+                    mobilityStatus = status,
+                    mobilityNotes = draft.pendingMobilityNotes.orEmpty(),
+                    validationErrors = validationErrors - MOBILITY_FIELDS
+                )
             }
             moveTo(ProfileStep.EmergencyContact)
         }
@@ -518,19 +492,18 @@ class ProfileCompletionViewModel @Inject constructor(
                         val remoteSaved = data.saved.map {
                             ProfileCatalogOption(
                                 it.conditionName.normalizedCatalogKey(),
-                                it.conditionName,
-                                CatalogSource.REMOTE
+                                it.conditionName
                             )
                         }
                         val options = (data.catalog.map {
-                            ProfileCatalogOption(it.localKey, it.name, it.source)
+                            ProfileCatalogOption(it.localKey, it.name)
                         } + remoteSaved).distinctBy { it.localKey }
                         val savedKeys = data.saved.map { it.conditionName.normalizedCatalogKey() }.toSet()
                         updateState {
                             copy(
                                 isLoadingStep = false,
                                 conditionCatalog = options,
-                                selectedConditionKeys = selectedConditionKeys + savedKeys,
+                                selectedConditionKeys = savedKeys,
                                 originalConditionBackendIds = data.saved.map { it.medicalConditionId }.toSet(),
                                 loadedSteps = loadedSteps + step
                             )
@@ -544,52 +517,19 @@ class ProfileCompletionViewModel @Inject constructor(
                             ProfileAllergyOption(
                                 it.allergyName.normalizedCatalogKey(),
                                 it.allergyName,
-                                it.type,
-                                CatalogSource.REMOTE
+                                it.type
                             )
                         }
                         val options = (data.catalog.map {
-                            ProfileAllergyOption(it.localKey, it.name, it.type, it.source)
+                            ProfileAllergyOption(it.localKey, it.name, it.type)
                         } + remoteSaved).distinctBy { it.localKey }
                         val savedKeys = data.saved.map { it.allergyName.normalizedCatalogKey() }.toSet()
                         updateState {
                             copy(
                                 isLoadingStep = false,
                                 allergyCatalog = options,
-                                selectedAllergyKeys = if (hasNoKnownAllergies) emptySet() else selectedAllergyKeys + savedKeys,
+                                selectedAllergyKeys = if (hasNoKnownAllergies) emptySet() else savedKeys,
                                 originalAllergyBackendIds = data.saved.map { it.allergyId }.toSet(),
-                                loadedSteps = loadedSteps + step
-                            )
-                        }
-                    },
-                    onFailure = ::finishLoadFailure
-                )
-                ProfileStep.CurrentMedications -> loadMedications(profileId).fold(
-                    onSuccess = { data ->
-                        val options = data.catalog.map {
-                            ProfileCatalogOption(it.localKey, it.name, it.source)
-                        }
-                        val localEntries = currentState.currentMedications
-                        val localByBackendId = localEntries.mapNotNull {
-                            it.backendMedicationId?.let { id -> id to it }
-                        }.toMap()
-                        val remoteEntries = data.saved.map { saved ->
-                            localByBackendId[saved.medicationId] ?: LocalMedicationEntry(
-                                localId = "remote-${saved.medicationId}",
-                                backendMedicationId = saved.medicationId,
-                                name = saved.medicationName,
-                                syncState = SyncState.SYNCED
-                            )
-                        }
-                        val merged = (localEntries + remoteEntries).distinctBy { it.localId }
-                        updateState {
-                            copy(
-                                isLoadingStep = false,
-                                medicationCatalog = options,
-                                currentMedications = if (
-                                    hasNoCurrentMedications || merged.isNotEmpty()
-                                ) merged else listOf(blankMedication()),
-                                originalMedicationBackendIds = data.saved.map { it.medicationId }.toSet(),
                                 loadedSteps = loadedSteps + step
                             )
                         }
@@ -688,19 +628,13 @@ class ProfileCompletionViewModel @Inject constructor(
 
     private fun updateMedication(
         index: Int,
-        field: MedicationField,
         transform: LocalMedicationEntry.() -> LocalMedicationEntry
     ) = updateState {
         if (index !in currentMedications.indices) return@updateState this
         val entry = currentMedications[index]
         val updatedErrors = medicationValidationErrors.toMutableMap()
-        val currentErrors = updatedErrors[entry.localId]
-        if (currentErrors != null) {
-            val cleared = when (field) {
-                MedicationField.Name -> currentErrors.copy(name = null)
-                MedicationField.Dosage -> currentErrors.copy(dosage = null)
-                MedicationField.Frequency -> currentErrors.copy(frequency = null)
-            }
+        updatedErrors[entry.localId]?.let { currentErrors ->
+            val cleared = currentErrors.copy(name = null)
             if (cleared.isEmpty) updatedErrors.remove(entry.localId) else updatedErrors[entry.localId] = cleared
         }
         copy(
@@ -721,9 +655,7 @@ class ProfileCompletionViewModel @Inject constructor(
         weight = profile.weight?.displayNumber() ?: weight,
         bloodType = profile.bloodType?.replace('−', '-') ?: bloodType,
         previousSurgeries = profile.previousSurgeries.orEmpty(),
-        previousHospitalizations = profile.previousHospitalizations.orEmpty(),
-        mobilityStatus = profile.mobilityStatus?.toMobilityStatus() ?: mobilityStatus,
-        mobilityNotes = profile.mobilityNotes ?: mobilityNotes
+        previousHospitalizations = profile.previousHospitalizations.orEmpty()
     )
 
     private fun ProfileCompletionState.hydrateContacts(contacts: List<EmergencyContact>): ProfileCompletionState {
@@ -761,14 +693,12 @@ class ProfileCompletionViewModel @Inject constructor(
         val REMOTE_STEPS = setOf(
             ProfileStep.MedicalConditions,
             ProfileStep.Allergies,
-            ProfileStep.CurrentMedications,
             ProfileStep.EmergencyContact
         )
     }
 
 }
 
-private enum class MedicationField { Name, Dosage, Frequency }
 
 private fun temporaryDebugProfile(profileId: String) = Profile(
     id = profileId,

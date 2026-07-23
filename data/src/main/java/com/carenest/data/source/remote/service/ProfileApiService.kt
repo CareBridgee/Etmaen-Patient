@@ -16,11 +16,6 @@ interface ProfileApiService {
     suspend fun addAllergy(profileId: String, request: ProfileAllergyRequestDto): Result<ProfileAllergyResponseDto>
     suspend fun removeAllergy(profileId: String, allergyId: String): Result<Unit>
 
-    suspend fun getMedications(): Result<List<MedicationDto>>
-    suspend fun getProfileMedications(profileId: String): Result<List<ProfileMedicationResponseDto>>
-    suspend fun addMedication(profileId: String, request: ProfileMedicationRequestDto): Result<ProfileMedicationResponseDto>
-    suspend fun removeMedication(profileId: String, medicationId: String): Result<Unit>
-
     suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContactResponseDto>>
     suspend fun createEmergencyContact(profileId: String, request: EmergencyContactRequestDto): Result<EmergencyContactResponseDto>
     suspend fun updateEmergencyContact(emergencyContactId: String, request: EmergencyContactRequestDto): Result<EmergencyContactResponseDto>

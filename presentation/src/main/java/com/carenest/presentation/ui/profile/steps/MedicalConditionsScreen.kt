@@ -203,8 +203,8 @@ private fun MedicalConditionsScreenPreview() {
     SpTheme {
         MedicalConditionsScreen(
             conditions = listOf(
-                ProfileCatalogOption("hypertension", "Hypertension", com.carenest.domain.model.profile.CatalogSource.FALLBACK),
-                ProfileCatalogOption("asthma", "Asthma", com.carenest.domain.model.profile.CatalogSource.FALLBACK)
+                ProfileCatalogOption("hypertension", "Hypertension"),
+                ProfileCatalogOption("asthma", "Asthma")
             ),
             selectedConditionKeys = setOf("hypertension", "asthma"),
             otherConditions = "",

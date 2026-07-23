@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.carenest.domain.model.profile.LocalMedicationEntry
 import com.carenest.domain.model.profile.ProfileLocalDraft
-import com.carenest.domain.model.profile.SyncState
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
@@ -44,9 +43,7 @@ class LocalProfileDraftDataSourceImpl @Inject constructor(
 
 @Serializable
 private data class ProfileLocalDraftDto(
-    val selectedConditionKeys: Set<String> = emptySet(),
     val otherConditions: String = "",
-    val selectedAllergyKeys: Set<String> = emptySet(),
     val otherAllergies: String = "",
     val noKnownAllergiesConfirmed: Boolean = false,
     val medications: List<LocalMedicationEntryDto> = emptyList(),
@@ -55,28 +52,24 @@ private data class ProfileLocalDraftDto(
     val pendingMobilityNotes: String? = null
 ) {
     fun toDomain() = ProfileLocalDraft(
-        selectedConditionKeys,
-        otherConditions,
-        selectedAllergyKeys,
-        otherAllergies,
-        noKnownAllergiesConfirmed,
-        medications.map(LocalMedicationEntryDto::toDomain),
-        noCurrentMedicationsConfirmed,
-        pendingMobilityStatus,
-        pendingMobilityNotes
+        otherConditions = otherConditions,
+        otherAllergies = otherAllergies,
+        noKnownAllergiesConfirmed = noKnownAllergiesConfirmed,
+        medications = medications.map(LocalMedicationEntryDto::toDomain),
+        noCurrentMedicationsConfirmed = noCurrentMedicationsConfirmed,
+        pendingMobilityStatus = pendingMobilityStatus,
+        pendingMobilityNotes = pendingMobilityNotes
     )
 
     companion object {
         fun fromDomain(value: ProfileLocalDraft) = ProfileLocalDraftDto(
-            value.selectedConditionKeys,
-            value.otherConditions,
-            value.selectedAllergyKeys,
-            value.otherAllergies,
-            value.noKnownAllergiesConfirmed,
-            value.medications.map(LocalMedicationEntryDto::fromDomain),
-            value.noCurrentMedicationsConfirmed,
-            value.pendingMobilityStatus,
-            value.pendingMobilityNotes
+            otherConditions = value.otherConditions,
+            otherAllergies = value.otherAllergies,
+            noKnownAllergiesConfirmed = value.noKnownAllergiesConfirmed,
+            medications = value.medications.map(LocalMedicationEntryDto::fromDomain),
+            noCurrentMedicationsConfirmed = value.noCurrentMedicationsConfirmed,
+            pendingMobilityStatus = value.pendingMobilityStatus,
+            pendingMobilityNotes = value.pendingMobilityNotes
         )
     }
 }
@@ -84,29 +77,14 @@ private data class ProfileLocalDraftDto(
 @Serializable
 private data class LocalMedicationEntryDto(
     val localId: String,
-    val backendMedicationId: String? = null,
-    val name: String = "",
-    val dosage: String = "",
-    val frequency: String = "",
-    val syncState: String = SyncState.LOCAL_ONLY.name
+    val name: String = ""
 ) {
-    fun toDomain() = LocalMedicationEntry(
-        localId,
-        backendMedicationId,
-        name,
-        dosage,
-        frequency,
-        runCatching { SyncState.valueOf(syncState) }.getOrDefault(SyncState.LOCAL_ONLY)
-    )
+    fun toDomain() = LocalMedicationEntry(localId = localId, name = name)
 
     companion object {
         fun fromDomain(value: LocalMedicationEntry) = LocalMedicationEntryDto(
-            value.localId,
-            value.backendMedicationId,
-            value.name,
-            value.dosage,
-            value.frequency,
-            value.syncState.name
+            localId = value.localId,
+            name = value.name
         )
     }
 }

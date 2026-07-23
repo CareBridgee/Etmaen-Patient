@@ -117,8 +117,6 @@
   <string name="current_medications_none_description">لا أتناول أي أدوية موصوفة</string>
   <string name="current_medications_hint">اسم الدواء (مثال: ليسينوبريل 10 ملغ)</string>
   <string name="current_medications_name_hint">اسم الدواء</string>
-  <string name="current_medications_dosage_hint">الجرعة</string>
-  <string name="current_medications_frequency_hint">معدل التكرار</string>
   <string name="current_medications_delete">حذف الدواء</string>
   <string name="current_medications_add">إضافة دواء</string>
 

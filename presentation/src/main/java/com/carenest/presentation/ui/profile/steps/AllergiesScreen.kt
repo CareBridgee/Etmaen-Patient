@@ -291,8 +291,8 @@ private fun AllergiesScreenPreview() {
         AllergiesScreen(
             hasNoKnownAllergies = false,
             allergies = listOf(
-                ProfileAllergyOption("penicillin", "Penicillin", AllergyType.DRUG, com.carenest.domain.model.profile.CatalogSource.FALLBACK),
-                ProfileAllergyOption("peanuts", "Peanuts", AllergyType.FOOD, com.carenest.domain.model.profile.CatalogSource.FALLBACK)
+                ProfileAllergyOption("penicillin", "Penicillin", AllergyType.DRUG),
+                ProfileAllergyOption("peanuts", "Peanuts", AllergyType.FOOD)
             ),
             selectedAllergyKeys = setOf("penicillin"),
             otherAllergies = "",

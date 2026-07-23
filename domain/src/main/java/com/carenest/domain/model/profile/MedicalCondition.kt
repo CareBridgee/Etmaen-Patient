@@ -2,11 +2,9 @@ package com.carenest.domain.model.profile
 
 data class MedicalCondition(
     val localKey: String,
-    val backendId: String?,
+    val backendId: String,
     val name: String,
-    val description: String?,
-    val source: CatalogSource,
-    val syncState: SyncState
+    val description: String?
 )
 
 data class ProfileMedicalCondition(
