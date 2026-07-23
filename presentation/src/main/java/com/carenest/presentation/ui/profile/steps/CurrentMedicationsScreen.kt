@@ -41,17 +41,21 @@ import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.domain.model.profile.LocalMedicationEntry
 
 @Composable
 fun CurrentMedicationsScreen(
     hasNoCurrentMedications: Boolean,
-    medications: List<String>,
+    medications: List<LocalMedicationEntry>,
     onNoCurrentMedicationsToggle: () -> Unit,
-    onMedicationChange: (Int, String) -> Unit,
+    onMedicationNameChange: (Int, String) -> Unit,
+    onMedicationDosageChange: (Int, String) -> Unit,
+    onMedicationFrequencyChange: (Int, String) -> Unit,
     onAddMedication: () -> Unit,
     onRemoveMedication: (Int) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -109,7 +113,9 @@ fun CurrentMedicationsScreen(
                     MedicationEntry(
                         medication = medication,
                         enabled = !hasNoCurrentMedications,
-                        onMedicationChange = { onMedicationChange(index, it) },
+                        onNameChange = { onMedicationNameChange(index, it) },
+                        onDosageChange = { onMedicationDosageChange(index, it) },
+                        onFrequencyChange = { onMedicationFrequencyChange(index, it) },
                         onRemove = { onRemoveMedication(index) }
                     )
                 }
@@ -123,7 +129,9 @@ fun CurrentMedicationsScreen(
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -173,41 +181,65 @@ private fun NoCurrentMedicationsCard(
 
 @Composable
 private fun MedicationEntry(
-    medication: String,
+    medication: LocalMedicationEntry,
     enabled: Boolean,
-    onMedicationChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onDosageChange: (String) -> Unit,
+    onFrequencyChange: (String) -> Unit,
     onRemove: () -> Unit
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(4.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
             .background(Theme.colors.surface)
             .padding(Theme.spacing.extraSmall),
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
     ) {
-        CustomTextField(
-            text = medication,
-            onTextChange = onMedicationChange,
-            hint = stringResource(R.string.current_medications_hint),
-            enabled = enabled,
-            borderColor = Theme.colors.surfaceVariant,
-            containerColor = Theme.colors.cardBackground,
-            singleLine = true,
-            modifier = Modifier.weight(1f)
-        )
-        Icon(
-            imageVector = Icons.Outlined.DeleteOutline,
-            contentDescription = stringResource(R.string.current_medications_delete),
-            tint = Theme.colors.error,
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .clickable(enabled = enabled, onClick = onRemove)
-                .padding(Theme.spacing.space10)
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomTextField(
+                text = medication.name,
+                onTextChange = onNameChange,
+                hint = stringResource(R.string.current_medications_name_hint),
+                enabled = enabled,
+                borderColor = Theme.colors.surfaceVariant,
+                containerColor = Theme.colors.cardBackground,
+                singleLine = true,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = Icons.Outlined.DeleteOutline,
+                contentDescription = stringResource(R.string.current_medications_delete),
+                tint = Theme.colors.error,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable(enabled = enabled, onClick = onRemove)
+                    .padding(Theme.spacing.space10)
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+            CustomTextField(
+                text = medication.dosage,
+                onTextChange = onDosageChange,
+                hint = stringResource(R.string.current_medications_dosage_hint),
+                enabled = enabled,
+                singleLine = true,
+                modifier = Modifier.weight(1f)
+            )
+            CustomTextField(
+                text = medication.frequency,
+                onTextChange = onFrequencyChange,
+                hint = stringResource(R.string.current_medications_frequency_hint),
+                enabled = enabled,
+                singleLine = true,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
@@ -250,9 +282,11 @@ private fun CurrentMedicationsScreenPreview() {
     SpTheme {
         CurrentMedicationsScreen(
             hasNoCurrentMedications = false,
-            medications = listOf("Lisinopril 10mg"),
+            medications = listOf(LocalMedicationEntry("preview", name = "Lisinopril", dosage = "10 mg", frequency = "Once daily")),
             onNoCurrentMedicationsToggle = {},
-            onMedicationChange = { _, _ -> },
+            onMedicationNameChange = { _, _ -> },
+            onMedicationDosageChange = { _, _ -> },
+            onMedicationFrequencyChange = { _, _ -> },
             onAddMedication = {},
             onRemoveMedication = {},
             onBack = {},
