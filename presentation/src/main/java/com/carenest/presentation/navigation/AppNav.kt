@@ -39,12 +39,11 @@ import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
+import com.carenest.domain.model.home.ServiceCategory
 import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
-import com.carenest.presentation.ui.request_service.components.MapScreen
-import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -199,6 +198,14 @@ fun AppNav() {
                 )
             }
 
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                       replaceWith(AppRoute.AcceptOffer)
+                    }
+                )
+            }
         }
 
         val bottomNavRoutes = remember {
