@@ -22,7 +22,8 @@ fun ProfileScreenNavigation(
     modifier: Modifier = Modifier,
     continueCaption: String = stringResource(R.string.profile_continue),
     stackButtons: Boolean = false,
-    continueEnabled: Boolean = true
+    continueEnabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
     val navigationModifier = modifier
         .fillMaxWidth()
@@ -41,6 +42,7 @@ fun ProfileScreenNavigation(
                 caption = continueCaption,
                 onClick = onContinue,
                 isDisabled = !continueEnabled,
+                isLoading = isLoading,
                 modifier = Modifier.fillMaxWidth()
             )
             SecondaryButton(
@@ -64,6 +66,7 @@ fun ProfileScreenNavigation(
                 onClick = onContinue,
                 iconPosition = ButtonIconPosition.End,
                 isDisabled = !continueEnabled,
+                isLoading = isLoading,
                 modifier = Modifier.weight(0.66f)
             )
         }
