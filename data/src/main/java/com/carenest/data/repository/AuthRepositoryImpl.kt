@@ -2,6 +2,7 @@ package com.carenest.data.repository
 
 import com.carenest.data.mapper.toDomain
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
+import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.domain.model.auth.AuthResult
 import com.carenest.domain.model.auth.User
 import com.carenest.domain.repository.AuthRepository
@@ -9,7 +10,8 @@ import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val authDatasource: AuthDatasource
+    private val authDatasource: AuthDatasource,
+    private val datastore: CarenestDatastore
 ) : AuthRepository {
 
     override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> {
@@ -45,8 +47,25 @@ class AuthRepositoryImpl @Inject constructor(
                 expiresIn = 3600L,
                 user = mockUser
             )
-            return Result.success(mockAuthResult)
+            return runCatching {
+                datastore.saveAuthTokens(
+                    accessToken = mockAuthResult.accessToken,
+                    refreshToken = mockAuthResult.refreshToken
+                )
+                mockAuthResult
+            }
         }
-        return authDatasource.verifyOtp(phoneNumber, otp).map { it.toDomain() }
+        return authDatasource.verifyOtp(phoneNumber, otp).fold(
+            onSuccess = { response ->
+                runCatching {
+                    datastore.saveAuthTokens(
+                        accessToken = response.accessToken,
+                        refreshToken = response.refreshToken
+                    )
+                    response.toDomain()
+                }
+            },
+            onFailure = { Result.failure(it) }
+        )
     }
 }
