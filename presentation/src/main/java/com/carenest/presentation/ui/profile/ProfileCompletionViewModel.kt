@@ -8,7 +8,6 @@ import com.carenest.domain.model.profile.EmergencyRelationship
 import com.carenest.domain.model.profile.MedicationInput
 import com.carenest.domain.model.profile.MobilityStatus
 import com.carenest.domain.model.profile.Profile
-import com.carenest.domain.model.profile.ProfileException
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
 import com.carenest.domain.model.profile.ProfileValidationException
@@ -237,16 +236,14 @@ class ProfileCompletionViewModel @Inject constructor(
         launchSubmission {
             syncMedicalConditions(
                 profileId = profileId,
-                originalBackendIds = snapshot.originalConditionBackendIds,
                 selectedBackendIds = snapshot.selectedConditionIds,
                 otherConditions = snapshot.otherConditions
             ).fold(
-                onSuccess = { syncedIds ->
+                onSuccess = { _ ->
                     updateState {
                         copy(
                             isSubmitting = false,
                             otherConditions = otherConditions.trim(),
-                            originalConditionBackendIds = syncedIds,
                             validationErrors = validationErrors - MEDICAL_CONDITION_FIELDS
                         )
                     }
@@ -263,7 +260,6 @@ class ProfileCompletionViewModel @Inject constructor(
         launchSubmission {
             syncAllergies(
                 profileId = profileId,
-                originalBackendIds = snapshot.originalAllergyBackendIds,
                 selectedBackendIds = snapshot.selectedAllergyIds,
                 hasNoKnownAllergies = snapshot.hasNoKnownAllergies,
                 otherAllergies = snapshot.otherAllergies
@@ -274,7 +270,6 @@ class ProfileCompletionViewModel @Inject constructor(
                             isSubmitting = false,
                             selectedAllergyIds = syncedIds,
                             otherAllergies = if (hasNoKnownAllergies) "" else otherAllergies.trim(),
-                            originalAllergyBackendIds = syncedIds,
                             validationErrors = validationErrors - ALLERGY_FIELDS
                         )
                     }
@@ -356,11 +351,6 @@ class ProfileCompletionViewModel @Inject constructor(
             ensureStepLoaded(ProfileStep.EmergencyContact)
             return
         }
-        if (currentState.emergencyContacts.size > 1 && currentState.emergencyContactId == null) {
-            finishHealthOnboarding()
-            return
-        }
-
         val profileId = requireProfileId() ?: return
         val snapshot = currentState
         launchSubmission {
@@ -386,31 +376,12 @@ class ProfileCompletionViewModel @Inject constructor(
                     finishHealthOnboarding()
                 },
                 onFailure = { failure ->
-                    if ((failure as? ProfileException)?.statusCode == 409 &&
-                        snapshot.emergencyContactId == null
-                    ) {
-                        reconcileEmergencyConflict(profileId, failure)
-                    } else {
-                        handleFailure(failure, EMERGENCY_FIELDS)
-                    }
+                    handleFailure(failure, EMERGENCY_FIELDS)
                 }
             )
         }
     }
 
-    private suspend fun reconcileEmergencyConflict(profileId: String, conflict: Throwable) {
-        loadEmergencyContacts(profileId).fold(
-            onSuccess = { contacts ->
-                updateState {
-                    hydrateContacts(contacts).copy(
-                        isSubmitting = false,
-                        errorMessage = conflict.userMessage()
-                    )
-                }
-            },
-            onFailure = ::finishFailure
-        )
-    }
 
     private fun finishHealthOnboarding() {
         if (currentState.isInitializing || currentState.isSubmitting) return
@@ -443,9 +414,6 @@ class ProfileCompletionViewModel @Inject constructor(
                                 selectedConditionIds = data.saved.map {
                                     it.medicalConditionId
                                 }.toSet(),
-                                originalConditionBackendIds = data.saved.map {
-                                    it.medicalConditionId
-                                }.toSet(),
                                 loadedSteps = loadedSteps + step
                             )
                         }
@@ -469,9 +437,6 @@ class ProfileCompletionViewModel @Inject constructor(
                                 } else {
                                     data.saved.map { it.allergyId }.toSet()
                                 },
-                                originalAllergyBackendIds = data.saved.map {
-                                    it.allergyId
-                                }.toSet(),
                                 loadedSteps = loadedSteps + step
                             )
                         }

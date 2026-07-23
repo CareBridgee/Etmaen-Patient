@@ -7,7 +7,6 @@ import javax.inject.Inject
 class SyncAllergiesUseCase @Inject constructor(private val repository: ProfileRepository) {
     suspend operator fun invoke(
         profileId: String,
-        originalBackendIds: Set<String>,
         selectedBackendIds: Set<String>,
         hasNoKnownAllergies: Boolean,
         otherAllergies: String
@@ -19,6 +18,15 @@ class SyncAllergiesUseCase @Inject constructor(private val repository: ProfileRe
                 otherAllergies
             )
         }.getOrElse { return Result.failure(it) }
-        return repository.syncProfileAllergies(profileId, originalBackendIds, validatedIds)
+
+        val currentBackendIds = repository.getProfileAllergies(profileId)
+            .getOrElse { return Result.failure(it) }
+            .mapTo(linkedSetOf()) { it.allergyId }
+
+        return repository.syncProfileAllergies(
+            profileId = profileId,
+            originalBackendIds = currentBackendIds,
+            selectedBackendIds = validatedIds
+        )
     }
 }

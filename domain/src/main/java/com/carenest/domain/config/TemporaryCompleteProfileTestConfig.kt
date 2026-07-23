@@ -6,7 +6,7 @@ package com.carenest.domain.config
  */
 object TemporaryCompleteProfileTestConfig {
     const val ENABLED = true
-    const val PROFILE_ID = "c6eed55c-62e6-4b5f-ba71-195d78b928dc"
+    const val PROFILE_ID = "38b5b1e7-8618-441c-bda3-d8e9a5c6b245"
     const val ACCESS_TOKEN =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Yjk5NjM1MC0zODVlLTQ0MTgtOWZkMi02Y2YzNzdjNjEwZWUiLCJ0eXBlIjoiYWNjZXNzIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODQ4MjAyMzIsImV4cCI6MTc4NDgyMTEzMn0.2ZlnsM9l3vMsErOGUWw2aaqNeBBhID23c6cz41eh898"
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyZDNiZDJiOS04NGYzLTQ4ODItYTIxZC1mYmJjYjBjMzZmMzkiLCJ0eXBlIjoiYWNjZXNzIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODQ4NDIwNzMsImV4cCI6MTc4NDg0Mjk3M30.N-1v4xBaKvDxY5W3WMoDGoKJ-hcHdB2GSKtuqUZcEuo"
 }
