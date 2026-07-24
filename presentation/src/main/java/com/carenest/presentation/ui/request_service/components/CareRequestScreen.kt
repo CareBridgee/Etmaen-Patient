@@ -42,28 +42,9 @@ fun CareRequestScreenContent(
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showLocationPermissionHandler by remember { mutableStateOf(false) }
-    var showLocationRationale by remember { mutableStateOf(false) }
 
     var showAudioPermissionHandler by remember { mutableStateOf(false) }
     var showAudioRationale by remember { mutableStateOf(false) }
-
-    if (showLocationPermissionHandler) {
-        LocationPermissionHandler(
-            onPermissionGranted = {
-                showLocationPermissionHandler = false
-                onMapClick()
-            },
-            onPermissionDenied = {
-                showLocationPermissionHandler = false
-                showLocationRationale = true
-            },
-            showRationale = showLocationRationale,
-            onRationaleDismissed = {
-                showLocationRationale = false
-            }
-        )
-    }
 
     if (showAudioPermissionHandler) {
         AudioPermissionHandler(
@@ -117,7 +98,7 @@ fun CareRequestScreenContent(
         AddressSection(
             location = state.location,
             onEditClick = onEditAddressClick,
-            onMapClick = { showLocationPermissionHandler = true }
+            onMapClick = onMapClick
         )
 
         PaymentMethodSection(
