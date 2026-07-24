@@ -5,10 +5,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -24,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -58,8 +62,8 @@ fun ChatScreen(
             is ChatEffect.InitiateCall -> dialPhoneNumber(context, effect.phoneNumber)
             ChatEffect.NavigateBack -> onNavigateBack()
             ChatEffect.ScrollToBottom -> coroutineScope.launch {
-                if (state.messages.isNotEmpty()) {
-                    listState.animateScrollToItem(state.messages.lastIndex)
+                if (listState.layoutInfo.totalItemsCount > 0) {
+                        listState.animateScrollToItem(0)
                 }
             }
 
@@ -68,6 +72,9 @@ fun ChatScreen(
     }
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         containerColor = Theme.colors.backGround,
         topBar = {
             ChatTopBar(
@@ -80,7 +87,7 @@ fun ChatScreen(
         bottomBar = {
             ChatInputBar(
                 value = state.inputText,
-                onValueChange = { viewModel.handleIntent(ChatIntent.OnMessageInputChanged(it)) },
+                onValueChange = { value -> viewModel.handleIntent(ChatIntent.OnMessageInputChanged(value)) },
                 onSendClick = { viewModel.handleIntent(ChatIntent.OnSendMessageClicked) },
             )
         },
@@ -97,7 +104,7 @@ fun ChatScreen(
 @Composable
 private fun ChatScreenContent(
     state: ChatState,
-    listState: androidx.compose.foundation.lazy.LazyListState,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ){
     Box(
@@ -112,22 +119,35 @@ private fun ChatScreenContent(
             )
         } else {
             val groupedMessages = remember(state.messages) {
-                state.messages.groupBy { it.dayKey() }
+                state.messages
+                    .groupBy { message -> message.dayKey() }
+                    .toList()
+                    .asReversed()
             }
 
             LazyColumn(
                 state = listState,
+                reverseLayout = true,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+                contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 groupedMessages.forEach { (_, messagesForDay) ->
-                    val firstMessage = messagesForDay.first()
-                    item(key = "date_${firstMessage.id}") {
-                        DateSeparatorPill(label = formatDateSeparator(firstMessage.sentAtEpochMillis))
-                    }
-                    itemsIndexed(messagesForDay, key = { _, m -> m.id }) { _, message ->
+                    items(
+                        items = messagesForDay.asReversed(),
+                        key = { message -> message.id },
+                    ) { message ->
                         MessageBubble(message = message)
+                    }
+
+                    val firstMessage = messagesForDay.first()
+
+                    item(key = "date_${firstMessage.id}") {
+                        DateSeparatorPill(
+                            label = formatDateSeparator(
+                                firstMessage.sentAtEpochMillis
+                            )
+                        )
                     }
                 }
             }
