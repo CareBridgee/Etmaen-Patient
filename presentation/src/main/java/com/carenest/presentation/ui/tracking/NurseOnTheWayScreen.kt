@@ -82,15 +82,10 @@ fun NurseOnTheWayScreen(
         }
     }
 
-    Scaffold(
-        containerColor = Theme.colors.backGround,
-    ) { paddingValues ->
         NurseOnTheWayLanding(
             state = state,
-            modifier = Modifier.padding(paddingValues),
             onIntent = viewModel::handleIntent,
         )
-    }
 }
 
 @Composable

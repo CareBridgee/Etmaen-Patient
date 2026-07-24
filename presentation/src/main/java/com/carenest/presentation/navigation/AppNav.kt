@@ -230,7 +230,8 @@ fun AppNav() {
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .statusBarsPadding(),
                 containerColor = Theme.colors.backGround,
                 contentWindowInsets = WindowInsets(0),
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
