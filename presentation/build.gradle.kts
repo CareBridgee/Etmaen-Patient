@@ -60,6 +60,9 @@ dependencies {
     // Location
     implementation(libs.play.services.location)
 
+    // Image loading
+    implementation(libs.bundles.coil)
+
     // Camera
     implementation(libs.bundles.camera)
 

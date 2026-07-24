@@ -1,6 +1,5 @@
 package com.carenest.presentation.ui.request_service.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.R
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -55,8 +55,8 @@ fun AddressSection(
                 .noRippleClickable(onClick = onMapClick),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.img_placeholder),
+            AsyncImage(
+                model = R.drawable.map_img_placeholder,
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
