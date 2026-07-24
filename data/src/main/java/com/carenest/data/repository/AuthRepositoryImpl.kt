@@ -1,15 +1,19 @@
 package com.carenest.data.repository
 
+import com.carenest.data.di.IoDispatcher
 import com.carenest.data.mapper.toDomain
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
 import com.carenest.domain.model.Patient
 import com.carenest.domain.model.auth.AuthResult
 import com.carenest.domain.repository.AuthRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val authDatasource: AuthDatasource
+    private val authDatasource: AuthDatasource,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthRepository {
 
     override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> {
