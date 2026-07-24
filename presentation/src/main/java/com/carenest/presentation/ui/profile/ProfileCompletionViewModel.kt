@@ -100,7 +100,12 @@ class ProfileCompletionViewModel @Inject constructor(
                 )
             }
             ProfileCompletionIntent.MedicationAdded -> edit(ProfileField.MedicationsSelection) {
-                if (hasNoCurrentMedications || currentMedications.size >= MAX_MEDICATIONS) {
+                val hasIncompleteMedication = currentMedications.any { it.name.isBlank() }
+                if (
+                    hasNoCurrentMedications ||
+                    currentMedications.size >= MAX_MEDICATIONS ||
+                    hasIncompleteMedication
+                ) {
                     this
                 } else {
                     copy(currentMedications = currentMedications + blankMedication())
@@ -570,9 +575,9 @@ class ProfileCompletionViewModel @Inject constructor(
     private fun ProfileCompletionState.hydrateProfile(profile: Profile): ProfileCompletionState = copy(
         profile = profile,
         profileId = profile.id,
-        height = profile.height?.displayNumber() ?: height,
-        weight = profile.weight?.displayNumber() ?: weight,
-        bloodType = profile.bloodType?.replace('−', '-') ?: bloodType,
+        height = profile.height?.displayNumber().orEmpty(),
+        weight = profile.weight?.displayNumber().orEmpty(),
+        bloodType = profile.bloodType?.replace('−', '-').orEmpty(),
         previousSurgeries = profile.previousSurgeries.orEmpty(),
         previousHospitalizations = profile.previousHospitalizations.orEmpty()
     )

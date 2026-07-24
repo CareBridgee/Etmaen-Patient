@@ -5,7 +5,7 @@ import com.carenest.data.source.remote.dto.profile.EmergencyContactRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileAllergyRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
-import com.carenest.data.source.remote.service.ProfileApiException
+import com.carenest.data.source.remote.ApiException
 import com.carenest.data.source.remote.service.ProfileApiService
 import com.carenest.domain.model.profile.Allergy
 import com.carenest.domain.model.profile.BasicHealthUpdate
@@ -166,7 +166,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
 private fun Throwable.toDomainFailure(): Throwable = when (this) {
     is ProfileException -> this
-    is ProfileApiException -> ProfileException(message ?: "Profile request failed", statusCode, backendCode)
+    is ApiException -> ProfileException(message ?: "Profile request failed", statusCode, backendCode)
     else -> this
 }
 

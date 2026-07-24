@@ -98,6 +98,7 @@ fun BasicHealthInfoScreen(
                     label = stringResource(R.string.basic_health_height),
                     value = height,
                     unit = stringResource(R.string.basic_health_cm),
+                    hint = stringResource(R.string.basic_health_height_hint),
                     onValueChange = onHeightChange,
                     errorMessage = heightError,
                     modifier = Modifier.weight(1f)
@@ -106,6 +107,7 @@ fun BasicHealthInfoScreen(
                     label = stringResource(R.string.basic_health_weight),
                     value = weight,
                     unit = stringResource(R.string.basic_health_kg),
+                    hint = stringResource(R.string.basic_health_weight_hint),
                     onValueChange = onWeightChange,
                     errorMessage = weightError,
                     modifier = Modifier.weight(1f)
@@ -122,6 +124,7 @@ fun BasicHealthInfoScreen(
         ProfileScreenNavigation(
             onBack = onBack,
             onContinue = onContinue,
+            showBackButton = false,
             continueEnabled = !isSubmitting,
             isLoading = isSubmitting
         )
@@ -179,6 +182,7 @@ private fun MeasurementCard(
     label: String,
     value: String,
     unit: String,
+    hint: String,
     onValueChange: (String) -> Unit,
     errorMessage: String? = null,
     modifier: Modifier = Modifier
@@ -202,6 +206,7 @@ private fun MeasurementCard(
             CustomTextField(
                 text = value,
                 onTextChange = { onValueChange(it.filter(Char::isDigit).take(3)) },
+                hint = hint,
                 singleLine = true,
                 fieldHeight = 52.dp,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

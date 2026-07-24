@@ -41,9 +41,9 @@
   <string name="personal_info_step_title">Personal Details</string>
   <string name="personal_info_title">Personal Info</string>
   <string name="personal_info_first_name_title">First name</string>
-  <string name="personal_info_first_name_hint">Jane</string>
+  <string name="personal_info_first_name_hint">Enter your first name</string>
   <string name="personal_info_last_name_title">Last name</string>
-  <string name="personal_info_last_name_hint">Doe</string>
+  <string name="personal_info_last_name_hint">Enter your last name</string>
   <string name="personal_info_dob_title">Date of birth</string>
   <string name="personal_info_dob_hint">mm/dd/yyyy</string>
   <string name="personal_info_date_confirm">OK</string>
@@ -62,7 +62,9 @@
   <string name="basic_health_title">Basic Health Info</string>
   <string name="basic_health_description">Providing these details helps our specialists prepare a personalized care plan tailored to your physical requirements.</string>
   <string name="basic_health_height">Height</string>
+  <string name="basic_health_height_hint">e.g. 170</string>
   <string name="basic_health_weight">Weight</string>
+  <string name="basic_health_weight_hint">e.g. 65</string>
   <string name="basic_health_cm">cm</string>
   <string name="basic_health_kg">kg</string>
   <string name="basic_health_blood_type">Blood Type</string>

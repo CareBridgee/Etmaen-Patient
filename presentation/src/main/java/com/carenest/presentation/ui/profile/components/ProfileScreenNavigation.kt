@@ -22,6 +22,7 @@ fun ProfileScreenNavigation(
     modifier: Modifier = Modifier,
     continueCaption: String = stringResource(R.string.profile_continue),
     stackButtons: Boolean = false,
+    showBackButton: Boolean = true,
     continueEnabled: Boolean = true,
     isLoading: Boolean = false
 ) {
@@ -33,42 +34,57 @@ fun ProfileScreenNavigation(
             vertical = Theme.spacing.space12
         )
 
-    if (stackButtons) {
-        Column(
-            modifier = navigationModifier,
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)
-        ) {
-            PrimaryButton(
-                caption = continueCaption,
-                onClick = onContinue,
-                isDisabled = !continueEnabled,
-                isLoading = isLoading,
-                modifier = Modifier.fillMaxWidth()
-            )
-            SecondaryButton(
-                caption = stringResource(R.string.profile_back),
-                onClick = onBack,
-                modifier = Modifier.fillMaxWidth()
-            )
+    when {
+        !showBackButton -> {
+            Column(modifier = navigationModifier) {
+                PrimaryButton(
+                    caption = continueCaption,
+                    onClick = onContinue,
+                    iconPosition = ButtonIconPosition.End,
+                    isDisabled = !continueEnabled,
+                    isLoading = isLoading,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
-    } else {
-        Row(
-            modifier = navigationModifier,
-            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)
-        ) {
-            SecondaryButton(
-                caption = stringResource(R.string.profile_back),
-                onClick = onBack,
-                modifier = Modifier.weight(0.34f)
-            )
-            PrimaryButton(
-                caption = continueCaption,
-                onClick = onContinue,
-                iconPosition = ButtonIconPosition.End,
-                isDisabled = !continueEnabled,
-                isLoading = isLoading,
-                modifier = Modifier.weight(0.66f)
-            )
+        stackButtons -> {
+            Column(
+                modifier = navigationModifier,
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)
+            ) {
+                PrimaryButton(
+                    caption = continueCaption,
+                    onClick = onContinue,
+                    isDisabled = !continueEnabled,
+                    isLoading = isLoading,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                SecondaryButton(
+                    caption = stringResource(R.string.profile_back),
+                    onClick = onBack,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+        else -> {
+            Row(
+                modifier = navigationModifier,
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)
+            ) {
+                SecondaryButton(
+                    caption = stringResource(R.string.profile_back),
+                    onClick = onBack,
+                    modifier = Modifier.weight(0.34f)
+                )
+                PrimaryButton(
+                    caption = continueCaption,
+                    onClick = onContinue,
+                    iconPosition = ButtonIconPosition.End,
+                    isDisabled = !continueEnabled,
+                    isLoading = isLoading,
+                    modifier = Modifier.weight(0.66f)
+                )
+            }
         }
     }
 }

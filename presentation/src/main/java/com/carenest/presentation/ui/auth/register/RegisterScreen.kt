@@ -84,9 +84,13 @@ internal fun RegisterScreenContent(
 
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
-        showLeadingIcon = true,
-        onLeadingClick = { onEvent(RegisterIntent.BackClicked) }
+        showLeadingIcon = false
     )
+
+    if (state.isInitializing) {
+        RegisterLoadingShimmer()
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -127,7 +131,6 @@ internal fun RegisterScreenContent(
                         onEvent(RegisterIntent.FirstNameChanged(it))
                     },
                     title = stringResource(R.string.personal_info_first_name_title),
-                    hint = stringResource(R.string.personal_info_first_name_hint),
                     singleLine = true,
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
@@ -141,7 +144,6 @@ internal fun RegisterScreenContent(
                         onEvent(RegisterIntent.LastNameChanged(it))
                     },
                     title = stringResource(R.string.personal_info_last_name_title),
-                    hint = stringResource(R.string.personal_info_last_name_hint),
                     singleLine = true,
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
@@ -201,8 +203,8 @@ internal fun RegisterScreenContent(
                 caption = stringResource(R.string.personal_info_continue_btn),
                 onClick = { onEvent(RegisterIntent.ContinueClicked) },
                 modifier = Modifier.fillMaxWidth(),
-                isDisabled = state.isInitializing || state.isSubmitting,
-                isLoading = state.isInitializing || state.isSubmitting
+                isDisabled = state.isSubmitting,
+                isLoading = state.isSubmitting
             )
             state.errorMessage?.let {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -217,8 +219,36 @@ internal fun RegisterScreenContent(
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = parseDateOfBirth(state.dateOfBirth)
         )
+        val datePickerColors = DatePickerDefaults.colors(
+            containerColor = Theme.colors.surface,
+            titleContentColor = Theme.colors.primaryFont,
+            headlineContentColor = Theme.colors.primaryFont,
+            weekdayContentColor = Theme.colors.secondaryFont,
+            subheadContentColor = Theme.colors.primaryFont,
+            navigationContentColor = Theme.colors.primary,
+            yearContentColor = Theme.colors.primaryFont,
+            disabledYearContentColor = Theme.colors.onDisable,
+            currentYearContentColor = Theme.colors.primary,
+            selectedYearContentColor = Theme.colors.onPrimary,
+            disabledSelectedYearContentColor = Theme.colors.onDisable,
+            selectedYearContainerColor = Theme.colors.primary,
+            disabledSelectedYearContainerColor = Theme.colors.disable,
+            dayContentColor = Theme.colors.primaryFont,
+            disabledDayContentColor = Theme.colors.onDisable,
+            selectedDayContentColor = Theme.colors.onPrimary,
+            disabledSelectedDayContentColor = Theme.colors.onDisable,
+            selectedDayContainerColor = Theme.colors.primary,
+            disabledSelectedDayContainerColor = Theme.colors.disable,
+            todayContentColor = Theme.colors.primary,
+            todayDateBorderColor = Theme.colors.primary,
+            dayInSelectionRangeContainerColor = Theme.colors.primaryContainer,
+            dayInSelectionRangeContentColor = Theme.colors.onPrimaryContainer,
+            dividerColor = Theme.colors.divider
+        )
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
+            colors = datePickerColors,
+            tonalElevation = 0.dp,
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -248,17 +278,7 @@ internal fun RegisterScreenContent(
         ) {
             DatePicker(
                 state = datePickerState,
-                colors = DatePickerDefaults.colors(
-                    containerColor = Theme.colors.surface,
-                    titleContentColor = Theme.colors.primaryFont,
-                    headlineContentColor = Theme.colors.primaryFont,
-                    weekdayContentColor = Theme.colors.secondaryFont,
-                    dayContentColor = Theme.colors.primaryFont,
-                    selectedDayContainerColor = Theme.colors.primary,
-                    selectedDayContentColor = Theme.colors.onPrimary,
-                    todayContentColor = Theme.colors.primary,
-                    todayDateBorderColor = Theme.colors.primary
-                )
+                colors = datePickerColors
             )
         }
     }
@@ -316,10 +336,10 @@ private fun RegisterScreenPreview() {
     SpTheme {
         RegisterScreenContent(
             state = RegisterState(
-                firstName = "Jane",
-                lastName = "Doe",
-                dateOfBirth = "01/15/1990",
-                gender = "FEMALE",
+                firstName = "",
+                lastName = "",
+                dateOfBirth = "",
+                gender = "",
                 isInitializing = false
             ),
             onEvent = {}

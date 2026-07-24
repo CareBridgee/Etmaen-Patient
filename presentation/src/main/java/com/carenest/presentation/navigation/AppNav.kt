@@ -86,13 +86,10 @@ fun AppNav() {
                 OtpScreen(
                     entry = route,
                     onVerificationSuccess = {
-                        Snapshot.withMutableSnapshot {
-                            backStack.clear()
-                            backStack.add(AppRoute.Register)
-                        }
+                        replaceWith(AppRoute.Register)
                     },
                     onNavigateToRegister = {
-                        backStack.add(AppRoute.Register)
+                        replaceWith(AppRoute.Register)
                     },
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )

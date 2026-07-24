@@ -126,7 +126,9 @@ fun CurrentMedicationsScreen(
                 }
 
                 AddMedicationButton(
-                    enabled = !hasNoCurrentMedications && medications.size < MAX_MEDICATIONS,
+                    enabled = !hasNoCurrentMedications &&
+                        medications.size < MAX_MEDICATIONS &&
+                        medications.all { it.name.isNotBlank() },
                     onClick = onAddMedication
                 )
             }

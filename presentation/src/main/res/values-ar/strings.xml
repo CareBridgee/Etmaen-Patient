@@ -47,9 +47,9 @@
   <string name="personal_info_step_title">التفاصيل الشخصية</string>
   <string name="personal_info_title">المعلومات الشخصية</string>
   <string name="personal_info_first_name_title">الاسم الأول</string>
-  <string name="personal_info_first_name_hint">الاسم الأول</string>
+  <string name="personal_info_first_name_hint">أدخل الاسم الأول</string>
   <string name="personal_info_last_name_title">اسم العائلة</string>
-  <string name="personal_info_last_name_hint">اسم العائلة</string>
+  <string name="personal_info_last_name_hint">أدخل اسم العائلة</string>
   <string name="personal_info_dob_title">تاريخ الميلاد</string>
   <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
   <string name="personal_info_date_confirm">تأكيد</string>
@@ -70,7 +70,9 @@
   <string name="basic_health_title">المعلومات الصحية الأساسية</string>
   <string name="basic_health_description">تساعد هذه التفاصيل المختصين لدينا على إعداد خطة رعاية مخصصة تناسب احتياجاتك الجسدية.</string>
   <string name="basic_health_height">الطول</string>
+  <string name="basic_health_height_hint">مثال: 170</string>
   <string name="basic_health_weight">الوزن</string>
+  <string name="basic_health_weight_hint">مثال: 65</string>
   <string name="basic_health_cm">سم</string>
   <string name="basic_health_kg">كجم</string>
   <string name="basic_health_blood_type">فصيلة الدم</string>
