@@ -15,6 +15,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -49,6 +50,22 @@ object NetworkModule {
 
             defaultRequest {
                 url(BuildConfig.base_url)
+            }
+        }
+
+    @Provides
+    @Singleton
+    @Named("locationiq")
+    fun provideLocationIqHttpClient(
+        json: Json,
+    ): HttpClient =
+        HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(json)
+            }
+
+            install(Logging) {
+                level = LogLevel.BODY
             }
         }
 }
