@@ -43,7 +43,10 @@ abstract class RepositoryModule {
     abstract fun provideHomeRepositoryImpl(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 
     @Binds
+    @Singleton
     abstract fun provideProfileRepositoryImpl(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
+
+    @Binds
     @Singleton
     abstract fun bindNurseTrackingRepository(impl: NurseTrackingRepositoryImpl, ): NurseTrackingRepository
 
