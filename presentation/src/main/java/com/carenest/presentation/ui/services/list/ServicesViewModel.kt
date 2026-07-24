@@ -9,8 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import com.carenest.domain.model.home.ServiceCategory
 import com.carenest.domain.usecase.home.GetServicesUseCase
+import com.carenest.presentation.model.HealthcareServiceUiModel
 
 @HiltViewModel
 class ServicesViewModel @Inject constructor(
@@ -52,12 +52,20 @@ class ServicesViewModel @Inject constructor(
             }
 
             is ServicesIntent.CategoryClicked -> {
-                sendEffect(ServicesEffect.NavigateToDetails(event.category))
+                sendEffect(ServicesEffect.NavigateToDetails(event.service))
             }
 
             ServicesIntent.FilterClicked -> sendEffect(ServicesEffect.OpenFilters)
             ServicesIntent.ChronicCareClicked -> {
-                sendEffect(ServicesEffect.NavigateToDetails(ServiceCategory.CHRONIC_CARE))
+                val chronicCareService = HealthcareServiceUiModel(
+                    id = "CHRONIC_CARE",
+                    name = "Chronic Care",
+                    iconResName = "ic_heart_beat",
+                    estimatedDurationMinutes = 60,
+                    basePrice = 150.0,
+                    description = "Comprehensive chronic care management."
+                )
+                sendEffect(ServicesEffect.NavigateToDetails(chronicCareService))
             }
             ServicesIntent.ConsultationClicked -> sendEffect(ServicesEffect.OpenCareCoordinator)
         }
