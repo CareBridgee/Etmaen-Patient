@@ -3,20 +3,20 @@ package com.carenest.presentation.ui.request_service
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.carenest.designsystem.R as DesignR
 import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
+import com.carenest.domain.model.LocationDetails
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.request_service.components.CareRequestScreenContent
 import com.carenest.presentation.util.rememberSpeechToTextHelper
+import com.carenest.designsystem.R as DesignR
 
 @Composable
 fun RequestServiceScreen(
@@ -27,11 +27,20 @@ fun RequestServiceScreen(
     onNavigateToServiceSelection: () -> Unit,
     onNavigateToAddressPicker: () -> Unit,
     onSubmitRequestClick: () -> Unit,
+    mapResultLocation: LocationDetails? = null,
+    onMapResultConsumed: () -> Unit = {},
     viewModel: RequestServiceViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val toastState = rememberToastState()
     val listeningMessage = stringResource(DesignR.string.request_service_listening)
+
+    LaunchedEffect(mapResultLocation) {
+        mapResultLocation?.let {
+            viewModel.onIntent(RequestServiceIntent.OnLocationDetailsReceived(it))
+            onMapResultConsumed()
+        }
+    }
 
     val speechToTextHelper = rememberSpeechToTextHelper(
         onResult = { result ->

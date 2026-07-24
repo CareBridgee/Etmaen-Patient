@@ -32,6 +32,7 @@ sealed class RequestServiceIntent {
     data object OnBackClicked : RequestServiceIntent()
     data object OnHelpClicked : RequestServiceIntent()
     data object OnFillWithAiClicked : RequestServiceIntent()
+    data class OnLocationDetailsReceived(val locationDetails: LocationDetails) : RequestServiceIntent()
 }
 
 sealed class RequestServiceEffect {

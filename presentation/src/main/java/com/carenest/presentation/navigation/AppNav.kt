@@ -44,14 +44,19 @@ import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
-import com.carenest.presentation.ui.request_service.components.MapScreen
+import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
+import com.carenest.domain.model.LocationDetails
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import kotlin.collections.listOf
 
 @Composable
 fun AppNav() {
     SpTheme {
         val initialRoute: NavKey = AppRoute.Splash
+
+        var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
 
         val backStack = rememberNavBackStack(
             savedStateConfiguration,
@@ -187,17 +192,19 @@ fun AppNav() {
                     onNavigateToAddPatient = { /* TODO */ },
                     onNavigateToServiceSelection = { /* TODO */ },
                     onNavigateToAddressPicker = { /* TODO */ },
-                    onSubmitRequestClick = {/* TODO() */}
+                    onSubmitRequestClick = {/* TODO() */},
+                    mapResultLocation = mapResultLocation,
+                    onMapResultConsumed = { mapResultLocation = null },
                 )
             }
 
             entry<AppRoute.Map> {
                 MapScreen(
-                    onLocationSelected = { lat, lon ->
-                        // Handle location selection
+                    onLocationConfirmed = { locationDetails ->
+                        mapResultLocation = locationDetails
                         if (backStack.size > 1) backStack.removeLastOrNull()
                     },
-                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                 )
             }
 

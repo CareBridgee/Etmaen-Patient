@@ -35,6 +35,9 @@ class RequestServiceViewModel @Inject constructor(): ViewModel(),
             RequestServiceIntent.OnMapClicked -> {
                 sendEffect(RequestServiceEffect.NavigateToMap)
             }
+            is RequestServiceIntent.OnLocationDetailsReceived -> {
+                updateState { copy(location = intent.locationDetails) }
+            }
         }
     }
 }
