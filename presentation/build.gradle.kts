@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
@@ -15,6 +17,11 @@ android {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            type = "String",
+            name = "base_url",
+            value = "\"${gradleLocalProperties(rootDir, providers).getProperty("MAPBOX_ACCESS_TOKEN")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -22,6 +29,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

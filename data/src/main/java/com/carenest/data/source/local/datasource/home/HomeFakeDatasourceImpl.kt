@@ -2,7 +2,7 @@ package com.carenest.data.source.local.datasource.home
 
 import com.carenest.domain.model.home.Booking
 import com.carenest.domain.model.home.HealthcareService
-import com.carenest.domain.model.home.ServiceCategory
+
 import com.carenest.domain.model.home.User
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -26,55 +26,73 @@ class HomeFakeDatasourceImpl @Inject constructor() : HomeDatasource {
                 id = "srv_1",
                 name = "General Nursing",
                 iconResName = "ic_heart_beat",
-                category = ServiceCategory.GENERAL_NURSING
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_2",
                 name = "Injection Service",
                 iconResName = "ic_syringe",
-                category = ServiceCategory.INJECTION
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_3",
                 name = "Blood Collection",
                 iconResName = "ic_pill",
-                category = ServiceCategory.BLOOD_COLLECTION
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_4",
                 name = "IV Therapy",
                 iconResName = "ic_syringe",
-                category = ServiceCategory.IV_DRIP
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_5",
                 name = "Wound Dressing",
                 iconResName = "ic_physical_therapy",
-                category = ServiceCategory.WOUND_CARE
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_6",
                 name = "Physical Therapy",
                 iconResName = "ic_physical_therapy",
-                category = ServiceCategory.PHYSICAL_THERAPY
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_7",
                 name = "Post Natal",
                 iconResName = "ic_heart_beat",
-                category = ServiceCategory.POST_NATAL
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_8",
                 name = "Elderly Care",
                 iconResName = "ic_heart_beat",
-                category = ServiceCategory.ELDERLY_CARE
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             ),
             HealthcareService(
                 id = "srv_9",
                 name = "Vaccinations",
                 iconResName = "ic_syringe",
-                category = ServiceCategory.VACCINATIONS
+                estimatedDurationMinutes = 1L,
+                basePrice = 1.0,
+                description = "TODO()"
             )
         )
         return Result.success(services)

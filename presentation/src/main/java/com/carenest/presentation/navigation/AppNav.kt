@@ -85,7 +85,14 @@ fun AppNav() {
 
             entry<AppRoute.Login> {
                 LoginScreen(
-                    onNavigateToOtp = { phone, method -> backStack.add(AppRoute.Otp(phone, method)) }
+                    onNavigateToOtp = { phone, method ->
+                        backStack.add(
+                            AppRoute.Otp(
+                                phone,
+                                method
+                            )
+                        )
+                    }
                 )
             }
 
@@ -143,26 +150,26 @@ fun AppNav() {
                     onNavigateToAIChat = {
                         // AI Chat navigation placeholder
                     },
-                    onNavigateToServiceDetails = { category ->
-                        backStack.add(AppRoute.ServiceDetails(category))
+                    onNavigateToServiceDetails = { service ->
+                        backStack.add(AppRoute.ServiceDetails(service))
                     }
                 )
             }
 
             entry<AppRoute.Services> {
                 ServicesScreen(
-                    onNavigateToDetails = { category ->
-                        backStack.add(AppRoute.ServiceDetails(category))
+                    onNavigateToDetails = { service ->
+                        backStack.add(AppRoute.ServiceDetails(service))
                     },
                 )
             }
 
             entry<AppRoute.ServiceDetails> { route ->
                 ServiceDetailsScreen(
-                    category = route.category,
+                    service = route.service,
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                    onRequestService = {
-                        backStack.add(AppRoute.RequestService)
+                    onRequestService = { service ->
+                        backStack.add(AppRoute.RequestService(service = service))
                     }
                 )
             }
@@ -192,7 +199,7 @@ fun AppNav() {
                     onNavigateToAddPatient = { /* TODO */ },
                     onNavigateToServiceSelection = { /* TODO */ },
                     onNavigateToAddressPicker = { /* TODO */ },
-                    onSubmitRequestClick = {/* TODO() */},
+                    onSubmitRequestClick = {/* TODO() */ },
                     mapResultLocation = mapResultLocation,
                     onMapResultConsumed = { mapResultLocation = null },
                 )
@@ -212,7 +219,7 @@ fun AppNav() {
                 NurseSearchScreen(
                     onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     onMatched = { nurseId ->
-                       replaceWith(AppRoute.AcceptOffer)
+                        replaceWith(AppRoute.AcceptOffer)
                     }
                 )
             }
@@ -257,7 +264,8 @@ fun AppNav() {
                         BaseTopAppBar(
                             title = config.title,
                             leadingIcon = if (config.showLeadingIcon) {
-                                config.leadingIcon ?: painterResource(id = RD.drawable.ic_arrow_back)
+                                config.leadingIcon
+                                    ?: painterResource(id = RD.drawable.ic_arrow_back)
                             } else null,
                             onLeadingClick = config.onLeadingClick,
                             autoMirrorLeadingIcon = true,
@@ -278,44 +286,44 @@ fun AppNav() {
                                 if (shouldShowBottomBar) Modifier
                                 else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             ),
-                    entries = rememberDecoratedNavEntries(
-                        backStack = backStack,
-                        entryProvider = entryProvider,
-                        entryDecorators = listOf(
-                            rememberSaveableStateHolderNavEntryDecorator(),
-                            rememberViewModelStoreNavEntryDecorator()
-                        )
-                    ),
-                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                )
-
-                if (shouldShowBottomBar) {
-                    SPBottomNavigation(
-                        items = listOf(
-                            BottomNavItem(
-                                stringResource(R.string.nav_home),
-                                RD.drawable.ic_bottom_nav_home
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_services),
-                                RD.drawable.ic_bottom_nav_services
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_booking),
-                                RD.drawable.ic_bottom_nav_bookings
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_profile),
-                                RD.drawable.ic_bottom_nav_profile
+                        entries = rememberDecoratedNavEntries(
+                            backStack = backStack,
+                            entryProvider = entryProvider,
+                            entryDecorators = listOf(
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                rememberViewModelStoreNavEntryDecorator()
                             )
                         ),
-                        selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
-                        onItemSelected = { index -> onBottomNavItemSelected(index) },
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = paddingValues.calculateBottomPadding()),
+                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     )
-                }
+
+                    if (shouldShowBottomBar) {
+                        SPBottomNavigation(
+                            items = listOf(
+                                BottomNavItem(
+                                    stringResource(R.string.nav_home),
+                                    RD.drawable.ic_bottom_nav_home
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_services),
+                                    RD.drawable.ic_bottom_nav_services
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_booking),
+                                    RD.drawable.ic_bottom_nav_bookings
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_profile),
+                                    RD.drawable.ic_bottom_nav_profile
+                                )
+                            ),
+                            selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                            onItemSelected = { index -> onBottomNavItemSelected(index) },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = paddingValues.calculateBottomPadding()),
+                        )
+                    }
                 }
             }
         }
