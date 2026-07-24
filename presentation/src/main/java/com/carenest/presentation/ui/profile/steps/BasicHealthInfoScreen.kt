@@ -124,7 +124,7 @@ fun BasicHealthInfoScreen(
         ProfileScreenNavigation(
             onBack = onBack,
             onContinue = onContinue,
-            showBackButton = false,
+            showBackButton = true,
             continueEnabled = !isSubmitting,
             isLoading = isSubmitting
         )
