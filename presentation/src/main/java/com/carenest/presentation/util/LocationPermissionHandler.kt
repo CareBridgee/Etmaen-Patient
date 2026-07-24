@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.request_service.components
+package com.carenest.presentation.util
 
 import android.Manifest
 import android.content.pm.PackageManager
