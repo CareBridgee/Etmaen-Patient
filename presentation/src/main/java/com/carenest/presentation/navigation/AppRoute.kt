@@ -43,4 +43,7 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data object Profile : AppRoute
+
+     @Serializable
+     data class NurseOnTheWay(val requestId: String) : AppRoute
 }

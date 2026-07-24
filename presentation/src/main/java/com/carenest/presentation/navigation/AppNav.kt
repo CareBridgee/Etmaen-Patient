@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
 import androidx.compose.ui.res.painterResource
+import com.carenest.designsystem.components.toast.SnackbarHost
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.splash.SplashScreen
@@ -39,16 +42,25 @@ import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
-import com.carenest.domain.model.home.ServiceCategory
 import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
+import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
 @Composable
 fun AppNav() {
     SpTheme {
+
+        val snackbarHostState = remember { SnackbarHostState() }
+        val coroutineScope = rememberCoroutineScope()
+
+        val onShowSnackbar: (String) -> Unit = { message ->
+            coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+        }
+
         val initialRoute: NavKey = AppRoute.Splash
 
         val backStack = rememberNavBackStack(
@@ -167,6 +179,19 @@ fun AppNav() {
                 ProfileScreen()
             }
 
+            entry<AppRoute.NurseOnTheWay> { route->
+                NurseOnTheWayScreen(
+                    requestId = route.requestId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToQrCode = {
+                        // QR Code navigation placeholder
+                    },
+                    onOpenChat = { nurseId ->
+                        // Chat navigation placeholder
+                    },
+                    showSnackbar = onShowSnackbar
+                )
+            }
         }
 
         val bottomNavRoutes = remember {
@@ -199,9 +224,11 @@ fun AppNav() {
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .statusBarsPadding(),
                 containerColor = Theme.colors.backGround,
                 contentWindowInsets = WindowInsets(0),
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                 topBar = {
                     val config = topBarState.value
                     if (config.title != null) {
