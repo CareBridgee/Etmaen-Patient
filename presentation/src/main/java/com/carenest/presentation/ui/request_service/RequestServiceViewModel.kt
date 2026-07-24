@@ -10,7 +10,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RequestServiceViewModel @Inject constructor(): ViewModel(),
-    StateHolder<RequestServiceUiState> by DefaultStateHolder(RequestServiceUiState()),
+    StateHolder<RequestServiceUiState> by DefaultStateHolder(
+        RequestServiceUiState(
+            location = com.carenest.domain.model.LocationDetails(
+                address = "Cairo, Egypt",
+                apartment = "",
+                district = "",
+                latitude = 30.0444,
+                longitude = 31.2357
+            )
+        )
+    ),
     EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
 
     fun onIntent(intent: RequestServiceIntent) {
