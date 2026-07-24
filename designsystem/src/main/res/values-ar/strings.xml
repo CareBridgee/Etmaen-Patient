@@ -1,3 +1,5 @@
 <resources>
-
+    <string name="request_service_listening">جاري الاستماع…</string>
+    <string name="permission_audio_title">مطلوب إذن الوصول إلى الميكروفون</string>
+    <string name="permission_audio_rationale">يحتاج هذا التطبيق إلى الوصول إلى الميكروفون لاستخدام ميزة التعرف على الكلام لمساعدتك في كتابة الوصف.</string>
 </resources>
