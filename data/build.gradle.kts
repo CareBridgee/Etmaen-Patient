@@ -29,6 +29,11 @@ android {
                 name = "api_key",
                 value = "\"${gradleLocalProperties(rootDir, providers).getProperty("api_key")}\""
             )
+            buildConfigField(
+                type = "String",
+                name = "location_iq_token",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("location_iq_token")}\""
+            )
         }
         getByName("release") {
             buildConfigField(
@@ -40,6 +45,11 @@ android {
                 type = "String",
                 name = "api_key",
                 value = "\"${gradleLocalProperties(rootDir, providers).getProperty("api_key")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "location_iq_token",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("location_iq_token")}\""
             )
         }
     }

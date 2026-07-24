@@ -57,6 +57,9 @@ dependencies {
     // Paging UI
     implementation(libs.androidx.paging.compose)
 
+    // Location
+    implementation(libs.play.services.location)
+
     // Camera
     implementation(libs.bundles.camera)
 
