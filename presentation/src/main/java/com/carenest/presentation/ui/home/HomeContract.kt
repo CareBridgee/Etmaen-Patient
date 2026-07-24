@@ -2,7 +2,7 @@ package com.carenest.presentation.ui.home
 
 import com.carenest.domain.model.home.Booking
 import com.carenest.domain.model.home.HealthcareService
-import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.domain.model.home.User
 
 sealed interface HomeIntent {
@@ -47,7 +47,7 @@ sealed class HomeEffect {
     object NavigateToServices : HomeEffect()
     object NavigateToBookings : HomeEffect()
     object NavigateToAIChat : HomeEffect()
-    data class NavigateToServiceDetails(val category: ServiceCategory) : HomeEffect()
+    data class NavigateToServiceDetails(val service: HealthcareServiceUiModel) : HomeEffect()
     data class ShowToast(
         val message: String, 
         val type: com.carenest.designsystem.components.toast.ToastType = com.carenest.designsystem.components.toast.ToastType.Info
