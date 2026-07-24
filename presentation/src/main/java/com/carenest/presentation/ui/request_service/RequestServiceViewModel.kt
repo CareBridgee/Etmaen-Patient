@@ -5,16 +5,18 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-
-class RequestServiceViewModel : ViewModel(),
+@HiltViewModel
+class RequestServiceViewModel @Inject constructor(): ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(RequestServiceUiState()),
     EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
 
     fun onIntent(intent: RequestServiceIntent) {
         when (intent) {
             is RequestServiceIntent.OnDescriptionChanged -> {
-                updateState { copy(description = intent.description) }
+                updateState { copy(description = intent.description, isListening = false) }
             }
             is RequestServiceIntent.OnPatientSelected -> {
                 updateState { copy(selectedPatient = intent.patient) }

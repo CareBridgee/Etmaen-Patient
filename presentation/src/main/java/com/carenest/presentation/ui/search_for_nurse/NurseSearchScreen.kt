@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -73,59 +74,40 @@ private fun NurseSearchContent(
 ) {
     val colors = Theme.colors
 
-    Scaffold(
-        containerColor = colors.backGround, topBar = {
-            TopAppBar(
-                title = {
-                Text(
-                    stringResource(R.string.request_status),
-                    color = colors.primary,
-                    fontSize = 16.sp
+    Column(
+        modifier = Modifier.statusBarsPadding()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.height(24.dp))
+
+        SearchingAnimation()
+        Spacer(Modifier.height(16.dp))
+        Text(
+            stringResource(R.string.searching_for_available),
+            style = Theme.typography.title,
+            color = colors.primaryFont
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.searching_describtion),
+            style = Theme.typography.body.small,
+            color = colors.secondaryFont,
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(12.dp))
+
+        ActiveNursesChip(count = state.activeNursesCount)
+
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(state.nearbyNurses, key = { it.id }) { nurse ->
+                NurseOfferCard(
+                    nurse = nurse,
+                    onAccept = { onAccept(nurse.id) },
+                    onDecline = { onDecline(nurse.id) }
                 )
-            }, navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = colors.backGround, titleContentColor = colors.primaryFont
-            )
-            )
-        }) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(24.dp))
-
-            SearchingAnimation()
-            Spacer(Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.searching_for_available),
-                style = Theme.typography.title,
-                color = colors.primaryFont
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.searching_describtion),
-                style = Theme.typography.body.small,
-                color = colors.secondaryFont,
-                textAlign = TextAlign.Center
-            )
-            Spacer(Modifier.height(12.dp))
-
-            ActiveNursesChip(count = state.activeNursesCount)
-
-            Spacer(Modifier.height(16.dp))
-
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(state.nearbyNurses, key = { it.id }) { nurse ->
-                    NurseOfferCard(
-                        nurse = nurse,
-                        onAccept = { onAccept(nurse.id) },
-                        onDecline = { onDecline(nurse.id) })
-                }
             }
         }
     }
@@ -136,7 +118,41 @@ private fun NurseSearchContent(
 private fun Preview() {
     SpTheme {
         NurseSearchContent(
-            state = NurseSearchState(),
+            state = NurseSearchState(nearbyNurses = listOf(
+                NearbyNurse(
+                    id = "1",
+                    name = "TODO()",
+                    title = "TODO()",
+                    price = 1.0,
+                    rating = 1.0,
+                    reviewCount = 1,
+                    area = "TODO()",
+                    distanceKm = 1.0,
+                    avatarUrl = "TODO()"
+                ),
+                NearbyNurse(
+                    id = "2",
+                    name = "TODO()",
+                    title = "TODO()",
+                    price = 1.0,
+                    rating = 1.0,
+                    reviewCount = 1,
+                    area = "TODO()",
+                    distanceKm = 1.0,
+                    avatarUrl = "TODO()"
+                ),
+                NearbyNurse(
+                    id = "3",
+                    name = "TODO()",
+                    title = "TODO()",
+                    price = 1.0,
+                    rating = 1.0,
+                    reviewCount = 1,
+                    area = "TODO()",
+                    distanceKm = 1.0,
+                    avatarUrl = "TODO()"
+                )
+            )),
             onBack = { },
             onAccept = { },
             onDecline = { })

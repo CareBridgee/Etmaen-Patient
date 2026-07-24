@@ -15,6 +15,7 @@ data class RequestServiceUiState(
     val selectedPaymentMethod: PaymentMethod? = null,
     val isSubmitting: Boolean = false,
     val isLoading: Boolean = false,
+    val isListening: Boolean = false,
     val error: String? = null,
 )
 

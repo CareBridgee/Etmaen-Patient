@@ -114,6 +114,11 @@
     <string name="request_service_precise">Precise</string>
     <string name="request_service_payment_method_label">Select Payment Method</string>
     <string name="request_service_submit">Submit Request</string>
+    <string name="request_service_listening">Listening…</string>
+
+    <!-- Permissions -->
+    <string name="permission_audio_title">Audio Permission Required</string>
+    <string name="permission_audio_rationale">This app needs access to your microphone for speech recognition to help you fill the description.</string>
 </resources>
 
 

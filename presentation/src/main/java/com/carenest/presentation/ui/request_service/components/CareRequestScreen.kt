@@ -24,6 +24,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.Patient
 import com.carenest.domain.model.PaymentMethod
 import com.carenest.presentation.ui.request_service.RequestServiceUiState
+import com.carenest.presentation.util.AudioPermissionHandler
 
 @Composable
 fun CareRequestScreenContent(
@@ -37,25 +38,46 @@ fun CareRequestScreenContent(
     onPaymentMethodSelected: (PaymentMethod) -> Unit,
     onFillWithAiClick: () -> Unit,
     onMapClick: () -> Unit,
+    onMicClick: () -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showPermissionHandler by remember { mutableStateOf(false) }
-    var showRationale by remember { mutableStateOf(false) }
+    var showLocationPermissionHandler by remember { mutableStateOf(false) }
+    var showLocationRationale by remember { mutableStateOf(false) }
 
-    if (showPermissionHandler) {
+    var showAudioPermissionHandler by remember { mutableStateOf(false) }
+    var showAudioRationale by remember { mutableStateOf(false) }
+
+    if (showLocationPermissionHandler) {
         LocationPermissionHandler(
             onPermissionGranted = {
-                showPermissionHandler = false
+                showLocationPermissionHandler = false
                 onMapClick()
             },
             onPermissionDenied = {
-                showPermissionHandler = false
-                showRationale = true
+                showLocationPermissionHandler = false
+                showLocationRationale = true
             },
-            showRationale = showRationale,
+            showRationale = showLocationRationale,
             onRationaleDismissed = {
-                showRationale = false
+                showLocationRationale = false
+            }
+        )
+    }
+
+    if (showAudioPermissionHandler) {
+        AudioPermissionHandler(
+            onPermissionGranted = {
+                showAudioPermissionHandler = false
+                onMicClick()
+            },
+            onPermissionDenied = {
+                showAudioPermissionHandler = false
+                showAudioRationale = true
+            },
+            showRationale = showAudioRationale,
+            onRationaleDismissed = {
+                showAudioRationale = false
             }
         )
     }
@@ -87,13 +109,15 @@ fun CareRequestScreenContent(
 
         SituationDescriptionField(
             text = state.description,
-            onTextChange = onDescriptionChange
+            onTextChange = onDescriptionChange,
+            isListening = state.isListening,
+            onMicClick = { showAudioPermissionHandler = true }
         )
 
         AddressSection(
             location = state.location,
             onEditClick = onEditAddressClick,
-            onMapClick = { showPermissionHandler = true }
+            onMapClick = { showLocationPermissionHandler = true }
         )
 
         PaymentMethodSection(
@@ -124,6 +148,7 @@ private fun CareRequestScreenPreview() {
             onPaymentMethodSelected = {},
             onFillWithAiClick = {},
             onMapClick = {},
+            onMicClick = {},
             onSubmitClick = {}
         )
     }

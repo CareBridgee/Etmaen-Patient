@@ -6,11 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.carenest.designsystem.R as DesignR
 import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.request_service.components.CareRequestScreenContent
+import com.carenest.presentation.util.rememberSpeechToTextHelper
 
 @Composable
 fun RequestServiceScreen(
@@ -20,10 +26,26 @@ fun RequestServiceScreen(
     onNavigateToAddPatient: () -> Unit,
     onNavigateToServiceSelection: () -> Unit,
     onNavigateToAddressPicker: () -> Unit,
+    onSubmitRequestClick: () -> Unit,
     viewModel: RequestServiceViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val toastState = rememberToastState()
+    val listeningMessage = stringResource(DesignR.string.request_service_listening)
+
+    val speechToTextHelper = rememberSpeechToTextHelper(
+        onResult = { result ->
+            viewModel.onIntent(RequestServiceIntent.OnDescriptionChanged(state.description + " " + result))
+        },
+        onError = { error ->
+            viewModel.updateState { copy(isListening = false) }
+            toastState.show(error)
+        },
+        onStarted = {
+            viewModel.updateState { copy(isListening = true) }
+            toastState.show(listeningMessage)
+        }
+    )
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -38,7 +60,7 @@ fun RequestServiceScreen(
             RequestServiceEffect.NavigateToMap -> onNavigateToMap()
             RequestServiceEffect.RequestSubmittedSuccessfully -> {
                 toastState.show("Request submitted successfully")
-                onNavigateBack()
+                onSubmitRequestClick()
             }
         }
     }
@@ -55,8 +77,23 @@ fun RequestServiceScreen(
             onPaymentMethodSelected = { viewModel.onIntent(RequestServiceIntent.OnPaymentMethodSelected(it)) },
             onFillWithAiClick = { viewModel.onIntent(RequestServiceIntent.OnFillWithAiClicked) },
             onMapClick = { viewModel.onIntent(RequestServiceIntent.OnMapClicked) },
+            onMicClick = { speechToTextHelper.startListening() },
             onSubmitClick = { viewModel.onIntent(RequestServiceIntent.OnSubmitClicked) }
         )
         ToastHost(state = toastState)
     }
+}
+
+@Preview
+@Composable
+private fun RequestServiceScreenPreview() {
+    RequestServiceScreen(
+        onNavigateBack = { TODO() },
+        onNavigateToMap = { TODO() },
+        onNavigateToEditProfile = { TODO() },
+        onNavigateToAddPatient = { TODO() },
+        onNavigateToServiceSelection = { TODO() },
+        onNavigateToAddressPicker = { TODO() },
+        onSubmitRequestClick = { TODO() },
+    )
 }

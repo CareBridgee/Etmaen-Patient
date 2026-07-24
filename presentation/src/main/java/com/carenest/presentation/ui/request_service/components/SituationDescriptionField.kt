@@ -1,5 +1,10 @@
 package com.carenest.presentation.ui.request_service.components
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,9 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -31,8 +38,20 @@ fun SituationDescriptionField(
     text: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isListening: Boolean = false,
     onMicClick: () -> Unit = {},
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "micPulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "micScale"
+    )
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
@@ -72,11 +91,14 @@ fun SituationDescriptionField(
             Icon(
                 painter = painterResource(id = com.carenest.designsystem.R.drawable.ic_mic),
                 contentDescription = null,
-                tint = Theme.colors.secondaryFont,
+                tint = if (isListening) Theme.colors.primary else Theme.colors.secondaryFont,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(Theme.spacing.medium)
                     .size(24.dp)
+                    .then(
+                        if (isListening) Modifier.scale(scale) else Modifier
+                    )
                     .noRippleClickable(onClick = onMicClick)
             )
         }
