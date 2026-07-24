@@ -17,6 +17,10 @@ import com.carenest.data.repository.HomeRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.data.source.local.datasource.home.HomeDatasource
 import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
+import com.carenest.data.repository.GeocodingRepositoryImpl
+import com.carenest.data.source.remote.service.GeocodingApiService
+import com.carenest.data.source.remote.service.GeocodingApiServiceImpl
+import com.carenest.domain.repository.GeocodingRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -31,6 +35,12 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideHomeRepositoryImpl(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
+
+    @Binds
+    abstract fun provideGeocodingRepositoryImpl(impl: GeocodingRepositoryImpl): GeocodingRepository
+
+    @Binds
+    abstract fun provideGeocodingApiService(impl: GeocodingApiServiceImpl): GeocodingApiService
 
     //endregion
 
