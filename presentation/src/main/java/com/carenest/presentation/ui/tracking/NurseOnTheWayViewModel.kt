@@ -38,7 +38,7 @@ class NurseOnTheWayViewModel @Inject constructor(
             NurseOnTheWayIntent.OnDismissCancelDialogClicked -> updateState {
                 copy(showCancelConfirmationDialog = false)
             }
-
+            NurseOnTheWayIntent.OnRequestIdNotFound -> sendEffect(NurseOnTheWayEffect.NavigateBackAfterCancel)
             NurseOnTheWayIntent.OnErrorDismissed -> updateState { copy(errorMessage = null) }
         }
     }

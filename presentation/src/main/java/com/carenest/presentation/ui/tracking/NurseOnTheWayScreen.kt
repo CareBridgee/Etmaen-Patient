@@ -60,12 +60,11 @@ fun NurseOnTheWayScreen(
     onNavigateBack: () -> Unit,
     onNavigateToQrCode: () -> Unit,
     onOpenChat: (nurseId: String) -> Unit,
+    showSnackbar: (String) -> Unit,
     viewModel: NurseOnTheWayViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(requestId) {
         viewModel.handleIntent(NurseOnTheWayIntent.LoadNurseTrackingInfo(requestId))
@@ -77,17 +76,13 @@ fun NurseOnTheWayScreen(
             is NurseOnTheWayEffect.OpenChat -> onOpenChat(effect.nurseId)
             NurseOnTheWayEffect.NavigateToQrCode -> onNavigateToQrCode()
             NurseOnTheWayEffect.NavigateBackAfterCancel -> onNavigateBack()
-            is NurseOnTheWayEffect.ShowCancellationFeeWarning -> coroutineScope.launch {
-                snackbarHostState.showSnackbar(effect.message)
-            }
-            is NurseOnTheWayEffect.ShowError -> coroutineScope.launch {
-                snackbarHostState.showSnackbar(effect.message)
-            }
+            is NurseOnTheWayEffect.ShowCancellationFeeWarning -> showSnackbar(effect.message)
+            is NurseOnTheWayEffect.ShowError -> showSnackbar(effect.message)
+
         }
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = Theme.colors.backGround,
     ) { paddingValues ->
         NurseOnTheWayLanding(
@@ -204,7 +199,7 @@ private fun NurseOnTheWayContent(
         NurseOnTheWayActionButtons(
             onShowQrCodeClick = { onIntent(NurseOnTheWayIntent.OnShowQrCodeClicked) },
             onCancelClick = { onIntent(NurseOnTheWayIntent.OnCancelVisitClicked(state.nurseInfo?.requestId
-                ?: "")) },
+                ?: "".also { onIntent(NurseOnTheWayIntent.OnRequestIdNotFound) }))},
             isCancelling = state.isCancelling,
         )
     }

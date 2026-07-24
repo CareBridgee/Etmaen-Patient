@@ -20,6 +20,7 @@ sealed interface NurseOnTheWayIntent {
     data object OnConfirmCancelVisitClicked : NurseOnTheWayIntent
     data object OnDismissCancelDialogClicked : NurseOnTheWayIntent
     data object OnErrorDismissed : NurseOnTheWayIntent
+    data object OnRequestIdNotFound : NurseOnTheWayIntent
 }
 
 sealed interface NurseOnTheWayEffect {
