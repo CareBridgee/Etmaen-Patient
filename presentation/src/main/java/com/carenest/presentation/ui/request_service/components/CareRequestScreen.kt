@@ -22,7 +22,6 @@ import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.Patient
-import com.carenest.domain.model.PaymentMethod
 import com.carenest.presentation.ui.request_service.RequestServiceUiState
 import com.carenest.presentation.util.AudioPermissionHandler
 
@@ -35,7 +34,6 @@ fun CareRequestScreenContent(
     onChangeServiceClick: () -> Unit,
     onDescriptionChange: (String) -> Unit,
     onEditAddressClick: () -> Unit,
-    onPaymentMethodSelected: (PaymentMethod) -> Unit,
     onFillWithAiClick: () -> Unit,
     onMapClick: () -> Unit,
     onMicClick: () -> Unit,
@@ -101,10 +99,6 @@ fun CareRequestScreenContent(
             onMapClick = onMapClick
         )
 
-        PaymentMethodSection(
-            paymentMethods = state.paymentMethods,
-            onMethodSelected = onPaymentMethodSelected
-        )
 
         PrimaryButton(
             caption = stringResource(id = R.string.request_service_submit),
@@ -126,7 +120,6 @@ private fun CareRequestScreenPreview() {
             onChangeServiceClick = {},
             onDescriptionChange = {},
             onEditAddressClick = {},
-            onPaymentMethodSelected = {},
             onFillWithAiClick = {},
             onMapClick = {},
             onMicClick = {},

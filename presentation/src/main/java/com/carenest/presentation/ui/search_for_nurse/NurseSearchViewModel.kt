@@ -26,6 +26,22 @@ class NurseSearchViewModel @Inject constructor(
             NurseSearchIntent.CancelSearch -> {
                 sendEffect(NurseSearchEffect.NavigateBack)
             }
+            is NurseSearchIntent.PaymentMethodSelected -> {
+                updateState {
+                    copy(paymentMethods = paymentMethods.map {
+                        it.copy(isSelected = it.id == intent.paymentMethod.id)
+                    })
+                }
+            }
+            NurseSearchIntent.ConfirmPayment -> {
+                state.value.selectedNurseIdForPayment?.let { nurseId ->
+                    updateState { copy(showPaymentSheet = false, matchedNurseId = nurseId, isSearching = true) }
+                    sendEffect(NurseSearchEffect.NavigateToEnRoute(nurseId))
+                }
+            }
+            NurseSearchIntent.DismissPaymentSheet -> {
+                updateState { copy(showPaymentSheet = false, selectedNurseIdForPayment = null) }
+            }
         }
     }
 
@@ -34,8 +50,7 @@ class NurseSearchViewModel @Inject constructor(
     }
 
     private fun acceptOffer(nurseId: String) {
-        updateState { copy(matchedNurseId = nurseId, isSearching = true) }
-        sendEffect(NurseSearchEffect.NavigateToEnRoute(nurseId))
+        updateState { copy(showPaymentSheet = true, selectedNurseIdForPayment = nurseId) }
     }
 
 

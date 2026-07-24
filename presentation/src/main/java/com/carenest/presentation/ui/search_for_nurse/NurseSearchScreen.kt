@@ -20,6 +20,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.presentation.ui.request_service.components.PaymentMethodSection
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -61,7 +65,32 @@ fun NurseSearchScreen(
         onAccept = { viewModel.onIntent(NurseSearchIntent.AcceptOffer(it)) },
         onDecline = { viewModel.onIntent(NurseSearchIntent.DeclineOffer(it)) })
 
-
+    if (state.showPaymentSheet) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.onIntent(NurseSearchIntent.DismissPaymentSheet) },
+            sheetState = sheetState,
+            containerColor = Theme.colors.backGround
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .padding(bottom = 32.dp)
+            ) {
+                PaymentMethodSection(
+                    paymentMethods = state.paymentMethods,
+                    onMethodSelected = { viewModel.onIntent(NurseSearchIntent.PaymentMethodSelected(it)) }
+                )
+                Spacer(Modifier.height(24.dp))
+                PrimaryButton(
+                    caption = "Confirm Payment",
+                    onClick = { viewModel.onIntent(NurseSearchIntent.ConfirmPayment) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
