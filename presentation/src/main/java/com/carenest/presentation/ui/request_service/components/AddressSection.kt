@@ -13,12 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,11 +28,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.carenest.presentation.BuildConfig
 import com.carenest.designsystem.R
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.domain.model.LocationDetails
+
+// Default location: Cairo, Egypt
+private const val DEFAULT_LATITUDE = 30.0444
+private const val DEFAULT_LONGITUDE = 31.2357
+private const val DEFAULT_ZOOM = 13
+
+private fun buildMapSnapshotUrl(latitude: Double, longitude: Double): String {
+    val lon = "%.6f".format(longitude)
+    val lat = "%.6f".format(latitude)
+    val pin = "pin-s+e53935($lon,$lat)"
+    return "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/" +
+        "$pin/$lon,$lat,$DEFAULT_ZOOM,0/700x300@2x" +
+        "?access_token=${BuildConfig.MAPBOX_ACCESS_TOKEN}"
+}
 
 @Composable
 fun AddressSection(
@@ -46,7 +65,6 @@ fun AddressSection(
             .clip(Theme.shapes.medium)
             .background(Theme.colors.backGround)
     ) {
-        // Map Placeholder
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -55,14 +73,20 @@ fun AddressSection(
                 .noRippleClickable(onClick = onMapClick),
             contentAlignment = Alignment.Center
         ) {
+            val lat = location?.latitude ?: DEFAULT_LATITUDE
+            val lon = location?.longitude ?: DEFAULT_LONGITUDE
+            val mapSnapshotUrl = remember(lat, lon) { buildMapSnapshotUrl(lat, lon) }
+
             AsyncImage(
-                model = R.drawable.map_img_placeholder,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(mapSnapshotUrl)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
-            
-            // Precise tag
+
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -93,7 +117,6 @@ fun AddressSection(
             }
         }
 
-        // Address Details
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,10 +134,9 @@ fun AddressSection(
             Column(modifier = Modifier.weight(1f)) {
                 BasicText(
                     text = location?.address ?: "No address selected",
-                    style = Theme.typography.body.large.copy(
+                    style = Theme.typography.body.medium.copy(
                         color = Theme.colors.primaryFont,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
                     )
                 )
                 location?.let {
@@ -122,9 +144,8 @@ fun AddressSection(
                         text = listOfNotNull(it.apartment, it.district)
                             .filter { it.isNotBlank() }
                             .joinToString(", "),
-                        style = Theme.typography.body.medium.copy(
+                        style = Theme.typography.body.small.copy(
                             color = Theme.colors.secondaryFont,
-                            fontSize = 16.sp
                         )
                     )
                 }
@@ -150,11 +171,11 @@ private fun AddressSectionPreview() {
         Box(modifier = Modifier.background(Theme.colors.surfaceVariant).padding(16.dp)) {
             AddressSection(
                 location = LocationDetails(
-                    address = "123 Serenity Lane",
-                    apartment = "Apt 4B",
-                    district = "Health District",
-                    latitude = 0.0,
-                    longitude = 0.0
+                    address = "Cairo, Egypt",
+                    apartment = "Downtown Cairo",
+                    district = "Cairo Governorate",
+                    latitude = DEFAULT_LATITUDE,
+                    longitude = DEFAULT_LONGITUDE,
                 ),
                 onEditClick = {},
                 onMapClick = {}
