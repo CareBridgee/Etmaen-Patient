@@ -44,6 +44,7 @@ import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import kotlin.collections.listOf
 
 @Composable
@@ -173,6 +174,18 @@ fun AppNav() {
                 ProfileScreen()
             }
 
+            entry<AppRoute.NurseOnTheWay> { route->
+                NurseOnTheWayScreen(
+                    requestId = route.requestId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToQrCode = {
+                        // QR Code navigation placeholder
+                    },
+                    onOpenChat = { nurseId ->
+                        // Chat navigation placeholder
+                    }
+                )
+            }
         }
 
         val bottomNavRoutes = remember {
