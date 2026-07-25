@@ -1,9 +1,28 @@
+import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+}
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+
+    if (file.exists()) {
+        file.inputStream().use(::load)
+    }
+}
+
+fun localProperty(name: String): String {
+    return localProperties.getProperty(name).orEmpty()
+}
+
+fun String.toBuildConfigString(): String {
+    val escapedValue = replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+
+    return "\"$escapedValue\""
 }
 
 android {
@@ -18,6 +37,24 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "PAYMOB_PUBLIC_KEY",
+            localProperty("PAYMOB_PUBLIC_KEY").toBuildConfigString()
+        )
+
+        buildConfigField(
+            "String",
+            "PAYMOB_SECRET_KEY",
+            localProperty("PAYMOB_SECRET_KEY").toBuildConfigString()
+        )
+
+        buildConfigField(
+            "String",
+            "PAYMOB_INTEGRATION_ID",
+            localProperty("PAYMOB_INTEGRATION_ID").toBuildConfigString()
+        )
     }
 
     buildTypes {
@@ -31,6 +68,8 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -73,4 +112,6 @@ dependencies {
     // Debug only
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    implementation(libs.paymob.sdk)
 }

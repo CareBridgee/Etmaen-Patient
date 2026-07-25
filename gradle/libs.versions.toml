@@ -18,6 +18,7 @@ kotlinSeralization = "1.8.0"
 
 kotlinSerialization  = "1.8.0"
 kotlinxSerializationPlugin = "2.3.10"
+paymobSdk = "1.9.3"
 uiGraphics = "1.11.3"
 navigation3 = "1.1.4"
 hilt = "2.60.1"
@@ -108,6 +109,7 @@ androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.r
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 # Location
+paymob-sdk = { module = "com.paymob.sdk:Paymob-SDK", version.ref = "paymobSdk" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 # Splash
