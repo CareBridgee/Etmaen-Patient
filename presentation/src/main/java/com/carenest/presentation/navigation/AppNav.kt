@@ -66,7 +66,7 @@ fun AppNav() {
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
         }
 
-        val initialRoute: NavKey = AppRoute.Chat(requestId = "test")
+        val initialRoute: NavKey = AppRoute.Splash
 
         val backStack = rememberNavBackStack(
             savedStateConfiguration,
