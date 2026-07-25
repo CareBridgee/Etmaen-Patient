@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.R as DR
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -33,9 +34,13 @@ fun AddPaymentMethodScreen(
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 22.dp),
     ) {
-        Text(stringResource(R.string.wallet_payment_description), color = Theme.colors.secondaryFont, style = Theme.typography.body.medium)
-        Spacer(Modifier.height(28.dp))
-        Surface(color = Theme.colors.surface, shape = RoundedCornerShape(18.dp), shadowElevation = 1.dp) {
+        Text(
+            stringResource(R.string.wallet_payment_description),
+            color = Theme.colors.secondaryFont,
+            style = Theme.typography.body.medium.copy(fontSize = 17.sp, lineHeight = 25.sp)
+        )
+        Spacer(Modifier.height(30.dp))
+        Surface(color = Theme.colors.surface, shape = RoundedCornerShape(18.dp), shadowElevation = 2.dp) {
             Column {
                 val options = listOf(
                     Triple(R.string.wallet_credit_card, DR.drawable.ic_wallet_card, onCreditCardClick),
@@ -49,16 +54,16 @@ fun AddPaymentMethodScreen(
                 }
             }
         }
-        Spacer(Modifier.height(42.dp))
+        Spacer(Modifier.height(48.dp))
         Row(Modifier.align(Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
-            Icon(painterResource(DR.drawable.ic_verified), null, tint = Theme.colors.primary, modifier = Modifier.size(15.dp))
+            Icon(painterResource(DR.drawable.ic_verified), null, tint = Theme.colors.primary, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(6.dp))
-            Text(stringResource(R.string.wallet_secure_payments), color = Theme.colors.primary, style = Theme.typography.body.small, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.wallet_secure_payments), color = Theme.colors.primary, style = Theme.typography.body.small.copy(fontSize = 13.sp), fontWeight = FontWeight.Medium)
         }
         Text(
             stringResource(R.string.wallet_secure_payments_description),
             color = Theme.colors.hint,
-            style = Theme.typography.body.small,
+            style = Theme.typography.body.small.copy(fontSize = 12.sp, lineHeight = 18.sp),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 26.dp, vertical = 8.dp)
         )

@@ -1,7 +1,6 @@
 package com.carenest.presentation.ui.wallet.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,40 +17,138 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.R as DR
 import com.carenest.designsystem.theme.Theme
-import com.google.common.math.LinearTransformation.horizontal
+import com.carenest.presentation.R
 
 @Composable
-fun WalletBalanceCard(balance: String, autoRefillText: String, addFundsText: String, onAddFunds: () -> Unit) {
+fun WalletBalanceCard(
+    balanceLabel: String,
+    balance: String,
+    autoRefillText: String,
+    addFundsText: String,
+    onAddFunds: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        Modifier.fillMaxWidth().background(
-            Brush.linearGradient(listOf(Theme.colors.primary, Theme.colors.primaryVariant)),
-            RoundedCornerShape(22.dp)
-        ).padding(22.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .height(232.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Theme.colors.primary,
+                        Theme.colors.primaryVariant
+                    )
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(
+                start = 20.dp,
+                top = 20.dp,
+                end = 20.dp,
+                bottom = 16.dp
+            )
     ) {
-        Text(autoRefillText.substringBefore(":"), color = Theme.colors.onPrimary.copy(alpha = .85f), style = Theme.typography.body.small, fontWeight = FontWeight.Medium)
-        Text(balance, color = Theme.colors.onPrimary, style = Theme.typography.display, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(12.dp))
-        Surface(color = Theme.colors.onPrimary.copy(alpha = .12f), shape = CircleShape) {
-            Text(autoRefillText.substringAfter(":", autoRefillText), color = Theme.colors.onPrimary, style = Theme.typography.body.small, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
+        Text(
+            text = balanceLabel.uppercase(),
+            color = Theme.colors.onPrimary.copy(alpha = 0.78f),
+            style = Theme.typography.body.small.copy(
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                letterSpacing = 0.5.sp
+            ),
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = balance,
+            color = Theme.colors.onPrimary,
+            style = Theme.typography.display.copy(
+                fontSize = 30.sp,
+                lineHeight = 38.sp
+            ),
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier
+                .background(
+                    color = Theme.colors.onPrimary.copy(alpha = 0.12f),
+                    shape = CircleShape
+                )
+                .padding(
+                    horizontal = 10.dp,
+                    vertical = 6.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(DR.drawable.ic_wallet_info),
+                contentDescription = null,
+                tint = Theme.colors.onPrimary,
+                modifier = Modifier.size(15.dp)
+            )
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            Text(
+                text = autoRefillText,
+                color = Theme.colors.onPrimary,
+                style = Theme.typography.body.small.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp
+                ),
+                fontWeight = FontWeight.Medium
+            )
         }
-        Spacer(Modifier.height(22.dp))
+
+        Spacer(modifier = Modifier.height(28.dp))
+
         Button(
             onClick = onAddFunds,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.surface, contentColor = Theme.colors.primary),
-            shape = RoundedCornerShape(14.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(13.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Theme.colors.surface,
+                contentColor = Theme.colors.primary
+            ),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 0.dp,
+                hoveredElevation = 0.dp
+            )
         ) {
             Icon(
                 painter = painterResource(DR.drawable.ic_wallet_plus),
                 contentDescription = null,
-                modifier = Modifier.size(21.dp)
+                modifier = Modifier.size(19.dp)
             )
-            Spacer(Modifier.width(9.dp))
-            Text(addFundsText, style = Theme.typography.body.medium, fontWeight = FontWeight.SemiBold)
+
+            Spacer(modifier = Modifier.width(7.dp))
+
+            Text(
+                text = addFundsText,
+                style = Theme.typography.body.medium.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp
+                ),
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
@@ -70,25 +167,44 @@ fun WalletActionRow(
     subtitleColor: Color = Theme.colors.secondaryFont,
 ) {
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 72.dp)
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 76.dp)
             .clickable(enabled = onClick != null) { onClick?.invoke() }
             .padding(horizontal = 24.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Surface(shape = iconContainerShape, color = iconContainerColor, modifier = Modifier.size(48.dp)) {
-            Icon(icon, null, tint = iconTint, modifier = Modifier.padding(13.dp))
+        Surface(
+            shape = iconContainerShape,
+            color = iconContainerColor,
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(icon, null, tint = iconTint, modifier = Modifier.padding(12.dp))
         }
         Spacer(Modifier.width(16.dp))
         Column(Modifier.weight(1f)) {
-            Text(title, color = Theme.colors.primaryFont, style = Theme.typography.body.medium, fontWeight = FontWeight.Medium)
-            if (subtitle != null) Text(subtitle, color = subtitleColor, style = Theme.typography.body.small)
+            Text(
+                title,
+                color = Theme.colors.primaryFont,
+                style = Theme.typography.body.medium.copy(fontSize = 16.sp),
+                fontWeight = FontWeight.Medium
+            )
+            if (subtitle != null) Text(
+                subtitle,
+                color = subtitleColor,
+                style = Theme.typography.body.small.copy(fontSize = 12.sp)
+            )
         }
-        if (selected) Box(Modifier.size(8.dp).background(Theme.colors.primary, CircleShape))
+        if (selected) Box(
+            Modifier
+                .size(8.dp)
+                .background(Theme.colors.primary, CircleShape)
+        )
         else if (showChevron) Icon(
             painterResource(DR.drawable.ic_wallet_chevron),
             contentDescription = null,
             tint = Theme.colors.hint,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(22.dp)
         )
     }
 }
@@ -98,7 +214,7 @@ fun OutlinedWalletAction(text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(58.dp)
+            .height(60.dp)
             .dashedRoundedBorder(Theme.colors.onDisable, 18.dp)
             .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
@@ -108,10 +224,15 @@ fun OutlinedWalletAction(text: String, onClick: () -> Unit) {
             painterResource(DR.drawable.ic_wallet_plus),
             contentDescription = null,
             tint = Theme.colors.primary,
-            modifier = Modifier.size(21.dp)
+            modifier = Modifier.size(23.dp)
         )
         Spacer(Modifier.width(9.dp))
-        Text(text, color = Theme.colors.primary, style = Theme.typography.body.medium, fontWeight = FontWeight.SemiBold)
+        Text(
+            text,
+            color = Theme.colors.primary,
+            style = Theme.typography.body.medium.copy(fontSize = 17.sp),
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
@@ -119,7 +240,10 @@ fun OutlinedWalletAction(text: String, onClick: () -> Unit) {
 fun PaymentOptionRow(title: String, icon: Painter, onClick: () -> Unit, showDivider: Boolean) {
     Column {
         WalletActionRow(title = title, icon = icon, onClick = onClick)
-        if (showDivider) HorizontalDivider(Modifier.padding(start = 62.dp), color = Theme.colors.divider)
+        if (showDivider) HorizontalDivider(
+            Modifier.padding(start = 62.dp),
+            color = Theme.colors.divider
+        )
     }
 }
 
