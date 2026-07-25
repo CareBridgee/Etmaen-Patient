@@ -28,6 +28,7 @@ object NavigationConfig {
             serializableSubclass(AppRoute.Services::class)
             serializableSubclass(AppRoute.ServiceDetails::class)
             serializableSubclass(AppRoute.NurseOnTheWay::class)
+            serializableSubclass(AppRoute.VisitCompleted::class)
         }
     }
 

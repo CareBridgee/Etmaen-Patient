@@ -47,6 +47,7 @@ import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
+import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
@@ -197,6 +198,16 @@ fun AppNav() {
                     },
                     showSnackbar = onShowSnackbar
                 )
+            }
+
+            entry<AppRoute.VisitCompleted> { route->
+                 VisitCompletedScreen(
+                     requestId = route.requestId,
+                     onNavigateHome = {
+                         replaceWith(AppRoute.Home)
+                     },
+                     onShowSnackbar = onShowSnackbar
+                 )
             }
         }
 
