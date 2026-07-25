@@ -266,4 +266,25 @@
   <string name="nurse_on_the_way_cancel_dialog_confirm">Yes, Cancel</string>
   <string name="nurse_on_the_way_cancel_dialog_dismiss">Keep Visit</string>
 
+  <!-- visit summary -->
+  <string name="visit_completed_menu_content_description">Menu</string>
+  <string name="visit_completed_title">Visit Completed</string>
+  <string name="visit_completed_subtitle">Your medical professional has finalized the session report. Thank you for choosing CareMatch.</string>
+  <string name="visit_completed_summary_title">SUMMARY DETAIL</string>
+  <string name="visit_completed_verified_badge">Verified Visit</string>
+  <string name="visit_completed_professional_label">Medical Professional</string>
+  <string name="visit_completed_service_type_label">Service Type</string>
+  <string name="visit_completed_duration_label">Visit Duration</string>
+  <string name="visit_completed_duration_value">%1$d mins</string>
+  <string name="visit_completed_date_label">Completed Date</string>
+  <string name="visit_completed_total_amount_label">TOTAL AMOUNT DUE</string>
+  <string name="visit_completed_total_amount_value">$%1$.2f</string>
+  <string name="visit_completed_back_home_button">Back to Home</string>
+
+  <string name="visit_rating_title">How was your visit?</string>
+  <string name="visit_rating_subtitle">Your feedback helps us provide better care for everyone.</string>
+  <string name="visit_rating_star_content_description">%1$d star</string>
+  <string name="visit_rating_submit_button">Submit</string>
+  <string name="visit_rating_skip_button">Skip</string>
+
 </resources>
