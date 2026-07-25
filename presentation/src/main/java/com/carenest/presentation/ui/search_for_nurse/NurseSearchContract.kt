@@ -21,23 +21,10 @@ data class NurseSearchState(
     val matchedNurseId: String? = null,
     val showPaymentSheet: Boolean = false,
     val selectedNurseIdForPayment: String? = null,
+    val selectedPaymentMethod: PaymentMethod = PaymentMethod.COD,
     val paymentMethods: List<PaymentMethod> = listOf(
-        PaymentMethod(
-            id = "cod",
-            title = "Cash on Delivery",
-            description = "Pay when the service is completed",
-            iconResName = "ic_wallet",
-            subDescription = "",
-            isSelected = true
-        ),
-        PaymentMethod(
-            id = "paymob",
-            title = "Credit/Debit Card via Paymob",
-            description = "Pay securely using your card",
-            iconResName = "ic_wallet",
-            subDescription = "Visa, MasterCard, Meeza",
-            isSelected = false
-        )
+        PaymentMethod.COD,
+        PaymentMethod.PAYMOB
     )
 )
 

@@ -40,7 +40,9 @@ class RequestServiceViewModel @Inject constructor(): ViewModel(),
             RequestServiceIntent.OnEditProfileClicked -> TODO()
             RequestServiceIntent.OnFillWithAiClicked -> TODO()
             RequestServiceIntent.OnHelpClicked -> TODO()
-            RequestServiceIntent.OnSubmitClicked -> TODO()
+            RequestServiceIntent.OnSubmitClicked -> {
+                sendEffect(RequestServiceEffect.RequestSubmittedSuccessfully)
+            }
             RequestServiceIntent.OnBackClicked -> TODO()
             RequestServiceIntent.OnMapClicked -> {
                 sendEffect(RequestServiceEffect.NavigateToMap)

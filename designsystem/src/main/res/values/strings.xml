@@ -34,6 +34,12 @@
     <string name="payout_arrival_instant">Est. arrival: Instant</string>
     <string name="payout_fastest">FASTEST</string>
     <string name="payout_info">Withdrawals may be subject to a small processing fee depending on your bank\'s policy.</string>
+    <string name="payment_info_banner">A processing fee may apply depending on your payment provider\'s policy.</string>
+    <string name="payment_confirm_btn">Confirm Payment</string>
+    <string name="payment_method_cod">Cash on Delivery</string>
+    <string name="payment_method_cod_desc">Pay when the service is completed</string>
+    <string name="payment_method_paymob">Credit/Debit Card</string>
+    <string name="payment_method_paymob_desc">Pay securely using your card</string>
     <string name="action_withdraw">Withdraw</string>
     <string name="earnings_total_title">Total Earnings (This Month)</string>
     <string name="earnings_vs_last_month">%1$d%% vs last month</string>

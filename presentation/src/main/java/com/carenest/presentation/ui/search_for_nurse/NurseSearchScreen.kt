@@ -8,33 +8,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
-import com.carenest.designsystem.components.button.PrimaryButton
-import com.carenest.presentation.ui.request_service.components.PaymentMethodSection
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.payout.PayoutInfoBanner
+import com.carenest.designsystem.components.payout.PayoutMethodCard
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.model.PaymentMethod
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.search_for_nurse.composables.ActiveNursesChip
 import com.carenest.presentation.ui.search_for_nurse.composables.NurseOfferCard
@@ -78,13 +73,29 @@ fun NurseSearchScreen(
                     .padding(16.dp)
                     .padding(bottom = 32.dp)
             ) {
-                PaymentMethodSection(
-                    paymentMethods = state.paymentMethods,
-                    onMethodSelected = { viewModel.onIntent(NurseSearchIntent.PaymentMethodSelected(it)) }
+                PayoutMethodCard(
+                    title = stringResource(com.carenest.designsystem.R.string.payment_method_cod),
+                    subtitle = stringResource(com.carenest.designsystem.R.string.payment_method_cod_desc),
+                    painter = painterResource(com.carenest.designsystem.R.drawable.cod),
+                    selected = state.selectedPaymentMethod == PaymentMethod.COD,
+                    onClick = { viewModel.onIntent(NurseSearchIntent.PaymentMethodSelected(PaymentMethod.COD)) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
+                Spacer(Modifier.height(12.dp))
+                PayoutMethodCard(
+                    title = stringResource(com.carenest.designsystem.R.string.payment_method_paymob),
+                    subtitle = stringResource(com.carenest.designsystem.R.string.payment_method_paymob_desc),
+                    painter = painterResource(com.carenest.designsystem.R.drawable.card),
+                    selected = state.selectedPaymentMethod == PaymentMethod.PAYMOB,
+                    onClick = { viewModel.onIntent(NurseSearchIntent.PaymentMethodSelected(PaymentMethod.PAYMOB)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Spacer(Modifier.height(16.dp))
+                PayoutInfoBanner(text = stringResource(com.carenest.designsystem.R.string.payment_info_banner))
+
                 Spacer(Modifier.height(24.dp))
                 PrimaryButton(
-                    caption = "Confirm Payment",
+                    caption = stringResource(com.carenest.designsystem.R.string.payment_confirm_btn),
                     onClick = { viewModel.onIntent(NurseSearchIntent.ConfirmPayment) },
                     modifier = Modifier.fillMaxWidth()
                 )

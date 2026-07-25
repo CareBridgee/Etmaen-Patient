@@ -16,6 +16,7 @@ class NurseSearchViewModel @Inject constructor(
 
     init {
         onIntent(NurseSearchIntent.StartSearching)
+        updateState { copy(showPaymentSheet = true) }
     }
 
     fun onIntent(intent: NurseSearchIntent) {
@@ -28,9 +29,12 @@ class NurseSearchViewModel @Inject constructor(
             }
             is NurseSearchIntent.PaymentMethodSelected -> {
                 updateState {
-                    copy(paymentMethods = paymentMethods.map {
-                        it.copy(isSelected = it.id == intent.paymentMethod.id)
-                    })
+                    copy(
+                        selectedPaymentMethod = intent.paymentMethod,
+                        paymentMethods = paymentMethods.map {
+                            it.copy(isSelected = it.id == intent.paymentMethod.id)
+                        }
+                    )
                 }
             }
             NurseSearchIntent.ConfirmPayment -> {
