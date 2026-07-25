@@ -47,6 +47,10 @@ import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
+import com.carenest.presentation.ui.wallet.AddFundsScreen
+import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
+import com.carenest.presentation.ui.wallet.WalletScreen
+import com.carenest.designsystem.components.topbar.TopBarAction
 import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
@@ -185,6 +189,38 @@ fun AppNav() {
                 ProfileScreen()
             }
 
+            entry<AppRoute.Wallet> {
+                ScreenTopBar(
+                    title = stringResource(R.string.wallet_title),
+                    showLeadingIcon = true,
+                    onLeadingClick = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+                WalletScreen(
+                    onAddFunds = { backStack.add(AppRoute.AddFunds) },
+                    onAddPaymentMethod = { backStack.add(AppRoute.AddPaymentMethod) },
+                )
+            }
+
+            entry<AppRoute.AddFunds> {
+                ScreenTopBar(
+                    title = stringResource(R.string.wallet_add_funds),
+                    onLeadingClick = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+                AddFundsScreen(
+                    onAddPaymentMethod = { backStack.add(AppRoute.AddPaymentMethod) },
+                    onTermsClick = {},
+                    onAddFunds = {},
+                )
+            }
+
+            entry<AppRoute.AddPaymentMethod> {
+                ScreenTopBar(
+                    title = stringResource(R.string.wallet_add_payment_method_title),
+                    onLeadingClick = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+                AddPaymentMethodScreen({}, {}, {}, {}, {})
+            }
+
             entry<AppRoute.NurseOnTheWay> { route->
                 NurseOnTheWayScreen(
                     requestId = route.requestId,
@@ -205,7 +241,8 @@ fun AppNav() {
                 AppRoute.Home,
                 AppRoute.Services,
                 AppRoute.Bookings,
-                AppRoute.Profile
+                AppRoute.Profile,
+                AppRoute.Wallet,
             )
         }
 
@@ -245,6 +282,12 @@ fun AppNav() {
                             } else null,
                             onLeadingClick = config.onLeadingClick,
                             autoMirrorLeadingIcon = true,
+                            actions = buildList {
+                                if (config.profileImage != null) {
+                                    add(TopBarAction(config.profileImage, "Profile", onClick = config.onProfileClick ?: {}))
+                                }
+                                config.trailingAction?.let(::add)
+                            },
                             modifier = Modifier.statusBarsPadding()
                         )
                     }
@@ -291,6 +334,10 @@ fun AppNav() {
                             BottomNavItem(
                                 stringResource(R.string.nav_profile),
                                 RD.drawable.ic_bottom_nav_profile
+                            ),
+                            BottomNavItem(
+                                stringResource(R.string.wallet_title),
+                                RD.drawable.ic_bottom_nav_wallet
                             )
                         ),
                         selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
