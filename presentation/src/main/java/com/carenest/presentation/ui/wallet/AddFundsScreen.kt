@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.wallet
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -26,6 +29,8 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.wallet.components.WalletActionRow
+import com.carenest.presentation.ui.wallet.components.RequiredPaymentMethodRow
+import com.carenest.presentation.ui.wallet.components.dashedRoundedBorder
 
 @Composable
 fun AddFundsScreen(
@@ -48,64 +53,26 @@ private fun AddFundsContent(
 ) {
     Column(Modifier.fillMaxSize()) {
         Column(
-            Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 22.dp),
+            Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 22.dp),
         ) {
-            Text(
-                stringResource(R.string.wallet_top_up_title),
-                color = Theme.colors.primaryFont,
-                style = Theme.typography.title,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                stringResource(R.string.wallet_top_up_description),
-                color = Theme.colors.secondaryFont,
-                style = Theme.typography.body.medium
-            )
+            Text(stringResource(R.string.wallet_top_up_title), color = Theme.colors.primaryFont, style = Theme.typography.title, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.wallet_top_up_description), color = Theme.colors.secondaryFont, style = Theme.typography.body.medium)
             Spacer(Modifier.height(24.dp))
-            OutlinedTextField(
-                value = state.topUpAmount,
-                onValueChange = { onEvent(WalletIntent.TopUpAmountChanged(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(76.dp),
-                prefix = {
-                    Text(
-                        stringResource(R.string.wallet_currency),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                placeholder = {
-                    Text(
-                        stringResource(R.string.wallet_zero_amount),
-                        color = Theme.colors.onDisable,
-                        style = Theme.typography.displayMedium
-                    )
-                },
-                textStyle = Theme.typography.displayMedium.copy(color = Theme.colors.primaryFont),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Theme.colors.primary,
-                    unfocusedBorderColor = Theme.colors.onDisable,
-                    cursorColor = Theme.colors.primary
-                )
+            AmountInput(
+                amount = state.topUpAmount,
+                onAmountChanged = { onEvent(WalletIntent.TopUpAmountChanged(it)) }
             )
             Spacer(Modifier.height(12.dp))
-            Row(verticalAlignment = Alignment.Top) {
-                Icon(
-                    painterResource(DR.drawable.ic_info),
-                    null,
-                    tint = Theme.colors.secondaryFont,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(Modifier.width(8.dp))
+            Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxWidth()) {
+                Icon(painterResource(DR.drawable.ic_wallet_info), null, tint = Theme.colors.secondaryFont, modifier = Modifier.padding(top = 2.dp).size(18.dp))
+                Spacer(Modifier.width(7.dp))
                 Text(
                     stringResource(R.string.wallet_amount_helper),
                     color = Theme.colors.secondaryFont,
-                    style = Theme.typography.body.small
+                    style = Theme.typography.body.medium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Clip,
+                    modifier = Modifier.weight(1f)
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -118,58 +85,42 @@ private fun AddFundsContent(
                         border = BorderStroke(1.dp, Theme.colors.onDisable),
                         contentPadding = PaddingValues(vertical = 11.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Theme.colors.primary)
-                    ) {
-                        Text(
-                            stringResource(R.string.wallet_suggested_amount, amount),
-                            style = Theme.typography.body.small,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    ) { Text(stringResource(R.string.wallet_suggested_amount, amount), style = Theme.typography.body.small, fontWeight = FontWeight.SemiBold) }
                 }
             }
             TextButton(onClick = onTermsClick, contentPadding = PaddingValues(vertical = 18.dp)) {
-                Text(
-                    stringResource(R.string.wallet_terms_apply),
-                    color = Theme.colors.primary,
-                    style = Theme.typography.body.small,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Text(stringResource(R.string.wallet_terms_apply), color = Theme.colors.primary, style = Theme.typography.body.small, fontWeight = FontWeight.SemiBold)
             }
             Spacer(Modifier.height(48.dp))
-            Text(
-                stringResource(R.string.wallet_payment_method_label),
-                color = Theme.colors.secondaryFont,
-                style = Theme.typography.body.small,
-                fontWeight = FontWeight.Bold
-            )
+            Text(stringResource(R.string.wallet_payment_method_label), color = Theme.colors.secondaryFont, style = Theme.typography.body.small, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(10.dp))
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        BorderStroke(1.5.dp, Theme.colors.error.copy(alpha = .55f)),
-                        RoundedCornerShape(16.dp)
-                    ),
-                color = Theme.colors.errorContainer.copy(alpha = .35f),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 90.dp)
+                    .dashedRoundedBorder(Theme.colors.error.copy(alpha = .55f), 16.dp),
+                color = Theme.colors.errorContainer.copy(alpha = .55f),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                WalletActionRow(
-                    title = state.selectedPaymentMethod?.let { stringResource(R.string.wallet_cash) }
-                        ?: stringResource(R.string.wallet_add_payment_method),
-                    subtitle = if (state.selectedPaymentMethod == null) stringResource(R.string.wallet_required) else null,
-                    icon = painterResource(if (state.selectedPaymentMethod == null) DR.drawable.ic_payment_method else DR.drawable.ic_wallet),
-                    onClick = onAddPaymentMethod
-                )
+                if (state.selectedPaymentMethod == null) {
+                    RequiredPaymentMethodRow(
+                        title = stringResource(R.string.wallet_add_payment_method),
+                        requiredText = stringResource(R.string.wallet_required),
+                        onClick = onAddPaymentMethod
+                    )
+                } else {
+                    WalletActionRow(
+                        title = stringResource(R.string.wallet_cash),
+                        icon = painterResource(DR.drawable.ic_wallet_cash),
+                        onClick = onAddPaymentMethod,
+                        iconContainerShape = RoundedCornerShape(12.dp)
+                    )
+                }
             }
         }
         Surface(color = Theme.colors.surface, shadowElevation = 4.dp) {
             Button(
                 onClick = onAddFunds,
                 enabled = state.canAddFunds,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-                    .height(54.dp),
+                modifier = Modifier.fillMaxWidth().padding(20.dp).height(54.dp),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Theme.colors.primary,
@@ -182,7 +133,50 @@ private fun AddFundsContent(
     }
 }
 
-@Preview
 @Composable
-private fun AddFundsPreview() =
-    SpTheme { AddFundsContent(WalletState(selectedPaymentMethod = null), {}, {}, {}, {}) }
+private fun AmountInput(amount: String, onAmountChanged: (String) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(88.dp)
+            .background(Theme.colors.surface, RoundedCornerShape(13.dp))
+            .border(1.5.dp, Theme.colors.onDisable, RoundedCornerShape(13.dp))
+            .padding(horizontal = 18.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.wallet_currency),
+            color = Theme.colors.secondaryFont,
+            style = Theme.typography.title,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.width(12.dp))
+        BasicTextField(
+            value = amount,
+            onValueChange = onAmountChanged,
+            modifier = Modifier.weight(1f),
+            textStyle = Theme.typography.displayMedium.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            cursorBrush = androidx.compose.ui.graphics.SolidColor(Theme.colors.primary),
+            decorationBox = { innerTextField ->
+                Box(contentAlignment = Alignment.CenterStart) {
+                    if (amount.isEmpty()) {
+                        Text(
+                            stringResource(R.string.wallet_zero_amount),
+                            color = Theme.colors.onDisable,
+                            style = Theme.typography.displayMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    innerTextField()
+                }
+            }
+        )
+    }
+}
+
+@Preview @Composable private fun AddFundsPreview() = SpTheme { AddFundsContent(WalletState(selectedPaymentMethod = null), {}, {}, {}, {}) }
