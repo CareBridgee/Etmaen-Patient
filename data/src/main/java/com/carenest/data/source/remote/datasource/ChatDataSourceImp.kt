@@ -7,6 +7,7 @@ import com.carenest.domain.model.chat.ChatMessage
 import com.carenest.domain.model.chat.ChatMessageType
 import com.carenest.domain.model.chat.ChatParticipant
 import com.carenest.domain.model.chat.ChatSession
+import com.carenest.domain.model.chat.MessageSender
 import com.carenest.domain.model.chat.MessageStatus
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -36,18 +37,21 @@ class ChatDataSourceImp @Inject constructor() : ChatDataSource {
                     id = "sys_1",
                     type = ChatMessageType.SYSTEM_TIP,
                     text = "Sarah is your assigned caregiver for today. You can share vitals or images securely through this encrypted chat.",
+                    senderType = MessageSender.NURSE,
                     sentAtEpochMillis = todayAt(10, 41),
                 ),
                 ChatMessage(
                     id = "msg_1",
                     type = ChatMessageType.INCOMING,
                     text = "Hello Elena! I'm on my way to your location. I should be there in about 10 minutes.",
+                    senderType = MessageSender.NURSE,
                     sentAtEpochMillis = todayAt(10, 42),
                 ),
                 ChatMessage(
                     id = "msg_2",
                     type = ChatMessageType.OUTGOING,
                     text = "Thank you, Sarah. I have the medical reports ready for you.",
+                    senderType = MessageSender.PATIENT,
                     sentAtEpochMillis = todayAt(10, 43),
                     status = MessageStatus.SEEN,
                 ),
@@ -61,6 +65,7 @@ class ChatDataSourceImp @Inject constructor() : ChatDataSource {
             id = "msg_${System.currentTimeMillis()}",
             type = ChatMessageType.OUTGOING,
             text = text,
+            senderType = MessageSender.PATIENT,
             sentAtEpochMillis = System.currentTimeMillis(),
             status = MessageStatus.SENT,
         )

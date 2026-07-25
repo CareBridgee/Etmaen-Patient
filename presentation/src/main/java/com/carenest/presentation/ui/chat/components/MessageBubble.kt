@@ -27,6 +27,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.chat.ChatMessage
 import com.carenest.domain.model.chat.ChatMessageType
+import com.carenest.domain.model.chat.MessageSender
 import com.carenest.domain.model.chat.MessageStatus
 import com.carenest.presentation.R
 import com.carenest.presentation.core.util.formatMessageTime
@@ -147,6 +148,7 @@ private fun Preview() {
                 id = "",
                 type = ChatMessageType.INCOMING,
                 text = "Hello Elena! I'm on my way to your\n" + "location. I should be there in about\n" + "10 minutes.",
+                senderType = MessageSender.NURSE,
                 status = MessageStatus.SEEN,
                 sentAtEpochMillis = 0
             )

@@ -3,11 +3,13 @@ package com.carenest.domain.model.chat
 enum class ChatMessageType { INCOMING, OUTGOING, SYSTEM_TIP }
 
 enum class MessageStatus { SENDING, SENT, DELIVERED, SEEN }
+enum class MessageSender { NURSE, PATIENT }
 
 data class ChatMessage(
     val id: String,
     val type: ChatMessageType,
     val text: String,
+    val senderType : MessageSender,
     val sentAtEpochMillis: Long,
     val status: MessageStatus = MessageStatus.SENT,
 )
