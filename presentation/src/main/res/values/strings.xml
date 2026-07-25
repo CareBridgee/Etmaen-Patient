@@ -266,4 +266,39 @@
   <string name="nurse_on_the_way_cancel_dialog_confirm">Yes, Cancel</string>
   <string name="nurse_on_the_way_cancel_dialog_dismiss">Keep Visit</string>
 
+    <string name="wallet_title">Wallet</string>
+    <string name="wallet_balance_value">EGP %1$s</string>
+    <string name="wallet_balance_auto_refill">WALLET BALANCE:Auto refill is %1$s</string>
+    <string name="wallet_on">on</string>
+    <string name="wallet_off">off</string>
+    <string name="wallet_add_funds">Add Funds</string>
+    <string name="wallet_payment_methods">Payment methods</string>
+    <string name="wallet_cash">Cash</string>
+    <string name="wallet_add_payment_method">Add payment method</string>
+    <string name="wallet_add_payment_method_title">Add payment method</string>
+    <string name="wallet_ride_profiles">Ride Profiles</string>
+    <string name="wallet_personal">Personal</string>
+    <string name="wallet_business">Business</string>
+    <string name="wallet_business_subtitle">Turn on business travel features</string>
+    <string name="wallet_top_up_title">Wallet Top-up</string>
+    <string name="wallet_top_up_description">How much do you want to add to your Wallet balance?</string>
+    <string name="wallet_currency">EGP</string>
+    <string name="wallet_zero_amount">0.00</string>
+    <string name="wallet_amount_helper">Enter an amount between EGP120.00 and EGP1,240.00</string>
+    <string name="wallet_suggested_amount">EGP\n%d.00</string>
+    <string name="wallet_terms_apply">Terms apply</string>
+    <string name="wallet_payment_method_label">PAYMENT METHOD</string>
+    <string name="wallet_required">Required</string>
+    <string name="wallet_payment_description">Select a payment method to securely pay for your nursing services and care packages.</string>
+    <string name="wallet_credit_card">Credit or debit card</string>
+    <string name="wallet_paypal">PayPal</string>
+    <string name="wallet_fawry_cash">Fawry Cash</string>
+    <string name="wallet_meeza_card">Meeza Card</string>
+    <string name="wallet_mobile_wallets">Mobile Wallets</string>
+    <string name="wallet_secure_payments">SECURE ENCRYPTED PAYMENTS</string>
+    <string name="wallet_secure_payments_description">Your payment details are processed securely and never stored directly on our servers.</string>
+    <string name="wallet_balance">Wallet Balance</string>
+  <string name="wallet_auto_refill_on">Auto refill is on</string>
+  <string name="wallet_auto_refill_off">Auto refill is off</string>
+
 </resources>
