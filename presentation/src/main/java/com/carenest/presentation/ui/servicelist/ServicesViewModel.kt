@@ -1,16 +1,16 @@
-package com.carenest.presentation.ui.services.list
+package com.carenest.presentation.ui.servicelist
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import com.carenest.domain.model.home.ServiceCategory
-import com.carenest.domain.usecase.home.GetServicesUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class ServicesViewModel @Inject constructor(

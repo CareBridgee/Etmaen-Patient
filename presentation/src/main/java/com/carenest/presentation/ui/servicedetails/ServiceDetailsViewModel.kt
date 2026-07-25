@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.services.details
+package com.carenest.presentation.ui.servicedetails
 
 import androidx.lifecycle.ViewModel
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher

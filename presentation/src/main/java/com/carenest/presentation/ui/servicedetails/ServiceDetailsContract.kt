@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.services.details
+package com.carenest.presentation.ui.servicedetails
 
 import com.carenest.domain.model.home.ServiceCategory
 

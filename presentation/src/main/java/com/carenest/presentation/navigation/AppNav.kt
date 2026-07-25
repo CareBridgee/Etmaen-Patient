@@ -41,8 +41,8 @@ import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
-import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
-import com.carenest.presentation.ui.services.list.ServicesScreen
+import com.carenest.presentation.ui.servicedetails.ServiceDetailsScreen
+import com.carenest.presentation.ui.servicelist.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen

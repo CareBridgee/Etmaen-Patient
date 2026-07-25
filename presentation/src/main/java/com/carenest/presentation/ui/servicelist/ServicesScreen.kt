@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.services.list
+package com.carenest.presentation.ui.servicelist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,15 +22,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccessibilityNew
-import androidx.compose.material.icons.outlined.ChildCare
-import androidx.compose.material.icons.outlined.Healing
-import androidx.compose.material.icons.outlined.MedicalServices
-import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.outlined.Tune
-import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,12 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,11 +48,12 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
-import com.carenest.presentation.ui.services.components.ServiceCategoryCard
+import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
 import com.carenest.designsystem.R as RD
 
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.ui.servicelist.ServicesViewModel
 
 @Composable
 fun ServicesScreen(
@@ -193,8 +188,8 @@ private fun CategoryGrid(
     services: List<HealthcareService>,
     onCategoryClick: (HealthcareService) -> Unit,
 ) {
-    val left = mutableListOf<Pair<HealthcareService, androidx.compose.ui.unit.Dp>>()
-    val right = mutableListOf<Pair<HealthcareService, androidx.compose.ui.unit.Dp>>()
+    val left = mutableListOf<Pair<HealthcareService, Dp>>()
+    val right = mutableListOf<Pair<HealthcareService, Dp>>()
 
     services.forEachIndexed { index, service ->
         // Create masonry effect by varying heights
@@ -218,7 +213,7 @@ private fun CategoryGrid(
 
 @Composable
 private fun CategoryColumn(
-    items: List<Pair<HealthcareService, androidx.compose.ui.unit.Dp>>,
+    items: List<Pair<HealthcareService, Dp>>,
     onCategoryClick: (HealthcareService) -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.services.details
+package com.carenest.presentation.ui.servicedetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,11 +51,12 @@ import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
-import com.carenest.presentation.ui.services.components.ServiceChecklistItem
-import com.carenest.presentation.ui.services.components.ServiceInformationNote
-import com.carenest.presentation.ui.services.components.ServiceMetricCard
-import com.carenest.presentation.ui.services.components.ServiceSurfaceCard
+import com.carenest.presentation.ui.servicedetails.components.ServiceChecklistItem
+import com.carenest.presentation.ui.servicedetails.components.ServiceInformationNote
+import com.carenest.presentation.ui.servicedetails.components.ServiceMetricCard
+import com.carenest.presentation.ui.servicedetails.components.ServiceSurfaceCard
 import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.ui.servicedetails.ServiceDetailsViewModel
 import com.carenest.designsystem.R as RD
 
 @Composable
@@ -256,7 +258,7 @@ private fun ServiceDetailsTopBar(
 
 @Composable
 private fun TopBarAction(
-    icon: androidx.compose.ui.graphics.painter.Painter,
+    icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
