@@ -15,12 +15,16 @@ import dagger.hilt.components.SingletonComponent
 
 import com.carenest.data.repository.HomeRepositoryImpl
 import com.carenest.data.repository.NurseTrackingRepositoryImpl
+import com.carenest.data.repository.VisitSummaryRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.data.source.local.datasource.home.HomeDatasource
 import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
 import com.carenest.data.source.remote.datasource.NurseTrackingDataSource
 import com.carenest.data.source.remote.datasource.NurseTrackingDataSourceImp
+import com.carenest.data.source.remote.datasource.VisitSummaryDataSource
+import com.carenest.data.source.remote.datasource.VisitSummaryDataSourceImp
 import com.carenest.domain.repository.NurseTrackingRepository
+import com.carenest.domain.repository.VisitSummaryRepository
 import javax.inject.Singleton
 
 @Module
@@ -44,6 +48,10 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindNurseTrackingRepository(impl: NurseTrackingRepositoryImpl, ): NurseTrackingRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindVisitSummaryRepository(impl: VisitSummaryRepositoryImpl): VisitSummaryRepository
+
     //endregion
 
     //region datasource
@@ -62,6 +70,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideNurseTrackingDataSource(nurseTrackingDataSource: NurseTrackingDataSourceImp): NurseTrackingDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindVisitSummaryDataSource(visitSummaryDataSource: VisitSummaryDataSourceImp): VisitSummaryDataSource
 
     //endregion
 }
