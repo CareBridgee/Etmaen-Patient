@@ -175,6 +175,9 @@ internal fun RegisterScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+
+
+
             BasicText(
                 text = stringResource(R.string.personal_info_gender_title),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont)

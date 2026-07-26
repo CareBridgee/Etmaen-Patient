@@ -3,6 +3,7 @@ package com.carenest.domain.di
 import com.carenest.domain.repository.AuthRepository
 import com.carenest.domain.repository.SettingsRepository
 import com.carenest.domain.usecase.auth.LoginWithPhoneUseCase
+import com.carenest.domain.usecase.auth.RequestDevOtpUseCase
 import com.carenest.domain.usecase.auth.VerifyOtpUseCase
 import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
 import com.carenest.domain.usecase.settings.UpdateOnboardingStatusUseCase
@@ -66,6 +67,14 @@ object DomainModule {
         authRepository: AuthRepository
     ): LoginWithPhoneUseCase {
         return LoginWithPhoneUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRequestDevOtpUseCase(
+        authRepository: AuthRepository
+    ): RequestDevOtpUseCase {
+        return RequestDevOtpUseCase(authRepository)
     }
 
     @Provides

@@ -226,6 +226,23 @@
   <string name="home_error_retry">Retry</string>
   <string name="bookings_screen_title">Bookings Screen</string>
   <string name="profile_screen_title">Profile Screen</string>
+
+  <!-- Choose Patient Screen -->
+  <string name="choose_patient_title">Choose Patient</string>
+  <string name="choose_patient_description">Who are we assessing today? This helps us provide specific health recommendations.</string>
+  <string name="add_family_member">Add Family Member</string>
+  <string name="add_family_member_info">Adding family members allows you to manage their care plans, track medical appointments, and receive personalized health assessments tailored to their specific age and medical history.</string>
+  <string name="continue_with_assessment">Continue with Assessment</string>
+
+  <!-- AI Chat Screen -->
+  <string name="ai_health_assistant">AI Health Assistant</string>
+  <string name="online_ready">Online &amp; Ready to help</string>
+  <string name="recommended_service">RECOMMENDED</string>
+  <string name="ask_health_profile">Ask about your health profile...</string>
+  <string name="book_now">Book Now</string>
+  <string name="view_service">View Service</string>
+
+  <!-- Search For Nurse -->
   <string name="profile_greeting">Good morning, Elena</string>
   <string name="profile_primary_caregiver">Primary Caregiver</string>
   <string name="profile_personal_info_title">Personal Info</string>
@@ -376,4 +393,12 @@
   <string name="visit_rating_submit_button">Submit</string>
   <string name="visit_rating_skip_button">Skip</string>
 
+
+  <!-- Emergency Assistance -->
+  <string name="emergency_urgent_badge">URGENT</string>
+  <string name="emergency_assistance_required">Emergency Assistance Required</string>
+  <string name="emergency_description">Our AI system has detected critical symptoms. Please stay calm and follow the emergency steps below.</string>
+  <string name="emergency_call_ambulance">Call Ambulance Now</string>
+  <string name="emergency_call_contact">Call Emergency Contact</string>
+  <string name="emergency_dismiss">Dismiss if false alarm</string>
 </resources>

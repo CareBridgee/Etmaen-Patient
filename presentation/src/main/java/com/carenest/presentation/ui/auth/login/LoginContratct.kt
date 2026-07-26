@@ -43,5 +43,9 @@ data class LoginState(
 )
 
 sealed interface LoginEffect {
-    data class NavigateToOtp(val phone: String, val method: OtpDeliveryMethod) : LoginEffect
+    data class NavigateToOtp(
+        val phone: String,
+        val otp: String? = null,
+        val method: OtpDeliveryMethod
+    ) : LoginEffect
 }

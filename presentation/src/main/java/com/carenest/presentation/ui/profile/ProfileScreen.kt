@@ -73,14 +73,21 @@ fun ProfileScreen(
     )
 }
 
+import androidx.compose.foundation.layout.statusBarsPadding
+import com.carenest.presentation.navigation.HideTopBar
+
 @Composable
 fun ProfileContent(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit
 ) {
+    HideTopBar()
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
+        contentAlignment = Alignment.Center
             .background(Theme.colors.backGround)
             .statusBarsPadding()
     ) {

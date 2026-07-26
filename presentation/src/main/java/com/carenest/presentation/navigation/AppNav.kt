@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -48,6 +50,7 @@ import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
+import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
@@ -59,7 +62,13 @@ import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.profile.familymembers.FamilyMembersScreen
 import com.carenest.presentation.ui.profile.settings.SettingsScreen
-import com.carenest.presentation.ui.splash.SplashScreen
+import com.carenest.presentation.ui.home.HomeScreen
+import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
+import com.carenest.presentation.ui.aichat.chat.AIChatScreen
+import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
@@ -138,10 +147,12 @@ fun AppNav(
 
             entry<AppRoute.Login> {
                 LoginScreen(
-                    onNavigateToOtp = { phone, method ->
+                    onNavigateToOtp = { phone, otp, method ->
                         backStack.add(
                             AppRoute.Otp(
-                                phone, method
+                                phone = phone,
+                                otp = otp,
+                                method = method
                             )
                         )
                     })
@@ -187,7 +198,7 @@ fun AppNav(
                         backStack.add(AppRoute.Bookings)
                     }
                 }, onNavigateToAIChat = {
-                    // AI Chat navigation placeholder
+                    backStack.add(AppRoute.ChoosePatient)
                 }, onNavigateToServiceDetails = { service ->
                     backStack.add(AppRoute.ServiceDetails(service))
                 })
@@ -296,70 +307,104 @@ fun AppNav(
             }
 
             entry<AppRoute.NurseOnTheWay> { route ->
+                NurseOnTheWayScreen(
+                    requestId = route.requestId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToQrCode = { },
+                    onOpenChat = { nurseId -> },
+                    showSnackbar = onShowSnackbar
+                )
+            }
 
-                entry<AppRoute.RequestService> { route ->
-                    RequestServiceScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToMap = { backStack.add(AppRoute.Map) },
-                        onNavigateToEditProfile = { /* TODO */ },
-                        onNavigateToAddPatient = { /* TODO */ },
-                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
-                        onNavigateToAddressPicker = { /* TODO */ },
-                        onSubmitRequestClick = {
-                            backStack.add(AppRoute.SearchForNurse)
-                        },
-                        selectedService = route.service,
-                        mapResultLocation = mapResultLocation,
-                        onMapResultConsumed = { mapResultLocation = null },
-                    )
-                }
+            entry<AppRoute.RequestService> { route ->
+                RequestServiceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToMap = { backStack.add(AppRoute.Map) },
+                    onNavigateToEditProfile = { /* TODO */ },
+                    onNavigateToAddPatient = { /* TODO */ },
+                    onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
+                    onNavigateToAddressPicker = { /* TODO */ },
+                    onSubmitRequestClick = {
+                        backStack.add(AppRoute.SearchForNurse)
+                    },
+                    selectedService = route.service,
+                    mapResultLocation = mapResultLocation,
+                    onMapResultConsumed = { mapResultLocation = null },
+                )
+            }
 
-                entry<AppRoute.Map> {
-                    MapScreen(
-                        onLocationConfirmed = { locationDetails ->
-                            mapResultLocation = locationDetails
-                            if (backStack.size > 1) backStack.removeLastOrNull()
-                        },
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                    )
-                }
+            entry<AppRoute.Map> {
+                MapScreen(
+                    onLocationConfirmed = { locationDetails ->
+                        mapResultLocation = locationDetails
+                        if (backStack.size > 1) backStack.removeLastOrNull()
+                    },
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+            }
 
-                entry<AppRoute.SearchForNurse> {
-                    NurseSearchScreen(
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMatched = { nurseId ->
-                            replaceWith(AppRoute.AcceptOffer)
-                        })
-                }
-                entry<AppRoute.NurseOnTheWay> { route ->
-                    NurseOnTheWayScreen(
-                        requestId = route.requestId,
-                        onNavigateBack = { navigateBackOrToHome() },
-                        onNavigateToQrCode = {
-                            // QR Code navigation placeholder
-                        },
-                        onOpenChat = { nurseId ->
-                            // Chat navigation placeholder
-                        },
-                        showSnackbar = onShowSnackbar
-                    )
-                }
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                        replaceWith(AppRoute.AcceptOffer)
+                    })
+            }
 
-                entry<AppRoute.VisitCompleted> { route ->
-                    VisitCompletedScreen(
-                        requestId = route.requestId, onNavigateHome = {
-                            replaceWith(AppRoute.Home)
-                        }, onShowSnackbar = onShowSnackbar
-                    )
-                }
+            entry<AppRoute.ChoosePatient> {
+                ChoosePatientScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToChat = { patientId ->
+                        backStack.add(AppRoute.EmergencyAssistance(patientId))
+                    }
+                )
+            }
 
-                entry<AppRoute.Chat> { route ->
-                    ChatScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        requestId = route.requestId,
-                        showSnackbar = onShowSnackbar
-                    )
-                }
+            entry<AppRoute.AIChat> { route ->
+                AIChatScreen(
+                    patientId = route.patientId,
+                    onNavigateBack = { navigateBackOrToHome() },
+                    onNavigateToBookings = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Bookings)
+                        }
+                    },
+                    onNavigateToServiceDetails = { categoryStr ->
+                        val uiModel = HealthcareServiceUiModel(
+                            id = categoryStr,
+                            name = categoryStr.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                            estimatedDurationMinutes = 45L,
+                            basePrice = 50.0,
+                            description = "Professional care service tailored to your needs.",
+                            iconResName = ""
+                        )
+                        backStack.add(AppRoute.ServiceDetails(uiModel))
+                    }
+                )
+            }
+
+            entry<AppRoute.VisitCompleted> { route ->
+                VisitCompletedScreen(
+                    requestId = route.requestId, onNavigateHome = {
+                        replaceWith(AppRoute.Home)
+                    }, onShowSnackbar = onShowSnackbar
+                )
+            }
+
+            entry<AppRoute.Chat> { route ->
+                ChatScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    requestId = route.requestId,
+                    showSnackbar = onShowSnackbar
+                )
+            }
+
+            entry<AppRoute.EmergencyAssistance> { route ->
+                EmergencyAssistanceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                )
             }
         }
 
@@ -413,7 +458,7 @@ fun AppNav(
                     modifier = Modifier
                         .fillMaxSize()
                         .navigationBarsPadding()
-                        .statusBarsPadding(),
+                        .imePadding(),
                     containerColor = Theme.colors.backGround,
                     contentWindowInsets = WindowInsets(0),
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

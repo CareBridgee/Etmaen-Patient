@@ -5,7 +5,7 @@ import com.carenest.designsystem.R
 
 data class OnBoardingPage(
     val id: Int,
-    @DrawableRes val illustrationRes: Int,
+    @param:DrawableRes val illustrationRes: Int,
     val title: String,
     val description: String,
 )

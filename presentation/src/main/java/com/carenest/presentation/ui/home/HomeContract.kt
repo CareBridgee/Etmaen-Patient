@@ -28,7 +28,7 @@ data class HomeState(
     val errorMessage: String? = null
 ) {
     val greetingName: String
-        get() = if (user?.name.isNullOrBlank()) "Hello" else "Hi, ${user?.name}"
+        get() = if (user?.name.isNullOrBlank()) "Hello" else "Hi, ${user.name}"
 
     val isSearchActive: Boolean
         get() = searchQuery.trim().isNotBlank()

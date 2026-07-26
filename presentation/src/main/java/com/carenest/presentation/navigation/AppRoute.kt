@@ -17,7 +17,11 @@ sealed interface AppRoute : NavKey {
      data object Login : AppRoute
 
      @Serializable
-     data class Otp(val phone: String, val method: com.carenest.presentation.ui.auth.login.OtpDeliveryMethod = com.carenest.presentation.ui.auth.login.OtpDeliveryMethod.SMS) : AppRoute
+     data class Otp(
+         val phone: String,
+         val otp: String? = null,
+         val method: com.carenest.presentation.ui.auth.login.OtpDeliveryMethod = com.carenest.presentation.ui.auth.login.OtpDeliveryMethod.SMS
+     ) : AppRoute
 
      @Serializable
      data object Register : AppRoute
@@ -33,7 +37,6 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data class ServiceDetails(val service: HealthcareServiceUiModel) : AppRoute
-
 
      @Serializable
      data object Bookings : AppRoute
@@ -70,9 +73,17 @@ sealed interface AppRoute : NavKey {
      @Serializable
      data object ChoosePatient : AppRoute
 
+
+     @Serializable
+     data class AIChat(val patientId: String) : AppRoute
+
+     @Serializable
+     data class EmergencyAssistance(val patientId: String = "") : AppRoute
+
      @Serializable
      data class NurseOnTheWay(val requestId: String) : AppRoute
 
      @Serializable
      data class VisitCompleted (val requestId: String): AppRoute
+
 }
