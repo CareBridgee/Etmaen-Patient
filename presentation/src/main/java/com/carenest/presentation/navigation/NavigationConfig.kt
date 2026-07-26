@@ -33,6 +33,11 @@ object NavigationConfig {
 //            serializableSubclass(AppRoute.AIChat::class)
             serializableSubclass(AppRoute.Chat::class)
             serializableSubclass(AppRoute.NurseOnTheWay::class)
+            serializableSubclass(AppRoute.Bookings::class)
+            serializableSubclass(AppRoute.Profile::class)
+            serializableSubclass(AppRoute.Wallet::class)
+            serializableSubclass(AppRoute.AddFunds::class)
+            serializableSubclass(AppRoute.AddPaymentMethod::class)
             serializableSubclass(AppRoute.VisitCompleted::class)
         }
     }
