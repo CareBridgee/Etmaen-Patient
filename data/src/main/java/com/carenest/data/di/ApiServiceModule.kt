@@ -2,6 +2,8 @@ package com.carenest.data.di
 
 import com.carenest.data.source.remote.service.AuthApiService
 import com.carenest.data.source.remote.service.AuthApiServiceImpl
+import com.carenest.data.source.remote.service.ProfileApiService
+import com.carenest.data.source.remote.service.ProfileApiServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +17,9 @@ abstract class ApiServiceModule {
 
     @Binds
     abstract fun provideAuthApiService(authApiServiceImpl: AuthApiServiceImpl): AuthApiService
+
+    @Binds
+    abstract fun provideProfileApiService(profileApiServiceImpl: ProfileApiServiceImpl): ProfileApiService
 
 
 

@@ -5,16 +5,12 @@
   <string name="nav_booking">الحجوزات</string>
   <string name="nav_services">الخدمات</string>
   <string name="nav_profile">الملف الشخصي</string>
-
-  <!-- Auth Landing -->
   <string name="auth_title">كير كونيكت</string>
   <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
   <string name="auth_continue_google">المتابعة باستخدام Google</string>
   <string name="auth_continue_apple">المتابعة باستخدام Apple</string>
   <string name="auth_continue_phone">المتابعة باستخدام رقم الهاتف</string>
   <string name="auth_terms_agreement">الانضمام إلى تطبيقنا يعني موافقتك على شروط الاستخدام وسياسة الخصوصية</string>
-
-  <!-- Phone Input -->
   <string name="phone_input_topbar_title">انضم إلينا عبر رقم الهاتف</string>
   <string name="phone_input_subtitle">سنرسل رمزاً للتحقق من رقم هاتفك.</string>
   <string name="phone_input_label">رقم الهاتف</string>
@@ -309,6 +305,38 @@
   <string name="settings_language_arabic">العربية</string>
 
   <!-- Nurse Tracking -->
+  <string name="profile_screen_title">شاشة الملف الشخصي</string>
+  <string name="validation_required">هذا الحقل مطلوب</string>
+  <string name="validation_invalid_name">استخدم حروفًا ومسافات وشرطة أو فاصلة علوية فقط</string>
+  <string name="validation_name_length">أدخل من حرفين إلى 50 حرفًا</string>
+  <string name="validation_invalid_date">أدخل تاريخًا صحيحًا بصيغة شهر/يوم/سنة</string>
+  <string name="validation_future_date">لا يمكن أن يكون تاريخ الميلاد في المستقبل</string>
+  <string name="validation_date_too_old">أدخل تاريخ ميلاد واقعيًا</string>
+  <string name="validation_invalid_number">أدخل رقمًا صحيحًا</string>
+  <string name="validation_height_range">يجب أن يكون الطول بين 30 و250 سم</string>
+  <string name="validation_weight_range">يجب أن يكون الوزن بين 1 و500 كجم</string>
+  <string name="validation_blood_type">اختر فصيلة دم صحيحة</string>
+  <string name="validation_text_too_long_100">الحد الأقصى 100 حرف</string>
+  <string name="validation_text_too_long_500">الحد الأقصى 500 حرف</string>
+  <string name="validation_text_too_long_1000">الحد الأقصى 1000 حرف</string>
+  <string name="validation_allergy_selection">اختر حساسية أو اكتب حساسية أخرى أو أكد عدم وجود حساسية معروفة</string>
+  <string name="validation_medication_selection">أضف دواءً واحدًا على الأقل أو اختر عدم وجود أدوية حالية</string>
+  <string name="validation_medication_name">أدخل اسم الدواء</string>
+  <string name="validation_mobility_required">اختر حالة الحركة</string>
+  <string name="validation_emergency_name_length">أدخل اسم جهة اتصال من حرفين إلى 100 حرف</string>
+  <string name="validation_invalid_phone">أدخل رقم هاتف صحيحًا يحتوي على 7 إلى 15 رقمًا</string>
+  <string name="request_status">حالة الطلب</string>
+  <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
+  <string name="searching_describtion">نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.\n</string>
+  <string name="nurse_active_nearby">%1$d ممرضون نشطون بالقرب منك</string>
+  <string name="nurse_name_format">%1$s،</string>
+  <string name="nurse_review_format"> • %1$d %2$s</string>
+  <string name="nurse_price_format">%1$.0f$</string>
+  <string name="nurse_area_format">%1$s • %2$.1f %3$s</string>
+  <string name="decline">رفض</string>
+  <string name="accept">قبول</string>
+  <string name="km">كم</string>
+  <string name="reviews">تقييمًا</string>
   <string name="nurse_on_the_way_title">الممرض في طريقه إليك</string>
 
   <string name="nurse_on_the_way_subtitle">الممرض المختص في طريقه لتقديم الرعاية لك.</string>
@@ -340,5 +368,65 @@
   <string name="nurse_on_the_way_cancel_dialog_confirm">نعم، إلغاء الزيارة</string>
 
   <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
+  <string name="visit_completed_menu_content_description">القائمة</string>
+  <string name="visit_completed_title">اكتملت الزيارة</string>
+  <string name="visit_completed_subtitle">قام الأخصائي الطبي بإنهاء تقرير الجلسة. شكراً لاختيارك CareMatch.</string>
+  <string name="visit_completed_summary_title">تفاصيل الملخص</string>
+  <string name="visit_completed_verified_badge">زيارة موثقة</string>
+  <string name="visit_completed_professional_label">الأخصائي الطبي</string>
+  <string name="visit_completed_service_type_label">نوع الخدمة</string>
+  <string name="visit_completed_duration_label">مدة الزيارة</string>
+  <string name="visit_completed_duration_value">%1$d دقيقة</string>
+  <string name="visit_completed_date_label">تاريخ الإكمال</string>
+  <string name="visit_completed_total_amount_label">إجمالي المبلغ المستحق</string>
+  <string name="visit_completed_total_amount_value">$%1$.2f</string>
+  <string name="visit_completed_back_home_button">العودة للرئيسية</string>
+  <string name="visit_rating_title">كيف كانت زيارتك؟</string>
+  <string name="visit_rating_subtitle">تقييمك يساعدنا في تقديم خدمة أفضل للجميع.</string>
+  <string name="visit_rating_star_content_description">%1$d نجمة</string>
+  <string name="visit_rating_submit_button">إرسال</string>
+  <string name="visit_rating_skip_button">تخطي</string>
+  <string name="chat_back_content_description">رجوع</string>
+  <string name="chat_call_content_description">الاتصال بالممرض</string>
+  <string name="chat_send_content_description">إرسال الرسالة</string>
+  <string name="chat_status_active_now">متصل الآن</string>
+  <string name="chat_status_offline">غير متصل</string>
+  <string name="chat_input_placeholder">اكتب رسالة…</string>
+  <string name="chat_quick_tip_title">نصيحة سريعة</string>
+  <string name="chat_message_seen">تمت المشاهدة</string>
+  <string name="wallet_title">المحفظة</string>
+  <string name="wallet_balance">رصيد المحفظة</string>
+  <string name="wallet_balance_value">%1$s ج.م</string>
+  <string name="wallet_balance_auto_refill">رصيد المحفظة: إعادة التعبئة التلقائية %1$s</string>
+  <string name="wallet_on">مفعّلة</string>
+  <string name="wallet_off">متوقفة</string>
+  <string name="wallet_auto_refill_on">إعادة التعبئة التلقائية مفعّلة</string>
+  <string name="wallet_auto_refill_off">إعادة التعبئة التلقائية متوقفة</string>
+  <string name="wallet_add_funds">إضافة رصيد</string>
+  <string name="wallet_payment_methods">طرق الدفع</string>
+  <string name="wallet_cash">نقدًا</string>
+  <string name="wallet_add_payment_method">إضافة طريقة دفع</string>
+  <string name="wallet_add_payment_method_title">إضافة طريقة دفع</string>
+  <string name="wallet_ride_profiles">ملفات الرحلات</string>
+  <string name="wallet_personal">شخصي</string>
+  <string name="wallet_business">الأعمال</string>
+  <string name="wallet_business_subtitle">فعّل ميزات رحلات العمل</string>
+  <string name="wallet_top_up_title">شحن المحفظة</string>
+  <string name="wallet_top_up_description">ما المبلغ الذي تريد إضافته إلى رصيد محفظتك؟</string>
+  <string name="wallet_currency">ج.م</string>
+  <string name="wallet_zero_amount">0.00</string>
+  <string name="wallet_amount_helper">أدخل مبلغًا يتراوح بين 120.00 و1,240.00 ج.م</string>
+  <string name="wallet_suggested_amount">ج.م\n%d.00</string>
+  <string name="wallet_terms_apply">تُطبق الشروط</string>
+  <string name="wallet_payment_method_label">طريقة الدفع</string>
+  <string name="wallet_required">مطلوب</string>
+  <string name="wallet_payment_description">اختر طريقة دفع لسداد قيمة خدمات التمريض وباقات الرعاية بأمان.</string>
+  <string name="wallet_credit_card">بطاقة ائتمان أو خصم مباشر</string>
+  <string name="wallet_paypal">PayPal</string>
+  <string name="wallet_fawry_cash">فوري كاش</string>
+  <string name="wallet_meeza_card">بطاقة ميزة</string>
+  <string name="wallet_mobile_wallets">المحافظ الإلكترونية</string>
+  <string name="wallet_secure_payments">مدفوعات آمنة ومشفرة</string>
+  <string name="wallet_secure_payments_description">تتم معالجة بيانات الدفع الخاصة بك بأمان، ولا يتم تخزينها مباشرة على خوادمنا.</string>
 
 </resources>

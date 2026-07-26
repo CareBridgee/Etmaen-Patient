@@ -30,6 +30,7 @@ workManager = "2.11.2"
 paging = "3.5.0"
 playServicesLocation = "21.4.0"
 coreSplashscreen = "1.2.0"
+mapbox = "11.10.3"
 kotlinxDatetime = "0.8.0"
 lottieCompose = "6.7.1"
 cameraX = "1.6.1"
@@ -129,6 +130,10 @@ hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", vers
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
+
+# Mapbox
+mapbox-maps-android = { group = "com.mapbox.maps", name = "android", version.ref = "mapbox" }
+mapbox-maps-compose = { group = "com.mapbox.extension", name = "maps-compose", version.ref = "mapbox" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -242,4 +247,9 @@ data-testing = [
     "kotlinx-coroutines-test",
     "ktor-client-mock",
     "androidx-room-testing",
+]
+
+mapbox = [
+    "mapbox-maps-android",
+    "mapbox-maps-compose",
 ]

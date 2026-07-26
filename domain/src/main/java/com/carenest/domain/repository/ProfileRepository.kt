@@ -1,0 +1,45 @@
+package com.carenest.domain.repository
+
+import com.carenest.domain.model.profile.Allergy
+import com.carenest.domain.model.profile.BasicHealthUpdate
+import com.carenest.domain.model.profile.EmergencyContact
+import com.carenest.domain.model.profile.EmergencyContactInput
+import com.carenest.domain.model.profile.MedicalCondition
+import com.carenest.domain.model.profile.MedicalHistoryUpdate
+import com.carenest.domain.model.profile.PersonalInfoUpdate
+import com.carenest.domain.model.profile.Profile
+import com.carenest.domain.model.profile.ProfileAllergy
+import com.carenest.domain.model.profile.ProfileMedicalCondition
+
+interface ProfileRepository {
+    suspend fun getDefaultProfile(): Result<Profile>
+    suspend fun updatePersonalInfo(profileId: String, update: PersonalInfoUpdate): Result<Profile>
+    suspend fun updateBasicHealth(profileId: String, update: BasicHealthUpdate): Result<Profile>
+    suspend fun updateMedicalHistory(profileId: String, update: MedicalHistoryUpdate): Result<Profile>
+
+    suspend fun getMedicalConditionCatalog(): Result<List<MedicalCondition>>
+    suspend fun getProfileMedicalConditions(profileId: String): Result<List<ProfileMedicalCondition>>
+    suspend fun syncProfileMedicalConditions(
+        profileId: String,
+        originalBackendIds: Set<String>,
+        selectedBackendIds: Set<String>
+    ): Result<Set<String>>
+
+    suspend fun getAllergyCatalog(): Result<List<Allergy>>
+    suspend fun getProfileAllergies(profileId: String): Result<List<ProfileAllergy>>
+    suspend fun syncProfileAllergies(
+        profileId: String,
+        originalBackendIds: Set<String>,
+        selectedBackendIds: Set<String>
+    ): Result<Set<String>>
+
+    suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>>
+    suspend fun createEmergencyContact(
+        profileId: String,
+        input: EmergencyContactInput
+    ): Result<EmergencyContact>
+    suspend fun updateEmergencyContact(
+        emergencyContactId: String,
+        input: EmergencyContactInput
+    ): Result<EmergencyContact>
+}

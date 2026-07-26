@@ -1,10 +1,10 @@
 package com.carenest.presentation.ui.services.details
 
-import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.model.HealthcareServiceUiModel
 
 data class ServiceDetailsState(
-    val category: ServiceCategory = ServiceCategory.IV_DRIP,
     val service: ServiceDetails = ServiceDetails.IV_HYDRATION,
+    val healthcareService: HealthcareServiceUiModel? = null
 )
 
 enum class ServiceDetails {
@@ -12,7 +12,7 @@ enum class ServiceDetails {
 }
 
 sealed interface ServiceDetailsIntent {
-    data class CategoryReceived(val category: ServiceCategory) : ServiceDetailsIntent
+    data class ServiceReceived(val service: HealthcareServiceUiModel) : ServiceDetailsIntent
     data object BackClicked : ServiceDetailsIntent
     data object ShareClicked : ServiceDetailsIntent
     data object RequestServiceClicked : ServiceDetailsIntent
@@ -21,5 +21,5 @@ sealed interface ServiceDetailsIntent {
 sealed interface ServiceDetailsEffect {
     data object NavigateBack : ServiceDetailsEffect
     data object ShareService : ServiceDetailsEffect
-    data object RequestService : ServiceDetailsEffect
+    data class RequestService(val service: HealthcareServiceUiModel) : ServiceDetailsEffect
 }

@@ -32,7 +32,18 @@ object NavigationConfig {
             serializableSubclass(AppRoute.FamilyMembers::class)
             serializableSubclass(AppRoute.Settings::class)
             serializableSubclass(AppRoute.ChoosePatient::class)
+            serializableSubclass(AppRoute.SearchForNurse::class)
+            serializableSubclass(AppRoute.AcceptOffer::class)
+//            serializableSubclass(AppRoute.ChoosePatient::class)
+//            serializableSubclass(AppRoute.AIChat::class)
+            serializableSubclass(AppRoute.Chat::class)
             serializableSubclass(AppRoute.NurseOnTheWay::class)
+            serializableSubclass(AppRoute.Bookings::class)
+            serializableSubclass(AppRoute.Profile::class)
+            serializableSubclass(AppRoute.Wallet::class)
+            serializableSubclass(AppRoute.AddFunds::class)
+            serializableSubclass(AppRoute.AddPaymentMethod::class)
+            serializableSubclass(AppRoute.VisitCompleted::class)
         }
     }
 

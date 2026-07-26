@@ -41,7 +41,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.MobilityStatus
+import com.carenest.domain.model.profile.MobilityStatus
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
 
@@ -56,10 +56,13 @@ private data class MobilityOption(
 fun MobilityStatusScreen(
     selectedStatus: MobilityStatus?,
     additionalNotes: String,
+    statusError: String? = null,
+    notesError: String? = null,
     onStatusSelected: (MobilityStatus) -> Unit,
     onAdditionalNotesChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -145,6 +148,12 @@ fun MobilityStatusScreen(
                         onClick = { onStatusSelected(option.status) }
                     )
                 }
+                statusError?.let {
+                    BasicText(
+                        text = it,
+                        style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                    )
+                }
             }
 
             Column(
@@ -176,6 +185,8 @@ fun MobilityStatusScreen(
                     fieldVerticalAlignment = Alignment.Top,
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
+                    isError = notesError != null,
+                    errorMessage = notesError,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -184,7 +195,8 @@ fun MobilityStatusScreen(
         ProfileScreenNavigation(
             onBack = onBack,
             onContinue = onContinue,
-            continueEnabled = selectedStatus != null
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }

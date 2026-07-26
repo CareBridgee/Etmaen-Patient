@@ -7,9 +7,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface AppRoute : NavKey {
 
-    // screen with no parameters → use data object
-    // screen with parameters → use data class
-
      @Serializable
      data object Splash : AppRoute
 
@@ -45,6 +42,26 @@ sealed interface AppRoute : NavKey {
      data object Profile : AppRoute
 
      @Serializable
+     data object Wallet : AppRoute
+
+     @Serializable
+     data object AddFunds : AppRoute
+
+     @Serializable
+     data object AddPaymentMethod : AppRoute
+     @Serializable
+     data class RequestService(val service: HealthcareServiceUiModel) : AppRoute
+
+     @Serializable
+     data object Map : AppRoute
+     @Serializable
+     data object SearchForNurse : AppRoute
+     @Serializable
+     data object AcceptOffer : AppRoute
+     @Serializable
+     data class Chat(val requestId: String) : AppRoute
+
+     @Serializable
      data object FamilyMembers : AppRoute
 
      @Serializable
@@ -55,4 +72,7 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data class NurseOnTheWay(val requestId: String) : AppRoute
+
+     @Serializable
+     data class VisitCompleted (val requestId: String): AppRoute
 }

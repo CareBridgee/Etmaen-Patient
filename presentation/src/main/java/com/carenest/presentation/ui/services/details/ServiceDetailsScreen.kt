@@ -47,6 +47,7 @@ import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
+import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
@@ -54,28 +55,30 @@ import com.carenest.presentation.ui.services.components.ServiceChecklistItem
 import com.carenest.presentation.ui.services.components.ServiceInformationNote
 import com.carenest.presentation.ui.services.components.ServiceMetricCard
 import com.carenest.presentation.ui.services.components.ServiceSurfaceCard
-import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.designsystem.R as RD
 
 @Composable
 fun ServiceDetailsScreen(
-    category: ServiceCategory,
+    service: HealthcareServiceUiModel,
     onNavigateBack: () -> Unit,
     onShareService: () -> Unit = {},
-    onRequestService: () -> Unit = {},
+    onRequestService: (service: HealthcareServiceUiModel) -> Unit = {},
     viewModel: ServiceDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(category) {
-        viewModel.onEvent(ServiceDetailsIntent.CategoryReceived(category))
+    LaunchedEffect(service) {
+        viewModel.onEvent(ServiceDetailsIntent.ServiceReceived(service))
     }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             ServiceDetailsEffect.NavigateBack -> onNavigateBack()
             ServiceDetailsEffect.ShareService -> onShareService()
-            ServiceDetailsEffect.RequestService -> onRequestService()
+            is ServiceDetailsEffect.RequestService ->{
+                onRequestService(effect.service)
+            }
         }
     }
 

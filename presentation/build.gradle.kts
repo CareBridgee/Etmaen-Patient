@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
@@ -15,6 +17,11 @@ android {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            type = "String",
+            name = "MAPBOX_ACCESS_TOKEN",
+            value = "\"${gradleLocalProperties(rootDir, providers).getProperty("MAPBOX_ACCESS_TOKEN")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -22,6 +29,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -57,6 +65,12 @@ dependencies {
     // Paging UI
     implementation(libs.androidx.paging.compose)
 
+    // Location
+    implementation(libs.play.services.location)
+
+    // Image loading
+    implementation(libs.bundles.coil)
+
     // Camera
     implementation(libs.bundles.camera)
 
@@ -67,6 +81,7 @@ dependencies {
     // Android tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.bundles.mapbox)
 
     // Compose UI tests
     androidTestImplementation(platform(libs.androidx.compose.bom))
