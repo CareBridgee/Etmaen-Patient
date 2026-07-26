@@ -446,8 +446,6 @@ fun ChatInputBar(
                     .background(if (inputText.isNotBlank()) Theme.colors.primary else Theme.colors.primary.copy(alpha = 0.5f))
                     .clickable(
                         enabled = inputText.isNotBlank(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = LocalIndication.current,
                         onClick = onSendClick
                     ),
                 contentAlignment = Alignment.Center
@@ -463,7 +461,7 @@ fun ChatInputBar(
     }
 }
 
-@Preview(showBackground = true, name = "AIChat - Light Mode")
+@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "AIChat - Light Mode")
 @Composable
 fun AIChatScreenLightPreview() {
     SpTheme(isDarkTheme = false) {
@@ -497,7 +495,7 @@ fun AIChatScreenLightPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "AIChat - Dark Mode")
+@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "AIChat - Dark Mode")
 @Composable
 fun AIChatScreenDarkPreview() {
     SpTheme(isDarkTheme = true) {

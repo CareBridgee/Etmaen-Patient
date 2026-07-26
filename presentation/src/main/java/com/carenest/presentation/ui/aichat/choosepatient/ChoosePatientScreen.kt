@@ -205,10 +205,6 @@ fun PatientCard(
         targetValue = if (isSelected) Theme.colors.primary.copy(alpha = 0.06f) else Theme.colors.surface,
         animationSpec = tween(300)
     )
-    val elevation by animateDpAsState(
-        targetValue = if (isSelected) 6.dp else 2.dp,
-        animationSpec = tween(300)
-    )
 
     Surface(
         modifier = Modifier
@@ -220,7 +216,7 @@ fun PatientCard(
             ),
         shape = RoundedCornerShape(24.dp),
         color = backgroundColor,
-        shadowElevation = elevation
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier

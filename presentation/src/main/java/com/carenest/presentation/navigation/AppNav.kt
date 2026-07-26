@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -46,6 +47,11 @@ import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
+import com.carenest.presentation.ui.aichat.chat.AIChatScreen
+import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
+import com.carenest.domain.model.home.ServiceCategory
+import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
 @Composable
@@ -187,8 +193,36 @@ fun AppNav() {
                 ChoosePatientScreen(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     onNavigateToChat = { patientId ->
-                        backStack.add(AppRoute.AIChat(patientId))
+                        backStack.add(AppRoute.EmergencyAssistance(patientId))
                     }
+                )
+            }
+
+            entry<AppRoute.AIChat> { route ->
+                AIChatScreen(
+                    patientId = route.patientId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToBookings = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Bookings)
+                        }
+                    },
+                    onNavigateToServiceDetails = { categoryStr ->
+                        try {
+                            val category = ServiceCategory.valueOf(categoryStr)
+                            backStack.add(AppRoute.ServiceDetails(category))
+                        } catch (e: Exception) {
+                            // Invalid category
+                        }
+                    }
+                )
+            }
+
+            entry<AppRoute.EmergencyAssistance> { route ->
+                EmergencyAssistanceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
 
@@ -225,7 +259,7 @@ fun AppNav() {
                 modifier = Modifier
                     .fillMaxSize()
                     .navigationBarsPadding()
-                    .statusBarsPadding(),
+                    .imePadding(),
                 containerColor = Theme.colors.backGround,
                 contentWindowInsets = WindowInsets(0),
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

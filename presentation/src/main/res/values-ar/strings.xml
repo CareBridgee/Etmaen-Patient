@@ -316,4 +316,12 @@
 
   <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
 
+
+  <!-- Emergency Assistance -->
+  <string name="emergency_urgent_badge">عاجل</string>
+  <string name="emergency_assistance_required">مطلوب مساعدة طارئة</string>
+  <string name="emergency_description">اكتشف نظام الذكاء الاصطناعي أعراضاً حرجة. يرجى التزام الهدوء واتباع خطوات الطوارئ أدناه.</string>
+  <string name="emergency_call_ambulance">الاتصال بالإسعاف الآن</string>
+  <string name="emergency_call_contact">الاتصال بجهة اتصال الطوارئ</string>
+  <string name="emergency_dismiss">تجاهل إذا كان إنذاراً خاطئاً</string>
 </resources>

@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -83,7 +83,7 @@ fun NurseInfoCard(
             RatingBadge(rating = rating)
         }
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.padding(vertical = 14.dp),
             color = Theme.colors.divider,
         )

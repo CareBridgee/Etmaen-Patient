@@ -6,6 +6,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.painter.Painter
 
+import androidx.compose.ui.platform.LocalInspectionMode
+
 data class TopBarConfiguration(
     val title: String? = null,
     val showLeadingIcon: Boolean = false,
@@ -22,6 +24,7 @@ fun ScreenTopBar(
     leadingIcon: Painter? = null,
     onLeadingClick: (() -> Unit)? = null
 ) {
+    if (LocalInspectionMode.current) return
     val topBarState = LocalTopBarState.current
 
     DisposableEffect(title, showLeadingIcon, onLeadingClick, leadingIcon) {
@@ -41,6 +44,7 @@ fun ScreenTopBar(
  */
 @Composable
 fun HideTopBar() {
+    if (LocalInspectionMode.current) return
     val topBarState = LocalTopBarState.current
     DisposableEffect(Unit) {
         topBarState.value = TopBarConfiguration()

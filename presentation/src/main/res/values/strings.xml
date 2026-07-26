@@ -281,4 +281,12 @@
   <string name="nurse_on_the_way_cancel_dialog_confirm">Yes, Cancel</string>
   <string name="nurse_on_the_way_cancel_dialog_dismiss">Keep Visit</string>
 
+
+  <!-- Emergency Assistance -->
+  <string name="emergency_urgent_badge">URGENT</string>
+  <string name="emergency_assistance_required">Emergency Assistance Required</string>
+  <string name="emergency_description">Our AI system has detected critical symptoms. Please stay calm and follow the emergency steps below.</string>
+  <string name="emergency_call_ambulance">Call Ambulance Now</string>
+  <string name="emergency_call_contact">Call Emergency Contact</string>
+  <string name="emergency_dismiss">Dismiss if false alarm</string>
 </resources>
