@@ -403,9 +403,7 @@
   <string name="emergency_dismiss">Dismiss if false alarm</string>
 
   <!-- Choose Patient -->
-
   <string name="back">Back</string>
-  <string name="add_family_member">Add Family Member</string>
   <string name="add_new_member">Add New Member</string>
   <string name="add_family_member_description">Enter the details of your family member to manage their healthcare.</string>
   <string name="full_name">Full Name</string>
