@@ -1,6 +1,7 @@
 package com.carenest.data.di
 
 import com.carenest.data.repository.AuthRepositoryImpl
+import com.carenest.data.repository.ChatRepositoryImpl
 import com.carenest.data.repository.SettingsRepositoryImpl
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.local.preferences.CarenestDatastoreImpl
@@ -26,6 +27,9 @@ import com.carenest.data.source.remote.datasource.VisitSummaryDataSourceImp
 import com.carenest.domain.repository.NurseTrackingRepository
 import com.carenest.domain.repository.VisitSummaryRepository
 import javax.inject.Singleton
+import com.carenest.data.source.remote.datasource.ChatDataSource
+import com.carenest.data.source.remote.datasource.ChatDataSourceImp
+import com.carenest.domain.repository.ChatRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -51,6 +55,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindVisitSummaryRepository(impl: VisitSummaryRepositoryImpl): VisitSummaryRepository
+  
+    @Binds
+    @Singleton
+    abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 
     //endregion
 
@@ -66,6 +74,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideHomeDatasource(homeDatasourceImpl: HomeFakeDatasourceImpl): HomeDatasource
+
+    @Binds
+    @Singleton
+    abstract fun bindChatDataSource(chatDatsSource: ChatDataSourceImp): ChatDataSource
 
     @Binds
     @Singleton
