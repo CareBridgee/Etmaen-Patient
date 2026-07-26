@@ -19,6 +19,8 @@ import com.carenest.presentation.ui.request_service.components.CareRequestScreen
 import com.carenest.presentation.util.rememberSpeechToTextHelper
 import com.carenest.designsystem.R as DesignR
 
+import com.carenest.presentation.navigation.ScreenTopBar
+
 @Composable
 fun RequestServiceScreen(
     onNavigateBack: () -> Unit,
@@ -37,6 +39,11 @@ fun RequestServiceScreen(
     val toastState = rememberToastState()
     val listeningMessage = stringResource(DesignR.string.request_service_listening)
     val requestSuccessMessage = stringResource(DesignR.string.request_service_success)
+
+    ScreenTopBar(
+        title = "Request Service",
+        onLeadingClick = onNavigateBack
+    )
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(RequestServiceIntent.OnStart(selectedService))
