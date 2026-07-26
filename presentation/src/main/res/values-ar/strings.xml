@@ -268,6 +268,21 @@
   <!-- Profile Screen -->
   <string name="profile_screen_title">شاشة الملف الشخصي</string>
 
+  <string name="request_status">حالة الطلب</string>
+  <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
+  <string name="searching_describtion">نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.\n</string>
+  <string name="nurse_active_nearby">%1$d ممرضون نشطون بالقرب منك</string>
+  <string name="nurse_name_format">%1$s،</string>
+  <string name="nurse_review_format"> • %1$d %2$s</string>
+  <string name="nurse_price_format">%1$.0f$</string>
+  <string name="nurse_area_format">%1$s • %2$.1f %3$s</string>
+  <string name="decline">رفض</string>
+
+  <string name="accept">قبول</string>
+
+  <string name="km">كم</string>
+
+  <string name="reviews">تقييمًا</string>
   <!-- Nurse Tracking -->
   <string name="nurse_on_the_way_title">الممرض في طريقه إليك</string>
 

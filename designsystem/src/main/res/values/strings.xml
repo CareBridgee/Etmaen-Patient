@@ -34,6 +34,12 @@
     <string name="payout_arrival_instant">Est. arrival: Instant</string>
     <string name="payout_fastest">FASTEST</string>
     <string name="payout_info">Withdrawals may be subject to a small processing fee depending on your bank\'s policy.</string>
+    <string name="payment_info_banner">A processing fee may apply depending on your payment provider\'s policy.</string>
+    <string name="payment_confirm_btn">Confirm Payment</string>
+    <string name="payment_method_cod">Cash on Delivery</string>
+    <string name="payment_method_cod_desc">Pay when the service is completed</string>
+    <string name="payment_method_paymob">Credit/Debit Card</string>
+    <string name="payment_method_paymob_desc">Pay securely using your card</string>
     <string name="action_withdraw">Withdraw</string>
     <string name="earnings_total_title">Total Earnings (This Month)</string>
     <string name="earnings_vs_last_month">%1$d%% vs last month</string>
@@ -99,6 +105,31 @@
     <string name="availability_distance_max_radius">Maximum radius</string>
     <string name="availability_distance_min_label">1 mi</string>
     <string name="availability_distance_max_label">50 mi</string>
+
+    <!-- Care Request screen -->
+    <string name="request_service_title">Care Request</string>
+    <string name="request_service_fill_ai">Fill with AI</string>
+    <string name="request_service_patient_label">PATIENT</string>
+    <string name="request_service_edit_profile">Edit Profile</string>
+    <string name="request_service_chosen_service">Chosen Service</string>
+    <string name="request_service_service_details">Service Details</string>
+    <string name="request_service_change_service">Change</string>
+    <string name="request_service_situation_label">Describe the situation or symptoms</string>
+    <string name="request_service_situation_hint">E.g., Feeling dehydrated after the flu, needs routine IV administration...</string>
+    <string name="request_service_edit_address">Edit Address</string>
+    <string name="request_service_no_address">No address selected</string>
+    <string name="request_service_precise">Precise</string>
+    <string name="request_service_payment_method_label">Select Payment Method</string>
+    <string name="request_service_submit">Submit Request</string>
+    <string name="request_service_success">Request submitted successfully</string>
+    <string name="request_service_listening">Listening…</string>
+
+    <!-- Common -->
+    <string name="common_guest">Guest</string>
+
+    <!-- Permissions -->
+    <string name="permission_audio_title">Audio Permission Required</string>
+    <string name="permission_audio_rationale">This app needs access to your microphone for speech recognition to help you fill the description.</string>
 </resources>
 
 

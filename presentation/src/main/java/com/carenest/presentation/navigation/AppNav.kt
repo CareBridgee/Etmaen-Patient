@@ -50,6 +50,12 @@ import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.request_service.RequestServiceScreen
+import com.carenest.presentation.ui.map.MapScreen
+import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
+import com.carenest.domain.model.LocationDetails
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import kotlinx.coroutines.launch
@@ -68,6 +74,8 @@ fun AppNav() {
         }
 
         val initialRoute: NavKey = AppRoute.Splash
+
+        var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
 
         val backStack = rememberNavBackStack(
             savedStateConfiguration,
@@ -96,7 +104,14 @@ fun AppNav() {
 
             entry<AppRoute.Login> {
                 LoginScreen(
-                    onNavigateToOtp = { phone, method -> backStack.add(AppRoute.Otp(phone, method)) }
+                    onNavigateToOtp = { phone, method ->
+                        backStack.add(
+                            AppRoute.Otp(
+                                phone,
+                                method
+                            )
+                        )
+                    }
                 )
             }
 
@@ -154,24 +169,27 @@ fun AppNav() {
                     onNavigateToAIChat = {
                         // AI Chat navigation placeholder
                     },
-                    onNavigateToServiceDetails = { category ->
-                        backStack.add(AppRoute.ServiceDetails(category))
+                    onNavigateToServiceDetails = { service ->
+                        backStack.add(AppRoute.ServiceDetails(service))
                     }
                 )
             }
 
             entry<AppRoute.Services> {
                 ServicesScreen(
-                    onNavigateToDetails = { category ->
-                        backStack.add(AppRoute.ServiceDetails(category))
+                    onNavigateToDetails = { service ->
+                        backStack.add(AppRoute.ServiceDetails(service))
                     },
                 )
             }
 
             entry<AppRoute.ServiceDetails> { route ->
                 ServiceDetailsScreen(
-                    category = route.category,
+                    service = route.service,
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onRequestService = { service ->
+                        backStack.add(AppRoute.RequestService(service = service))
+                    }
                 )
             }
 
@@ -191,7 +209,43 @@ fun AppNav() {
                 ProfileScreen()
             }
 
-            entry<AppRoute.NurseOnTheWay> { route->
+
+            entry<AppRoute.RequestService> { route ->
+                RequestServiceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToMap = { backStack.add(AppRoute.Map) },
+                    onNavigateToEditProfile = { /* TODO */ },
+                    onNavigateToAddPatient = { /* TODO */ },
+                    onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
+                    onNavigateToAddressPicker = { /* TODO */ },
+                    onSubmitRequestClick = {
+                        backStack.add(AppRoute.SearchForNurse)
+                    },
+                    selectedService = route.service,
+                    mapResultLocation = mapResultLocation,
+                    onMapResultConsumed = { mapResultLocation = null },
+                )
+            }
+
+            entry<AppRoute.Map> {
+                MapScreen(
+                    onLocationConfirmed = { locationDetails ->
+                        mapResultLocation = locationDetails
+                        if (backStack.size > 1) backStack.removeLastOrNull()
+                    },
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+            }
+
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                        replaceWith(AppRoute.AcceptOffer)
+                    }
+                )
+            }
+            entry<AppRoute.NurseOnTheWay> { route ->
                 NurseOnTheWayScreen(
                     requestId = route.requestId,
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
@@ -265,7 +319,8 @@ fun AppNav() {
                         BaseTopAppBar(
                             title = config.title,
                             leadingIcon = if (config.showLeadingIcon) {
-                                config.leadingIcon ?: painterResource(id = RD.drawable.ic_arrow_back)
+                                config.leadingIcon
+                                    ?: painterResource(id = RD.drawable.ic_arrow_back)
                             } else null,
                             onLeadingClick = config.onLeadingClick,
                             autoMirrorLeadingIcon = true,
@@ -286,44 +341,44 @@ fun AppNav() {
                                 if (shouldShowBottomBar) Modifier
                                 else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             ),
-                    entries = rememberDecoratedNavEntries(
-                        backStack = backStack,
-                        entryProvider = entryProvider,
-                        entryDecorators = listOf(
-                            rememberSaveableStateHolderNavEntryDecorator(),
-                            rememberViewModelStoreNavEntryDecorator()
-                        )
-                    ),
-                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                )
-
-                if (shouldShowBottomBar) {
-                    SPBottomNavigation(
-                        items = listOf(
-                            BottomNavItem(
-                                stringResource(R.string.nav_home),
-                                RD.drawable.ic_bottom_nav_home
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_services),
-                                RD.drawable.ic_bottom_nav_services
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_booking),
-                                RD.drawable.ic_bottom_nav_bookings
-                            ),
-                            BottomNavItem(
-                                stringResource(R.string.nav_profile),
-                                RD.drawable.ic_bottom_nav_profile
+                        entries = rememberDecoratedNavEntries(
+                            backStack = backStack,
+                            entryProvider = entryProvider,
+                            entryDecorators = listOf(
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                rememberViewModelStoreNavEntryDecorator()
                             )
                         ),
-                        selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
-                        onItemSelected = { index -> onBottomNavItemSelected(index) },
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = paddingValues.calculateBottomPadding()),
+                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     )
-                }
+
+                    if (shouldShowBottomBar) {
+                        SPBottomNavigation(
+                            items = listOf(
+                                BottomNavItem(
+                                    stringResource(R.string.nav_home),
+                                    RD.drawable.ic_bottom_nav_home
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_services),
+                                    RD.drawable.ic_bottom_nav_services
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_booking),
+                                    RD.drawable.ic_bottom_nav_bookings
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_profile),
+                                    RD.drawable.ic_bottom_nav_profile
+                                )
+                            ),
+                            selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                            onItemSelected = { index -> onBottomNavItemSelected(index) },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = paddingValues.calculateBottomPadding()),
+                        )
+                    }
                 }
             }
         }

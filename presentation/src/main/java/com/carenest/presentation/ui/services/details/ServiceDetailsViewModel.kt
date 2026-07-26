@@ -16,13 +16,16 @@ class ServiceDetailsViewModel @Inject constructor() :
 
     fun onEvent(event: ServiceDetailsIntent) {
         when (event) {
-            is ServiceDetailsIntent.CategoryReceived -> updateState {
-                copy(category = event.category)
+            is ServiceDetailsIntent.ServiceReceived -> updateState {
+                copy(healthcareService = event.service)
             }
+
             ServiceDetailsIntent.BackClicked -> sendEffect(ServiceDetailsEffect.NavigateBack)
             ServiceDetailsIntent.ShareClicked -> sendEffect(ServiceDetailsEffect.ShareService)
             ServiceDetailsIntent.RequestServiceClicked -> {
-                sendEffect(ServiceDetailsEffect.RequestService)
+                state.value.healthcareService?.let { service ->
+                    sendEffect(ServiceDetailsEffect.RequestService(service))
+                }
             }
         }
     }
