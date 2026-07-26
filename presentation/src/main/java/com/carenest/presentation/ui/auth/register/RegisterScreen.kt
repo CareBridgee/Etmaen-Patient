@@ -57,6 +57,7 @@ import java.util.TimeZone
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onNavigateToWelcome: () -> Unit,
+    onNavigateHome: () -> Unit,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
