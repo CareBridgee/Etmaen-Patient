@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
   <string name="nav_home">الرئيسية</string>
   <string name="nav_booking">الحجوزات</string>
   <string name="nav_services">الخدمات</string>
@@ -334,5 +333,21 @@
   <string name="wallet_mobile_wallets">المحافظ الإلكترونية</string>
   <string name="wallet_secure_payments">مدفوعات آمنة ومشفرة</string>
   <string name="wallet_secure_payments_description">تتم معالجة بيانات الدفع الخاصة بك بأمان، ولا يتم تخزينها مباشرة على خوادمنا.</string>
-
+  <string name="choose_patient_title">اختيار المريض</string>
+  <string name="choose_patient_description">لمن نقوم بالتقييم اليوم؟ يساعدنا هذا في تقديم توصيات صحية محددة.</string>
+  <string name="add_family_member">إضافة فرد من العائلة</string>
+  <string name="add_family_member_info">إضافة أفراد العائلة يتيح لك إدارة خطط الرعاية الخاصة بهم، وتتبع المواعيد الطبية، والحصول على تقييمات صحية مخصصة تناسب أعمارهم وتاريخهم الطبي.</string>
+  <string name="continue_with_assessment">متابعة التقييم</string>
+  <string name="ai_health_assistant">المساعد الصحي الذكي</string>
+  <string name="online_ready">متصل وجاهز للمساعدة</string>
+  <string name="recommended_service">موصى به</string>
+  <string name="ask_health_profile">اسأل عن ملفك الصحي...</string>
+  <string name="book_now">احجز الآن</string>
+  <string name="view_service">عرض الخدمة</string>
+  <string name="emergency_urgent_badge">عاجل</string>
+  <string name="emergency_assistance_required">مطلوب مساعدة طارئة</string>
+  <string name="emergency_description">اكتشف نظام الذكاء الاصطناعي أعراضاً حرجة. يرجى التزام الهدوء واتباع خطوات الطوارئ أدناه.</string>
+  <string name="emergency_call_ambulance">الاتصال بالإسعاف الآن</string>
+  <string name="emergency_call_contact">الاتصال بجهة اتصال الطوارئ</string>
+  <string name="emergency_dismiss">تجاهل إذا كان إنذاراً خاطئاً</string>
 </resources>

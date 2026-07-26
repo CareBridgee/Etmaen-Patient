@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -40,8 +41,13 @@ import com.carenest.designsystem.components.topbar.TopBarAction
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.LocationDetails
+import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.R
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
+import com.carenest.presentation.ui.aichat.chat.AIChatScreen
+import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
+import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
 import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
@@ -62,7 +68,6 @@ import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
 import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
-import com.carenest.presentation.MainViewModel
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
 
@@ -179,7 +184,7 @@ fun AppNav(
                         backStack.add(AppRoute.Bookings)
                     }
                 }, onNavigateToAIChat = {
-                    // AI Chat navigation placeholder
+                    backStack.add(AppRoute.ChoosePatient)
                 }, onNavigateToServiceDetails = { service ->
                     backStack.add(AppRoute.ServiceDetails(service))
                 })
@@ -250,6 +255,16 @@ fun AppNav(
                 AddPaymentMethodScreen({}, {}, {}, {}, {})
             }
 
+            entry<AppRoute.NurseOnTheWay> { route ->
+                NurseOnTheWayScreen(
+                    requestId = route.requestId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToQrCode = { },
+                    onOpenChat = { nurseId -> },
+                    showSnackbar = onShowSnackbar
+                )
+            }
+
             entry<AppRoute.RequestService> { route ->
                 RequestServiceScreen(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
@@ -297,6 +312,46 @@ fun AppNav(
                     showSnackbar = onShowSnackbar
                 )
             }
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                        replaceWith(AppRoute.AcceptOffer)
+                    })
+            }
+
+            entry<AppRoute.ChoosePatient> {
+                ChoosePatientScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToChat = { patientId ->
+                        backStack.add(AppRoute.EmergencyAssistance(patientId))
+                    }
+                )
+            }
+
+            entry<AppRoute.AIChat> { route ->
+                AIChatScreen(
+                    patientId = route.patientId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToBookings = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Bookings)
+                        }
+                    },
+                    onNavigateToServiceDetails = { categoryStr ->
+                        val uiModel = HealthcareServiceUiModel(
+                            id = categoryStr,
+                            name = categoryStr.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                            estimatedDurationMinutes = 45L,
+                            basePrice = 50.0,
+                            description = "Professional care service tailored to your needs.",
+                            iconResName = ""
+                        )
+                        backStack.add(AppRoute.ServiceDetails(uiModel))
+                    }
+                )
+            }
 
             entry<AppRoute.VisitCompleted> { route ->
                 VisitCompletedScreen(
@@ -311,6 +366,19 @@ fun AppNav(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     requestId = route.requestId,
                     showSnackbar = onShowSnackbar
+                )
+            entry<AppRoute.Chat> { route ->
+                ChatScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    requestId = route.requestId,
+                    showSnackbar = onShowSnackbar
+                )
+            }
+
+            entry<AppRoute.EmergencyAssistance> { route ->
+                EmergencyAssistanceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
 
@@ -378,6 +446,41 @@ fun AppNav(
                         )
                     }
                 }) { paddingValues ->
+            CompositionLocalProvider(LocalTopBarState provides topBarState) {
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding()
+                        .imePadding(),
+                    containerColor = Theme.colors.backGround,
+                    contentWindowInsets = WindowInsets(0),
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                    topBar = {
+                        val config = topBarState.value
+                        if (config.title != null) {
+                            BaseTopAppBar(
+                                title = config.title,
+                                leadingIcon = if (config.showLeadingIcon) {
+                                    config.leadingIcon
+                                        ?: painterResource(id = RD.drawable.ic_arrow_back)
+                                } else null,
+                                onLeadingClick = config.onLeadingClick,
+                                autoMirrorLeadingIcon = true,
+                                actions = buildList {
+                                    if (config.profileImage != null) {
+                                        add(
+                                            TopBarAction(
+                                                config.profileImage,
+                                                "Profile",
+                                                onClick = config.onProfileClick ?: {})
+                                        )
+                                    }
+                                    config.trailingAction?.let(::add)
+                                },
+                                modifier = Modifier.statusBarsPadding()
+                            )
+                        }
+                    }) { paddingValues ->
 
                 Box(
                     modifier = Modifier.fillMaxSize()
