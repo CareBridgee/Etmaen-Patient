@@ -49,6 +49,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideGeocodingApiService(impl: GeocodingApiServiceImpl): GeocodingApiService
+    @Binds
     @Singleton
     abstract fun bindNurseTrackingRepository(impl: NurseTrackingRepositoryImpl, ): NurseTrackingRepository
 
