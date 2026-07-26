@@ -81,10 +81,7 @@ fun RequestServiceScreen(
         }
     }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             CareRequestScreenContent(
                 state = state,
                 onPatientSelected = { viewModel.onIntent(RequestServiceIntent.OnPatientSelected(it)) },

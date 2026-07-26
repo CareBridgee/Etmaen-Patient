@@ -86,7 +86,8 @@ fun NurseOfferCard(
                 ) {
 
                     Text(
-                        text = "${nurse.name},", style = Theme.typography.title.copy(
+                        text = stringResource(R.string.nurse_name_format, nurse.name),
+                        style = Theme.typography.title.copy(
                             fontWeight = FontWeight.SemiBold,
                         ), color = Theme.colors.primaryFont
                     )
@@ -130,7 +131,11 @@ fun NurseOfferCard(
                         )
 
                         Text(
-                            text = " • ${nurse.reviewCount} ${stringResource(R.string.reviews)}",
+                            text = stringResource(
+                                R.string.nurse_review_format,
+                                nurse.reviewCount,
+                                stringResource(R.string.reviews)
+                            ),
                             style = Theme.typography.body.medium.copy(
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -139,7 +144,8 @@ fun NurseOfferCard(
                 }
 
                 Text(
-                    text = "$${nurse.price}", style = Theme.typography.title.copy(
+                    text = stringResource(R.string.nurse_price_format, nurse.price),
+                    style = Theme.typography.title.copy(
                         fontWeight = FontWeight.SemiBold
                     ), color = Theme.colors.primary
                 )
@@ -168,7 +174,12 @@ fun NurseOfferCard(
                 Spacer(Modifier.width(8.dp))
 
                 Text(
-                    text = "${nurse.area} • ${nurse.distanceKm} ${stringResource(R.string.km)}",
+                    text = stringResource(
+                        R.string.nurse_area_format,
+                        nurse.area,
+                        nurse.distanceKm,
+                        stringResource(R.string.km)
+                    ),
                     style = Theme.typography.body.medium,
                     color = colors.secondaryFont
                 )

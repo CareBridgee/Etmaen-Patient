@@ -250,10 +250,13 @@
 
   <!-- Search For Nurse -->
   <string name="request_status">Request Status</string>
-  <string name="searching_for_available">"Searching for an available nurse…</string>
-  <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.
-</string>
-  <string name="nurse_active"> nurses active nearby</string>
+  <string name="searching_for_available">Searching for an available nurse…</string>
+  <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.\n</string>
+  <string name="nurse_active_nearby">%1$d nurses active nearby</string>
+  <string name="nurse_name_format">%1$s,</string>
+  <string name="nurse_review_format"> • %1$d %2$s</string>
+  <string name="nurse_price_format">$%1$.0f</string>
+  <string name="nurse_area_format">%1$s • %2$.1f %3$s</string>
   <string name="decline">Decline</string>
   <string name="accept">Accept</string>
   <string name="km">km</string>

@@ -55,7 +55,7 @@ fun ActiveNursesChip(
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = "$count ${stringResource(R.string.nurse_active)}",
+                text = stringResource(R.string.nurse_active_nearby, count),
                 style = Theme.typography.body.small.copy(
                     fontWeight = FontWeight.Medium,
                     color = colors.secondary
