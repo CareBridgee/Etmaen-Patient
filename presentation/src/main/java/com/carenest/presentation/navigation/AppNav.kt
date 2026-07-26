@@ -1,8 +1,11 @@
 package com.carenest.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -45,11 +48,13 @@ import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
 import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNav() {
     SpTheme {
@@ -195,6 +200,13 @@ fun AppNav() {
                     onOpenChat = { nurseId ->
                         // Chat navigation placeholder
                     },
+                    showSnackbar = onShowSnackbar
+                )
+            }
+            entry <AppRoute.Chat>{route->
+                ChatScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    requestId = route.requestId,
                     showSnackbar = onShowSnackbar
                 )
             }
