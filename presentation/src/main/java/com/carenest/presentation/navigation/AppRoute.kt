@@ -42,6 +42,14 @@ sealed interface AppRoute : NavKey {
      data object Profile : AppRoute
 
      @Serializable
+     data object Wallet : AppRoute
+
+     @Serializable
+     data object AddFunds : AppRoute
+
+     @Serializable
+     data object AddPaymentMethod : AppRoute
+     @Serializable
      data class RequestService(val service: HealthcareServiceUiModel) : AppRoute
 
      @Serializable
