@@ -1,14 +1,11 @@
 package com.carenest.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
-import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface AppRoute : NavKey {
-
-    // screen with no parameters → use data object
-    // screen with parameters → use data class
 
      @Serializable
      data object Splash : AppRoute
@@ -35,7 +32,7 @@ sealed interface AppRoute : NavKey {
      data object Services : AppRoute
 
      @Serializable
-     data class ServiceDetails(val category: ServiceCategory) : AppRoute
+     data class ServiceDetails(val service: HealthcareServiceUiModel) : AppRoute
 
 
      @Serializable
@@ -45,5 +42,20 @@ sealed interface AppRoute : NavKey {
      data object Profile : AppRoute
 
      @Serializable
+     data class RequestService(val service: HealthcareServiceUiModel) : AppRoute
+
+     @Serializable
+     data object Map : AppRoute
+     @Serializable
+     data object SearchForNurse : AppRoute
+     @Serializable
+     data object AcceptOffer : AppRoute
+     @Serializable
+     data class Chat(val requestId: String) : AppRoute
+
+     @Serializable
      data class NurseOnTheWay(val requestId: String) : AppRoute
+
+     @Serializable
+     data class VisitCompleted (val requestId: String): AppRoute
 }

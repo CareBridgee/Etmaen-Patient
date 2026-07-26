@@ -54,9 +54,14 @@
   <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
   <string name="personal_info_date_confirm">تأكيد</string>
   <string name="personal_info_date_cancel">إلغاء</string>
+  <string name="personal_info_national_id_title">الرقم القومي</string>
+  <string name="personal_info_national_id_hint">0000000000000000</string>
   <string name="personal_info_gender_title">النوع</string>
   <string name="personal_info_gender_male">ذكر</string>
   <string name="personal_info_gender_female">أنثى</string>
+  <string name="personal_info_account_type_title">نوع الحساب</string>
+  <string name="personal_info_account_type_family">عائلي</string>
+  <string name="personal_info_account_type_personal">شخصي</string>
   <string name="personal_info_continue_btn">متابعة</string>
 
   <!-- Profile Completion -->
@@ -287,6 +292,21 @@
   <string name="validation_mobility_required">اختر حالة الحركة</string>
   <string name="validation_emergency_name_length">أدخل اسم جهة اتصال من حرفين إلى 100 حرف</string>
   <string name="validation_invalid_phone">أدخل رقم هاتف صحيحًا يحتوي على 7 إلى 15 رقمًا</string>
+  <string name="request_status">حالة الطلب</string>
+  <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
+  <string name="searching_describtion">نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.\n</string>
+  <string name="nurse_active_nearby">%1$d ممرضون نشطون بالقرب منك</string>
+  <string name="nurse_name_format">%1$s،</string>
+  <string name="nurse_review_format"> • %1$d %2$s</string>
+  <string name="nurse_price_format">%1$.0f$</string>
+  <string name="nurse_area_format">%1$s • %2$.1f %3$s</string>
+  <string name="decline">رفض</string>
+
+  <string name="accept">قبول</string>
+
+  <string name="km">كم</string>
+
+  <string name="reviews">تقييمًا</string>
   <!-- Nurse Tracking -->
   <string name="nurse_on_the_way_title">الممرض في طريقه إليك</string>
 
@@ -320,4 +340,35 @@
 
   <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
 
+  <!-- Visit summary -->
+  <string name="visit_completed_menu_content_description">القائمة</string>
+  <string name="visit_completed_title">اكتملت الزيارة</string>
+  <string name="visit_completed_subtitle">قام الأخصائي الطبي بإنهاء تقرير الجلسة. شكراً لاختيارك CareMatch.</string>
+  <string name="visit_completed_summary_title">تفاصيل الملخص</string>
+  <string name="visit_completed_verified_badge">زيارة موثقة</string>
+  <string name="visit_completed_professional_label">الأخصائي الطبي</string>
+  <string name="visit_completed_service_type_label">نوع الخدمة</string>
+  <string name="visit_completed_duration_label">مدة الزيارة</string>
+  <string name="visit_completed_duration_value">%1$d دقيقة</string>
+  <string name="visit_completed_date_label">تاريخ الإكمال</string>
+  <string name="visit_completed_total_amount_label">إجمالي المبلغ المستحق</string>
+  <string name="visit_completed_total_amount_value">$%1$.2f</string>
+  <string name="visit_completed_back_home_button">العودة للرئيسية</string>
+
+  <string name="visit_rating_title">كيف كانت زيارتك؟</string>
+  <string name="visit_rating_subtitle">تقييمك يساعدنا في تقديم خدمة أفضل للجميع.</string>
+  <string name="visit_rating_star_content_description">%1$d نجمة</string>
+  <string name="visit_rating_submit_button">إرسال</string>
+  <string name="visit_rating_skip_button">تخطي</string>
+
+
+  <!-- Chat Screen  -->
+  <string name="chat_back_content_description">رجوع</string>
+  <string name="chat_call_content_description">الاتصال بالممرض</string>
+  <string name="chat_send_content_description">إرسال الرسالة</string>
+  <string name="chat_status_active_now">متصل الآن</string>
+  <string name="chat_status_offline">غير متصل</string>
+  <string name="chat_input_placeholder">اكتب رسالة…</string>
+  <string name="chat_quick_tip_title">نصيحة سريعة</string>
+  <string name="chat_message_seen">تمت المشاهدة</string>
 </resources>

@@ -29,6 +29,7 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.first
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -64,6 +65,22 @@ object NetworkModule {
 
             if (BuildConfig.DEBUG) {
                 install(SafeNetworkLogging)
+            }
+        }
+
+    @Provides
+    @Singleton
+    @Named("locationiq")
+    fun provideLocationIqHttpClient(
+        json: Json,
+    ): HttpClient =
+        HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(json)
+            }
+
+            install(Logging) {
+                level = LogLevel.BODY
             }
         }
 

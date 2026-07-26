@@ -1,6 +1,7 @@
 package com.carenest.data.di
 
 import com.carenest.data.repository.AuthRepositoryImpl
+import com.carenest.data.repository.ChatRepositoryImpl
 import com.carenest.data.repository.SettingsRepositoryImpl
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.local.preferences.CarenestDatastoreImpl
@@ -16,14 +17,25 @@ import dagger.hilt.components.SingletonComponent
 import com.carenest.data.repository.HomeRepositoryImpl
 import com.carenest.data.repository.ProfileRepositoryImpl
 import com.carenest.data.repository.NurseTrackingRepositoryImpl
+import com.carenest.data.repository.VisitSummaryRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.data.source.local.datasource.home.HomeDatasource
 import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
+import com.carenest.data.repository.GeocodingRepositoryImpl
+import com.carenest.data.source.remote.service.GeocodingApiService
+import com.carenest.data.source.remote.service.GeocodingApiServiceImpl
+import com.carenest.domain.repository.GeocodingRepository
 import com.carenest.data.source.remote.datasource.NurseTrackingDataSource
 import com.carenest.data.source.remote.datasource.NurseTrackingDataSourceImp
+import com.carenest.data.source.remote.datasource.VisitSummaryDataSource
+import com.carenest.data.source.remote.datasource.VisitSummaryDataSourceImp
 import com.carenest.domain.repository.NurseTrackingRepository
+import com.carenest.domain.repository.VisitSummaryRepository
 import javax.inject.Singleton
+import com.carenest.data.source.remote.datasource.ChatDataSource
+import com.carenest.data.source.remote.datasource.ChatDataSourceImp
+import com.carenest.domain.repository.ChatRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -43,12 +55,25 @@ abstract class RepositoryModule {
     abstract fun provideHomeRepositoryImpl(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 
     @Binds
+    abstract fun provideGeocodingRepositoryImpl(impl: GeocodingRepositoryImpl): GeocodingRepository
+
+    @Binds
+    abstract fun provideGeocodingApiService(impl: GeocodingApiServiceImpl): GeocodingApiService
+    @Binds
     @Singleton
     abstract fun provideProfileRepositoryImpl(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
 
     @Binds
     @Singleton
     abstract fun bindNurseTrackingRepository(impl: NurseTrackingRepositoryImpl, ): NurseTrackingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindVisitSummaryRepository(impl: VisitSummaryRepositoryImpl): VisitSummaryRepository
+  
+    @Binds
+    @Singleton
+    abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 
     //endregion
 
@@ -67,7 +92,15 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindChatDataSource(chatDatsSource: ChatDataSourceImp): ChatDataSource
+
+    @Binds
+    @Singleton
     abstract fun provideNurseTrackingDataSource(nurseTrackingDataSource: NurseTrackingDataSourceImp): NurseTrackingDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindVisitSummaryDataSource(visitSummaryDataSource: VisitSummaryDataSourceImp): VisitSummaryDataSource
 
     //endregion
 }
