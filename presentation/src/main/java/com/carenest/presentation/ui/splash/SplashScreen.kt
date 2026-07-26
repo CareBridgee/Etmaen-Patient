@@ -34,6 +34,8 @@ import com.carenest.presentation.navigation.HideTopBar
 @Composable
 fun SplashScreen(
     onNavigateToOnBoarding: () -> Unit,
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -41,6 +43,8 @@ fun SplashScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             SplashEffect.NavigateToOnBoarding -> onNavigateToOnBoarding()
+            SplashEffect.NavigateToLogin -> onNavigateToLogin()
+            SplashEffect.NavigateToHome -> onNavigateToHome()
         }
     }
 

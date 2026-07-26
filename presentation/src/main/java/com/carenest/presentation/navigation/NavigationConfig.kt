@@ -27,6 +27,11 @@ object NavigationConfig {
             serializableSubclass(AppRoute.Home::class)
             serializableSubclass(AppRoute.Services::class)
             serializableSubclass(AppRoute.ServiceDetails::class)
+            serializableSubclass(AppRoute.Bookings::class)
+            serializableSubclass(AppRoute.Profile::class)
+            serializableSubclass(AppRoute.FamilyMembers::class)
+            serializableSubclass(AppRoute.Settings::class)
+            serializableSubclass(AppRoute.ChoosePatient::class)
             serializableSubclass(AppRoute.NurseOnTheWay::class)
         }
     }

@@ -266,7 +266,47 @@
   <string name="bookings_screen_title">شاشة الحجوزات</string>
 
   <!-- Profile Screen -->
-  <string name="profile_screen_title">شاشة الملف الشخصي</string>
+  <string name="profile_screen_title">الملف الشخصي</string>
+  <string name="profile_greeting">صباح الخير، إيلينا</string>
+  <string name="profile_primary_caregiver">مقدم الرعاية الرئيسي</string>
+  <string name="profile_personal_info_title">البيانات الشخصية</string>
+  <string name="profile_personal_info_subtitle">تحديث تفاصيل حسابك</string>
+  <string name="profile_health_profile_title">الملف الصحي</string>
+  <string name="profile_health_profile_subtitle">السجل الطبي والمستندات</string>
+  <string name="profile_family_members_title">أفراد العائلة</string>
+  <string name="profile_family_members_subtitle">إدارة المعالين (%1$d نشط)</string>
+  <string name="profile_addresses_title">العناوين</string>
+  <string name="profile_addresses_subtitle">مواقع المنزل والرعاية</string>
+  <string name="profile_payment_title">الدفع</string>
+  <string name="profile_payment_subtitle">فيزا تنتهي بـ ••42</string>
+  <string name="profile_settings_title">الإعدادات</string>
+  <string name="profile_settings_subtitle">الأمان وتفضيلات التطبيق</string>
+  <string name="profile_logout_title">تسجيل الخروج</string>
+  <string name="profile_app_version">سيرين كير v2.4.1</string>
+
+  <!-- Family Members Screen -->
+  <string name="family_members_screen_title">أفراد العائلة</string>
+  <string name="family_members_screen_subtitle">إدارة الملفات الصحية لأحبائك.</string>
+  <string name="family_members_last_checkup">آخر فحص</string>
+  <string name="family_members_upcoming">القادم</string>
+  <string name="family_members_edit_personal">تعديل البيانات الشخصية</string>
+  <string name="family_members_edit_health">تعديل الملف الصحي</string>
+  <string name="family_members_add_btn">+ إضافة فرد عائلة</string>
+
+  <!-- Settings Screen -->
+  <string name="settings_screen_title">الإعدادات</string>
+  <string name="settings_screen_subtitle">إدارة حسابك وتجربة التطبيق</string>
+  <string name="settings_section_app_preferences">تفضيلات التطبيق</string>
+  <string name="settings_language_title">اللغة</string>
+  <string name="settings_dark_mode_title">الوضع الداكن</string>
+  <string name="settings_section_notifications">الإشعارات</string>
+  <string name="settings_email_updates_title">تحديثات البريد الإلكتروني</string>
+  <string name="settings_sms_alerts_title">تنبيهات الرسائل القصيره (SMS)</string>
+  <string name="settings_section_security_privacy">الأمان والخصوصية</string>
+  <string name="settings_privacy_policy_title">سياسة الخصوصية</string>
+  <string name="settings_select_language_title">اختر اللغة</string>
+  <string name="settings_language_english">English</string>
+  <string name="settings_language_arabic">العربية</string>
 
   <!-- Nurse Tracking -->
   <string name="nurse_on_the_way_title">الممرض في طريقه إليك</string>

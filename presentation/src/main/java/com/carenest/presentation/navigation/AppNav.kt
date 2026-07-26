@@ -46,13 +46,27 @@ import com.carenest.presentation.ui.services.list.ServicesScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.bookings.BookingsScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.profile.familymembers.FamilyMembersScreen
+import com.carenest.presentation.ui.profile.settings.SettingsScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import kotlinx.coroutines.launch
 import kotlin.collections.listOf
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+
 @Composable
-fun AppNav() {
-    SpTheme {
+fun AppNav(
+    mainViewModel: MainViewModel = hiltViewModel()
+) {
+    val mainState by mainViewModel.state.collectAsState()
+
+    SpTheme(
+        isDarkTheme = mainState.isDarkMode,
+        languageCode = mainState.languageCode
+    ) {
 
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
@@ -79,11 +93,27 @@ fun AppNav() {
                 }
             }
 
+            fun navigateBackOrToHome() {
+                if (backStack.size > 1) {
+                    backStack.removeLastOrNull()
+                } else {
+                    val current = backStack.lastOrNull()
+                    if (current != null && current !in listOf(AppRoute.Home, AppRoute.Splash, AppRoute.OnBoarding, AppRoute.Login)) {
+                        replaceWith(AppRoute.Home)
+                    }
+                }
+            }
 
             entry<AppRoute.Splash> {
                 SplashScreen(
                     onNavigateToOnBoarding = {
                         replaceWith(AppRoute.OnBoarding)
+                    },
+                    onNavigateToLogin = {
+                        replaceWith(AppRoute.Login)
+                    },
+                    onNavigateToHome = {
+                        replaceWith(AppRoute.Home)
                     }
                 )
             }
@@ -106,15 +136,13 @@ fun AppNav() {
                     onNavigateToRegister = {
                         backStack.add(AppRoute.Register)
                     },
-                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                    onNavigateBack = { navigateBackOrToHome() }
                 )
             }
 
             entry<AppRoute.Register> {
                 RegisterScreen(
-                    onNavigateBack = {
-                        if (backStack.size > 1) backStack.removeLastOrNull()
-                    },
+                    onNavigateBack = { navigateBackOrToHome() },
                     onNavigateToWelcome = {
                         replaceWith(AppRoute.ProfileCompletion)
                     },
@@ -126,7 +154,7 @@ fun AppNav() {
 
             entry<AppRoute.ProfileCompletion> {
                 ProfileCompletionScreen(
-                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateBack = { navigateBackOrToHome() },
                     onNavigateToHome = { replaceWith(AppRoute.Home) }
                 )
             }
@@ -165,7 +193,7 @@ fun AppNav() {
             entry<AppRoute.ServiceDetails> { route ->
                 ServiceDetailsScreen(
                     category = route.category,
-                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateBack = { navigateBackOrToHome() },
                 )
             }
 
@@ -182,13 +210,50 @@ fun AppNav() {
             }
 
             entry<AppRoute.Profile> {
-                ProfileScreen()
+                ProfileScreen(
+                    onNavigateToFamilyMembers = {
+                        backStack.add(AppRoute.FamilyMembers)
+                    },
+                    onNavigateToHealthProfile = {
+                        backStack.add(AppRoute.ProfileCompletion)
+                    },
+                    onNavigateToSettings = {
+                        backStack.add(AppRoute.Settings)
+                    },
+                    onLogout = {
+                        Snapshot.withMutableSnapshot {
+                            backStack.clear()
+                            backStack.add(AppRoute.Login)
+                        }
+                    }
+                )
+            }
+
+            entry<AppRoute.FamilyMembers> {
+                FamilyMembersScreen(
+                    onNavigateBack = { navigateBackOrToHome() },
+                    onNavigateToAddMember = {
+                        backStack.add(AppRoute.ChoosePatient)
+                    }
+                )
+            }
+
+            entry<AppRoute.Settings> {
+                SettingsScreen(
+                    onNavigateBack = { navigateBackOrToHome() }
+                )
+            }
+
+            entry<AppRoute.ChoosePatient> {
+                com.carenest.presentation.ui.profile.familymembers.ChoosePatientScreen(
+                    onNavigateBack = { navigateBackOrToHome() }
+                )
             }
 
             entry<AppRoute.NurseOnTheWay> { route->
                 NurseOnTheWayScreen(
                     requestId = route.requestId,
-                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateBack = { navigateBackOrToHome() },
                     onNavigateToQrCode = {
                         // QR Code navigation placeholder
                     },
@@ -212,6 +277,24 @@ fun AppNav() {
         val currentRoute = backStack.lastOrNull()
         val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
         val shouldShowBottomBar = currentRoute in bottomNavRoutes
+
+        val shouldHandleBackToHome = currentRoute != null && currentRoute !in listOf(
+            AppRoute.Home,
+            AppRoute.Splash,
+            AppRoute.OnBoarding,
+            AppRoute.Login
+        )
+
+        BackHandler(enabled = shouldHandleBackToHome) {
+            if (backStack.size > 1) {
+                backStack.removeLastOrNull()
+            } else {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(AppRoute.Home)
+                }
+            }
+        }
 
         fun onBottomNavItemSelected(index: Int) {
             val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
@@ -270,7 +353,16 @@ fun AppNav() {
                             rememberViewModelStoreNavEntryDecorator()
                         )
                     ),
-                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onBack = {
+                        if (backStack.size > 1) {
+                            backStack.removeLastOrNull()
+                        } else {
+                            Snapshot.withMutableSnapshot {
+                                backStack.clear()
+                                backStack.add(AppRoute.Home)
+                            }
+                        }
+                    },
                 )
 
                 if (shouldShowBottomBar) {

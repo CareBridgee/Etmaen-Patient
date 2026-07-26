@@ -12,8 +12,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
+import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
+import kotlinx.coroutines.flow.first
+
 @HiltViewModel
-class SplashViewModel @Inject constructor() :
+class SplashViewModel @Inject constructor(
+    private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
+    private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase
+) :
     ViewModel(),
     StateHolder<SplashState> by DefaultStateHolder(SplashState()),
     EffectPublisher<SplashEffect> by DefaultEffectPublisher() {
@@ -31,7 +38,16 @@ class SplashViewModel @Inject constructor() :
     private fun handleStart() {
         viewModelScope.launch {
             delay(2000.milliseconds)
-            sendEffect(SplashEffect.NavigateToOnBoarding)
+            val isOnboardingDone = getOnboardingStatusUseCase().first()
+            val isLoggedIn = getLoggedInStatusUseCase().first()
+
+            if (!isOnboardingDone) {
+                sendEffect(SplashEffect.NavigateToOnBoarding)
+            } else if (isLoggedIn) {
+                sendEffect(SplashEffect.NavigateToHome)
+            } else {
+                sendEffect(SplashEffect.NavigateToLogin)
+            }
         }
     }
 }
