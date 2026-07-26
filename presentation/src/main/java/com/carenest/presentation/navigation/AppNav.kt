@@ -437,51 +437,52 @@ fun AppNav(
         fun onBottomNavItemSelected(index: Int) {
             val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
 
-                if (currentRoute != targetRoute) {
-                    Snapshot.withMutableSnapshot {
-                        backStack.clear()
-                        backStack.add(targetRoute)
-                    }
+            if (currentRoute != targetRoute) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(targetRoute)
                 }
             }
+        }
 
-            val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
+        val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
 
-            CompositionLocalProvider(LocalTopBarState provides topBarState) {
-                Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .navigationBarsPadding()
-                        .imePadding(),
-                    containerColor = Theme.colors.backGround,
-                    contentWindowInsets = WindowInsets(0),
-                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-                    topBar = {
-                        val config = topBarState.value
-                        if (config.title != null) {
-                            BaseTopAppBar(
-                                title = config.title,
-                                leadingIcon = if (config.showLeadingIcon) {
-                                    config.leadingIcon
-                                        ?: painterResource(id = RD.drawable.ic_arrow_back)
-                                } else null,
-                                onLeadingClick = config.onLeadingClick,
-                                autoMirrorLeadingIcon = true,
-                                actions = buildList {
-                                    if (config.profileImage != null) {
-                                        add(
-                                            TopBarAction(
-                                                config.profileImage,
-                                                "Profile",
-                                                onClick = config.onProfileClick ?: {})
-                                        )
-                                    }
-                                    config.trailingAction?.let(::add)
-                                },
-                                modifier = Modifier.statusBarsPadding()
-                            )
-                        }
-                    }) { paddingValues ->
+        CompositionLocalProvider(LocalTopBarState provides topBarState) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+                    .imePadding(),
+                containerColor = Theme.colors.backGround,
+                contentWindowInsets = WindowInsets(0),
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                topBar = {
+                    val config = topBarState.value
+                    if (config.title != null) {
+                        BaseTopAppBar(
+                            title = config.title,
+                            leadingIcon = if (config.showLeadingIcon) {
+                                config.leadingIcon
+                                    ?: painterResource(id = RD.drawable.ic_arrow_back)
+                            } else null,
+                            onLeadingClick = config.onLeadingClick,
+                            autoMirrorLeadingIcon = true,
+                            actions = buildList {
+                                if (config.profileImage != null) {
+                                    add(
+                                        TopBarAction(
+                                            config.profileImage,
+                                            "Profile",
+                                            onClick = config.onProfileClick ?: {})
+                                    )
+                                }
+                                config.trailingAction?.let(::add)
+                            },
+                            modifier = Modifier.statusBarsPadding()
+                        )
+                    }
+                }
+            ) { paddingValues ->
 
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -494,55 +495,55 @@ fun AppNav(
                                 if (shouldShowBottomBar) Modifier
                                 else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             ),
-                    entries = rememberDecoratedNavEntries(
-                        backStack = backStack,
-                        entryProvider = entryProvider,
-                        entryDecorators = listOf(
-                            rememberSaveableStateHolderNavEntryDecorator(),
-                            rememberViewModelStoreNavEntryDecorator()
-                        )
-                    ),
-                    onBack = {
-                        if (backStack.size > 1) {
-                            backStack.removeLastOrNull()
-                        } else {
-                            Snapshot.withMutableSnapshot {
-                                backStack.clear()
-                                backStack.add(AppRoute.Home)
-                            }
-                        }
-                    },
-                )
-
-                        if (shouldShowBottomBar) {
-                            SPBottomNavigation(
-                                items = listOf(
-                                    BottomNavItem(
-                                        stringResource(R.string.nav_home),
-                                        RD.drawable.ic_bottom_nav_home
-                                    ), BottomNavItem(
-                                        stringResource(R.string.nav_services),
-                                        RD.drawable.ic_bottom_nav_services
-                                    ), BottomNavItem(
-                                        stringResource(R.string.nav_booking),
-                                        RD.drawable.ic_bottom_nav_bookings
-                                    ), BottomNavItem(
-                                        stringResource(R.string.nav_profile),
-                                        RD.drawable.ic_bottom_nav_profile
-                                    ), BottomNavItem(
-                                        stringResource(R.string.wallet_title),
-                                        RD.drawable.ic_bottom_nav_wallet
-                                    )
-                                ),
-                                selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
-                                onItemSelected = { index -> onBottomNavItemSelected(index) },
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = paddingValues.calculateBottomPadding()),
+                        entries = rememberDecoratedNavEntries(
+                            backStack = backStack,
+                            entryProvider = entryProvider,
+                            entryDecorators = listOf(
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                rememberViewModelStoreNavEntryDecorator()
                             )
-                        }
+                        ),
+                        onBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            } else {
+                                Snapshot.withMutableSnapshot {
+                                    backStack.clear()
+                                    backStack.add(AppRoute.Home)
+                                }
+                            }
+                        },
+                    )
+
+                    if (shouldShowBottomBar) {
+                        SPBottomNavigation(
+                            items = listOf(
+                                BottomNavItem(
+                                    stringResource(R.string.nav_home),
+                                    RD.drawable.ic_bottom_nav_home
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_services),
+                                    RD.drawable.ic_bottom_nav_services
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_booking),
+                                    RD.drawable.ic_bottom_nav_bookings
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_profile),
+                                    RD.drawable.ic_bottom_nav_profile
+                                ), BottomNavItem(
+                                    stringResource(R.string.wallet_title),
+                                    RD.drawable.ic_bottom_nav_wallet
+                                )
+                            ),
+                            selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                            onItemSelected = { index -> onBottomNavItemSelected(index) },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = paddingValues.calculateBottomPadding()),
+                        )
                     }
                 }
             }
         }
     }
+}
