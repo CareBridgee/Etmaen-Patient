@@ -15,9 +15,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
 import com.carenest.data.repository.HomeRepositoryImpl
+import com.carenest.data.repository.ProfileRepositoryImpl
 import com.carenest.data.repository.NurseTrackingRepositoryImpl
 import com.carenest.data.repository.VisitSummaryRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
+import com.carenest.domain.repository.ProfileRepository
 import com.carenest.data.source.local.datasource.home.HomeDatasource
 import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
 import com.carenest.data.repository.GeocodingRepositoryImpl
@@ -57,6 +59,10 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideGeocodingApiService(impl: GeocodingApiServiceImpl): GeocodingApiService
+    @Binds
+    @Singleton
+    abstract fun provideProfileRepositoryImpl(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
+
     @Binds
     @Singleton
     abstract fun bindNurseTrackingRepository(impl: NurseTrackingRepositoryImpl, ): NurseTrackingRepository

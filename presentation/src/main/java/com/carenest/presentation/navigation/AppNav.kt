@@ -132,7 +132,6 @@ fun AppNav() {
                     backStack.add(AppRoute.Register)
                 }, onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() })
             }
-
             entry<AppRoute.Register> {
                 RegisterScreen(onNavigateBack = {
                     if (backStack.size > 1) backStack.removeLastOrNull()

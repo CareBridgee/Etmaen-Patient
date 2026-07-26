@@ -54,8 +54,7 @@ fun WelcomeScreen(
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
-        showLeadingIcon = true,
-        onLeadingClick = onBack
+        showLeadingIcon = false
     )
 
     Column(

@@ -41,19 +41,23 @@ import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.presentation.ui.profile.ProfileAllergyOption
+import com.carenest.domain.model.profile.AllergyType
 
 @Composable
 fun AllergiesScreen(
     hasNoKnownAllergies: Boolean,
-    selectedDrugAllergies: Set<String>,
-    selectedFoodAllergies: Set<String>,
+    allergies: List<ProfileAllergyOption>,
+    selectedAllergyIds: Set<String>,
     otherAllergies: String,
+    selectionError: String? = null,
+    otherAllergiesError: String? = null,
     onNoKnownAllergiesToggle: () -> Unit,
-    onDrugAllergyToggle: (String) -> Unit,
-    onFoodAllergyToggle: (String) -> Unit,
+    onAllergyToggle: (String) -> Unit,
     onOtherAllergiesChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -100,6 +104,12 @@ fun AllergiesScreen(
                 checked = hasNoKnownAllergies,
                 onCheckedChange = onNoKnownAllergiesToggle
             )
+            selectionError?.let {
+                BasicText(
+                    text = it,
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                )
+            }
 
             Column(
                 modifier = Modifier.alpha(if (hasNoKnownAllergies) 0.45f else 1f),
@@ -108,18 +118,26 @@ fun AllergiesScreen(
                 AllergyCategory(
                     title = stringResource(R.string.allergies_drug_title),
                     icon = Icons.Outlined.Medication,
-                    options = stringResource(R.string.allergies_drug_options).split(","),
-                    selectedOptions = selectedDrugAllergies,
+                    options = allergies.filter { it.type == AllergyType.DRUG },
+                    selectedOptions = selectedAllergyIds,
                     enabled = !hasNoKnownAllergies,
-                    onOptionClick = onDrugAllergyToggle
+                    onOptionClick = onAllergyToggle
                 )
                 AllergyCategory(
                     title = stringResource(R.string.allergies_food_title),
                     icon = Icons.Outlined.Restaurant,
-                    options = stringResource(R.string.allergies_food_options).split(","),
-                    selectedOptions = selectedFoodAllergies,
+                    options = allergies.filter { it.type == AllergyType.FOOD },
+                    selectedOptions = selectedAllergyIds,
                     enabled = !hasNoKnownAllergies,
-                    onOptionClick = onFoodAllergyToggle
+                    onOptionClick = onAllergyToggle
+                )
+                AllergyCategory(
+                    title = stringResource(R.string.allergies_other_title),
+                    icon = Icons.Outlined.HealthAndSafety,
+                    options = allergies.filter { it.type == AllergyType.OTHER },
+                    selectedOptions = selectedAllergyIds,
+                    enabled = !hasNoKnownAllergies,
+                    onOptionClick = onAllergyToggle
                 )
                 CustomTextField(
                     text = otherAllergies,
@@ -129,6 +147,8 @@ fun AllergiesScreen(
                     enabled = !hasNoKnownAllergies,
                     fieldHeight = 96.dp,
                     fieldVerticalAlignment = Alignment.Top,
+                    isError = otherAllergiesError != null,
+                    errorMessage = otherAllergiesError,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -136,7 +156,9 @@ fun AllergiesScreen(
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -192,7 +214,7 @@ private fun NoKnownAllergiesCard(checked: Boolean, onCheckedChange: () -> Unit) 
 private fun AllergyCategory(
     title: String,
     icon: ImageVector,
-    options: List<String>,
+    options: List<ProfileAllergyOption>,
     selectedOptions: Set<String>,
     enabled: Boolean,
     onOptionClick: (String) -> Unit
@@ -222,10 +244,10 @@ private fun AllergyCategory(
         ) {
             options.forEach { option ->
                 AllergyChip(
-                    text = option,
-                    selected = option in selectedOptions,
+                    text = option.label,
+                    selected = option.id in selectedOptions,
                     enabled = enabled,
-                    onClick = { onOptionClick(option) }
+                    onClick = { onOptionClick(option.id) }
                 )
             }
         }
@@ -268,12 +290,14 @@ private fun AllergiesScreenPreview() {
     SpTheme {
         AllergiesScreen(
             hasNoKnownAllergies = false,
-            selectedDrugAllergies = setOf("Penicillin"),
-            selectedFoodAllergies = setOf("Peanuts", "Dairy"),
+            allergies = listOf(
+                ProfileAllergyOption("allergy-1", "Penicillin", AllergyType.DRUG),
+                ProfileAllergyOption("allergy-2", "Peanuts", AllergyType.FOOD)
+            ),
+            selectedAllergyIds = setOf("allergy-1"),
             otherAllergies = "",
             onNoKnownAllergiesToggle = {},
-            onDrugAllergyToggle = {},
-            onFoodAllergyToggle = {},
+            onAllergyToggle = {},
             onOtherAllergiesChange = {},
             onBack = {},
             onContinue = {}

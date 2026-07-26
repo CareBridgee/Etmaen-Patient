@@ -45,6 +45,8 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.domain.model.profile.ProfileField
+import com.carenest.presentation.ui.profile.validation.localizedMessage
 import com.carenest.presentation.navigation.ScreenTopBar
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -55,8 +57,8 @@ import java.util.TimeZone
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onNavigateToWelcome: () -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel(),
-    onNavigateHome: () -> Unit
+    onNavigateHome: () -> Unit,
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -83,9 +85,13 @@ internal fun RegisterScreenContent(
 
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
-        showLeadingIcon = true,
-        onLeadingClick = { onEvent(RegisterIntent.BackClicked) }
+        showLeadingIcon = false
     )
+
+    if (state.isInitializing) {
+        RegisterLoadingShimmer()
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -126,10 +132,11 @@ internal fun RegisterScreenContent(
                         onEvent(RegisterIntent.FirstNameChanged(it))
                     },
                     title = stringResource(R.string.personal_info_first_name_title),
-                    hint = stringResource(R.string.personal_info_first_name_hint),
                     singleLine = true,
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
+                    isError = state.validationErrors[ProfileField.FirstName] != null,
+                    errorMessage = state.validationErrors[ProfileField.FirstName].localizedMessage(),
                     modifier = Modifier.weight(1f)
                 )
                 CustomTextField(
@@ -138,10 +145,11 @@ internal fun RegisterScreenContent(
                         onEvent(RegisterIntent.LastNameChanged(it))
                     },
                     title = stringResource(R.string.personal_info_last_name_title),
-                    hint = stringResource(R.string.personal_info_last_name_hint),
                     singleLine = true,
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
+                    isError = state.validationErrors[ProfileField.LastName] != null,
+                    errorMessage = state.validationErrors[ProfileField.LastName].localizedMessage(),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -160,10 +168,15 @@ internal fun RegisterScreenContent(
                 singleLine = true,
                 fieldHeight = 48.dp,
                 containerColor = Theme.colors.disable,
+                isError = state.validationErrors[ProfileField.DateOfBirth] != null,
+                errorMessage = state.validationErrors[ProfileField.DateOfBirth].localizedMessage(),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+                modifier = Modifier.fillMaxWidth()
+            )
+
 
 
             BasicText(
@@ -176,21 +189,32 @@ internal fun RegisterScreenContent(
                 stringResource(R.string.personal_info_gender_male),
                 stringResource(R.string.personal_info_gender_female)
             )
+            val genderValues = listOf("MALE", "FEMALE")
             SegmentedControl(
                 items = genderOptions,
-                selectedIndex = genderOptions.indexOf(state.gender),
+                selectedIndex = genderValues.indexOf(state.gender),
                 onItemSelected = {
-                    onEvent(RegisterIntent.GenderChanged(genderOptions[it]))
+                    onEvent(RegisterIntent.GenderChanged(genderValues[it]))
                 }
             )
+            state.validationErrors[ProfileField.Gender].localizedMessage()?.let { validationMessage ->
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(text = validationMessage, color = Theme.colors.error)
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             PrimaryButton(
                 caption = stringResource(R.string.personal_info_continue_btn),
                 onClick = { onEvent(RegisterIntent.ContinueClicked) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isDisabled = state.isSubmitting,
+                isLoading = state.isSubmitting
             )
+            state.errorMessage?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = it, color = Theme.colors.error)
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -200,8 +224,36 @@ internal fun RegisterScreenContent(
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = parseDateOfBirth(state.dateOfBirth)
         )
+        val datePickerColors = DatePickerDefaults.colors(
+            containerColor = Theme.colors.surface,
+            titleContentColor = Theme.colors.primaryFont,
+            headlineContentColor = Theme.colors.primaryFont,
+            weekdayContentColor = Theme.colors.secondaryFont,
+            subheadContentColor = Theme.colors.primaryFont,
+            navigationContentColor = Theme.colors.primary,
+            yearContentColor = Theme.colors.primaryFont,
+            disabledYearContentColor = Theme.colors.onDisable,
+            currentYearContentColor = Theme.colors.primary,
+            selectedYearContentColor = Theme.colors.onPrimary,
+            disabledSelectedYearContentColor = Theme.colors.onDisable,
+            selectedYearContainerColor = Theme.colors.primary,
+            disabledSelectedYearContainerColor = Theme.colors.disable,
+            dayContentColor = Theme.colors.primaryFont,
+            disabledDayContentColor = Theme.colors.onDisable,
+            selectedDayContentColor = Theme.colors.onPrimary,
+            disabledSelectedDayContentColor = Theme.colors.onDisable,
+            selectedDayContainerColor = Theme.colors.primary,
+            disabledSelectedDayContainerColor = Theme.colors.disable,
+            todayContentColor = Theme.colors.primary,
+            todayDateBorderColor = Theme.colors.primary,
+            dayInSelectionRangeContainerColor = Theme.colors.primaryContainer,
+            dayInSelectionRangeContentColor = Theme.colors.onPrimaryContainer,
+            dividerColor = Theme.colors.divider
+        )
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
+            colors = datePickerColors,
+            tonalElevation = 0.dp,
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -231,17 +283,7 @@ internal fun RegisterScreenContent(
         ) {
             DatePicker(
                 state = datePickerState,
-                colors = DatePickerDefaults.colors(
-                    containerColor = Theme.colors.surface,
-                    titleContentColor = Theme.colors.primaryFont,
-                    headlineContentColor = Theme.colors.primaryFont,
-                    weekdayContentColor = Theme.colors.secondaryFont,
-                    dayContentColor = Theme.colors.primaryFont,
-                    selectedDayContainerColor = Theme.colors.primary,
-                    selectedDayContentColor = Theme.colors.onPrimary,
-                    todayContentColor = Theme.colors.primary,
-                    todayDateBorderColor = Theme.colors.primary
-                )
+                colors = datePickerColors
             )
         }
     }
@@ -299,10 +341,11 @@ private fun RegisterScreenPreview() {
     SpTheme {
         RegisterScreenContent(
             state = RegisterState(
-                firstName = "Jane",
-                lastName = "Doe",
-                dateOfBirth = "01/15/1990",
-                gender = "Female"
+                firstName = "",
+                lastName = "",
+                dateOfBirth = "",
+                gender = "",
+                isInitializing = false
             ),
             onEvent = {}
         )
