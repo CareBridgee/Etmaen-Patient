@@ -48,4 +48,7 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data class AIChat(val patientId: String) : AppRoute
+
+     @Serializable
+     data class NurseOnTheWay(val requestId: String) : AppRoute
 }

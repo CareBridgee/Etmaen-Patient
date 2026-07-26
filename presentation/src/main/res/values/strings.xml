@@ -262,4 +262,23 @@
   <string name="ask_health_profile">Ask about your health profile...</string>
   <string name="book_now">Book Now</string>
   <string name="view_service">View Service</string>
+
+  <!-- Nurse Tracking -->
+  <string name="nurse_on_the_way_title">Your Nurse Is on the Way</string>
+  <string name="nurse_on_the_way_subtitle">Your professional nurse is on their way to assist you.</string>
+  <string name="nurse_on_the_way_cancellation_notice">You can cancel within %1$d minutes after the visit starts. After that, a cancellation fee will apply.</string>
+  <string name="nurse_on_the_way_reviews_count">%1$d Reviews</string>
+  <string name="nurse_on_the_way_estimated_arrival_label">Estimated Arrival</string>
+  <string name="nurse_on_the_way_call_nurse_content_description">Call nurse</string>
+  <string name="nurse_on_the_way_message_nurse_content_description">Message nurse</string>
+  <string name="nurse_on_the_way_distance_label">Distance</string>
+  <string name="nurse_on_the_way_distance_value">%1$.1f km</string>
+  <string name="nurse_on_the_way_specialty_label">Specialty</string>
+  <string name="nurse_on_the_way_show_qr_code_button">Show QR Code</string>
+  <string name="nurse_on_the_way_cancel_button">Cancel</string>
+  <string name="nurse_on_the_way_cancel_dialog_title">Cancel this visit?</string>
+  <string name="nurse_on_the_way_cancel_dialog_message">Are you sure you want to cancel? If the free cancellation window has passed, a fee will apply.</string>
+  <string name="nurse_on_the_way_cancel_dialog_confirm">Yes, Cancel</string>
+  <string name="nurse_on_the_way_cancel_dialog_dismiss">Keep Visit</string>
+
 </resources>

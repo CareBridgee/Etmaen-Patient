@@ -9,7 +9,6 @@ import com.carenest.domain.repository.HomeRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class HomeRepositoryImpl @Inject constructor(
     private val homeDatasource: HomeDatasource
 ) : HomeRepository {
