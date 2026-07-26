@@ -263,6 +263,29 @@
   <string name="book_now">Book Now</string>
   <string name="view_service">View Service</string>
 
+  <!-- Search For Nurse -->
+  <string name="request_status">Request Status</string>
+  <string name="searching_for_available">Searching for an available nurse…</string>
+  <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.\n</string>
+  <string name="nurse_active_nearby">%1$d nurses active nearby</string>
+  <string name="nurse_name_format">%1$s,</string>
+  <string name="nurse_review_format"> • %1$d %2$s</string>
+  <string name="nurse_price_format">$%1$.0f</string>
+  <string name="nurse_area_format">%1$s • %2$.1f %3$s</string>
+  <string name="decline">Decline</string>
+  <string name="accept">Accept</string>
+  <string name="km">km</string>
+  <string name="reviews">reviews</string>
+  <!-- Chat Screen -->
+  <string name="chat_back_content_description">Back</string>
+  <string name="chat_call_content_description">Call nurse</string>
+  <string name="chat_send_content_description">Send message</string>
+  <string name="chat_status_active_now">Active Now</string>
+  <string name="chat_status_offline">Offline</string>
+  <string name="chat_input_placeholder">Type a message…</string>
+  <string name="chat_quick_tip_title">Quick Tip</string>
+  <string name="chat_message_seen">Seen</string>
+
   <!-- Nurse Tracking -->
   <string name="nurse_on_the_way_title">Your Nurse Is on the Way</string>
   <string name="nurse_on_the_way_subtitle">Your professional nurse is on their way to assist you.</string>
@@ -280,6 +303,61 @@
   <string name="nurse_on_the_way_cancel_dialog_message">Are you sure you want to cancel? If the free cancellation window has passed, a fee will apply.</string>
   <string name="nurse_on_the_way_cancel_dialog_confirm">Yes, Cancel</string>
   <string name="nurse_on_the_way_cancel_dialog_dismiss">Keep Visit</string>
+
+    <string name="wallet_title">Wallet</string>
+    <string name="wallet_balance_value">EGP %1$s</string>
+    <string name="wallet_balance_auto_refill">WALLET BALANCE:Auto refill is %1$s</string>
+    <string name="wallet_on">on</string>
+    <string name="wallet_off">off</string>
+    <string name="wallet_add_funds">Add Funds</string>
+    <string name="wallet_payment_methods">Payment methods</string>
+    <string name="wallet_cash">Cash</string>
+    <string name="wallet_add_payment_method">Add payment method</string>
+    <string name="wallet_add_payment_method_title">Add payment method</string>
+    <string name="wallet_ride_profiles">Ride Profiles</string>
+    <string name="wallet_personal">Personal</string>
+    <string name="wallet_business">Business</string>
+    <string name="wallet_business_subtitle">Turn on business travel features</string>
+    <string name="wallet_top_up_title">Wallet Top-up</string>
+    <string name="wallet_top_up_description">How much do you want to add to your Wallet balance?</string>
+    <string name="wallet_currency">EGP</string>
+    <string name="wallet_zero_amount">0.00</string>
+    <string name="wallet_amount_helper">Enter an amount between EGP120.00 and EGP1,240.00</string>
+    <string name="wallet_suggested_amount">EGP\n%d.00</string>
+    <string name="wallet_terms_apply">Terms apply</string>
+    <string name="wallet_payment_method_label">PAYMENT METHOD</string>
+    <string name="wallet_required">Required</string>
+    <string name="wallet_payment_description">Select a payment method to securely pay for your nursing services and care packages.</string>
+    <string name="wallet_credit_card">Credit or debit card</string>
+    <string name="wallet_paypal">PayPal</string>
+    <string name="wallet_fawry_cash">Fawry Cash</string>
+    <string name="wallet_meeza_card">Meeza Card</string>
+    <string name="wallet_mobile_wallets">Mobile Wallets</string>
+    <string name="wallet_secure_payments">SECURE ENCRYPTED PAYMENTS</string>
+    <string name="wallet_secure_payments_description">Your payment details are processed securely and never stored directly on our servers.</string>
+    <string name="wallet_balance">Wallet Balance</string>
+  <string name="wallet_auto_refill_on">Auto refill is on</string>
+  <string name="wallet_auto_refill_off">Auto refill is off</string>
+  <!-- visit summary -->
+  <string name="visit_completed_menu_content_description">Menu</string>
+  <string name="visit_completed_title">Visit Completed</string>
+  <string name="visit_completed_subtitle">Your medical professional has finalized the session report. Thank you for choosing CareMatch.</string>
+  <string name="visit_completed_summary_title">SUMMARY DETAIL</string>
+  <string name="visit_completed_verified_badge">Verified Visit</string>
+  <string name="visit_completed_professional_label">Medical Professional</string>
+  <string name="visit_completed_service_type_label">Service Type</string>
+  <string name="visit_completed_duration_label">Visit Duration</string>
+  <string name="visit_completed_duration_value">%1$d mins</string>
+  <string name="visit_completed_date_label">Completed Date</string>
+  <string name="visit_completed_total_amount_label">TOTAL AMOUNT DUE</string>
+  <string name="visit_completed_total_amount_value">$%1$.2f</string>
+  <string name="visit_completed_back_home_button">Back to Home</string>
+
+  <string name="visit_rating_title">How was your visit?</string>
+  <string name="visit_rating_subtitle">Your feedback helps us provide better care for everyone.</string>
+  <string name="visit_rating_star_content_description">%1$d star</string>
+  <string name="visit_rating_submit_button">Submit</string>
+  <string name="visit_rating_skip_button">Skip</string>
 
 
   <!-- Emergency Assistance -->

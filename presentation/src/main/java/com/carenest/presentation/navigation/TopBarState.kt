@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.painter.Painter
+import com.carenest.designsystem.components.topbar.TopBarAction
 
 import androidx.compose.ui.platform.LocalInspectionMode
 
@@ -12,7 +13,10 @@ data class TopBarConfiguration(
     val title: String? = null,
     val showLeadingIcon: Boolean = false,
     val onLeadingClick: (() -> Unit)? = null,
-    val leadingIcon: Painter? = null
+    val leadingIcon: Painter? = null,
+    val profileImage: Painter? = null,
+    val onProfileClick: (() -> Unit)? = null,
+    val trailingAction: TopBarAction? = null,
 )
 
 val LocalTopBarState = compositionLocalOf { mutableStateOf(TopBarConfiguration()) }
@@ -22,17 +26,25 @@ fun ScreenTopBar(
     title: String,
     showLeadingIcon: Boolean = true,
     leadingIcon: Painter? = null,
-    onLeadingClick: (() -> Unit)? = null
+    onLeadingClick: (() -> Unit)? = null,
+    profileImage: Painter? = null,
+    onProfileClick: (() -> Unit)? = null,
+    trailingAction: TopBarAction? = null,
 ) {
     if (LocalInspectionMode.current) return
     val topBarState = LocalTopBarState.current
 
-    DisposableEffect(title, showLeadingIcon, onLeadingClick, leadingIcon) {
+    DisposableEffect(
+        title, showLeadingIcon, onLeadingClick, leadingIcon, profileImage, onProfileClick, trailingAction
+    ) {
         topBarState.value = TopBarConfiguration(
             title = title,
             showLeadingIcon = showLeadingIcon,
             onLeadingClick = onLeadingClick,
-            leadingIcon = leadingIcon
+            leadingIcon = leadingIcon,
+            profileImage = profileImage,
+            onProfileClick = onProfileClick,
+            trailingAction = trailingAction,
         )
         onDispose { /* State persists until the next screen overrides it */ }
     }

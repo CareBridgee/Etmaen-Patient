@@ -1,3 +1,14 @@
 <resources>
-
+    <string name="request_service_listening">جاري الاستماع…</string>
+    <string name="permission_audio_title">مطلوب إذن الوصول إلى الميكروفون</string>
+    <string name="permission_audio_rationale">يحتاج هذا التطبيق إلى الوصول إلى الميكروفون لاستخدام ميزة التعرف على الكلام لمساعدتك في كتابة الوصف.</string>
+    <string name="payment_info_banner">قد يتم تطبيق رسوم معالجة اعتماداً على سياسة مزود الدفع الخاص بك.</string>
+    <string name="payment_confirm_btn">تأكيد الدفع</string>
+    <string name="payment_method_cod">الدفع عند الاستلام</string>
+    <string name="payment_method_cod_desc">ادفع عند اكتمال الخدمة</string>
+    <string name="payment_method_paymob">بطاقة ائتمان / خصم</string>
+    <string name="payment_method_paymob_desc">ادفع بأمان باستخدام بطاقتك</string>
+    <string name="request_service_success">تم تقديم الطلب بنجاح</string>
+    <string name="request_service_no_address">لم يتم اختيار عنوان</string>
+    <string name="common_guest">زائر</string>
 </resources>

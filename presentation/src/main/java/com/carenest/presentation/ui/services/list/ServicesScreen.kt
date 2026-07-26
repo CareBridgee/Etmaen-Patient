@@ -58,11 +58,12 @@ import com.carenest.presentation.ui.services.components.ServiceCategoryCard
 import com.carenest.designsystem.R as RD
 
 import com.carenest.domain.model.home.HealthcareService
-import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.model.HealthcareServiceUiModel
+import com.carenest.presentation.model.toUiModel
 
 @Composable
 fun ServicesScreen(
-    onNavigateToDetails: (ServiceCategory) -> Unit,
+    onNavigateToDetails: (HealthcareServiceUiModel) -> Unit,
     onOpenFilters: () -> Unit = {},
     onOpenCareCoordinator: () -> Unit = {},
     viewModel: ServicesViewModel = hiltViewModel(),
@@ -71,7 +72,7 @@ fun ServicesScreen(
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is ServicesEffect.NavigateToDetails -> onNavigateToDetails(effect.category)
+            is ServicesEffect.NavigateToDetails -> onNavigateToDetails(effect.service)
             ServicesEffect.OpenFilters -> onOpenFilters()
             ServicesEffect.OpenCareCoordinator -> onOpenCareCoordinator()
         }
@@ -137,7 +138,7 @@ internal fun ServicesScreenContent(
                 Spacer(Modifier.height(Theme.spacing.space12))
                 CategoryGrid(
                     services = state.filteredServices,
-                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.category)) },
+                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.toUiModel())) },
                 )
             }
         }

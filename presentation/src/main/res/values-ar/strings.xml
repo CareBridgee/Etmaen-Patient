@@ -1,273 +1,297 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_booking">الحجوزات</string>
+    <string name="nav_services">الخدمات</string>
+    <string name="nav_profile">الملف الشخصي</string>
 
-  <string name="nav_home">الرئيسية</string>
-  <string name="nav_booking">الحجوزات</string>
-  <string name="nav_services">الخدمات</string>
-  <string name="nav_profile">الملف الشخصي</string>
+    <!-- Auth Landing -->
+    <string name="auth_title">كير كونيكت</string>
+    <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
+    <string name="auth_continue_google">المتابعة باستخدام Google</string>
+    <string name="auth_continue_apple">المتابعة باستخدام Apple</string>
+    <string name="auth_continue_phone">المتابعة باستخدام رقم الهاتف</string>
+    <string name="auth_terms_agreement">الانضمام إلى تطبيقنا يعني موافقتك على شروط الاستخدام وسياسة الخصوصية</string>
 
-  <!-- Auth Landing -->
-  <string name="auth_title">كير كونيكت</string>
-  <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
-  <string name="auth_continue_google">المتابعة باستخدام Google</string>
-  <string name="auth_continue_apple">المتابعة باستخدام Apple</string>
-  <string name="auth_continue_phone">المتابعة باستخدام رقم الهاتف</string>
-  <string name="auth_terms_agreement">الانضمام إلى تطبيقنا يعني موافقتك على شروط الاستخدام وسياسة الخصوصية</string>
+    <!-- Phone Input -->
+    <string name="phone_input_topbar_title">انضم إلينا عبر رقم الهاتف</string>
+    <string name="phone_input_subtitle">سنرسل رمزاً للتحقق من رقم هاتفك.</string>
+    <string name="phone_input_label">رقم الهاتف</string>
+    <string name="phone_input_carrier_charges">قد تطبق شركة الاتصالات رسوماً على الرسائل النصية.</string>
+    <string name="phone_input_next_btn">التالي</string>
+    <string name="phone_header_brand">الرعاية الآمنة</string>
+    <string name="phone_otp_method_title">اختر الطريقة التي تريد تلقي رمز التحقق من خلالها</string>
+    <string name="phone_otp_sms_title">رسالة نصية</string>
+    <string name="phone_otp_sms_subtitle">استلام رمز التحقق عبر رسالة نصية</string>
+    <string name="phone_otp_whatsapp_title">واتساب</string>
+    <string name="phone_otp_whatsapp_subtitle">استلام رمز التحقق بأمان عبر واتساب</string>
+    <string name="phone_continue_btn">متابعة</string>
+    <string name="phone_input_secure_care_desc">يستخدم رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
+    <string name="phone_input_via_whatsapp">عبر واتساب</string>
+    <string name="phone_input_via_sms">عبر رسالة نصية</string>
 
-  <!-- Phone Input -->
-  <string name="phone_input_topbar_title">انضم إلينا عبر رقم الهاتف</string>
-  <string name="phone_input_subtitle">سنرسل رمزاً للتحقق من رقم هاتفك.</string>
-  <string name="phone_input_label">رقم الهاتف</string>
-  <string name="phone_input_carrier_charges">قد تطبق شركة الاتصالات رسوماً على الرسائل النصية.</string>
-  <string name="phone_input_next_btn">التالي</string>
+    <!-- OTP -->
+    <string name="otp_title">التحقق من الهاتف</string>
+    <string name="otp_subtitle">أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
+    <string name="otp_verify_btn">تحقق</string>
+    <string name="otp_resend_timer">إعادة إرسال الرمز خلال 00:30</string>
+    <string name="otp_app_name">CareConnect</string>
 
-  <!-- OTP -->
-  <string name="otp_title">التحقق من الهاتف</string>
-  <string name="otp_subtitle">أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
-  <string name="otp_verify_btn">تحقق</string>
-  <string name="otp_resend_timer">إعادة إرسال الرمز خلال 00:30</string>
+    <!-- Welcome -->
+    <string name="welcome_topbar_title">كير كونيكت</string>
+    <string name="welcome_title">مرحباً بك في كير كونيكت</string>
+    <string name="welcome_subtitle">حسابك جاهز! لتقديم أفضل دعم ممكن، نقترح إكمال ملفك الصحي.</string>
+    <string name="welcome_complete_profile_btn">إكمال الملف الصحي\n(موصى به)</string>
+    <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك لاحقاً</string>
+    <string name="welcome_complete_profile_title">إكمال الملف الصحي</string>
+    <string name="welcome_recommended">(موصى به)</string>
+    <string name="welcome_skip_title">تخطي الآن</string>
+    <string name="welcome_skip_subtitle">إعداد ملفك لاحقاً</string>
+    <string name="welcome_skip_warning">قد يؤدي تخطي هذه الخطوة إلى تقليل دقة التقييم بالذكاء الاصطناعي ومطابقة الممرضين. بياناتك مشفرة ومحمية.</string>
+    <string name="welcome_feature_secure">آمن</string>
+    <string name="welcome_feature_fast">سريع</string>
+    <string name="welcome_feature_verified">موثق</string>
 
-  <!-- Welcome -->
-  <string name="welcome_topbar_title">كير كونيكت</string>
-  <string name="welcome_title">مرحباً بك في كير كونيكت</string>
-  <string name="welcome_subtitle">حسابك جاهز! لتقديم أفضل دعم ممكن، نقترح إكمال ملفك الصحي.</string>
-  <string name="welcome_complete_profile_btn">إكمال الملف الصحي\n(موصى به)</string>
-  <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك لاحقاً</string>
-  <string name="welcome_complete_profile_title">إكمال الملف الصحي</string>
-  <string name="welcome_recommended">(موصى به)</string>
-  <string name="welcome_skip_title">تخطي الآن</string>
-  <string name="welcome_skip_subtitle">إعداد ملفك لاحقاً</string>
-  <string name="welcome_skip_warning">قد يؤدي تخطي هذه الخطوة إلى تقليل دقة التقييم بالذكاء الاصطناعي ومطابقة الممرضين. بياناتك مشفرة ومحمية.</string>
-  <string name="welcome_feature_secure">آمن</string>
-  <string name="welcome_feature_fast">سريع</string>
-  <string name="welcome_feature_verified">موثق</string>
+    <!-- Personal Info -->
+    <string name="registration_progress_label">التسجيل</string>
+    <string name="personal_info_step_title">التفاصيل الشخصية</string>
+    <string name="personal_info_title">المعلومات الشخصية</string>
+    <string name="personal_info_first_name_title">الاسم الأول</string>
+    <string name="personal_info_first_name_hint">الاسم الأول</string>
+    <string name="personal_info_last_name_title">اسم العائلة</string>
+    <string name="personal_info_last_name_hint">اسم العائلة</string>
+    <string name="personal_info_dob_title">تاريخ الميلاد</string>
+    <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
+    <string name="personal_info_date_confirm">تأكيد</string>
+    <string name="personal_info_date_cancel">إلغاء</string>
+    <string name="personal_info_national_id_title">الرقم القومي</string>
+    <string name="personal_info_national_id_hint">0000000000000000</string>
+    <string name="personal_info_gender_title">النوع</string>
+    <string name="personal_info_gender_male">ذكر</string>
+    <string name="personal_info_gender_female">أنثى</string>
+    <string name="personal_info_account_type_title">نوع الحساب</string>
+    <string name="personal_info_account_type_family">عائلي</string>
+    <string name="personal_info_account_type_personal">شخصي</string>
+    <string name="personal_info_continue_btn">متابعة</string>
 
-  <!-- Personal Info -->
-  <string name="registration_progress_label">التسجيل</string>
-  <string name="personal_info_step_title">التفاصيل الشخصية</string>
-  <string name="personal_info_title">المعلومات الشخصية</string>
-  <string name="personal_info_first_name_title">الاسم الأول</string>
-  <string name="personal_info_first_name_hint">الاسم الأول</string>
-  <string name="personal_info_last_name_title">اسم العائلة</string>
-  <string name="personal_info_last_name_hint">اسم العائلة</string>
-  <string name="personal_info_dob_title">تاريخ الميلاد</string>
-  <string name="personal_info_dob_hint">شهر/يوم/سنة</string>
-  <string name="personal_info_date_confirm">تأكيد</string>
-  <string name="personal_info_date_cancel">إلغاء</string>
-  <string name="personal_info_national_id_title">الرقم القومي</string>
-  <string name="personal_info_national_id_hint">0000000000000000</string>
-  <string name="personal_info_gender_title">النوع</string>
-  <string name="personal_info_gender_male">ذكر</string>
-  <string name="personal_info_gender_female">أنثى</string>
-  <string name="personal_info_account_type_title">نوع الحساب</string>
-  <string name="personal_info_account_type_family">عائلي</string>
-  <string name="personal_info_account_type_personal">شخصي</string>
-  <string name="personal_info_continue_btn">متابعة</string>
+    <!-- Profile Completion -->
+    <string name="profile_step_format">الخطوة %1$d من %2$d</string>
+    <string name="profile_onboarding_label">إعداد الحساب</string>
+    <string name="profile_health_profile">الملف الصحي</string>
+    <string name="profile_back">رجوع</string>
+    <string name="profile_continue">متابعة  ‹</string>
 
-  <!-- Profile Completion -->
-  <string name="profile_step_format">الخطوة %1$d من %2$d</string>
-  <string name="profile_onboarding_label">إعداد الحساب</string>
-  <string name="profile_health_profile">الملف الصحي</string>
-  <string name="profile_back">رجوع</string>
-  <string name="profile_continue">متابعة  ‹</string>
+    <!-- Basic Health Info -->
+    <string name="basic_health_title">المعلومات الصحية الأساسية</string>
+    <string name="basic_health_description">تساعد هذه التفاصيل المختصين لدينا على إعداد خطة رعاية مخصصة تناسب احتياجاتك الجسدية.</string>
+    <string name="basic_health_height">الطول</string>
+    <string name="basic_health_weight">الوزن</string>
+    <string name="basic_health_cm">سم</string>
+    <string name="basic_health_kg">كجم</string>
+    <string name="basic_health_blood_type">فصيلة الدم</string>
+    <string name="basic_health_blood_type_hint">اختر فصيلة الدم</string>
+    <string name="basic_health_blood_types">A+,A−,B+,B−,AB+,AB−,O+,O−</string>
+    <string name="basic_health_blood_type_note">ⓘ يحتاج مقدمو خدمات الطوارئ إلى هذه المعلومة في الحالات الحرجة.</string>
 
-  <!-- Basic Health Info -->
-  <string name="basic_health_title">المعلومات الصحية الأساسية</string>
-  <string name="basic_health_description">تساعد هذه التفاصيل المختصين لدينا على إعداد خطة رعاية مخصصة تناسب احتياجاتك الجسدية.</string>
-  <string name="basic_health_height">الطول</string>
-  <string name="basic_health_weight">الوزن</string>
-  <string name="basic_health_cm">سم</string>
-  <string name="basic_health_kg">كجم</string>
-  <string name="basic_health_blood_type">فصيلة الدم</string>
-  <string name="basic_health_blood_type_hint">اختر فصيلة الدم</string>
-  <string name="basic_health_blood_types">A+,A−,B+,B−,AB+,AB−,O+,O−</string>
-  <string name="basic_health_blood_type_note">ⓘ يحتاج مقدمو خدمات الطوارئ إلى هذه المعلومة في الحالات الحرجة.</string>
+    <!-- Medical Conditions -->
+    <string name="medical_conditions_progress_title">الحالات المرضية</string>
+    <string name="medical_conditions_title">هل لديك أي حالات مرضية؟</string>
+    <string name="medical_conditions_description">حدد جميع الحالات التي تنطبق عليك لمساعدتنا في تقديم رعاية أكثر تخصيصاً لاحتياجاتك.</string>
+    <string name="condition_diabetes">السكري</string>
+    <string name="condition_hypertension">ارتفاع ضغط الدم</string>
+    <string name="condition_heart_disease">أمراض القلب</string>
+    <string name="condition_asthma">الربو</string>
+    <string name="condition_copd">الانسداد الرئوي المزمن</string>
+    <string name="condition_epilepsy">الصرع</string>
+    <string name="condition_liver_disease">أمراض الكبد</string>
+    <string name="medical_conditions_other_title">≋ أمراض أخرى</string>
+    <string name="medical_conditions_other_hint">أدخل أي أمراض بيئية أو موسمية أو حالات مرضية أخرى...</string>
 
-  <!-- Medical Conditions -->
-  <string name="medical_conditions_progress_title">الحالات المرضية</string>
-  <string name="medical_conditions_title">هل لديك أي حالات مرضية؟</string>
-  <string name="medical_conditions_description">حدد جميع الحالات التي تنطبق عليك لمساعدتنا في تقديم رعاية أكثر تخصيصاً لاحتياجاتك.</string>
-  <string name="condition_diabetes">السكري</string>
-  <string name="condition_hypertension">ارتفاع ضغط الدم</string>
-  <string name="condition_heart_disease">أمراض القلب</string>
-  <string name="condition_asthma">الربو</string>
-  <string name="condition_copd">الانسداد الرئوي المزمن</string>
-  <string name="condition_epilepsy">الصرع</string>
-  <string name="condition_liver_disease">أمراض الكبد</string>
-  <string name="medical_conditions_other_title">≋ أمراض أخرى</string>
-  <string name="medical_conditions_other_hint">أدخل أي أمراض بيئية أو موسمية أو حالات مرضية أخرى...</string>
+    <!-- Allergies -->
+    <string name="allergies_progress_title">الحساسية</string>
+    <string name="allergies_title">الحساسية والحساسيات</string>
+    <string name="allergies_description">يرجى تحديد أي أنواع حساسية لضمان أن تكون خطة الرعاية آمنة وفعالة.</string>
+    <string name="allergies_none_title">لا توجد حساسية معروفة</string>
+    <string name="allergies_none_description">لا أعاني من حساسية تجاه الأدوية أو الأطعمة</string>
+    <string name="allergies_drug_title">حساسية الأدوية</string>
+    <!-- Keep English commas because the UI code uses split(",") -->
+    <string name="allergies_drug_options">البنسلين,أدوية السلفا,الأسبرين,الإيبوبروفين,الليدوكايين,الكودايين,اللاتكس</string>
+    <string name="allergies_food_title">حساسية الطعام</string>
+    <string name="allergies_food_options">الفول السوداني,المحار,منتجات الألبان,البيض,الصويا,المكسرات,القمح/الجلوتين</string>
+    <string name="allergies_other_title">أنواع حساسية أخرى</string>
+    <string name="allergies_other_hint">أدخل أي حساسية بيئية أو موسمية أو أنواع حساسية أخرى...</string>
 
-  <!-- Allergies -->
-  <string name="allergies_progress_title">الحساسية</string>
-  <string name="allergies_title">الحساسية والحساسيات</string>
-  <string name="allergies_description">يرجى تحديد أي أنواع حساسية لضمان أن تكون خطة الرعاية آمنة وفعالة.</string>
-  <string name="allergies_none_title">لا توجد حساسية معروفة</string>
-  <string name="allergies_none_description">لا أعاني من حساسية تجاه الأدوية أو الأطعمة</string>
-  <string name="allergies_drug_title">حساسية الأدوية</string>
+    <!-- Current Medications -->
+    <string name="current_medications_progress" formatted="false">مكتمل بنسبة 50٪</string>
+    <string name="current_medications_title">الأدوية الحالية</string>
+    <string name="current_medications_description">يرجى إدراج جميع الأدوية التي تتناولها حاليًا، مع الجرعة ومعدل التكرار إن أمكن.</string>
+    <string name="current_medications_none_title">لا توجد أدوية حالية</string>
+    <string name="current_medications_none_description">لا أتناول أي أدوية موصوفة</string>
+    <string name="current_medications_hint">اسم الدواء (مثال: ليسينوبريل 10 ملغ)</string>
+    <string name="current_medications_delete">حذف الدواء</string>
+    <string name="current_medications_add">إضافة دواء</string>
 
-  <!-- Keep English commas because the UI code uses split(",") -->
-  <string name="allergies_drug_options">البنسلين,أدوية السلفا,الأسبرين,الإيبوبروفين,الليدوكايين,الكودايين,اللاتكس</string>
+    <!-- Medical History -->
+    <string name="medical_history_title">التاريخ الطبي</string>
+    <string name="medical_history_surgeries">العمليات الجراحية السابقة</string>
+    <string name="medical_history_surgeries_subtitle">اختياري • اذكر العملية والسنة</string>
+    <string name="medical_history_surgeries_hint">مثال: استئصال الزائدة (2015)، استبدال الركبة (2021)…</string>
+    <string name="medical_history_hospitalizations">مرات دخول المستشفى السابقة</string>
+    <string name="medical_history_hospitalizations_subtitle">اختياري • اذكر السبب والمدة</string>
+    <string name="medical_history_hospitalizations_hint">مثال: علاج التهاب رئوي (2019، 5 أيام)…</string>
+    <string name="medical_history_info">تساعد هذه المعلومات فريق الرعاية لدينا على إعداد خطة مساعدة أكثر تخصيصًا لك.</string>
 
-  <string name="allergies_food_title">حساسية الطعام</string>
-  <string name="allergies_food_options">الفول السوداني,المحار,منتجات الألبان,البيض,الصويا,المكسرات,القمح/الجلوتين</string>
+    <!-- Mobility Status -->
+    <string name="mobility_progress_title">حالة الحركة</string>
+    <string name="mobility_title">كيف هي قدرة المريض على الحركة؟</string>
+    <string name="mobility_description">يساعدنا ذلك على توفير المعدات والأخصائي المناسبين للزيارات المنزلية.</string>
+    <string name="mobility_independent">مستقل</string>
+    <string name="mobility_independent_description">يتحرك بحرية دون أي مساعدة</string>
+    <string name="mobility_needs_assistance">يحتاج إلى مساعدة</string>
+    <string name="mobility_needs_assistance_description">يحتاج إلى مساعدة جسدية من شخص آخر</string>
+    <string name="mobility_walking_aid">يستخدم أداة للمشي</string>
+    <string name="mobility_walking_aid_description">عصا أو مشاية أو عكازات</string>
+    <string name="mobility_wheelchair">يستخدم كرسيًا متحركًا</string>
+    <string name="mobility_wheelchair_description">يعتمد على كرسي متحرك يدوي أو كهربائي</string>
+    <string name="mobility_bedridden">طريح الفراش</string>
+    <string name="mobility_bedridden_description">ملازم للفراش معظم اليوم</string>
+    <string name="mobility_notes_title">ملاحظات إضافية (اختياري)</string>
+    <string name="mobility_notes_hint">مثال: سقوط عرضي أو ضعف في أحد الأطراف…</string>
 
-  <string name="allergies_other_title">أنواع حساسية أخرى</string>
-  <string name="allergies_other_hint">أدخل أي حساسية بيئية أو موسمية أو أنواع حساسية أخرى...</string>
+    <!-- Emergency Contact -->
+    <string name="emergency_contact_progress_title">جهة اتصال للطوارئ</string>
+    <string name="emergency_contact_title">جهة اتصال للطوارئ</string>
+    <string name="emergency_contact_description">بمن ينبغي أن نتصل في حالة الطوارئ؟ تساعدنا هذه المعلومات على ضمان سلامتك أثناء زيارات الرعاية.</string>
+    <string name="emergency_contact_name">اسم جهة الاتصال</string>
+    <string name="emergency_contact_name_hint">الاسم القانوني الكامل</string>
+    <string name="emergency_contact_relationship">صلة القرابة</string>
+    <string name="emergency_contact_relationship_hint">اختر صلة القرابة</string>
+    <string name="emergency_contact_phone">رقم الهاتف</string>
+    <string name="emergency_contact_phone_hint">0100 000 0000</string>
+    <string name="emergency_contact_security">بياناتك مشفرة ولا تتم مشاركتها إلا مع المتخصصين الطبيين أثناء جلسات الرعاية النشطة.</string>
+    <string name="emergency_contact_continue">المتابعة إلى الخطوة الأخيرة</string>
+    <string name="relationship_spouse">الزوج أو الزوجة</string>
+    <string name="relationship_parent">أحد الوالدين</string>
+    <string name="relationship_sibling">أخ أو أخت</string>
+    <string name="relationship_adult_child">ابن أو ابنة بالغة</string>
+    <string name="relationship_friend_neighbor">صديق أو جار</string>
+    <string name="relationship_other">أخرى</string>
 
-  <!-- Current Medications -->
-  <string name="current_medications_progress" formatted="false">مكتمل بنسبة 50٪</string>
-  <string name="current_medications_title">الأدوية الحالية</string>
-  <string name="current_medications_description">يرجى إدراج جميع الأدوية التي تتناولها حاليًا، مع الجرعة ومعدل التكرار إن أمكن.</string>
-  <string name="current_medications_none_title">لا توجد أدوية حالية</string>
-  <string name="current_medications_none_description">لا أتناول أي أدوية موصوفة</string>
-  <string name="current_medications_hint">اسم الدواء (مثال: ليسينوبريل 10 ملغ)</string>
-  <string name="current_medications_delete">حذف الدواء</string>
-  <string name="current_medications_add">إضافة دواء</string>
+    <!-- OnBoarding -->
+    <string name="onboarding_title">كير نيست</string>
+    <string name="onboarding_skip">تخطي</string>
+    <string name="onboarding_get_started">ابدأ الآن</string>
+    <string name="onboarding_next">التالي ←</string>
+    <string name="app_name_careconnect">CareConnect</string>
+    <string name="app_name_healthcare">الرعاية الصحية</string>
+    <string name="app_auth_description">رعاية مطمئنة لك ولأحبائك</string>
 
-  <!-- Medical History -->
-  <string name="medical_history_title">التاريخ الطبي</string>
-  <string name="medical_history_surgeries">العمليات الجراحية السابقة</string>
-  <string name="medical_history_surgeries_subtitle">اختياري • اذكر العملية والسنة</string>
-  <string name="medical_history_surgeries_hint">مثال: استئصال الزائدة (2015)، استبدال الركبة (2021)…</string>
-  <string name="medical_history_hospitalizations">مرات دخول المستشفى السابقة</string>
-  <string name="medical_history_hospitalizations_subtitle">اختياري • اذكر السبب والمدة</string>
-  <string name="medical_history_hospitalizations_hint">مثال: علاج التهاب رئوي (2019، 5 أيام)…</string>
-  <string name="medical_history_info">تساعد هذه المعلومات فريق الرعاية لدينا على إعداد خطة مساعدة أكثر تخصيصًا لك.</string>
+    <!-- Services -->
+    <string name="services_greeting">صباح الخير، إيلينا</string>
+    <string name="services_greeting_subtitle">ابحثي عن الرعاية التي تحتاجينها اليوم</string>
+    <string name="services_search_hint">ابحثي عن خدمة (مثال: حقن)</string>
+    <string name="services_categories_title">فئات الخدمات</string>
+    <string name="services_categories_subtitle">رعاية متخصصة تصلك حتى باب المنزل</string>
+    <string name="services_general_nursing">التمريض العام</string>
+    <string name="services_general_nursing_subtitle">فحوصات دورية ورعاية صحية</string>
+    <string name="services_injection">الحقن</string>
+    <string name="services_injection_subtitle">إعطاء الجرعات في المنزل</string>
+    <string name="services_physical_therapy">العلاج الطبيعي</string>
+    <string name="services_physical_therapy_subtitle">دعم الحركة</string>
+    <string name="services_wound_care">العناية بالجروح</string>
+    <string name="services_wound_care_subtitle">رعاية ما بعد الجراحة</string>
+    <string name="services_post_natal">رعاية ما بعد الولادة</string>
+    <string name="services_post_natal_subtitle">للأم والطفل</string>
+    <string name="services_elderly_care">رعاية كبار السن</string>
+    <string name="services_elderly_care_subtitle">دعم يومي</string>
+    <string name="services_iv_drip">المحاليل الوريدية</string>
+    <string name="services_iv_drip_subtitle">علاج الترطيب</string>
+    <string name="services_vaccinations">التطعيمات</string>
+    <string name="services_vaccinations_subtitle">لكل الفئات العمرية</string>
+    <string name="services_chronic_care_title">رعاية الأمراض المزمنة</string>
+    <string name="services_chronic_care_subtitle">السكري وضغط الدم والمزيد</string>
+    <string name="services_consultation_title">لستِ متأكدة مما تحتاجينه؟</string>
+    <string name="services_consultation_subtitle">تحدثي مع منسق الرعاية للحصول على توصية تناسب احتياجاتك.</string>
+    <string name="services_consultation_button">استشيري الآن</string>
 
-  <!-- Mobility Status -->
-  <string name="mobility_progress_title">حالة الحركة</string>
-  <string name="mobility_title">كيف هي قدرة المريض على الحركة؟</string>
-  <string name="mobility_description">يساعدنا ذلك على توفير المعدات والأخصائي المناسبين للزيارات المنزلية.</string>
-  <string name="mobility_independent">مستقل</string>
-  <string name="mobility_independent_description">يتحرك بحرية دون أي مساعدة</string>
-  <string name="mobility_needs_assistance">يحتاج إلى مساعدة</string>
-  <string name="mobility_needs_assistance_description">يحتاج إلى مساعدة جسدية من شخص آخر</string>
-  <string name="mobility_walking_aid">يستخدم أداة للمشي</string>
-  <string name="mobility_walking_aid_description">عصا أو مشاية أو عكازات</string>
-  <string name="mobility_wheelchair">يستخدم كرسيًا متحركًا</string>
-  <string name="mobility_wheelchair_description">يعتمد على كرسي متحرك يدوي أو كهربائي</string>
-  <string name="mobility_bedridden">طريح الفراش</string>
-  <string name="mobility_bedridden_description">ملازم للفراش معظم اليوم</string>
-  <string name="mobility_notes_title">ملاحظات إضافية (اختياري)</string>
-  <string name="mobility_notes_hint">مثال: سقوط عرضي أو ضعف في أحد الأطراف…</string>
+    <!-- Service Details -->
+    <string name="service_details_title">تفاصيل الخدمة</string>
+    <string name="service_details_back">رجوع</string>
+    <string name="service_details_share">مشاركة</string>
+    <string name="service_details_clinical_grade">معايير طبية</string>
+    <string name="service_details_service_title">العلاج بالترطيب الوريدي</string>
+    <string name="service_details_service_subtitle">محلول ترطيب وفيتامينات مخصص لاحتياجاتك.</string>
+    <string name="service_details_average_price">متوسط السعر</string>
+    <string name="service_details_price">189.00 دولار</string>
+    <string name="service_details_duration">المدة</string>
+    <string name="service_details_duration_value">45–60 دقيقة</string>
+    <string name="service_details_about_title">عن هذه الخدمة</string>
+    <string name="service_details_about_body">يقدم العلاج الوريدي متخصصون طبيون معتمدون في راحة منزلك. يساعد هذا العلاج على استعادة توازن السوائل سريعاً ويوصل الفيتامينات الأساسية مباشرة إلى مجرى الدم لتحقيق أقصى استفادة.</string>
+    <string name="service_details_included_title">ما تشمله الخدمة</string>
+    <string name="service_details_included_nurse">انتقال الممرض المسجل إلى المنزل وتجهيز الخدمة</string>
+    <string name="service_details_included_monitoring">مراقبة المؤشرات الحيوية والفحص الصحي</string>
+    <string name="service_details_included_solution">1000 مل من المحلول الملحي أو محلول رينجر اللاكتاتي</string>
+    <string name="service_details_included_booster">جرعة فيتامينات مخصصة (فيتامينات ب المركبة + فيتامين ج)</string>
+    <string name="service_details_included_supplies">مستلزمات طبية عالية الجودة للاستخدام مرة واحدة</string>
+    <string name="service_details_information_note">يرجى ملاحظة أن استبياناً صحياً مختصراً مطلوب قبل وصول المتخصص لضمان السلامة.</string>
+    <string name="service_details_request_button">اطلبي هذه الخدمة</string>
 
-  <!-- Emergency Contact -->
-  <string name="emergency_contact_progress_title">جهة اتصال للطوارئ</string>
-  <string name="emergency_contact_title">جهة اتصال للطوارئ</string>
-  <string name="emergency_contact_description">بمن ينبغي أن نتصل في حالة الطوارئ؟ تساعدنا هذه المعلومات على ضمان سلامتك أثناء زيارات الرعاية.</string>
-  <string name="emergency_contact_name">اسم جهة الاتصال</string>
-  <string name="emergency_contact_name_hint">الاسم القانوني الكامل</string>
-  <string name="emergency_contact_relationship">صلة القرابة</string>
-  <string name="emergency_contact_relationship_hint">اختر صلة القرابة</string>
-  <string name="emergency_contact_phone">رقم الهاتف</string>
-  <string name="emergency_contact_phone_hint">0100 000 0000</string>
-  <string name="emergency_contact_security">بياناتك مشفرة ولا تتم مشاركتها إلا مع المتخصصين الطبيين أثناء جلسات الرعاية النشطة.</string>
-  <string name="emergency_contact_continue">المتابعة إلى الخطوة الأخيرة</string>
-  <string name="relationship_spouse">الزوج أو الزوجة</string>
-  <string name="relationship_parent">أحد الوالدين</string>
-  <string name="relationship_sibling">أخ أو أخت</string>
-  <string name="relationship_adult_child">ابن أو ابنة بالغة</string>
-  <string name="relationship_friend_neighbor">صديق أو جار</string>
-  <string name="relationship_other">أخرى</string>
+    <!-- Home Screen -->
+    <string name="home_ai_powered">مدعوم بالذكاء الاصطناعي</string>
+    <string name="home_ai_title">التقييم الصحي بالذكاء الاصطناعي</string>
+    <string name="home_ai_description">صف الأعراض الخاصة بك، واحصل على مطابقة فورية مع المتخصصين.</string>
+    <string name="home_ai_start_chat">ابدأ المحادثة</string>
+    <string name="home_history_title">حجوزاتي</string>
+    <string name="home_bookings_manage">الكل</string>
+    <string name="home_bookings_empty">لا توجد حجوزات قادمة</string>
+    <string name="home_services_title">خدمات الرعاية الصحية</string>
+    <string name="home_services_view_all">عرض الكل</string>
+    <string name="home_services_search_empty_title">لم يتم العثور على خدمات</string>
+    <string name="home_services_search_empty_desc">حاول البحث عن خدمة أو عرض آخر.</string>
+    <string name="home_services_empty_title">لا توجد خدمات متاحة</string>
+    <string name="home_services_empty_desc">ستظهر الخدمات هنا عندما تكون متاحة.</string>
+    <string name="home_search_hint">البحث عن خدمات، أعراض...</string>
+    <string name="home_error_title">حدث خطأ ما</string>
+    <string name="home_error_default_desc">فشل في تحميل محتوى الصفحة الرئيسية. يرجى المحاولة مرة أخرى.</string>
+    <string name="home_error_retry">إعادة المحاولة</string>
 
-  <!-- OnBoarding -->
-  <string name="onboarding_title">كير نيست</string>
-  <string name="onboarding_skip">تخطي</string>
-  <string name="onboarding_get_started">ابدأ الآن</string>
-  <string name="onboarding_next">التالي ←</string>
-  <string name="app_name_careconnect">CareConnect</string>
-  <string name="app_name_healthcare">الرعاية الصحية</string>
-  <string name="app_auth_description">رعاية مطمئنة لك ولأحبائك</string>
-  <string name="phone_header_brand">الرعاية الآمنة</string>
-  <string name="phone_otp_method_title">اختر الطريقة التي تريد تلقي رمز التحقق من خلالها</string>
-  <string name="phone_otp_sms_title">رسالة نصية</string>
-  <string name="phone_otp_sms_subtitle">استلام رمز التحقق عبر رسالة نصية</string>
-  <string name="phone_otp_whatsapp_title">واتساب</string>
-  <string name="phone_otp_whatsapp_subtitle">استلام رمز التحقق بأمان عبر واتساب</string>
-  <string name="phone_continue_btn">متابعة</string>
-  <string name="phone_input_secure_care_desc">يستخدم رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
-  <string name="phone_input_via_whatsapp">عبر واتساب</string>
-  <string name="phone_input_via_sms">عبر رسالة نصية</string>
+    <!-- Bookings Screen -->
+    <string name="bookings_screen_title">شاشة الحجوزات</string>
 
-  <!-- Services -->
-  <string name="services_greeting">صباح الخير، إيلينا</string>
-  <string name="services_greeting_subtitle">ابحثي عن الرعاية التي تحتاجينها اليوم</string>
-  <string name="services_search_hint">ابحثي عن خدمة (مثال: حقن)</string>
-  <string name="services_categories_title">فئات الخدمات</string>
-  <string name="services_categories_subtitle">رعاية متخصصة تصلك حتى باب المنزل</string>
-  <string name="services_general_nursing">التمريض العام</string>
-  <string name="services_general_nursing_subtitle">فحوصات دورية ورعاية صحية</string>
-  <string name="services_injection">الحقن</string>
-  <string name="services_injection_subtitle">إعطاء الجرعات في المنزل</string>
-  <string name="services_physical_therapy">العلاج الطبيعي</string>
-  <string name="services_physical_therapy_subtitle">دعم الحركة</string>
-  <string name="services_wound_care">العناية بالجروح</string>
-  <string name="services_wound_care_subtitle">رعاية ما بعد الجراحة</string>
-  <string name="services_post_natal">رعاية ما بعد الولادة</string>
-  <string name="services_post_natal_subtitle">للأم والطفل</string>
-  <string name="services_elderly_care">رعاية كبار السن</string>
-  <string name="services_elderly_care_subtitle">دعم يومي</string>
-  <string name="services_iv_drip">المحاليل الوريدية</string>
-  <string name="services_iv_drip_subtitle">علاج الترطيب</string>
-  <string name="services_vaccinations">التطعيمات</string>
-  <string name="services_vaccinations_subtitle">لكل الفئات العمرية</string>
-  <string name="services_chronic_care_title">رعاية الأمراض المزمنة</string>
-  <string name="services_chronic_care_subtitle">السكري وضغط الدم والمزيد</string>
-  <string name="services_consultation_title">لستِ متأكدة مما تحتاجينه؟</string>
-  <string name="services_consultation_subtitle">تحدثي مع منسق الرعاية للحصول على توصية تناسب احتياجاتك.</string>
-  <string name="services_consultation_button">استشيري الآن</string>
+    <!-- Profile Screen -->
+    <string name="profile_screen_title">شاشة الملف الشخصي</string>
 
-  <!-- Service Details -->
-  <string name="service_details_title">تفاصيل الخدمة</string>
-  <string name="service_details_back">رجوع</string>
-  <string name="service_details_share">مشاركة</string>
-  <string name="service_details_clinical_grade">معايير طبية</string>
-  <string name="service_details_service_title">العلاج بالترطيب الوريدي</string>
-  <string name="service_details_service_subtitle">محلول ترطيب وفيتامينات مخصص لاحتياجاتك.</string>
-  <string name="service_details_average_price">متوسط السعر</string>
-  <string name="service_details_price">189.00 دولار</string>
-  <string name="service_details_duration">المدة</string>
-  <string name="service_details_duration_value">45–60 دقيقة</string>
-  <string name="service_details_about_title">عن هذه الخدمة</string>
-  <string name="service_details_about_body">يقدم العلاج الوريدي متخصصون طبيون معتمدون في راحة منزلك. يساعد هذا العلاج على استعادة توازن السوائل سريعاً ويوصل الفيتامينات الأساسية مباشرة إلى مجرى الدم لتحقيق أقصى استفادة.</string>
-  <string name="service_details_included_title">ما تشمله الخدمة</string>
-  <string name="service_details_included_nurse">انتقال الممرض المسجل إلى المنزل وتجهيز الخدمة</string>
-  <string name="service_details_included_monitoring">مراقبة المؤشرات الحيوية والفحص الصحي</string>
-  <string name="service_details_included_solution">1000 مل من المحلول الملحي أو محلول رينجر اللاكتاتي</string>
-  <string name="service_details_included_booster">جرعة فيتامينات مخصصة (فيتامينات ب المركبة + فيتامين ج)</string>
-  <string name="service_details_included_supplies">مستلزمات طبية عالية الجودة للاستخدام مرة واحدة</string>
-  <string name="service_details_information_note">يرجى ملاحظة أن استبياناً صحياً مختصراً مطلوب قبل وصول المتخصص لضمان السلامة.</string>
-  <string name="service_details_request_button">اطلبي هذه الخدمة</string>
+    <!-- Request Status -->
+    <string name="request_status">حالة الطلب</string>
+    <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
+    <string name="searching_describtion">نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.\n</string>
+    <string name="nurse_active_nearby">%1$d ممرضون نشطون بالقرب منك</string>
+    <string name="nurse_name_format">%1$s،</string>
+    <string name="nurse_review_format"> • %1$d %2$s</string>
+    <string name="nurse_price_format">%1$.0f$</string>
+    <string name="nurse_area_format">%1$s • %2$.1f %3$s</string>
+    <string name="decline">رفض</string>
+    <string name="accept">قبول</string>
+    <string name="km">كم</string>
+    <string name="reviews">تقييمًا</string>
 
-  <!-- Home Screen -->
-  <string name="home_ai_powered">مدعوم بالذكاء الاصطناعي</string>
-  <string name="home_ai_title">التقييم الصحي بالذكاء الاصطناعي</string>
-  <string name="home_ai_description">صف الأعراض الخاصة بك، واحصل على مطابقة فورية مع المتخصصين.</string>
-  <string name="home_ai_start_chat">ابدأ المحادثة</string>
-  
-  <string name="home_history_title">حجوزاتي</string>
-  <string name="home_bookings_manage">الكل</string>
-  <string name="home_bookings_empty">لا توجد حجوزات قادمة</string>
-
-  <string name="home_services_title">خدمات الرعاية الصحية</string>
-  <string name="home_services_view_all">عرض الكل</string>
-  <string name="home_services_search_empty_title">لم يتم العثور على خدمات</string>
-  <string name="home_services_search_empty_desc">حاول البحث عن خدمة أو عرض آخر.</string>
-  <string name="home_services_empty_title">لا توجد خدمات متاحة</string>
-  <string name="home_services_empty_desc">ستظهر الخدمات هنا عندما تكون متاحة.</string>
-  <string name="home_search_hint">البحث عن خدمات، أعراض...</string>
-  <string name="otp_app_name">CareConnect</string>
-
-  <string name="home_error_title">حدث خطأ ما</string>
-  <string name="home_error_default_desc">فشل في تحميل محتوى الصفحة الرئيسية. يرجى المحاولة مرة أخرى.</string>
-  <string name="home_error_retry">إعادة المحاولة</string>
-
-  <!-- Bookings Screen -->
-  <string name="bookings_screen_title">شاشة الحجوزات</string>
-
-  <!-- Profile Screen -->
-  <string name="profile_screen_title">شاشة الملف الشخصي</string>
-
+    <!-- Nurse Tracking -->
+    <string name="nurse_on_the_way_title">الممرض في طريقه إليك</string>
+    <string name="nurse_on_the_way_subtitle">الممرض المختص في طريقه لتقديم الرعاية لك.</string>
+    <string name="nurse_on_the_way_cancellation_notice">يمكنك إلغاء الزيارة خلال %1$d دقائق بعد بدء الزيارة. بعد ذلك سيتم تطبيق رسوم إلغاء.</string>
+    <string name="nurse_on_the_way_reviews_count">%1$d تقييم</string>
+    <string name="nurse_on_the_way_estimated_arrival_label">وقت الوصول المتوقع</string>
+    <string name="nurse_on_the_way_call_nurse_content_description">الاتصال بالممرض</string>
+    <string name="nurse_on_the_way_message_nurse_content_description">مراسلة الممرض</string>
+    <string name="nurse_on_the_way_distance_label">المسافة</string>
+    <string name="nurse_on_the_way_distance_value">%1$.1f كم</string>
+    <string name="nurse_on_the_way_specialty_label">التخصص</string>
+    <string name="nurse_on_the_way_show_qr_code_button">عرض رمز QR</string>
+    <string name="nurse_on_the_way_cancel_button">إلغاء</string>
+    <string name="nurse_on_the_way_cancel_dialog_title">إلغاء هذه الزيارة؟</string>
+    <string name="nurse_on_the_way_cancel_dialog_message">هل أنت متأكد من رغبتك في إلغاء الزيارة؟ إذا انتهت فترة الإلغاء المجاني، فسيتم تطبيق رسوم إلغاء.</string>
+    <string name="nurse_on_the_way_cancel_dialog_confirm">نعم، إلغاء الزيارة</string>
+    <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
   <!-- Choose Patient Screen -->
   <string name="choose_patient_title">اختيار المريض</string>
   <string name="choose_patient_description">لمن نقوم بالتقييم اليوم؟ يساعدنا هذا في تقديم توصيات صحية محددة.</string>
@@ -316,6 +340,72 @@
 
   <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
 
+    <!-- Wallet -->
+    <string name="wallet_title">المحفظة</string>
+    <string name="wallet_balance">رصيد المحفظة</string>
+    <string name="wallet_balance_value">%1$s ج.م</string>
+    <string name="wallet_balance_auto_refill">رصيد المحفظة: إعادة التعبئة التلقائية %1$s</string>
+    <string name="wallet_on">مفعّلة</string>
+    <string name="wallet_off">متوقفة</string>
+    <string name="wallet_auto_refill_on">إعادة التعبئة التلقائية مفعّلة</string>
+    <string name="wallet_auto_refill_off">إعادة التعبئة التلقائية متوقفة</string>
+    <string name="wallet_add_funds">إضافة رصيد</string>
+    <string name="wallet_payment_methods">طرق الدفع</string>
+    <string name="wallet_cash">نقدًا</string>
+    <string name="wallet_add_payment_method">إضافة طريقة دفع</string>
+    <string name="wallet_add_payment_method_title">إضافة طريقة دفع</string>
+    <string name="wallet_ride_profiles">ملفات الرحلات</string>
+    <string name="wallet_personal">شخصي</string>
+    <string name="wallet_business">الأعمال</string>
+    <string name="wallet_business_subtitle">فعّل ميزات رحلات العمل</string>
+    <string name="wallet_top_up_title">شحن المحفظة</string>
+    <string name="wallet_top_up_description">ما المبلغ الذي تريد إضافته إلى رصيد محفظتك؟</string>
+    <string name="wallet_currency">ج.م</string>
+    <string name="wallet_zero_amount">0.00</string>
+    <string name="wallet_amount_helper">أدخل مبلغًا يتراوح بين 120.00 و1,240.00 ج.م</string>
+    <string name="wallet_suggested_amount">ج.م\n%d.00</string>
+    <string name="wallet_terms_apply">تُطبق الشروط</string>
+    <string name="wallet_payment_method_label">طريقة الدفع</string>
+    <string name="wallet_required">مطلوب</string>
+    <string name="wallet_payment_description">اختر طريقة دفع لسداد قيمة خدمات التمريض وباقات الرعاية بأمان.</string>
+    <string name="wallet_credit_card">بطاقة ائتمان أو خصم مباشر</string>
+    <string name="wallet_paypal">PayPal</string>
+    <string name="wallet_fawry_cash">فوري كاش</string>
+    <string name="wallet_meeza_card">بطاقة ميزة</string>
+    <string name="wallet_mobile_wallets">المحافظ الإلكترونية</string>
+    <string name="wallet_secure_payments">مدفوعات آمنة ومشفرة</string>
+    <string name="wallet_secure_payments_description">تتم معالجة بيانات الدفع الخاصة بك بأمان، ولا يتم تخزينها مباشرة على خوادمنا.</string>
+
+    <!-- Visit summary -->
+    <string name="visit_completed_menu_content_description">القائمة</string>
+    <string name="visit_completed_title">اكتملت الزيارة</string>
+    <string name="visit_completed_subtitle">قام الأخصائي الطبي بإنهاء تقرير الجلسة. شكراً لاختيارك CareMatch.</string>
+    <string name="visit_completed_summary_title">تفاصيل الملخص</string>
+    <string name="visit_completed_verified_badge">زيارة موثقة</string>
+    <string name="visit_completed_professional_label">الأخصائي الطبي</string>
+    <string name="visit_completed_service_type_label">نوع الخدمة</string>
+    <string name="visit_completed_duration_label">مدة الزيارة</string>
+    <string name="visit_completed_duration_value">%1$d دقيقة</string>
+    <string name="visit_completed_date_label">تاريخ الإكمال</string>
+    <string name="visit_completed_total_amount_label">إجمالي المبلغ المستحق</string>
+    <string name="visit_completed_total_amount_value">$%1$.2f</string>
+    <string name="visit_completed_back_home_button">العودة للرئيسية</string>
+
+    <string name="visit_rating_title">كيف كانت زيارتك؟</string>
+    <string name="visit_rating_subtitle">تقييمك يساعدنا في تقديم خدمة أفضل للجميع.</string>
+    <string name="visit_rating_star_content_description">%1$d نجمة</string>
+    <string name="visit_rating_submit_button">إرسال</string>
+    <string name="visit_rating_skip_button">تخطي</string>
+
+    <!-- Chat Screen  -->
+    <string name="chat_back_content_description">رجوع</string>
+    <string name="chat_call_content_description">الاتصال بالممرض</string>
+    <string name="chat_send_content_description">إرسال الرسالة</string>
+    <string name="chat_status_active_now">متصل الآن</string>
+    <string name="chat_status_offline">غير متصل</string>
+    <string name="chat_input_placeholder">اكتب رسالة…</string>
+    <string name="chat_quick_tip_title">نصيحة سريعة</string>
+    <string name="chat_message_seen">تمت المشاهدة</string>
 
   <!-- Emergency Assistance -->
   <string name="emergency_urgent_badge">عاجل</string>
