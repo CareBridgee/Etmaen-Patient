@@ -92,6 +92,7 @@
   <string name="allergies_food_options">الفول السوداني,المحار,منتجات الألبان,البيض,الصويا,المكسرات,القمح/الجلوتين</string>
   <string name="allergies_other_title">أنواع حساسية أخرى</string>
   <string name="allergies_other_hint">أدخل أي حساسية بيئية أو موسمية أو أنواع حساسية أخرى...</string>
+  <string name="current_medications_progress" formatted="false">مكتمل بنسبة 50٪</string>
   <string name="current_medications_title">الأدوية الحالية</string>
   <string name="current_medications_description">يرجى إدراج جميع الأدوية التي تتناولها حاليًا، مع الجرعة ومعدل التكرار إن أمكن.</string>
   <string name="current_medications_none_title">لا توجد أدوية حالية</string>
