@@ -268,12 +268,6 @@ fun AppNav(
                 )
             }
 
-            entry<AppRoute.ChoosePatient> {
-                com.carenest.presentation.ui.profile.familymembers.ChoosePatientScreen(
-                    onNavigateBack = { navigateBackOrToHome() }
-                )
-            }
-
             entry<AppRoute.Wallet> {
                 ScreenTopBar(
                     title = stringResource(R.string.wallet_title),
@@ -353,9 +347,9 @@ fun AppNav(
 
             entry<AppRoute.ChoosePatient> {
                 ChoosePatientScreen(
-                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateBack = { navigateBackOrToHome() },
                     onNavigateToChat = { patientId ->
-                        backStack.add(AppRoute.EmergencyAssistance(patientId))
+                        backStack.add(AppRoute.AIChat(patientId))
                     }
                 )
             }
