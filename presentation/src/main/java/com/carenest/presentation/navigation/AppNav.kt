@@ -199,7 +199,9 @@ fun AppNav() {
                     onNavigateToAddPatient = { /* TODO */ },
                     onNavigateToServiceSelection = { /* TODO */ },
                     onNavigateToAddressPicker = { /* TODO */ },
-                    onSubmitRequestClick = {/* TODO() */ },
+                    onSubmitRequestClick = {
+                        backStack.add(AppRoute.SearchForNurse)
+                    },
                     mapResultLocation = mapResultLocation,
                     onMapResultConsumed = { mapResultLocation = null },
                 )

@@ -198,7 +198,6 @@ fun PayoutMethodSelection(
             painter = painterResource(id = R.drawable.ic_bank),
             selected = selectedMethod == PaymentMethods.BANk,
             onClick = { selectedMethod = PaymentMethods.BANk },
-            iconContainerColor = Theme.colors.bankContainer,
         )
 
         PayoutMethodCard(
@@ -207,7 +206,6 @@ fun PayoutMethodSelection(
             painter = painterResource(id = R.drawable.ic_wallet),
             selected = selectedMethod == PaymentMethods.VODAFONE,
             onClick = { selectedMethod = PaymentMethods.VODAFONE },
-            iconContainerColor = Theme.colors.vodafoneContainer,
         )
 
         PayoutMethodCard(
@@ -217,7 +215,6 @@ fun PayoutMethodSelection(
             selected = selectedMethod == PaymentMethods.INSTAPAY,
             onClick = { selectedMethod = PaymentMethods.INSTAPAY },
             badge = stringResource(id = R.string.payout_fastest),
-            iconContainerColor = Theme.colors.onPrimaryContainer,
         )
 
         PayoutInfoBanner(
