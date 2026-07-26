@@ -22,9 +22,9 @@ import kotlin.math.sqrt
 // ─── Spring constants ───────────────────────────────────────────────────────
 
 private const val SETTLE_SPRING_DAMPING = 0.75f
-private const val SETTLE_SPRING_STIFFNESS = 300f
-private const val PROMOTE_SPRING_DAMPING = 0.7f
-private const val PROMOTE_SPRING_STIFFNESS = 80f
+private const val SETTLE_SPRING_STIFFNESS = 1000f
+private const val PROMOTE_SPRING_DAMPING = 0.8f
+private const val PROMOTE_SPRING_STIFFNESS = 700f
 
 // ─── Background repulsion factors ───────────────────────────────────────────
 
@@ -301,7 +301,7 @@ internal class DeckState {
             else -> dragY
         }
 
-        val flySpec = spring<Float>(dampingRatio = 1.0f, stiffness = 500f)
+        val flySpec = spring<Float>(dampingRatio = 1.0f, stiffness = 1500f)
 
         // Snap and fly-out the top card.
         // We reset dragX/Y/rotationY AFTER snapping topAnim but BEFORE deck rotation.
@@ -313,12 +313,14 @@ internal class DeckState {
         rotationY = 0f
         hasPassedThreshold = false
 
+        // Launch fly-out in parallel
         scope.launch {
             coroutineScope {
                 launch { topAnim.translationX.animateTo(flyX, flySpec) }
                 launch { topAnim.translationY.animateTo(flyY, flySpec) }
                 launch { topAnim.alpha.animateTo(0f, flySpec) }
             }
+            swipedKey = null
         }
 
         // Rotate deck: top → back (optimistic update).
@@ -330,11 +332,11 @@ internal class DeckState {
         val backPosition = newOrder.lastIndex
         val backCfg = stackPositionConfig(backPosition)
         val backIdleX = idleTranslationXPx(backPosition, backCfg.scale, backCfg.rotationZ, containerWidthPx)
-        // These are suspend but called in sequence — snap is instant.
+        
         topAnim.scale.snapTo(backCfg.scale)
         topAnim.rotationZ.snapTo(backCfg.rotationZ)
         topAnim.elevation.snapTo(backCfg.elevation.value)
-        topAnim.translationX.snapTo(backIdleX + flyX) // starts from off-screen
+        topAnim.translationX.snapTo(backIdleX + flyX) 
         topAnim.translationY.snapTo(flyY)
         topAnim.alpha.snapTo(0f)
 
@@ -346,7 +348,6 @@ internal class DeckState {
                 val cfg = stackPositionConfig(index)
                 val idleX = idleTranslationXPx(index, cfg.scale, cfg.rotationZ, containerWidthPx)
                 animStateFor(key)?.let { anim ->
-                    // If it was a background card being repelled, snap it to its repelled pos first.
                     if (anim.isDragging) {
                         anim.translationX.snapTo(anim.repulsionX)
                         anim.translationY.snapTo(anim.repulsionY)
@@ -362,7 +363,6 @@ internal class DeckState {
             }
         }
 
-        swipedKey = null
         isAnimating = false
     }
 }

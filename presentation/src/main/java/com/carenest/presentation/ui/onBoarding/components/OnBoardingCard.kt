@@ -1,15 +1,14 @@
 package com.carenest.presentation.ui.onBoarding.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
@@ -26,16 +25,14 @@ fun OnBoardingCard(
         modifier = modifier
             .shadow(elevation = 2.dp, shape = cardShape, clip = false)
             .clip(cardShape)
-            .background(Theme.colors.primaryContainer),
+            .background(Theme.colors.surface),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = page.illustrationRes),
             contentDescription = page.title,
-            tint = Theme.colors.primary,
-            modifier = Modifier
-                .size(96.dp)
-                .padding(8.dp),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize(),
         )
     }
 }
