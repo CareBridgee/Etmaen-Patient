@@ -124,9 +124,9 @@ internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: Carenest
             }
             sendWithoutRequest { request ->
                 val requestUrl = request.url.build()
-                requestUrl.host == BACKEND_HOST &&
-                    requestUrl.encodedPath.startsWith("/api/v1/") &&
-                    requestUrl.encodedPath !in PUBLIC_AUTH_PATHS
+                val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
+                val isBackendHost = requestUrl.host.isBlank() || requestUrl.host.equals(BACKEND_HOST, ignoreCase = true)
+                isBackendHost && path.startsWith("/api/v1") && path !in PUBLIC_AUTH_PATHS
             }
         }
     }
