@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.auth.LoginWithPhoneUseCase
+import com.carenest.domain.usecase.auth.RequestDevOtpUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginWithPhoneUseCase: LoginWithPhoneUseCase
+    private val loginWithPhoneUseCase: LoginWithPhoneUseCase,
+    private val requestDevOtpUseCase: RequestDevOtpUseCase
 ) : ViewModel(),
     StateHolder<LoginState> by DefaultStateHolder(LoginState()),
     EffectPublisher<LoginEffect> by DefaultEffectPublisher() {
@@ -80,17 +82,18 @@ class LoginViewModel @Inject constructor(
 
             updateState { copy(isLoading = true, errorMessage = null) }
 
-            val result = loginWithPhoneUseCase(fullPhoneNumber)
+            val result = requestDevOtpUseCase(fullPhoneNumber)
 
             updateState { copy(isLoading = false) }
 
             result.fold(
-                onSuccess = {
-                    Log.d(TAG, "requestOtp success")
+                onSuccess = { otp ->
+                    Log.d(TAG, "requestOtp success: $otp")
                     sendEffect(
                         LoginEffect.NavigateToOtp(
-                            fullPhoneNumber,
-                            currentState.selectedOtpMethod
+                            phone = fullPhoneNumber,
+                            otp = otp,
+                            method = currentState.selectedOtpMethod
                         )
                     )
                 },

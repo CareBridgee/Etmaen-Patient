@@ -2,6 +2,7 @@ package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.remote.dto.AuthResponse
 import com.carenest.data.source.remote.dto.LoginRequest
+import com.carenest.data.source.remote.dto.LoginResponse
 import com.carenest.data.source.remote.dto.VerifyOtpRequest
 import com.carenest.data.utils.executeRequest
 import com.carenest.data.utils.executeUnitRequest
@@ -23,6 +24,14 @@ class AuthApiServiceImpl @Inject constructor(
         httpClient.executeUnitRequest(json) {
             method = HttpMethod.Post
             url { path("api/v1/auth/login") }
+            setBody(LoginRequest(phoneNumber))
+            contentType(ContentType.Application.Json)
+        }
+
+    override suspend fun requestDevOtp(phoneNumber: String): Result<LoginResponse> =
+        httpClient.executeRequest<LoginResponse>(json) {
+            method = HttpMethod.Post
+            url { path("api/v1/auth/dev/request-otp") }
             setBody(LoginRequest(phoneNumber))
             contentType(ContentType.Application.Json)
         }
