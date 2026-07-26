@@ -74,4 +74,10 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data class VisitCompleted (val requestId: String): AppRoute
+
+     @Serializable
+     data object Settings : AppRoute
+
+     @Serializable
+     data object FamilyMembers : AppRoute
 }

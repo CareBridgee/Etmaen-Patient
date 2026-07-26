@@ -233,42 +233,51 @@ fun AppNav() {
             }
 
             entry<AppRoute.NurseOnTheWay> { route ->
+                NurseOnTheWayScreen(
+                    requestId = route.requestId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToQrCode = { },
+                    onOpenChat = { nurseId -> },
+                    showSnackbar = onShowSnackbar
+                )
+            }
 
-                entry<AppRoute.RequestService> { route ->
-                    RequestServiceScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToMap = { backStack.add(AppRoute.Map) },
-                        onNavigateToEditProfile = { /* TODO */ },
-                        onNavigateToAddPatient = { /* TODO */ },
-                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
-                        onNavigateToAddressPicker = { /* TODO */ },
-                        onSubmitRequestClick = {
-                            backStack.add(AppRoute.SearchForNurse)
-                        },
-                        selectedService = route.service,
-                        mapResultLocation = mapResultLocation,
-                        onMapResultConsumed = { mapResultLocation = null },
-                    )
-                }
+            entry<AppRoute.RequestService> { route ->
+                RequestServiceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToMap = { backStack.add(AppRoute.Map) },
+                    onNavigateToEditProfile = { /* TODO */ },
+                    onNavigateToAddPatient = { /* TODO */ },
+                    onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
+                    onNavigateToAddressPicker = { /* TODO */ },
+                    onSubmitRequestClick = {
+                        backStack.add(AppRoute.SearchForNurse)
+                    },
+                    selectedService = route.service,
+                    mapResultLocation = mapResultLocation,
+                    onMapResultConsumed = { mapResultLocation = null },
+                )
+            }
 
-                entry<AppRoute.Map> {
-                    MapScreen(
-                        onLocationConfirmed = { locationDetails ->
-                            mapResultLocation = locationDetails
-                            if (backStack.size > 1) backStack.removeLastOrNull()
-                        },
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                    )
-                }
+            entry<AppRoute.Map> {
+                MapScreen(
+                    onLocationConfirmed = { locationDetails ->
+                        mapResultLocation = locationDetails
+                        if (backStack.size > 1) backStack.removeLastOrNull()
+                    },
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+            }
 
-                entry<AppRoute.SearchForNurse> {
-                    NurseSearchScreen(
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMatched = { nurseId ->
-                            replaceWith(AppRoute.AcceptOffer)
-                        })
-                }
-                entry<AppRoute.ChoosePatient> {
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                        replaceWith(AppRoute.AcceptOffer)
+                    })
+            }
+
+            entry<AppRoute.ChoosePatient> {
                 ChoosePatientScreen(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     onNavigateToChat = { patientId ->
@@ -279,43 +288,42 @@ fun AppNav() {
 
             entry<AppRoute.AIChat> { route ->
                 AIChatScreen(
-                        patientId = route.patientId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToBookings = {
-                            Snapshot.withMutableSnapshot {
+                    patientId = route.patientId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToBookings = {
+                        Snapshot.withMutableSnapshot {
                             backStack.clear()
                             backStack.add(AppRoute.Bookings)
-                            }
-                        },
-                        onNavigateToServiceDetails = { categoryStr ->
-                            val uiModel = HealthcareServiceUiModel(
-                                id = categoryStr,
-                                name = categoryStr.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
-                                estimatedDurationMinutes = 45L,
-                                basePrice = 50.0,
-                                description = "Professional care service tailored to your needs.",
-                                iconResName = ""
-                            )
-                            backStack.add(AppRoute.ServiceDetails(uiModel))
                         }
-                    )
-                }
+                    },
+                    onNavigateToServiceDetails = { categoryStr ->
+                        val uiModel = HealthcareServiceUiModel(
+                            id = categoryStr,
+                            name = categoryStr.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                            estimatedDurationMinutes = 45L,
+                            basePrice = 50.0,
+                            description = "Professional care service tailored to your needs.",
+                            iconResName = ""
+                        )
+                        backStack.add(AppRoute.ServiceDetails(uiModel))
+                    }
+                )
+            }
 
-                entry<AppRoute.VisitCompleted> { route ->
-                    VisitCompletedScreen(
-                        requestId = route.requestId, onNavigateHome = {
-                            replaceWith(AppRoute.Home)
-                        }, onShowSnackbar = onShowSnackbar
-                    )
-                }
+            entry<AppRoute.VisitCompleted> { route ->
+                VisitCompletedScreen(
+                    requestId = route.requestId, onNavigateHome = {
+                        replaceWith(AppRoute.Home)
+                    }, onShowSnackbar = onShowSnackbar
+                )
+            }
 
-                entry<AppRoute.Chat> { route ->
-                    ChatScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        requestId = route.requestId,
-                        showSnackbar = onShowSnackbar
-                    )
-                }
+            entry<AppRoute.Chat> { route ->
+                ChatScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    requestId = route.requestId,
+                    showSnackbar = onShowSnackbar
+                )
             }
 
             entry<AppRoute.EmergencyAssistance> { route ->
@@ -324,7 +332,6 @@ fun AppNav() {
                     onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
-
         }
 
             val bottomNavRoutes = remember {
