@@ -42,6 +42,7 @@ fun RequestServiceScreen(
     val state by viewModel.state.collectAsState()
     val toastState = rememberToastState()
     val listeningMessage = stringResource(DesignR.string.request_service_listening)
+    val requestSuccessMessage = stringResource(DesignR.string.request_service_success)
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(RequestServiceIntent.OnStart(selectedService))
@@ -80,13 +81,16 @@ fun RequestServiceScreen(
             RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker()
             RequestServiceEffect.NavigateToMap -> onNavigateToMap()
             RequestServiceEffect.RequestSubmittedSuccessfully -> {
-                toastState.show("Request submitted successfully")
+                toastState.show(requestSuccessMessage)
                 onSubmitRequestClick()
             }
         }
     }
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             CareRequestScreenContent(
                 state = state,
                 onPatientSelected = { viewModel.onIntent(RequestServiceIntent.OnPatientSelected(it)) },
@@ -102,7 +106,7 @@ fun RequestServiceScreen(
             )
             ToastHost(state = toastState)
         }
-
+    
 }
 
 @Preview

@@ -133,7 +133,7 @@ fun AddressSection(
             
             Column(modifier = Modifier.weight(1f)) {
                 BasicText(
-                    text = location?.address ?: "No address selected",
+                    text = location?.address ?: stringResource(id = R.string.request_service_no_address),
                     style = Theme.typography.body.medium.copy(
                         color = Theme.colors.primaryFont,
                         fontWeight = FontWeight.Medium,

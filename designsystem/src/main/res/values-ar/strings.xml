@@ -8,4 +8,7 @@
     <string name="payment_method_cod_desc">ادفع عند اكتمال الخدمة</string>
     <string name="payment_method_paymob">بطاقة ائتمان / خصم</string>
     <string name="payment_method_paymob_desc">ادفع بأمان باستخدام بطاقتك</string>
+    <string name="request_service_success">تم تقديم الطلب بنجاح</string>
+    <string name="request_service_no_address">لم يتم اختيار عنوان</string>
+    <string name="common_guest">زائر</string>
 </resources>

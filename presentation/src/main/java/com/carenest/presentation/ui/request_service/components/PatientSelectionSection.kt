@@ -76,7 +76,7 @@ fun PatientSelectionSection(
             items(patients, key = { it.id }) { patient ->
                 val name = listOfNotNull(patient.firstName, patient.lastName).joinToString(" ")
                 AppChip(
-                    label = if (name.isBlank()) "Guest" else name,
+                    label = if (name.isBlank()) stringResource(id = R.string.common_guest) else name,
                     selected = patient.id == selectedPatientId,
                     onClick = { onPatientSelected(patient) }
                 )

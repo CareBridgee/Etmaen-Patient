@@ -117,10 +117,15 @@
     <string name="request_service_situation_label">Describe the situation or symptoms</string>
     <string name="request_service_situation_hint">E.g., Feeling dehydrated after the flu, needs routine IV administration...</string>
     <string name="request_service_edit_address">Edit Address</string>
+    <string name="request_service_no_address">No address selected</string>
     <string name="request_service_precise">Precise</string>
     <string name="request_service_payment_method_label">Select Payment Method</string>
     <string name="request_service_submit">Submit Request</string>
+    <string name="request_service_success">Request submitted successfully</string>
     <string name="request_service_listening">Listening…</string>
+
+    <!-- Common -->
+    <string name="common_guest">Guest</string>
 
     <!-- Permissions -->
     <string name="permission_audio_title">Audio Permission Required</string>
