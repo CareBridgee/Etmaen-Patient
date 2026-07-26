@@ -31,6 +31,7 @@ object NavigationConfig {
             serializableSubclass(AppRoute.AcceptOffer::class)
 //            serializableSubclass(AppRoute.ChoosePatient::class)
 //            serializableSubclass(AppRoute.AIChat::class)
+            serializableSubclass(AppRoute.NurseOnTheWay::class)
         }
     }
 

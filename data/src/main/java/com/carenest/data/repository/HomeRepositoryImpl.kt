@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class HomeRepositoryImpl @Inject constructor(
     private val homeDatasource: HomeDatasource,
     @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO

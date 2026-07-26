@@ -285,4 +285,37 @@
   <string name="km">كم</string>
 
   <string name="reviews">تقييمًا</string>
+  <!-- Nurse Tracking -->
+  <string name="nurse_on_the_way_title">الممرض في طريقه إليك</string>
+
+  <string name="nurse_on_the_way_subtitle">الممرض المختص في طريقه لتقديم الرعاية لك.</string>
+
+  <string name="nurse_on_the_way_cancellation_notice">يمكنك إلغاء الزيارة خلال %1$d دقائق بعد بدء الزيارة. بعد ذلك سيتم تطبيق رسوم إلغاء.</string>
+
+  <string name="nurse_on_the_way_reviews_count">%1$d تقييم</string>
+
+  <string name="nurse_on_the_way_estimated_arrival_label">وقت الوصول المتوقع</string>
+
+  <string name="nurse_on_the_way_call_nurse_content_description">الاتصال بالممرض</string>
+
+  <string name="nurse_on_the_way_message_nurse_content_description">مراسلة الممرض</string>
+
+  <string name="nurse_on_the_way_distance_label">المسافة</string>
+
+  <string name="nurse_on_the_way_distance_value">%1$.1f كم</string>
+
+  <string name="nurse_on_the_way_specialty_label">التخصص</string>
+
+  <string name="nurse_on_the_way_show_qr_code_button">عرض رمز QR</string>
+
+  <string name="nurse_on_the_way_cancel_button">إلغاء</string>
+
+  <string name="nurse_on_the_way_cancel_dialog_title">إلغاء هذه الزيارة؟</string>
+
+  <string name="nurse_on_the_way_cancel_dialog_message">هل أنت متأكد من رغبتك في إلغاء الزيارة؟ إذا انتهت فترة الإلغاء المجاني، فسيتم تطبيق رسوم إلغاء.</string>
+
+  <string name="nurse_on_the_way_cancel_dialog_confirm">نعم، إلغاء الزيارة</string>
+
+  <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
+
 </resources>
