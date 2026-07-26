@@ -136,6 +136,7 @@ private val BACKEND_HOST = Url(BuildConfig.base_url).host
 
 private val PUBLIC_AUTH_PATHS = setOf(
     "/api/v1/auth/login",
+    "/api/v1/auth/dev/request-otp",
     "/api/v1/auth/verify-otp",
     "/api/v1/auth/refresh"
 )
