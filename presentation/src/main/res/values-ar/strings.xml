@@ -343,4 +343,35 @@
     <string name="wallet_secure_payments">مدفوعات آمنة ومشفرة</string>
     <string name="wallet_secure_payments_description">تتم معالجة بيانات الدفع الخاصة بك بأمان، ولا يتم تخزينها مباشرة على خوادمنا.</string>
 
+  <!-- Visit summary -->
+  <string name="visit_completed_menu_content_description">القائمة</string>
+  <string name="visit_completed_title">اكتملت الزيارة</string>
+  <string name="visit_completed_subtitle">قام الأخصائي الطبي بإنهاء تقرير الجلسة. شكراً لاختيارك CareMatch.</string>
+  <string name="visit_completed_summary_title">تفاصيل الملخص</string>
+  <string name="visit_completed_verified_badge">زيارة موثقة</string>
+  <string name="visit_completed_professional_label">الأخصائي الطبي</string>
+  <string name="visit_completed_service_type_label">نوع الخدمة</string>
+  <string name="visit_completed_duration_label">مدة الزيارة</string>
+  <string name="visit_completed_duration_value">%1$d دقيقة</string>
+  <string name="visit_completed_date_label">تاريخ الإكمال</string>
+  <string name="visit_completed_total_amount_label">إجمالي المبلغ المستحق</string>
+  <string name="visit_completed_total_amount_value">$%1$.2f</string>
+  <string name="visit_completed_back_home_button">العودة للرئيسية</string>
+
+  <string name="visit_rating_title">كيف كانت زيارتك؟</string>
+  <string name="visit_rating_subtitle">تقييمك يساعدنا في تقديم خدمة أفضل للجميع.</string>
+  <string name="visit_rating_star_content_description">%1$d نجمة</string>
+  <string name="visit_rating_submit_button">إرسال</string>
+  <string name="visit_rating_skip_button">تخطي</string>
+
+
+  <!-- Chat Screen  -->
+  <string name="chat_back_content_description">رجوع</string>
+  <string name="chat_call_content_description">الاتصال بالممرض</string>
+  <string name="chat_send_content_description">إرسال الرسالة</string>
+  <string name="chat_status_active_now">متصل الآن</string>
+  <string name="chat_status_offline">غير متصل</string>
+  <string name="chat_input_placeholder">اكتب رسالة…</string>
+  <string name="chat_quick_tip_title">نصيحة سريعة</string>
+  <string name="chat_message_seen">تمت المشاهدة</string>
 </resources>

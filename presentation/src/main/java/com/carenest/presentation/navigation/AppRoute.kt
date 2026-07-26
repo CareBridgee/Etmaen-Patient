@@ -52,7 +52,13 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data object AddPaymentMethod : AppRoute
+     
+     @Serializable
+     data class Chat(val requestId: String) : AppRoute
 
      @Serializable
      data class NurseOnTheWay(val requestId: String) : AppRoute
+
+     @Serializable
+     data class VisitCompleted (val requestId: String): AppRoute
 }
