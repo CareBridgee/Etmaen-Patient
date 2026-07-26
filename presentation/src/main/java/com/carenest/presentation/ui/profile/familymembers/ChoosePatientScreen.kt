@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,12 +33,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.carenest.designsystem.R as RD
 import com.carenest.designsystem.theme.Theme
+import com.carenest.presentation.R
 import com.carenest.presentation.navigation.HideTopBar
+import com.carenest.designsystem.R as RD
 
 @Composable
 fun ChoosePatientScreen(
@@ -80,17 +81,16 @@ fun ChoosePatientScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = RD.drawable.ic_arrow_back),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = Theme.colors.primary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
 
                 Text(
-                    text = "Add Family Member",
+                    text = stringResource(R.string.add_family_member),
                     style = Theme.typography.body.large.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontWeight = FontWeight.Bold, fontSize = 18.sp
                     ),
                     color = Theme.colors.primary
                 )
@@ -99,10 +99,9 @@ fun ChoosePatientScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "Add New Member",
+                text = stringResource(R.string.add_new_member),
                 style = Theme.typography.display.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 26.sp
+                    fontWeight = FontWeight.Bold, fontSize = 26.sp
                 ),
                 color = Theme.colors.primaryFont
             )
@@ -110,10 +109,9 @@ fun ChoosePatientScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Enter the details of your family member to manage their healthcare.",
+                text = stringResource(R.string.add_family_member_description),
                 style = Theme.typography.body.large.copy(
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp
+                    fontSize = 15.sp, lineHeight = 22.sp
                 ),
                 color = Theme.colors.secondaryFont
             )
@@ -133,7 +131,7 @@ fun ChoosePatientScreen(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Full Name") },
+                        label = { Text(stringResource(R.string.full_name)) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Theme.colors.primary,
@@ -145,7 +143,7 @@ fun ChoosePatientScreen(
                     OutlinedTextField(
                         value = relationship,
                         onValueChange = { relationship = it },
-                        label = { Text("Relationship (e.g. Mother, Father, Child)") },
+                        label = { Text(stringResource(R.string.relationship)) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Theme.colors.primary,
@@ -157,7 +155,7 @@ fun ChoosePatientScreen(
                     OutlinedTextField(
                         value = age,
                         onValueChange = { age = it },
-                        label = { Text("Age") },
+                        label = { Text(stringResource(R.string.age)) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Theme.colors.primary,
@@ -179,10 +177,9 @@ fun ChoosePatientScreen(
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Text(
-                    text = "Save Family Member",
+                    text = stringResource(R.string.save_family_member),
                     style = Theme.typography.body.large.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontWeight = FontWeight.Bold, fontSize = 16.sp
                     ),
                     color = Theme.colors.surface
                 )

@@ -386,4 +386,13 @@
   <string name="current_medications_name_hint">اسم الدواء</string>
   <string name="emergency_contact_multiple_unavailable">تم حفظ عدة جهات اتصال للطوارئ. التعديل غير متاح هنا حتى يتم دعم اختيار جهة اتصال.</string>
   <string name="current_medications_progress" formatted="false">مكتمل بنسبة 50٪</string>
+
+  <!-- Choose Paitent -->
+  <string name="back">رجوع</string>
+  <string name="add_new_member">إضافة فرد جديد</string>
+  <string name="add_family_member_description">أدخل بيانات أحد أفراد عائلتك لإدارة خدماته الصحية بسهولة.</string>
+  <string name="full_name">الاسم بالكامل</string>
+  <string name="relationship">صلة القرابة (مثل: الأم، الأب، الابن)</string>
+  <string name="age">العمر</string>
+  <string name="save_family_member">حفظ فرد العائلة</string>
 </resources>

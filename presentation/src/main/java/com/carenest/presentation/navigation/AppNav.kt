@@ -81,6 +81,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.carenest.presentation.ui.profile.familymembers.ChoosePatientScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -398,6 +399,12 @@ fun AppNav(
                 EmergencyAssistanceScreen(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                )
+            }
+
+            entry <AppRoute.ChoosePatient>{
+                ChoosePatientScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                 )
             }
         }
