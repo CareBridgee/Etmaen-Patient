@@ -13,8 +13,14 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 
+import com.carenest.presentation.navigation.ScreenTopBar
+
 @Composable
 fun ProfileScreen() {
+    ScreenTopBar(
+        title = stringResource(R.string.profile_screen_title),
+        showLeadingIcon = false
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()

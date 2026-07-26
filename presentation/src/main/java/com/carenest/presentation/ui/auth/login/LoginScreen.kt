@@ -5,8 +5,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.navigation.HideTopBar
+import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.presentation.R
 
 import com.carenest.presentation.ui.auth.login.components.AuthLandingScreen
 import com.carenest.presentation.ui.auth.login.components.PhoneInputScreen
@@ -36,8 +40,17 @@ internal fun LoginScreenContent(
     onEvent: (LoginIntent) -> Unit
 ) {
     when (state.currentStep) {
-        LoginStep.LANDING -> AuthLandingScreen(onEvent)
-        LoginStep.PHONE_INPUT -> PhoneInputScreen(state, onEvent)
+        LoginStep.LANDING -> {
+            HideTopBar()
+            AuthLandingScreen(onEvent)
+        }
+        LoginStep.PHONE_INPUT -> {
+            ScreenTopBar(
+                title = stringResource(R.string.phone_input_topbar_title),
+                onLeadingClick = { onEvent(LoginIntent.BackClicked) }
+            )
+            PhoneInputScreen(state, onEvent)
+        }
     }
 }
 

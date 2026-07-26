@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -60,13 +62,23 @@ import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
 import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
+import com.carenest.presentation.MainViewModel
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNav() {
-    SpTheme {
+fun AppNav(
+    mainViewModel: MainViewModel = hiltViewModel()
+) {
+    val mainState by mainViewModel.state.collectAsStateWithLifecycle()
+
+    if (!mainState.isReady) return
+
+    SpTheme(
+        isDarkTheme = mainState.isDarkTheme,
+        languageCode = mainState.languageCode
+    ) {
 
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
@@ -75,7 +87,11 @@ fun AppNav() {
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
         }
 
-        val initialRoute: NavKey = AppRoute.Splash
+        val initialRoute: NavKey = when {
+            !mainState.onboardingDone -> AppRoute.OnBoarding
+            mainState.isLoggedIn -> AppRoute.Home
+            else -> AppRoute.Login
+        }
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
 
@@ -83,7 +99,10 @@ fun AppNav() {
             savedStateConfiguration, initialRoute
         )
 
-        val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
+        val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
+
+        CompositionLocalProvider(LocalTopBarState provides topBarState) {
+            val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
             /**
              * Clears the current navigation back stack and starts a new navigation flow from the provided destination.
              */
@@ -99,7 +118,14 @@ fun AppNav() {
                 SplashScreen(
                     onNavigateToOnBoarding = {
                         replaceWith(AppRoute.OnBoarding)
-                    })
+                    },
+                    onNavigateToHome = {
+                        replaceWith(AppRoute.Home)
+                    },
+                    onNavigateToLogin = {
+                        replaceWith(AppRoute.Login)
+                    }
+                )
             }
 
             entry<AppRoute.Login> {
@@ -224,188 +250,187 @@ fun AppNav() {
                 AddPaymentMethodScreen({}, {}, {}, {}, {})
             }
 
+            entry<AppRoute.RequestService> { route ->
+                RequestServiceScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToMap = { backStack.add(AppRoute.Map) },
+                    onNavigateToEditProfile = { /* TODO */ },
+                    onNavigateToAddPatient = { /* TODO */ },
+                    onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
+                    onNavigateToAddressPicker = { /* TODO */ },
+                    onSubmitRequestClick = {
+                        backStack.add(AppRoute.SearchForNurse)
+                    },
+                    selectedService = route.service,
+                    mapResultLocation = mapResultLocation,
+                    onMapResultConsumed = { mapResultLocation = null },
+                )
+            }
+
+            entry<AppRoute.Map> {
+                MapScreen(
+                    onLocationConfirmed = { locationDetails ->
+                        mapResultLocation = locationDetails
+                        if (backStack.size > 1) backStack.removeLastOrNull()
+                    },
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
+            }
+
+            entry<AppRoute.SearchForNurse> {
+                NurseSearchScreen(
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onMatched = { nurseId ->
+                        replaceWith(AppRoute.AcceptOffer)
+                    })
+            }
             entry<AppRoute.NurseOnTheWay> { route ->
+                NurseOnTheWayScreen(
+                    requestId = route.requestId,
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    onNavigateToQrCode = {
+                        // QR Code navigation placeholder
+                    },
+                    onOpenChat = { nurseId ->
+                        // Chat navigation placeholder
+                    },
+                    showSnackbar = onShowSnackbar
+                )
+            }
 
-                entry<AppRoute.RequestService> { route ->
-                    RequestServiceScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToMap = { backStack.add(AppRoute.Map) },
-                        onNavigateToEditProfile = { /* TODO */ },
-                        onNavigateToAddPatient = { /* TODO */ },
-                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
-                        onNavigateToAddressPicker = { /* TODO */ },
-                        onSubmitRequestClick = {
-                            backStack.add(AppRoute.SearchForNurse)
-                        },
-                        selectedService = route.service,
-                        mapResultLocation = mapResultLocation,
-                        onMapResultConsumed = { mapResultLocation = null },
-                    )
-                }
+            entry<AppRoute.VisitCompleted> { route ->
+                VisitCompletedScreen(
+                    requestId = route.requestId, onNavigateHome = {
+                        replaceWith(AppRoute.Home)
+                    }, onShowSnackbar = onShowSnackbar
+                )
+            }
 
-                entry<AppRoute.Map> {
-                    MapScreen(
-                        onLocationConfirmed = { locationDetails ->
-                            mapResultLocation = locationDetails
-                            if (backStack.size > 1) backStack.removeLastOrNull()
-                        },
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                    )
-                }
+            entry<AppRoute.Chat> { route ->
+                ChatScreen(
+                    onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    requestId = route.requestId,
+                    showSnackbar = onShowSnackbar
+                )
+            }
 
-                entry<AppRoute.SearchForNurse> {
-                    NurseSearchScreen(
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMatched = { nurseId ->
-                            replaceWith(AppRoute.AcceptOffer)
-                        })
-                }
-                entry<AppRoute.NurseOnTheWay> { route ->
-                    NurseOnTheWayScreen(
-                        requestId = route.requestId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToQrCode = {
-                            // QR Code navigation placeholder
-                        },
-                        onOpenChat = { nurseId ->
-                            // Chat navigation placeholder
-                        },
-                        showSnackbar = onShowSnackbar
-                    )
-                }
+        }
 
-                entry<AppRoute.VisitCompleted> { route ->
-                    VisitCompletedScreen(
-                        requestId = route.requestId, onNavigateHome = {
-                            replaceWith(AppRoute.Home)
-                        }, onShowSnackbar = onShowSnackbar
-                    )
-                }
+        val bottomNavRoutes = remember {
+            listOf<AppRoute>(
+                AppRoute.Home,
+                AppRoute.Services,
+                AppRoute.Bookings,
+                AppRoute.Profile,
+                AppRoute.Wallet,
+            )
+        }
 
-                entry<AppRoute.Chat> { route ->
-                    ChatScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        requestId = route.requestId,
-                        showSnackbar = onShowSnackbar
-                    )
+        val currentRoute = backStack.lastOrNull()
+        val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
+        val shouldShowBottomBar = currentRoute in bottomNavRoutes
+
+        fun onBottomNavItemSelected(index: Int) {
+            val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
+
+            if (currentRoute != targetRoute) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(targetRoute)
                 }
             }
         }
 
-            val bottomNavRoutes = remember {
-                listOf<AppRoute>(
-                    AppRoute.Home,
-                    AppRoute.Services,
-                    AppRoute.Bookings,
-                    AppRoute.Profile,
-                    AppRoute.Wallet,
-                )
-            }
+        val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
 
-            val currentRoute = backStack.lastOrNull()
-            val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-            val shouldShowBottomBar = currentRoute in bottomNavRoutes
-
-            fun onBottomNavItemSelected(index: Int) {
-                val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
-
-                if (currentRoute != targetRoute) {
-                    Snapshot.withMutableSnapshot {
-                        backStack.clear()
-                        backStack.add(targetRoute)
+        CompositionLocalProvider(LocalTopBarState provides topBarState) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+                    .statusBarsPadding(),
+                containerColor = Theme.colors.backGround,
+                contentWindowInsets = WindowInsets(0),
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                topBar = {
+                    val config = topBarState.value
+                    if (config.title != null) {
+                        BaseTopAppBar(
+                            title = config.title,
+                            leadingIcon = if (config.showLeadingIcon) {
+                                config.leadingIcon
+                                    ?: painterResource(id = RD.drawable.ic_arrow_back)
+                            } else null,
+                            onLeadingClick = config.onLeadingClick,
+                            autoMirrorLeadingIcon = true,
+                            actions = buildList {
+                                if (config.profileImage != null) {
+                                    add(
+                                        TopBarAction(
+                                            config.profileImage,
+                                            "Profile",
+                                            onClick = config.onProfileClick ?: {})
+                                    )
+                                }
+                                config.trailingAction?.let(::add)
+                            },
+                            modifier = Modifier.statusBarsPadding()
+                        )
                     }
-                }
-            }
+                }) { paddingValues ->
 
-            val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
-
-            CompositionLocalProvider(LocalTopBarState provides topBarState) {
-                Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .navigationBarsPadding()
-                        .statusBarsPadding(),
-                    containerColor = Theme.colors.backGround,
-                    contentWindowInsets = WindowInsets(0),
-                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-                    topBar = {
-                        val config = topBarState.value
-                        if (config.title != null) {
-                            BaseTopAppBar(
-                                title = config.title,
-                                leadingIcon = if (config.showLeadingIcon) {
-                                    config.leadingIcon
-                                        ?: painterResource(id = RD.drawable.ic_arrow_back)
-                                } else null,
-                                onLeadingClick = config.onLeadingClick,
-                                autoMirrorLeadingIcon = true,
-                                actions = buildList {
-                                    if (config.profileImage != null) {
-                                        add(
-                                            TopBarAction(
-                                                config.profileImage,
-                                                "Profile",
-                                                onClick = config.onProfileClick ?: {})
-                                        )
-                                    }
-                                    config.trailingAction?.let(::add)
-                                },
-                                modifier = Modifier.statusBarsPadding()
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    NavDisplay<NavKey>(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .then(
+                                if (shouldShowBottomBar) Modifier
+                                else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                            ),
+                        entries = rememberDecoratedNavEntries(
+                            backStack = backStack,
+                            entryProvider = entryProvider,
+                            entryDecorators = listOf(
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                rememberViewModelStoreNavEntryDecorator()
                             )
-                        }
-                    }) { paddingValues ->
+                        ),
+                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    )
 
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        NavDisplay<NavKey>(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = paddingValues.calculateTopPadding())
-                                .then(
-                                    if (shouldShowBottomBar) Modifier
-                                    else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                                ),
-                            entries = rememberDecoratedNavEntries(
-                                backStack = backStack,
-                                entryProvider = entryProvider,
-                                entryDecorators = listOf(
-                                    rememberSaveableStateHolderNavEntryDecorator(),
-                                    rememberViewModelStoreNavEntryDecorator()
+                    if (shouldShowBottomBar) {
+                        SPBottomNavigation(
+                            items = listOf(
+                                BottomNavItem(
+                                    stringResource(R.string.nav_home),
+                                    RD.drawable.ic_bottom_nav_home
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_services),
+                                    RD.drawable.ic_bottom_nav_services
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_booking),
+                                    RD.drawable.ic_bottom_nav_bookings
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_profile),
+                                    RD.drawable.ic_bottom_nav_profile
+                                ), BottomNavItem(
+                                    stringResource(R.string.nav_wallet),
+                                    RD.drawable.ic_bottom_nav_wallet
                                 )
                             ),
-                            onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                            selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                            onItemSelected = { index -> onBottomNavItemSelected(index) },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = paddingValues.calculateBottomPadding()),
                         )
-
-                        if (shouldShowBottomBar) {
-                            SPBottomNavigation(
-                                items = listOf(
-                                    BottomNavItem(
-                                        stringResource(R.string.nav_home),
-                                        RD.drawable.ic_bottom_nav_home
-                                    ), BottomNavItem(
-                                        stringResource(R.string.nav_services),
-                                        RD.drawable.ic_bottom_nav_services
-                                    ), BottomNavItem(
-                                        stringResource(R.string.nav_booking),
-                                        RD.drawable.ic_bottom_nav_bookings
-                                    ), BottomNavItem(
-                                        stringResource(R.string.nav_profile),
-                                        RD.drawable.ic_bottom_nav_profile
-                                    ), BottomNavItem(
-                                        stringResource(R.string.wallet_title),
-                                        RD.drawable.ic_bottom_nav_wallet
-                                    )
-                                ),
-                                selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
-                                onItemSelected = { index -> onBottomNavItemSelected(index) },
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = paddingValues.calculateBottomPadding()),
-                            )
-                        }
                     }
                 }
             }
         }
     }
+}
+}
