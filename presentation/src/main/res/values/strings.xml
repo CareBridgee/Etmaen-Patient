@@ -48,9 +48,14 @@
   <string name="personal_info_dob_hint">mm/dd/yyyy</string>
   <string name="personal_info_date_confirm">OK</string>
   <string name="personal_info_date_cancel">Cancel</string>
+  <string name="personal_info_national_id_title">National ID</string>
+  <string name="personal_info_national_id_hint">0000000000000000</string>
   <string name="personal_info_gender_title">Gender</string>
   <string name="personal_info_gender_male">Male</string>
   <string name="personal_info_gender_female">Female</string>
+  <string name="personal_info_account_type_title">Account Type</string>
+  <string name="personal_info_account_type_family">Family</string>
+  <string name="personal_info_account_type_personal">Personal</string>
   <string name="personal_info_continue_btn">Continue</string>
   <!-- Profile Completion -->
   <string name="profile_step_format">Step %1$d of %2$d</string>
