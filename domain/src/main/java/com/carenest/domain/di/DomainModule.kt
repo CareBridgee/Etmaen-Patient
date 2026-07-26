@@ -38,6 +38,30 @@ object DomainModule {
 
     @Provides
     @Singleton
+    fun provideGetLoggedInStatusUseCase(
+        settingsRepository: SettingsRepository
+    ): com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase {
+        return com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSettingsUseCase(
+        settingsRepository: SettingsRepository
+    ): com.carenest.domain.usecase.settings.GetSettingsUseCase {
+        return com.carenest.domain.usecase.settings.GetSettingsUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateSettingsUseCase(
+        settingsRepository: SettingsRepository
+    ): com.carenest.domain.usecase.settings.UpdateSettingsUseCase {
+        return com.carenest.domain.usecase.settings.UpdateSettingsUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideLoginWithPhoneUseCase(
         authRepository: AuthRepository
     ): LoginWithPhoneUseCase {

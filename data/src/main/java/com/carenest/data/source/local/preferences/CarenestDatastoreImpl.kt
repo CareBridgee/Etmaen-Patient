@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class CarenestDatastoreImpl @Inject constructor (
     private val dataStore: DataStore<Preferences>,
-    @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @param:IoDispatcher private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : CarenestDatastore {
 
     override val isLoggedIn: Flow<Boolean>
@@ -30,6 +30,17 @@ class CarenestDatastoreImpl @Inject constructor (
             }
         }
 
+    override val languageCode: Flow<String>
+        get() = dataStore.data.map { it[PreferenceKeys.LANGUAGE_CODE] ?: "en" }
+
+    override val isDarkMode: Flow<Boolean>
+        get() = dataStore.data.map { it[PreferenceKeys.IS_DARK_MODE] ?: false }
+
+    override val emailUpdates: Flow<Boolean>
+        get() = dataStore.data.map { it[PreferenceKeys.EMAIL_UPDATES] ?: true }
+
+    override val smsAlerts: Flow<Boolean>
+        get() = dataStore.data.map { it[PreferenceKeys.SMS_ALERTS] ?: false }
 
     override suspend fun setOnboardingDone(done: Boolean) {
         withContext(coroutineDispatcher) {
@@ -40,15 +51,47 @@ class CarenestDatastoreImpl @Inject constructor (
     }
 
     override suspend fun setLoggedIn(done: Boolean) {
-        withContext(coroutineDispatcher){
+        withContext(coroutineDispatcher) {
             dataStore.edit {
                 it[PreferenceKeys.IS_LOGGED_IN] = done
             }
         }
     }
 
+    override suspend fun setLanguageCode(languageCode: String) {
+        withContext(coroutineDispatcher) {
+            dataStore.edit {
+                it[PreferenceKeys.LANGUAGE_CODE] = languageCode
+            }
+        }
+    }
+
+    override suspend fun setDarkMode(isDark: Boolean) {
+        withContext(coroutineDispatcher) {
+            dataStore.edit {
+                it[PreferenceKeys.IS_DARK_MODE] = isDark
+            }
+        }
+    }
+
+    override suspend fun setEmailUpdates(enabled: Boolean) {
+        withContext(coroutineDispatcher) {
+            dataStore.edit {
+                it[PreferenceKeys.EMAIL_UPDATES] = enabled
+            }
+        }
+    }
+
+    override suspend fun setSmsAlerts(enabled: Boolean) {
+        withContext(coroutineDispatcher) {
+            dataStore.edit {
+                it[PreferenceKeys.SMS_ALERTS] = enabled
+            }
+        }
+    }
+
     override suspend fun clearAll() {
-        withContext(coroutineDispatcher){
+        withContext(coroutineDispatcher) {
             dataStore.edit { it.clear() }
         }
     }
