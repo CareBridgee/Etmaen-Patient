@@ -205,14 +205,16 @@ fun AppNav() {
                 )
             }
 
-            entry<AppRoute.VisitCompleted> { route->
-                 VisitCompletedScreen(
-                     requestId = route.requestId,
-                     onNavigateHome = {
-                         replaceWith(AppRoute.Home)
-                     },
-                     onShowSnackbar = onShowSnackbar
-                 )
+            entry<AppRoute.VisitCompleted> { route ->
+                VisitCompletedScreen(
+                    requestId = route.requestId,
+                    onNavigateHome = {
+                        replaceWith(AppRoute.Home)
+                    },
+                    onShowSnackbar = onShowSnackbar
+                )
+            }
+
             entry <AppRoute.Chat>{route->
                 ChatScreen(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
