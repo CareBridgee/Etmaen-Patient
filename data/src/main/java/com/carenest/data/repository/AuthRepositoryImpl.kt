@@ -2,6 +2,7 @@ package com.carenest.data.repository
 
 import com.carenest.data.di.IoDispatcher
 import com.carenest.data.mapper.toDomain
+import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
 import com.carenest.domain.model.Patient
 import com.carenest.domain.model.auth.AuthResult
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDatasource: AuthDatasource,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val datastore: CarenestDatastore
 ) : AuthRepository {
 
