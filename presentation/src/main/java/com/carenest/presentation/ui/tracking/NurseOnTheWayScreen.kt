@@ -1,8 +1,5 @@
 package com.carenest.presentation.ui.tracking
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,15 +19,10 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,8 +43,8 @@ import com.carenest.presentation.ui.tracking.components.NurseInfoCard
 import com.carenest.presentation.ui.tracking.components.NurseOnTheWayActionButtons
 import com.carenest.presentation.ui.tracking.components.StatInfoCard
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.core.util.dialPhoneNumber
 import com.carenest.presentation.ui.tracking.components.CancelVisitConfirmationDialog
-import kotlinx.coroutines.launch
 
 @Composable
 fun NurseOnTheWayScreen(
@@ -215,11 +207,6 @@ private fun SuccessIcon(modifier: Modifier = Modifier) {
             modifier = Modifier.size(40.dp),
         )
     }
-}
-
-private fun dialPhoneNumber(context: Context, phoneNumber: String) {
-    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
-    context.startActivity(intent)
 }
 
 @Preview(showBackground = true)
