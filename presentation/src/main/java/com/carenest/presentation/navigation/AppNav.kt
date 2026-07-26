@@ -50,6 +50,7 @@ import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
+import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
@@ -62,7 +63,7 @@ import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
 import com.carenest.presentation.ui.aichat.chat.AIChatScreen
 import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
-import com.carenest.domain.model.home.ServiceCategory
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
@@ -287,13 +288,16 @@ fun AppNav() {
                             }
                         },
                         onNavigateToServiceDetails = { categoryStr ->
-                        try {
-                            val category = ServiceCategory.valueOf(categoryStr)
-                            backStack.add(AppRoute.ServiceDetails(category))
-                        } catch (e: Exception) {
-                            // Invalid category
+                            val uiModel = HealthcareServiceUiModel(
+                                id = categoryStr,
+                                name = categoryStr.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                                estimatedDurationMinutes = 45L,
+                                basePrice = 50.0,
+                                description = "Professional care service tailored to your needs.",
+                                iconResName = ""
+                            )
+                            backStack.add(AppRoute.ServiceDetails(uiModel))
                         }
-                    }
                     )
                 }
 
