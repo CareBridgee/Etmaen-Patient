@@ -204,17 +204,18 @@ fun AppNav() {
             }
 
 
-            entry<AppRoute.RequestService> {
+            entry<AppRoute.RequestService> { route ->
                 RequestServiceScreen(
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                     onNavigateToMap = { backStack.add(AppRoute.Map) },
                     onNavigateToEditProfile = { /* TODO */ },
                     onNavigateToAddPatient = { /* TODO */ },
-                    onNavigateToServiceSelection = { /* TODO */ },
+                    onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
                     onNavigateToAddressPicker = { /* TODO */ },
                     onSubmitRequestClick = {
                         backStack.add(AppRoute.SearchForNurse)
                     },
+                    selectedService = route.service,
                     mapResultLocation = mapResultLocation,
                     onMapResultConsumed = { mapResultLocation = null },
                 )
@@ -236,7 +237,9 @@ fun AppNav() {
                     onMatched = { nurseId ->
                         replaceWith(AppRoute.AcceptOffer)
                     }
-            entry<AppRoute.NurseOnTheWay> { route->
+                )
+            }
+            entry<AppRoute.NurseOnTheWay> { route ->
                 NurseOnTheWayScreen(
                     requestId = route.requestId,
                     onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },

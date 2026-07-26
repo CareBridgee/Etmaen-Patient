@@ -4,6 +4,7 @@ import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.model.Patient
 import com.carenest.domain.model.PaymentMethod
+import com.carenest.presentation.model.HealthcareServiceUiModel
 
 data class RequestServiceUiState(
     val patients: List<Patient> = emptyList(),
@@ -20,6 +21,7 @@ data class RequestServiceUiState(
 )
 
 sealed class RequestServiceIntent {
+    data class OnStart(val service: HealthcareServiceUiModel?) : RequestServiceIntent()
     data class OnPatientSelected(val patient: Patient) : RequestServiceIntent()
     data object OnEditProfileClicked : RequestServiceIntent()
     data object OnAddPatientClicked : RequestServiceIntent()
@@ -40,7 +42,7 @@ sealed class RequestServiceEffect {
     data class ShowError(val message: String) : RequestServiceEffect()
     data object NavigateToEditProfile : RequestServiceEffect()
     data object NavigateToAddPatient : RequestServiceEffect()
-    data object NavigateToServiceSelection : RequestServiceEffect()
+    data class NavigateToServiceSelection(val currentService: HealthcareService?) : RequestServiceEffect()
     data object NavigateToAddressPicker : RequestServiceEffect()
     data object NavigateToMap : RequestServiceEffect()
     data object RequestSubmittedSuccessfully : RequestServiceEffect()
