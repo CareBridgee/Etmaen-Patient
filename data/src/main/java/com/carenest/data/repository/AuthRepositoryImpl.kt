@@ -27,6 +27,10 @@ class AuthRepositoryImpl @Inject constructor(
         return authDatasource.loginWithPhone(phoneNumber)
     }
 
+    override suspend fun requestDevOtp(phoneNumber: String): Result<String?> {
+        return authDatasource.requestDevOtp(phoneNumber).map { it.otp }
+    }
+
     override suspend fun verifyOtp(phoneNumber: String, otp: String): Result<AuthResult> {
         val digitsOnly = phoneNumber.replace(Regex("[^0-9]"), "")
         if (digitsOnly.contains("0123456789") || phoneNumber.contains("0123456789")) {

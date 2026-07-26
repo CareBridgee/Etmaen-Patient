@@ -50,8 +50,11 @@ fun OtpScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(entry.phone) {
+    androidx.compose.runtime.LaunchedEffect(entry.phone, entry.otp) {
         viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
+        entry.otp?.let {
+            viewModel.onEvent(OtpIntent.OtpCodeChanged(it))
+        }
     }
 
     ObserveEffect(viewModel.effect) { effect ->

@@ -104,10 +104,12 @@ fun AppNav() {
 
             entry<AppRoute.Login> {
                 LoginScreen(
-                    onNavigateToOtp = { phone, method ->
+                    onNavigateToOtp = { phone, otp, method ->
                         backStack.add(
                             AppRoute.Otp(
-                                phone, method
+                                phone = phone,
+                                otp = otp,
+                                method = method
                             )
                         )
                     })
