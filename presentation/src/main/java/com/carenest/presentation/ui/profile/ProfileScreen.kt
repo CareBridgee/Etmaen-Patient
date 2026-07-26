@@ -46,6 +46,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
 fun ProfileScreen(
@@ -73,9 +74,6 @@ fun ProfileScreen(
     )
 }
 
-import androidx.compose.foundation.layout.statusBarsPadding
-import com.carenest.presentation.navigation.HideTopBar
-
 @Composable
 fun ProfileContent(
     state: ProfileState,
@@ -85,9 +83,6 @@ fun ProfileContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.colors.backGround)
-            .statusBarsPadding(),
-        contentAlignment = Alignment.Center
             .background(Theme.colors.backGround)
             .statusBarsPadding()
     ) {
