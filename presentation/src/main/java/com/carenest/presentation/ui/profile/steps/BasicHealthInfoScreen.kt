@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.profile.steps
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,11 +52,15 @@ fun BasicHealthInfoScreen(
     height: String,
     weight: String,
     bloodType: String,
+    heightError: String? = null,
+    weightError: String? = null,
+    bloodTypeError: String? = null,
     onHeightChange: (String) -> Unit,
     onWeightChange: (String) -> Unit,
     onBloodTypeChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -93,27 +98,35 @@ fun BasicHealthInfoScreen(
                     label = stringResource(R.string.basic_health_height),
                     value = height,
                     unit = stringResource(R.string.basic_health_cm),
+                    hint = stringResource(R.string.basic_health_height_hint),
                     onValueChange = onHeightChange,
+                    errorMessage = heightError,
                     modifier = Modifier.weight(1f)
                 )
                 MeasurementCard(
                     label = stringResource(R.string.basic_health_weight),
                     value = weight,
                     unit = stringResource(R.string.basic_health_kg),
+                    hint = stringResource(R.string.basic_health_weight_hint),
                     onValueChange = onWeightChange,
+                    errorMessage = weightError,
                     modifier = Modifier.weight(1f)
                 )
             }
 
             BloodTypeCard(
                 selectedBloodType = bloodType,
+                errorMessage = bloodTypeError,
                 onBloodTypeSelected = onBloodTypeChange
             )
         }
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            showBackButton = true,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -169,7 +182,9 @@ private fun MeasurementCard(
     label: String,
     value: String,
     unit: String,
+    hint: String,
     onValueChange: (String) -> Unit,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -191,9 +206,12 @@ private fun MeasurementCard(
             CustomTextField(
                 text = value,
                 onTextChange = { onValueChange(it.filter(Char::isDigit).take(3)) },
+                hint = hint,
                 singleLine = true,
                 fieldHeight = 52.dp,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = errorMessage != null,
+                errorMessage = errorMessage,
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.size(Theme.spacing.small))
@@ -208,6 +226,7 @@ private fun MeasurementCard(
 @Composable
 private fun BloodTypeCard(
     selectedBloodType: String,
+    errorMessage: String? = null,
     onBloodTypeSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -236,6 +255,10 @@ private fun BloodTypeCard(
                     .height(56.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(Theme.colors.disable)
+                    .then(
+                        if (errorMessage != null) Modifier.border(1.dp, Theme.colors.error, RoundedCornerShape(14.dp))
+                        else Modifier
+                    )
                     .clickable { expanded = true }
                     .padding(horizontal = Theme.spacing.medium),
                 verticalAlignment = Alignment.CenterVertically,
@@ -269,6 +292,12 @@ private fun BloodTypeCard(
                     )
                 }
             }
+        }
+        errorMessage?.let {
+            BasicText(
+                text = it,
+                style = Theme.typography.body.small.copy(color = Theme.colors.error)
+            )
         }
         BasicText(
             text = stringResource(R.string.basic_health_blood_type_note),

@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.profile.steps
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +48,7 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.EmergencyRelationship
+import com.carenest.domain.model.profile.EmergencyRelationship
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
 
@@ -56,11 +57,17 @@ fun EmergencyContactScreen(
     contactName: String,
     relationship: EmergencyRelationship?,
     phoneNumber: String,
+    dataLoaded: Boolean = true,
+    editingUnavailable: Boolean = false,
+    contactNameError: String? = null,
+    relationshipError: String? = null,
+    phoneNumberError: String? = null,
     onContactNameChange: (String) -> Unit,
     onRelationshipSelected: (EmergencyRelationship) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -114,6 +121,13 @@ fun EmergencyContactScreen(
                     )
                 }
 
+                if (editingUnavailable) {
+                    BasicText(
+                        text = stringResource(R.string.emergency_contact_multiple_unavailable),
+                        style = Theme.typography.body.medium.copy(color = Theme.colors.error)
+                    )
+                }
+
                 CustomTextField(
                     text = contactName,
                     onTextChange = onContactNameChange,
@@ -122,12 +136,17 @@ fun EmergencyContactScreen(
                     leadingIcon = rememberVectorPainter(Icons.Outlined.PersonOutline),
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
+                    enabled = dataLoaded && !editingUnavailable,
+                    isError = contactNameError != null,
+                    errorMessage = contactNameError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 RelationshipDropdown(
                     relationship = relationship,
+                    enabled = dataLoaded && !editingUnavailable,
+                    errorMessage = relationshipError,
                     onRelationshipSelected = onRelationshipSelected
                 )
 
@@ -140,6 +159,9 @@ fun EmergencyContactScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
+                    enabled = dataLoaded && !editingUnavailable,
+                    isError = phoneNumberError != null,
+                    errorMessage = phoneNumberError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -185,7 +207,9 @@ fun EmergencyContactScreen(
             onBack = onBack,
             onContinue = onContinue,
             continueCaption = stringResource(R.string.emergency_contact_continue),
-            stackButtons = true
+            stackButtons = true,
+            continueEnabled = dataLoaded && !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -193,6 +217,8 @@ fun EmergencyContactScreen(
 @Composable
 private fun RelationshipDropdown(
     relationship: EmergencyRelationship?,
+    enabled: Boolean,
+    errorMessage: String? = null,
     onRelationshipSelected: (EmergencyRelationship) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -214,7 +240,14 @@ private fun RelationshipDropdown(
                     .height(56.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(Theme.colors.cardBackground)
-                    .clickable { expanded = true }
+                    .then(
+                        if (errorMessage != null) {
+                            Modifier.border(1.dp, Theme.colors.error, RoundedCornerShape(14.dp))
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .clickable(enabled = enabled) { expanded = true }
                     .padding(horizontal = Theme.spacing.medium),
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
                 verticalAlignment = Alignment.CenterVertically
@@ -268,6 +301,12 @@ private fun RelationshipDropdown(
                     )
                 }
             }
+        }
+        errorMessage?.let {
+            BasicText(
+                text = it,
+                style = Theme.typography.body.small.copy(color = Theme.colors.error)
+            )
         }
     }
 }

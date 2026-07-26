@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.Medication
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -37,21 +35,27 @@ import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.model.profile.MedicationInput
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.domain.model.profile.MedicationValidationErrors
+import com.carenest.presentation.ui.profile.validation.localizedMessage
 
 @Composable
 fun CurrentMedicationsScreen(
     hasNoCurrentMedications: Boolean,
-    medications: List<String>,
+    medications: List<MedicationInput>,
+    selectionError: String? = null,
+    medicationErrors: Map<Long, MedicationValidationErrors> = emptyMap(),
     onNoCurrentMedicationsToggle: () -> Unit,
-    onMedicationChange: (Int, String) -> Unit,
+    onMedicationNameChange: (Int, String) -> Unit,
     onAddMedication: () -> Unit,
     onRemoveMedication: (Int) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -100,6 +104,12 @@ fun CurrentMedicationsScreen(
                 checked = hasNoCurrentMedications,
                 onCheckedChange = onNoCurrentMedicationsToggle
             )
+            selectionError?.let {
+                BasicText(
+                    text = it,
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                )
+            }
 
             Column(
                 modifier = Modifier.alpha(if (hasNoCurrentMedications) 0.4f else 1f),
@@ -108,14 +118,17 @@ fun CurrentMedicationsScreen(
                 medications.forEachIndexed { index, medication ->
                     MedicationEntry(
                         medication = medication,
+                        validationErrors = medicationErrors[medication.uiKey],
                         enabled = !hasNoCurrentMedications,
-                        onMedicationChange = { onMedicationChange(index, it) },
+                        onNameChange = { onMedicationNameChange(index, it) },
                         onRemove = { onRemoveMedication(index) }
                     )
                 }
 
                 AddMedicationButton(
-                    enabled = !hasNoCurrentMedications,
+                    enabled = !hasNoCurrentMedications &&
+                        medications.size < MAX_MEDICATIONS &&
+                        medications.all { it.name.isNotBlank() },
                     onClick = onAddMedication
                 )
             }
@@ -123,7 +136,9 @@ fun CurrentMedicationsScreen(
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -173,9 +188,10 @@ private fun NoCurrentMedicationsCard(
 
 @Composable
 private fun MedicationEntry(
-    medication: String,
+    medication: MedicationInput,
+    validationErrors: MedicationValidationErrors? = null,
     enabled: Boolean,
-    onMedicationChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(
@@ -189,13 +205,15 @@ private fun MedicationEntry(
         verticalAlignment = Alignment.CenterVertically
     ) {
         CustomTextField(
-            text = medication,
-            onTextChange = onMedicationChange,
-            hint = stringResource(R.string.current_medications_hint),
+            text = medication.name,
+            onTextChange = onNameChange,
+            hint = stringResource(R.string.current_medications_name_hint),
             enabled = enabled,
             borderColor = Theme.colors.surfaceVariant,
             containerColor = Theme.colors.cardBackground,
-            singleLine = true,
+            isError = validationErrors?.name != null,
+            errorMessage = validationErrors?.name.localizedMessage(),
+            singleLine = false,
             modifier = Modifier.weight(1f)
         )
         Icon(
@@ -217,6 +235,7 @@ private fun AddMedicationButton(enabled: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .alpha(if (enabled) 1f else 0.4f)
             .clip(RoundedCornerShape(16.dp))
             .border(
                 width = 1.dp,
@@ -244,15 +263,17 @@ private fun AddMedicationButton(enabled: Boolean, onClick: () -> Unit) {
     }
 }
 
+private const val MAX_MEDICATIONS = 10
+
 @Preview(showBackground = true)
 @Composable
 private fun CurrentMedicationsScreenPreview() {
     SpTheme {
         CurrentMedicationsScreen(
             hasNoCurrentMedications = false,
-            medications = listOf("Lisinopril 10mg"),
+            medications = listOf(MedicationInput(uiKey = 0L, name = "Lisinopril 10mg")),
             onNoCurrentMedicationsToggle = {},
-            onMedicationChange = { _, _ -> },
+            onMedicationNameChange = { _, _ -> },
             onAddMedication = {},
             onRemoveMedication = {},
             onBack = {},

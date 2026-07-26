@@ -43,10 +43,13 @@ import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
 fun MedicalHistoryScreen(
     previousSurgeries: String,
     previousHospitalizations: String,
+    previousSurgeriesError: String? = null,
+    previousHospitalizationsError: String? = null,
     onPreviousSurgeriesChange: (String) -> Unit,
     onPreviousHospitalizationsChange: (String) -> Unit,
     onBack: () -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
@@ -80,6 +83,7 @@ fun MedicalHistoryScreen(
                 hint = stringResource(R.string.medical_history_surgeries_hint),
                 icon = Icons.Outlined.MedicalServices,
                 text = previousSurgeries,
+                errorMessage = previousSurgeriesError,
                 onTextChange = onPreviousSurgeriesChange
             )
 
@@ -89,6 +93,7 @@ fun MedicalHistoryScreen(
                 hint = stringResource(R.string.medical_history_hospitalizations_hint),
                 icon = Icons.Outlined.Business,
                 text = previousHospitalizations,
+                errorMessage = previousHospitalizationsError,
                 onTextChange = onPreviousHospitalizationsChange
             )
 
@@ -127,7 +132,9 @@ fun MedicalHistoryScreen(
 
         ProfileScreenNavigation(
             onBack = onBack,
-            onContinue = onContinue
+            onContinue = onContinue,
+            continueEnabled = !isSubmitting,
+            isLoading = isSubmitting
         )
     }
 }
@@ -139,6 +146,7 @@ private fun HistoryInputCard(
     hint: String,
     icon: ImageVector,
     text: String,
+    errorMessage: String? = null,
     onTextChange: (String) -> Unit
 ) {
     Column(
@@ -191,6 +199,8 @@ private fun HistoryInputCard(
             fieldVerticalAlignment = Alignment.Top,
             borderColor = Theme.colors.cardBackground,
             containerColor = Theme.colors.cardBackground,
+            isError = errorMessage != null,
+            errorMessage = errorMessage,
             modifier = Modifier.fillMaxWidth()
         )
     }
