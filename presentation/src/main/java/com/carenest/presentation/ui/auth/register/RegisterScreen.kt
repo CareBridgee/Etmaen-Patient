@@ -174,8 +174,7 @@ internal fun RegisterScreenContent(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-                modifier = Modifier.fillMaxWidth()
-            )
+
 
 
 
