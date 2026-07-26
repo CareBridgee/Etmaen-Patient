@@ -34,6 +34,7 @@ import com.carenest.presentation.ui.home.components.HomeGreetingBar
 import com.carenest.presentation.ui.home.components.HomeSearchBar
 import com.carenest.presentation.ui.home.components.HomeServicesGrid
 import com.carenest.presentation.ui.home.components.HomeShimmerLoading
+import com.carenest.presentation.model.HealthcareServiceUiModel
 
 import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
@@ -41,7 +42,7 @@ import com.carenest.designsystem.components.toast.rememberToastState
 @Composable
 fun HomeScreen(
     onNavigateToServices: () -> Unit,
-    onNavigateToServiceDetails: (com.carenest.domain.model.home.ServiceCategory) -> Unit,
+    onNavigateToServiceDetails: (HealthcareServiceUiModel) -> Unit,
     onNavigateToBookings: () -> Unit,
     onNavigateToAIChat: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
@@ -52,7 +53,7 @@ fun HomeScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             HomeEffect.NavigateToServices -> onNavigateToServices()
-            is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.category)
+            is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.service)
             HomeEffect.NavigateToBookings -> onNavigateToBookings()
             HomeEffect.NavigateToAIChat -> onNavigateToAIChat()
             is HomeEffect.ShowToast -> {
