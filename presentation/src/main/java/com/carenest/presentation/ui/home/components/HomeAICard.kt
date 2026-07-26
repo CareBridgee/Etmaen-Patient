@@ -61,13 +61,13 @@ fun HomeAICard(
                 Icon(
                     painter = painterResource(id = RD.drawable.ic_ai_sparkles),
                     contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.9f),
+                    tint = Theme.colors.onPrimary.copy(alpha = 0.9f),
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
                     text = stringResource(R.string.home_ai_powered),
                     style = Theme.typography.body.small.copy(
-                        color = Color.White.copy(alpha = 0.9f),
+                        color = Theme.colors.onPrimary.copy(alpha = 0.9f),
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
                     )
@@ -77,7 +77,7 @@ fun HomeAICard(
             Text(
                 text = stringResource(R.string.home_ai_title),
                 style = Theme.typography.body.large.copy(
-                    color = Color.White,
+                    color = Theme.colors.onPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
                 )
@@ -86,7 +86,7 @@ fun HomeAICard(
             Text(
                 text = stringResource(R.string.home_ai_description),
                 style = Theme.typography.body.medium.copy(
-                    color = Color.White.copy(alpha = 0.9f)
+                    color = Theme.colors.onPrimary.copy(alpha = 0.9f)
                 ),
                 modifier = Modifier.fillMaxWidth(0.85f)
             )
