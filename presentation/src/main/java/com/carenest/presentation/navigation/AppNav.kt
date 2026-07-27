@@ -1,6 +1,7 @@
 package com.carenest.presentation.navigation
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -62,6 +63,18 @@ import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
 import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
 import com.carenest.presentation.ui.services.list.ServicesScreen
+import com.carenest.presentation.ui.home.HomeScreen
+import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.profile.familymembers.FamilyMembersScreen
+import com.carenest.presentation.ui.profile.settings.SettingsScreen
+import com.carenest.presentation.ui.home.HomeScreen
+import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
+import com.carenest.presentation.ui.aichat.chat.AIChatScreen
+import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
+import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
@@ -319,6 +332,23 @@ fun AppNav(
             val currentRoute = backStack.lastOrNull()
             val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
             val shouldShowBottomBar = currentRoute in bottomNavRoutes
+            val shouldHandleBackToHome = currentRoute != null && currentRoute !in listOf(
+                AppRoute.Home,
+                AppRoute.Splash,
+                AppRoute.OnBoarding,
+                AppRoute.Login
+            )
+
+            BackHandler(enabled = shouldHandleBackToHome) {
+                if (backStack.size > 1) {
+                    backStack.removeLastOrNull()
+                } else {
+                    Snapshot.withMutableSnapshot {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    }
+                }
+            }
 
             fun onBottomNavItemSelected(index: Int) {
                 val targetRoute = bottomNavRoutes.getOrNull(index) ?: return

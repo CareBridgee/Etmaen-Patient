@@ -3,6 +3,7 @@ package com.carenest.data.source.local.preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
+import androidx.datastore.preferences.core.stringPreferencesKey
 
 internal object PreferenceKeys {
     internal const val DATA_STORE_FILE_NAME = "app_preferences.preferences_pb"
@@ -12,4 +13,8 @@ internal object PreferenceKeys {
     val ACCESS_TOKEN = stringPreferencesKey("ACCESS_TOKEN")
     val REFRESH_TOKEN = stringPreferencesKey("REFRESH_TOKEN")
 
+    val LANGUAGE_CODE = stringPreferencesKey("LANGUAGE_CODE")
+    val IS_DARK_MODE = booleanPreferencesKey("IS_DARK_MODE")
+    val EMAIL_UPDATES = booleanPreferencesKey("EMAIL_UPDATES")
+    val SMS_ALERTS = booleanPreferencesKey("SMS_ALERTS")
 }
