@@ -48,14 +48,6 @@ object DomainModule {
 
     @Provides
     @Singleton
-    fun provideGetLoggedInStatusUseCase(
-        settingsRepository: SettingsRepository
-    ): com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase {
-        return com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase(settingsRepository)
-    }
-
-    @Provides
-    @Singleton
     fun provideGetSettingsUseCase(
         settingsRepository: SettingsRepository
     ): com.carenest.domain.usecase.settings.GetSettingsUseCase {

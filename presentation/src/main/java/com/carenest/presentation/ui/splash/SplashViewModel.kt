@@ -9,16 +9,9 @@ import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
-
-import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
-import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
-import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
@@ -43,8 +36,6 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val onboardingDone = getOnboardingStatusUseCase().first()
             val isLoggedIn = getLoggedInStatusUseCase().first()
-
-
             when {
                 !onboardingDone -> sendEffect(SplashEffect.NavigateToOnBoarding)
                 isLoggedIn -> sendEffect(SplashEffect.NavigateToHome)
