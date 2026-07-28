@@ -22,7 +22,7 @@ data class HomeState(
     val allServices: List<HealthcareService> = emptyList(),
     val filteredServices: List<HealthcareService> = emptyList(),
     val searchQuery: String = "",
-    val upcomingBooking: Booking? = null,
+    val upcomingBooking: List<Booking> = emptyList(),
     val isLoading: Boolean = true,
     val isError: Boolean = false,
     val errorMessage: String? = null
@@ -40,7 +40,7 @@ data class HomeState(
         get() = !isSearchActive && allServices.isEmpty() && !isLoading && !isError
 
     val isBookingEmpty: Boolean
-        get() = upcomingBooking == null && !isLoading && !isError
+        get() = upcomingBooking.isEmpty() && !isLoading && !isError
 }
 
 sealed class HomeEffect {

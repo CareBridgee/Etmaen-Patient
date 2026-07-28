@@ -3,12 +3,12 @@ package com.carenest.presentation.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +28,9 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.home.components.HomeAICard
-import com.carenest.presentation.ui.home.components.HomeBookingCard
+import com.carenest.presentation.ui.home.components.HomeBookingEmpty
+import com.carenest.presentation.ui.home.components.HomeBookingHeader
+import com.carenest.presentation.ui.home.components.HomeBookingItem
 import com.carenest.presentation.ui.home.components.HomeGreetingBar
 import com.carenest.presentation.ui.home.components.HomeSearchBar
 import com.carenest.presentation.ui.home.components.HomeServicesGrid
@@ -101,46 +103,61 @@ fun HomeScreenContent(
                 modifier = Modifier.padding(vertical = 48.dp)
             )
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 112.dp),
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 112.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // Top AppBar / Greeting
-                HomeGreetingBar(
-                    greetingText = state.greetingName,
-                    avatarUrl = state.user?.avatarUrl,
-                    onNotificationClick = { onEvent(HomeIntent.NotificationClicked) }
-                )
+                item {
+                    HomeGreetingBar(
+                        greetingText = state.greetingName,
+                        avatarUrl = state.user?.avatarUrl,
+                    )
+                }
 
-                // Search Bar
-                HomeSearchBar(
-                    query = state.searchQuery,
-                    onQueryChange = { onEvent(HomeIntent.SearchQueryChanged(it)) },
-                    onClearClick = { onEvent(HomeIntent.ClearSearch) }
-                )
+                item {
+                    HomeSearchBar(
+                        query = state.searchQuery,
+                        onQueryChange = { onEvent(HomeIntent.SearchQueryChanged(it)) },
+                    )
+                }
 
                 // AI Hero Assessment Card
-                HomeAICard(
-                    onStartChatClick = { onEvent(HomeIntent.StartAIChatClicked) }
-                )
+                item {
+                    HomeAICard(
+                        onStartChatClick = { onEvent(HomeIntent.StartAIChatClicked) }
+                    )
+                }
 
                 // Healthcare Services Grid
-                HomeServicesGrid(
-                    services = state.filteredServices,
-                    isSearchEmpty = state.isSearchEmpty,
-                    onViewAllClick = { onEvent(HomeIntent.ViewAllServicesClicked) },
-                    onServiceClick = { onEvent(HomeIntent.ServiceClicked(it)) }
-                )
+                item {
+                    HomeServicesGrid(
+                        services = state.filteredServices,
+                        isSearchEmpty = state.isSearchEmpty,
+                        onViewAllClick = { onEvent(HomeIntent.ViewAllServicesClicked) },
+                        onServiceClick = { onEvent(HomeIntent.ServiceClicked(it)) }
+                    )
+                }
 
-                // Upcoming Booking Preview
-                HomeBookingCard(
-                    booking = state.upcomingBooking,
-                    onManageClick = { onEvent(HomeIntent.ManageBookingsClicked) },
-                    onBookingClick = { onEvent(HomeIntent.BookingClicked(it)) }
-                )
+                // Upcoming Bookings Section
+                item {
+                    HomeBookingHeader(
+                        onManageClick = { onEvent(HomeIntent.ManageBookingsClicked) }
+                    )
+                }
+
+                if (state.isBookingEmpty) {
+                    item {
+                        HomeBookingEmpty()
+                    }
+                } else {
+                    items(state.upcomingBooking) { booking ->
+                        HomeBookingItem(
+                            booking = booking,
+                            onClick = { onEvent(HomeIntent.BookingClicked(it)) }
+                        )
+                    }
+                }
             }
         }
     }

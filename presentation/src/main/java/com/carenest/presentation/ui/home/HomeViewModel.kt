@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.presentation.model.toUiModel
-import com.carenest.domain.usecase.home.GetUpcomingBookingUseCase
+import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
 import com.carenest.domain.usecase.home.GetUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getServicesUseCase: GetServicesUseCase,
-    private val getUpcomingBookingUseCase: GetUpcomingBookingUseCase
+    private val getUpcomingBookingUseCase: GetUserRequestHistoryUseCase
 ) : ViewModel(),
     StateHolder<HomeState> by DefaultStateHolder(HomeState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -75,7 +75,7 @@ class HomeViewModel @Inject constructor(
 
                 val user = userResult.getOrNull()
                 val services = servicesResult.getOrDefault(emptyList())
-                val booking = bookingResult.getOrNull()
+                val booking = bookingResult.getOrNull() ?: emptyList()
 
                 val trimmedQuery = currentState.searchQuery.trim()
                 val filtered = if (trimmedQuery.isBlank()) {
