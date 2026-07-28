@@ -7,5 +7,5 @@ import com.carenest.domain.model.home.User
 interface HomeRepository {
     suspend fun getUser(): Result<User>
     suspend fun getServices(): Result<List<HealthcareService>>
-    suspend fun getUpcomingBooking(): Result<Booking?>
+    suspend fun getUserRequestsHistory(): Result<List<Booking>>
 }
