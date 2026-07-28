@@ -23,7 +23,6 @@ class OnBoardingViewModel @Inject constructor(
     fun onIntent(intent: OnBoardingIntent) {
         when (intent) {
             is OnBoardingIntent.OnCardSwiped -> handleCardSwiped(intent.newIndex)
-            is OnBoardingIntent.OnNextClicked -> handleNextClicked()
             is OnBoardingIntent.OnSkipClicked -> handleSkipClicked()
         }
     }
@@ -34,25 +33,10 @@ class OnBoardingViewModel @Inject constructor(
             val clamped = newIndex.coerceIn(0, pages.lastIndex)
             copy(
                 currentPageIndex = clamped,
-                isLastPage = clamped == pages.lastIndex,
             )
         }
     }
 
-    private fun handleNextClicked() {
-        val state = currentState
-        if (state.isLastPage) {
-            completeOnBoarding()
-        } else {
-            val next = (state.currentPageIndex + 1).coerceAtMost(state.pages.lastIndex)
-            updateState {
-                copy(
-                    currentPageIndex = next,
-                    isLastPage = next == pages.lastIndex,
-                )
-            }
-        }
-    }
     private fun handleSkipClicked() {
         completeOnBoarding()
     }

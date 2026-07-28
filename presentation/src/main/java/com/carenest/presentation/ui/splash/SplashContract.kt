@@ -11,4 +11,6 @@ sealed interface SplashIntent {
 
 sealed interface SplashEffect {
     data object NavigateToOnBoarding : SplashEffect
+    data object NavigateToHome : SplashEffect
+    data object NavigateToLogin : SplashEffect
 }

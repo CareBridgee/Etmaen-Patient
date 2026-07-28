@@ -65,7 +65,14 @@ sealed interface AppRoute : NavKey {
      data class Chat(val requestId: String) : AppRoute
 
      @Serializable
+     data object FamilyMembers : AppRoute
+
+     @Serializable
+     data object Settings : AppRoute
+
+     @Serializable
      data object ChoosePatient : AppRoute
+
 
      @Serializable
      data class AIChat(val patientId: String) : AppRoute
@@ -79,9 +86,4 @@ sealed interface AppRoute : NavKey {
      @Serializable
      data class VisitCompleted (val requestId: String): AppRoute
 
-     @Serializable
-     data object Settings : AppRoute
-
-     @Serializable
-     data object FamilyMembers : AppRoute
 }

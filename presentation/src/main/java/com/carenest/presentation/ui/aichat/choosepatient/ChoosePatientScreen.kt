@@ -1,7 +1,6 @@
 package com.carenest.presentation.ui.aichat.choosepatient
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.LocalIndication
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -48,16 +46,16 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.compose.ui.tooling.preview.Preview
-import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.theme.SpTheme
-import com.carenest.designsystem.R as RD
+import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.navigation.HideTopBar
+import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.designsystem.R as RD
 
 @Composable
 fun ChoosePatientScreen(
@@ -66,6 +64,11 @@ fun ChoosePatientScreen(
     viewModel: ChoosePatientViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    ScreenTopBar(
+        title = "Choose Patient",
+        onLeadingClick = onNavigateBack
+    )
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -86,13 +89,10 @@ fun ChoosePatientContent(
     state: ChoosePatientState,
     onEvent: (ChoosePatientEvent) -> Unit
 ) {
-    HideTopBar()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
-            .statusBarsPadding()
     ) {
         Column(
             modifier = Modifier

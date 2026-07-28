@@ -48,7 +48,6 @@ import com.carenest.designsystem.R as RD
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
-import com.carenest.presentation.ui.aichat.chat.AIChatTopBar
 import com.carenest.presentation.ui.aichat.chat.ChatInputBar
 
 @Composable
@@ -87,12 +86,7 @@ fun EmergencyAssistanceContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
-            .statusBarsPadding()
     ) {
-        AIChatTopBar(
-            onBackClick = { onEvent(EmergencyAssistanceEvent.OnBackClicked) }
-        )
-
         Box(
             modifier = Modifier
                 .weight(1f)

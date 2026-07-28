@@ -149,6 +149,7 @@
   <string name="onboarding_next">Next</string>
   <string name="app_name_careconnect">CareConnect</string>
   <string name="app_name_healthcare">Healthcare</string>
+  <string name="nav_wallet">Wallet</string>
   <string name="app_auth_description">Reassuring care for you and your loved ones</string>
   <string name="phone_header_brand">Secure Care</string>
   <string name="phone_otp_method_title">Choose how you\'d like to receive your verification code</string>
@@ -243,6 +244,48 @@
   <string name="view_service">View Service</string>
 
   <!-- Search For Nurse -->
+  <string name="profile_greeting">Good morning, Elena</string>
+  <string name="profile_primary_caregiver">Primary Caregiver</string>
+  <string name="profile_personal_info_title">Personal Info</string>
+  <string name="profile_personal_info_subtitle">Update your account details</string>
+  <string name="profile_health_profile_title">Health Profile</string>
+  <string name="profile_health_profile_subtitle">Medical history &amp; documents</string>
+  <string name="profile_family_members_title">Family Members</string>
+  <string name="profile_family_members_subtitle">Manage dependents (%1$d active)</string>
+  <string name="profile_addresses_title">Addresses</string>
+  <string name="profile_addresses_subtitle">Home and care locations</string>
+  <string name="profile_payment_title">Payment</string>
+  <string name="profile_payment_subtitle">Visa ending in ••42</string>
+  <string name="profile_settings_title">Settings</string>
+  <string name="profile_settings_subtitle">Security &amp; App preferences</string>
+  <string name="profile_logout_title">Logout</string>
+  <string name="profile_app_version">Serene Care v2.4.1</string>
+
+  <!-- Family Members Screen -->
+  <string name="family_members_screen_title">Family Members</string>
+  <string name="family_members_screen_subtitle">Manage healthcare profiles for your loved ones.</string>
+  <string name="family_members_last_checkup">Last Checkup</string>
+  <string name="family_members_upcoming">Upcoming</string>
+  <string name="family_members_edit_personal">Edit Personal Info</string>
+  <string name="family_members_edit_health">Edit Health Profile</string>
+  <string name="family_members_add_btn">+ Add Family Member</string>
+
+  <!-- Settings Screen -->
+  <string name="settings_screen_title">Settings</string>
+  <string name="settings_screen_subtitle">Manage your account and app experience</string>
+  <string name="settings_section_app_preferences">App Preferences</string>
+  <string name="settings_language_title">Language</string>
+  <string name="settings_dark_mode_title">Dark Mode</string>
+  <string name="settings_section_notifications">Notifications</string>
+  <string name="settings_email_updates_title">Email Updates</string>
+  <string name="settings_sms_alerts_title">SMS Alerts</string>
+  <string name="settings_section_security_privacy">Security &amp; Privacy</string>
+  <string name="settings_privacy_policy_title">Privacy Policy</string>
+  <string name="settings_select_language_title">Select Language</string>
+  <string name="settings_language_english">English</string>
+  <string name="settings_language_arabic">العربية</string>
+
+  <!-- Nurse Tracking -->
   <string name="validation_required">This field is required</string>
   <string name="validation_invalid_name">Use letters, spaces, apostrophes, or hyphens only</string>
   <string name="validation_name_length">Enter between 2 and 50 characters</string>
@@ -359,4 +402,13 @@
   <string name="emergency_call_ambulance">Call Ambulance Now</string>
   <string name="emergency_call_contact">Call Emergency Contact</string>
   <string name="emergency_dismiss">Dismiss if false alarm</string>
+
+  <!-- Choose Patient -->
+  <string name="back">Back</string>
+  <string name="add_new_member">Add New Member</string>
+  <string name="add_family_member_description">Enter the details of your family member to manage their healthcare.</string>
+  <string name="full_name">Full Name</string>
+  <string name="relationship">Relationship (e.g. Mother, Father, Child)</string>
+  <string name="age">Age</string>
+  <string name="save_family_member">Save Family Member</string>
 </resources>

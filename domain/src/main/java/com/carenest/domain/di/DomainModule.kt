@@ -11,6 +11,7 @@ import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.domain.usecase.home.GetUpcomingBookingUseCase
 import com.carenest.domain.usecase.home.GetUserUseCase
+import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,10 +32,34 @@ object DomainModule {
 
     @Provides
     @Singleton
+    fun provideGetLoggedInStatusUseCase(
+        settingsRepository: SettingsRepository
+    ): GetLoggedInStatusUseCase {
+        return GetLoggedInStatusUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideUpdateOnboardingStatusUseCase(
         settingsRepository: SettingsRepository
     ): UpdateOnboardingStatusUseCase {
         return UpdateOnboardingStatusUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSettingsUseCase(
+        settingsRepository: SettingsRepository
+    ): com.carenest.domain.usecase.settings.GetSettingsUseCase {
+        return com.carenest.domain.usecase.settings.GetSettingsUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateSettingsUseCase(
+        settingsRepository: SettingsRepository
+    ): com.carenest.domain.usecase.settings.UpdateSettingsUseCase {
+        return com.carenest.domain.usecase.settings.UpdateSettingsUseCase(settingsRepository)
     }
 
     @Provides

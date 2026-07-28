@@ -54,7 +54,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.navigation.HideTopBar
+import com.carenest.presentation.navigation.ScreenTopBar
 
 @Composable
 fun AIChatScreen(
@@ -65,6 +65,11 @@ fun AIChatScreen(
     viewModel: AIChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    ScreenTopBar(
+        title = "AI Health Assistant",
+        onLeadingClick = onNavigateBack
+    )
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -85,18 +90,11 @@ fun AIChatContent(
     state: AIChatState,
     onEvent: (AIChatEvent) -> Unit
 ) {
-    HideTopBar()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
-            .statusBarsPadding()
     ) {
-        AIChatTopBar(
-            onBackClick = { onEvent(AIChatEvent.OnBackClicked) }
-        )
-
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
@@ -127,78 +125,6 @@ fun AIChatContent(
             onInputChange = { onEvent(AIChatEvent.OnInputTextChanged(it)) },
             onSendClick = { onEvent(AIChatEvent.OnSendMessage) }
         )
-    }
-}
-
-@Composable
-fun AIChatTopBar(
-    onBackClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Theme.colors.surface)
-            .padding(horizontal = 12.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onBackClick) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
-                tint = Theme.colors.primaryFont
-            )
-        }
-
-        Spacer(modifier = Modifier.width(4.dp))
-
-        Icon(
-            painter = painterResource(id = RD.drawable.ic_ai_sparkles),
-            contentDescription = null,
-            tint = Theme.colors.primary,
-            modifier = Modifier.size(24.dp)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(R.string.ai_health_assistant),
-                style = Theme.typography.body.large.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                ),
-                color = Theme.colors.primaryFont
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF00C853))
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.online_ready),
-                    style = Theme.typography.body.small.copy(fontSize = 13.sp),
-                    color = Theme.colors.secondaryFont
-                )
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Theme.colors.primary.copy(alpha = 0.12f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = RD.drawable.ic_shield_check),
-                contentDescription = "Verified",
-                tint = Theme.colors.primary,
-                modifier = Modifier.size(20.dp)
-            )
-        }
     }
 }
 

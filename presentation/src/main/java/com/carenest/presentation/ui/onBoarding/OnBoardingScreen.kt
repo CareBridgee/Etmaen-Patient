@@ -96,7 +96,7 @@ fun OnBoardingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(0.85f),
-                maxVisibleCards = 3,
+                maxVisibleCards = 4,
                 onSwipe = { result ->
                     val newFrontId = result.resultingOrder.firstOrNull()?.id
                     val newIndex = state.pages.indexOfFirst { it.id == newFrontId }
@@ -154,18 +154,9 @@ fun OnBoardingContent(
 
             Spacer(Modifier.weight(1f))
 
-            val buttonLabel = if (state.isLastPage) stringResource(R.string.onboarding_get_started) else stringResource(R.string.onboarding_next)
-
             PrimaryButton(
-                caption = buttonLabel,
-                isDisabled = cardStackState.isAnimating,
-                onClick = {
-                    if (state.isLastPage) {
-                        onIntent(OnBoardingIntent.OnNextClicked)
-                    } else {
-                        cardStackState.swipe(SwipeDirection.Left)
-                    }
-                },
+                caption = stringResource(R.string.onboarding_get_started),
+                onClick = { onIntent(OnBoardingIntent.OnSkipClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp),
@@ -218,7 +209,7 @@ private fun OnBoardingFirstPagePreview() {
 private fun OnBoardingLastPagePreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
         OnBoardingContent(
-            state = OnBoardingState(currentPageIndex = 2, isLastPage = true),
+            state = OnBoardingState(currentPageIndex = 3),
             onIntent = {},
         )
     }
