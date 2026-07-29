@@ -4,10 +4,10 @@ import com.carenest.domain.model.home.Booking
 import com.carenest.domain.repository.HomeRepository
 import javax.inject.Inject
 
-class GetUpcomingBookingUseCase @Inject constructor(
+class GetUserRequestHistoryUseCase @Inject constructor(
     private val homeRepository: HomeRepository
 ) {
-    suspend operator fun invoke(): Result<Booking?> {
-        return homeRepository.getUpcomingBooking()
+    suspend operator fun invoke(): Result<List<Booking>> {
+        return homeRepository.getUserRequestsHistory()
     }
 }

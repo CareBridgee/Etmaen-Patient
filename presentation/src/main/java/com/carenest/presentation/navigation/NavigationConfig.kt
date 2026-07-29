@@ -51,6 +51,8 @@ object NavigationConfig {
             serializableSubclass(AppRoute.AddFunds::class)
             serializableSubclass(AppRoute.AddPaymentMethod::class)
             serializableSubclass(AppRoute.VisitCompleted::class)
+            serializableSubclass(AppRoute.ServiceDetails::class)
+            serializableSubclass(AppRoute.RequestService::class)
         }
     }
 

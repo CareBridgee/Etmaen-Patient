@@ -41,144 +41,172 @@ fun HomeBookingCard(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.home_history_title),
-                style = Theme.typography.body.large.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Theme.colors.primaryFont,
-                    fontSize = 18.sp
-                )
-            )
-
-            TextButton(onClick = onManageClick) {
-                Text(
-                    text = stringResource(R.string.home_bookings_manage),
-                    style = Theme.typography.body.medium.copy(
-                        color = Theme.colors.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                )
-            }
-        }
+        HomeBookingHeader(onManageClick = onManageClick)
 
         if (booking == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Theme.colors.surface)
-                    .padding(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.home_bookings_empty),
-                    style = Theme.typography.body.medium.copy(
-                        color = Theme.colors.secondaryFont
-                    )
-                )
-            }
+            HomeBookingEmpty()
         } else {
-            Box(
+            HomeBookingItem(
+                booking = booking,
+                onClick = onBookingClick
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeBookingHeader(
+    onManageClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.home_history_title),
+            style = Theme.typography.body.large.copy(
+                fontWeight = FontWeight.Bold,
+                color = Theme.colors.primaryFont,
+                fontSize = 18.sp
+            )
+        )
+
+        TextButton(onClick = onManageClick) {
+            Text(
+                text = stringResource(R.string.home_bookings_manage),
+                style = Theme.typography.body.medium.copy(
+                    color = Theme.colors.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeBookingEmpty(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(Theme.colors.surface)
+            .padding(20.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.home_bookings_empty),
+            style = Theme.typography.body.medium.copy(
+                color = Theme.colors.secondaryFont
+            )
+        )
+    }
+}
+
+@Composable
+fun HomeBookingItem(
+    booking: Booking,
+    onClick: (Booking) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(Theme.colors.surface)
+            .clickable { onClick(booking) }
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = RD.drawable.img_placeholder),
+                contentDescription = booking.providerName,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Theme.colors.surface)
-                    .clickable { onBookingClick(booking) }
-                    .padding(16.dp)
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = RD.drawable.img_placeholder),
-                        contentDescription = booking.providerName,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentScale = ContentScale.Crop
+                    Text(
+                        text = booking.providerName,
+                        style = Theme.typography.body.medium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Theme.colors.primaryFont
+                        )
                     )
 
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Theme.colors.primaryContainer)
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = booking.providerName,
-                                style = Theme.typography.body.medium.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = Theme.colors.primaryFont
-                                )
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(Theme.colors.primaryContainer)
-                                    .padding(horizontal = 8.dp, vertical = 2.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(6.dp)
-                                            .clip(CircleShape)
-                                            .background(Theme.colors.primary)
-                                    )
-                                    Text(
-                                        text = booking.statusText,
-                                        style = Theme.typography.body.small.copy(
-                                            color = Theme.colors.onPrimaryContainer,
-                                            fontWeight = FontWeight.Medium,
-                                            fontSize = 11.sp
-                                        )
-                                    )
-                                }
-                            }
-                        }
-
-                        Text(
-                            text = booking.serviceName,
-                            style = Theme.typography.body.medium.copy(
-                                color = Theme.colors.secondaryFont,
-                                fontSize = 13.sp
-                            )
-                        )
-
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Icon(
-                                painter = painterResource(id = RD.drawable.ic_time),
-                                contentDescription = null,
-                                tint = Theme.colors.hint,
-                                modifier = Modifier.size(14.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(Theme.colors.primary)
                             )
                             Text(
-                                text = booking.timeText,
+                                text = booking.statusText,
                                 style = Theme.typography.body.small.copy(
-                                    color = Theme.colors.hint,
-                                    fontSize = 12.sp
+                                    color = Theme.colors.onPrimaryContainer,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 11.sp
                                 )
                             )
                         }
                     }
                 }
+
+                Text(
+                    text = booking.serviceName,
+                    style = Theme.typography.body.medium.copy(
+                        color = Theme.colors.secondaryFont,
+                        fontSize = 13.sp
+                    )
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = RD.drawable.ic_time),
+                        contentDescription = null,
+                        tint = Theme.colors.hint,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Text(
+                        text = booking.timeText,
+                        style = Theme.typography.body.small.copy(
+                            color = Theme.colors.hint,
+                            fontSize = 12.sp
+                        )
+                    )
+                }
             }
         }
     }
 }
+

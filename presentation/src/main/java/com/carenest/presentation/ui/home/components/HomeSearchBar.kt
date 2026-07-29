@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 fun HomeSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    onClearClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     CustomTextField(

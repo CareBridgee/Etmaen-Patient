@@ -21,7 +21,7 @@ fun HealthcareService.toUiModel(): HealthcareServiceUiModel {
         estimatedDurationMinutes = estimatedDurationMinutes,
         basePrice = basePrice,
         description = description,
-        iconResName = iconResName
+        iconResName = iconResName?:""
     )
 }
 

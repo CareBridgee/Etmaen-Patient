@@ -68,8 +68,10 @@ class AuthRepositoryImpl @Inject constructor(
                 runCatching {
                     datastore.saveAuthTokens(
                         accessToken = response.accessToken,
-                        refreshToken = response.refreshToken
+                        refreshToken = response.refreshToken,
                     )
+
+                    datastore.setUserId(response.user.id)
                     response.toDomain()
                 }
             },

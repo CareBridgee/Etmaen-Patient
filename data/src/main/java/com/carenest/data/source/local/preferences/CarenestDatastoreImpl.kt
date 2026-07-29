@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class CarenestDatastoreImpl @Inject constructor (
     private val dataStore: DataStore<Preferences>,
-    @param:IoDispatcher private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @param:IoDispatcher private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : CarenestDatastore {
 
     override val authTokens: Flow<AuthTokens?>
@@ -52,6 +52,9 @@ class CarenestDatastoreImpl @Inject constructor (
 
     override val smsAlerts: Flow<Boolean>
         get() = dataStore.data.map { it[PreferenceKeys.SMS_ALERTS] ?: false }
+
+    override val userId: Flow<String>
+        get() = dataStore.data.map { it[PreferenceKeys.USER_ID]?: "Not Found UserId" }
 
     override suspend fun setOnboardingDone(done: Boolean) {
         withContext(coroutineDispatcher) {
@@ -97,6 +100,14 @@ class CarenestDatastoreImpl @Inject constructor (
         withContext(coroutineDispatcher) {
             dataStore.edit {
                 it[PreferenceKeys.SMS_ALERTS] = enabled
+            }
+        }
+    }
+
+    override suspend fun setUserId(id: String) {
+        withContext(coroutineDispatcher) {
+            dataStore.edit {
+                it[PreferenceKeys.USER_ID] = id
             }
         }
     }

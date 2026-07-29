@@ -13,6 +13,7 @@ interface CarenestDatastore {
     val isDarkMode: Flow<Boolean>
     val emailUpdates: Flow<Boolean>
     val smsAlerts: Flow<Boolean>
+    val userId : Flow<String>
 
     suspend fun setOnboardingDone(done: Boolean)
     suspend fun setLoggedIn(done: Boolean)
@@ -22,6 +23,7 @@ interface CarenestDatastore {
     suspend fun setDarkMode(isDark: Boolean)
     suspend fun setEmailUpdates(enabled: Boolean)
     suspend fun setSmsAlerts(enabled: Boolean)
+    suspend fun setUserId(id: String)
 
     suspend fun clearAll()
 
