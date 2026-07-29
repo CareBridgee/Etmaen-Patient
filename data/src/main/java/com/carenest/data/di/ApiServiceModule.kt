@@ -1,5 +1,7 @@
 package com.carenest.data.di
 
+import com.carenest.data.source.remote.service.AiChatApiService
+import com.carenest.data.source.remote.service.AiChatApiServiceImpl
 import com.carenest.data.source.remote.service.AuthApiService
 import com.carenest.data.source.remote.service.AuthApiServiceImpl
 import com.carenest.data.source.remote.service.ProfileApiService
@@ -9,11 +11,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ApiServiceModule {
-
 
     @Binds
     abstract fun provideAuthApiService(authApiServiceImpl: AuthApiServiceImpl): AuthApiService
@@ -21,6 +21,7 @@ abstract class ApiServiceModule {
     @Binds
     abstract fun provideProfileApiService(profileApiServiceImpl: ProfileApiServiceImpl): ProfileApiService
 
-
-
+    @Binds
+    abstract fun provideAiChatApiService(aiChatApiServiceImpl: AiChatApiServiceImpl): AiChatApiService
 }
+

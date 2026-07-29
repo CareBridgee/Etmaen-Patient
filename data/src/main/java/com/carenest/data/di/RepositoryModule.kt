@@ -36,6 +36,8 @@ import javax.inject.Singleton
 import com.carenest.data.source.remote.datasource.ChatDataSource
 import com.carenest.data.source.remote.datasource.ChatDataSourceImp
 import com.carenest.domain.repository.ChatRepository
+import com.carenest.data.repository.AiChatRepositoryImpl
+import com.carenest.domain.repository.AiChatRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -74,6 +76,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAiChatRepository(impl: AiChatRepositoryImpl): AiChatRepository
 
     //endregion
 
