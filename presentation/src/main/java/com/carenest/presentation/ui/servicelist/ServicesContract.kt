@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.services.list
+package com.carenest.presentation.ui.servicelist
 
 import com.carenest.domain.model.home.HealthcareService
 

@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.services.details
+package com.carenest.presentation.ui.servicedetails
 
 import android.content.Intent
 import androidx.compose.foundation.background
@@ -35,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.components.button.ButtonIconPosition
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
@@ -51,14 +54,13 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.domain.model.ServiceDetailsModel
 import com.carenest.presentation.R
-import coil3.compose.AsyncImage
 import com.carenest.presentation.ui.home.components.HomeShimmerLoading
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
-import com.carenest.presentation.ui.services.components.ServiceChecklistItem
-import com.carenest.presentation.ui.services.components.ServiceInformationNote
-import com.carenest.presentation.ui.services.components.ServiceMetricCard
-import com.carenest.presentation.ui.services.components.ServiceSurfaceCard
+import com.carenest.presentation.ui.servicedetails.components.ServiceChecklistItem
+import com.carenest.presentation.ui.servicedetails.components.ServiceInformationNote
+import com.carenest.presentation.ui.servicedetails.components.ServiceMetricCard
+import com.carenest.presentation.ui.servicedetails.components.ServiceSurfaceCard
 import com.carenest.designsystem.R as RD
 
 @Composable
@@ -291,7 +293,7 @@ private fun ServiceDetailsTopBar(
 
 @Composable
 private fun TopBarAction(
-    icon: androidx.compose.ui.graphics.painter.Painter,
+    icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -335,7 +337,7 @@ private fun ServiceImageHeader(imageUrl: String) {
                 model = imageUrl,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                contentScale = ContentScale.Crop
             )
         } else {
             Icon(
