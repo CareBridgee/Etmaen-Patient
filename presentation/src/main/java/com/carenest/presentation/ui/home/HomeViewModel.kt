@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.usecase.home.GetServicesUseCase
-import com.carenest.presentation.model.toUiModel
 import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
 import com.carenest.domain.usecase.home.GetUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
@@ -44,7 +43,7 @@ class HomeViewModel @Inject constructor(
                 if (event.service.id == "MORE_SERVICES") {
                     sendEffect(HomeEffect.NavigateToServices)
                 } else {
-                    sendEffect(HomeEffect.NavigateToServiceDetails(event.service.toUiModel()))
+                    sendEffect(HomeEffect.NavigateToServiceDetails(event.service.id))
                 }
             }
             HomeIntent.ManageBookingsClicked -> sendEffect(HomeEffect.NavigateToBookings)
