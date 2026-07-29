@@ -26,6 +26,15 @@ class CareNestApiServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getServiceDetails(serviceId: String): Result<ServiceDto> {
+        return httpClient.executeRequest<ServiceDto>(json) {
+            method = HttpMethod.Get
+            url {
+                path("/api/v1/service-types/${serviceId}")
+            }
+        }
+    }
+
     override suspend fun getUser(): Result<UserDto> {
         val userId = datastore.userId.first()
         return httpClient.executeRequest<UserDto>(json) {

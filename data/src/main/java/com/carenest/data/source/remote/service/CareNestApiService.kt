@@ -5,5 +5,6 @@ import com.carenest.data.source.remote.dto.UserDto
 
 interface CareNestApiService {
      suspend fun getServices(): Result<List<ServiceDto>>
+     suspend fun getServiceDetails(serviceId: String): Result<ServiceDto>
      suspend fun getUser(): Result<UserDto>
 }
