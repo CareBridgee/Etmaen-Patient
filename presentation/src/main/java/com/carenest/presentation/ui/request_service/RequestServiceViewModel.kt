@@ -9,8 +9,14 @@ import com.carenest.presentation.model.toDomainModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+import com.carenest.domain.repository.HomeRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+
 @HiltViewModel
-class RequestServiceViewModel @Inject constructor(): ViewModel(),
+class RequestServiceViewModel @Inject constructor(
+    private val homeRepository: HomeRepository
+): ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
             location = com.carenest.domain.model.LocationDetails(
@@ -27,8 +33,20 @@ class RequestServiceViewModel @Inject constructor(): ViewModel(),
     fun onIntent(intent: RequestServiceIntent) {
         when (intent) {
             is RequestServiceIntent.OnStart -> {
-                intent.service?.let { uiModel ->
-                    updateState { copy(selectedService = uiModel.toDomainModel()) }
+                intent.serviceId?.let { id ->
+                    viewModelScope.launch {
+                        homeRepository.getServiceDetails(id).onSuccess { serviceDetails ->
+                            val healthcareService = com.carenest.domain.model.home.HealthcareService(
+                                id = serviceDetails.id,
+                                name = serviceDetails.name,
+                                estimatedDurationMinutes = serviceDetails.estimatedDurationMinutes.toLong(),
+                                basePrice = serviceDetails.basePrice,
+                                description = serviceDetails.description,
+                                iconResName = null
+                            )
+                            updateState { copy(selectedService = healthcareService) }
+                        }
+                    }
                 }
             }
 
@@ -49,7 +67,7 @@ class RequestServiceViewModel @Inject constructor(): ViewModel(),
             }
 
             RequestServiceIntent.OnChangeServiceClicked -> {
-                sendEffect(RequestServiceEffect.NavigateToServiceSelection(state.value.selectedService))
+                sendEffect(RequestServiceEffect.NavigateToServiceSelection(currentState.selectedService?.id))
             }
 
             RequestServiceIntent.OnEditAddressClicked -> {
