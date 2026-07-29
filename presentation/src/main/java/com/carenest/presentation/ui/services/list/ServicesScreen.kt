@@ -63,7 +63,7 @@ import com.carenest.presentation.model.toUiModel
 
 @Composable
 fun ServicesScreen(
-    onNavigateToDetails: (HealthcareServiceUiModel) -> Unit,
+    onNavigateToDetails: (String) -> Unit,
     onOpenFilters: () -> Unit = {},
     onOpenCareCoordinator: () -> Unit = {},
     viewModel: ServicesViewModel = hiltViewModel(),
@@ -72,7 +72,7 @@ fun ServicesScreen(
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is ServicesEffect.NavigateToDetails -> onNavigateToDetails(effect.service)
+            is ServicesEffect.NavigateToDetails -> onNavigateToDetails(effect.serviceId)
             ServicesEffect.OpenFilters -> onOpenFilters()
             ServicesEffect.OpenCareCoordinator -> onOpenCareCoordinator()
         }
@@ -138,7 +138,7 @@ internal fun ServicesScreenContent(
                 Spacer(Modifier.height(Theme.spacing.space12))
                 CategoryGrid(
                     services = state.filteredServices,
-                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.toUiModel())) },
+                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.id)) },
                 )
             }
         }

@@ -1,7 +1,6 @@
 package com.carenest.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
-import com.carenest.presentation.model.HealthcareServiceUiModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -36,7 +35,7 @@ sealed interface AppRoute : NavKey {
      data object Services : AppRoute
 
      @Serializable
-     data class ServiceDetails(val service: HealthcareServiceUiModel) : AppRoute
+     data class ServiceDetails(val serviceId: String) : AppRoute
 
      @Serializable
      data object Bookings : AppRoute
@@ -53,7 +52,7 @@ sealed interface AppRoute : NavKey {
      @Serializable
      data object AddPaymentMethod : AppRoute
      @Serializable
-     data class RequestService(val service: HealthcareServiceUiModel) : AppRoute
+     data class RequestService(val serviceId : String) : AppRoute
 
      @Serializable
      data object Map : AppRoute

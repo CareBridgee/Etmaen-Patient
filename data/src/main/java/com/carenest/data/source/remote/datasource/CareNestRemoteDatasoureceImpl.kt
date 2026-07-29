@@ -15,6 +15,10 @@ class CareNestRemoteDataSourceImpl @Inject constructor(
         return careNestApiService.getServices()
     }
 
+    override suspend fun getServiceDetails(serviceId: String): Result<ServiceDto> {
+        return careNestApiService.getServiceDetails(serviceId)
+    }
+
     override suspend fun getUser(): Result<UserDto> {
         return careNestApiService.getUser()
     }

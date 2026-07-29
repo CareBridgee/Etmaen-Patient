@@ -25,7 +25,6 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.home.components.HomeAICard
 import com.carenest.presentation.ui.home.components.HomeBookingEmpty
@@ -40,7 +39,7 @@ import com.carenest.designsystem.R as RD
 @Composable
 fun HomeScreen(
     onNavigateToServices: () -> Unit,
-    onNavigateToServiceDetails: (HealthcareServiceUiModel) -> Unit,
+    onNavigateToServiceDetails: (String) -> Unit,
     onNavigateToBookings: () -> Unit,
     onNavigateToAIChat: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
@@ -57,7 +56,7 @@ fun HomeScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             HomeEffect.NavigateToServices -> onNavigateToServices()
-            is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.service)
+            is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.serviceId)
             HomeEffect.NavigateToBookings -> onNavigateToBookings()
             HomeEffect.NavigateToAIChat -> onNavigateToAIChat()
             is HomeEffect.ShowToast -> {

@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,9 +43,9 @@ import com.carenest.designsystem.components.topbar.TopBarAction
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.LocationDetails
+import com.carenest.presentation.MainIntent
 import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.R
-import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
 import com.carenest.presentation.ui.aichat.chat.AIChatScreen
 import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
@@ -165,21 +166,21 @@ fun AppNav(
                         onNavigateToServices = { replaceWith(AppRoute.Services) },
                         onNavigateToBookings = { replaceWith(AppRoute.Bookings) },
                         onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) },
-                        onNavigateToServiceDetails = { service -> backStack.add(AppRoute.ServiceDetails(service)) }
+                        onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
                     )
                 }
 
                 entry<AppRoute.Services> {
                     ServicesScreen(
-                        onNavigateToDetails = { service -> backStack.add(AppRoute.ServiceDetails(service)) }
+                        onNavigateToDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
                     )
                 }
 
                 entry<AppRoute.ServiceDetails> { route ->
                     ServiceDetailsScreen(
-                        service = route.service,
+                        serviceId = route.serviceId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onRequestService = { service -> backStack.add(AppRoute.RequestService(service = service)) }
+                        onRequestService = { serviceId -> backStack.add(AppRoute.RequestService(serviceId)) }
                     )
                 }
 
@@ -223,7 +224,7 @@ fun AppNav(
                         onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
                         onNavigateToAddressPicker = { /* TODO */ },
                         onSubmitRequestClick = { backStack.add(AppRoute.SearchForNurse) },
-                        selectedService = route.service,
+                        selectServiceId = route.serviceId,
                         mapResultLocation = mapResultLocation,
                         onMapResultConsumed = { mapResultLocation = null }
                     )
@@ -269,16 +270,7 @@ fun AppNav(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         onNavigateToBookings = { replaceWith(AppRoute.Bookings) },
                         onNavigateToServiceDetails = { categoryStr ->
-                            val uiModel = HealthcareServiceUiModel(
-                                id = categoryStr,
-                                name = categoryStr.replace("_", " ").lowercase()
-                                    .replaceFirstChar { it.uppercase() },
-                                estimatedDurationMinutes = 45L,
-                                basePrice = 50.0,
-                                description = "Professional care service tailored to your needs.",
-                                iconResName = ""
-                            )
-                            backStack.add(AppRoute.ServiceDetails(uiModel))
+                            backStack.add(AppRoute.ServiceDetails(categoryStr))
                         }
                     )
                 }

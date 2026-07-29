@@ -8,6 +8,7 @@ import com.carenest.domain.model.home.User
 
 interface CareNestRemoteDatasource {
     suspend fun getServices(): Result<List<ServiceDto>>
+    suspend fun getServiceDetails(serviceId: String) : Result<ServiceDto>
     suspend fun getUser() : Result<UserDto>
     suspend fun getUserRequestsHistory() : Result<List<Booking>>
 }
