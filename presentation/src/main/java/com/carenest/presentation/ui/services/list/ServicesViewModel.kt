@@ -52,20 +52,12 @@ class ServicesViewModel @Inject constructor(
             }
 
             is ServicesIntent.CategoryClicked -> {
-                sendEffect(ServicesEffect.NavigateToDetails(event.service))
+                sendEffect(ServicesEffect.NavigateToDetails(event.serviceId))
             }
 
             ServicesIntent.FilterClicked -> sendEffect(ServicesEffect.OpenFilters)
             ServicesIntent.ChronicCareClicked -> {
-                val chronicCareService = HealthcareServiceUiModel(
-                    id = "CHRONIC_CARE",
-                    name = "Chronic Care",
-                    iconResName = "ic_heart_beat",
-                    estimatedDurationMinutes = 60,
-                    basePrice = 150.0,
-                    description = "Comprehensive chronic care management."
-                )
-                sendEffect(ServicesEffect.NavigateToDetails(chronicCareService))
+                sendEffect(ServicesEffect.NavigateToDetails("CHRONIC_CARE"))
             }
             ServicesIntent.ConsultationClicked -> sendEffect(ServicesEffect.OpenCareCoordinator)
         }

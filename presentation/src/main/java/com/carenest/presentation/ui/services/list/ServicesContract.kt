@@ -1,6 +1,5 @@
 package com.carenest.presentation.ui.services.list
 
-import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.domain.model.home.HealthcareService
 
 data class ServicesState(
@@ -11,14 +10,14 @@ data class ServicesState(
 
 sealed interface ServicesIntent {
     data class SearchQueryChanged(val query: String) : ServicesIntent
-    data class CategoryClicked(val service: HealthcareServiceUiModel) : ServicesIntent
+    data class CategoryClicked(val serviceId: String) : ServicesIntent
     data object FilterClicked : ServicesIntent
     data object ChronicCareClicked : ServicesIntent
     data object ConsultationClicked : ServicesIntent
 }
 
 sealed interface ServicesEffect {
-    data class NavigateToDetails(val service: HealthcareServiceUiModel) : ServicesEffect
+    data class NavigateToDetails(val serviceId: String) : ServicesEffect
     data object OpenFilters : ServicesEffect
     data object OpenCareCoordinator : ServicesEffect
 }
