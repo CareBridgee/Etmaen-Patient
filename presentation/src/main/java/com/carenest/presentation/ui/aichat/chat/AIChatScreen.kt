@@ -1,9 +1,8 @@
 package com.carenest.presentation.ui.aichat.chat
 
-import androidx.compose.foundation.LocalIndication
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,30 +14,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -55,6 +54,14 @@ import com.carenest.designsystem.R as RD
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+fun formatMessageTime(epochMillis: Long): String {
+    val formatter = SimpleDateFormat("h:mm a", Locale.getDefault())
+    return formatter.format(Date(epochMillis))
+}
 
 @Composable
 fun AIChatScreen(
@@ -65,6 +72,7 @@ fun AIChatScreen(
     viewModel: AIChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     ScreenTopBar(
         title = "AI Health Assistant",
@@ -76,6 +84,9 @@ fun AIChatScreen(
             AIChatEffect.NavigateBack -> onNavigateBack()
             AIChatEffect.NavigateToBookings -> onNavigateToBookings()
             is AIChatEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.categoryId)
+            is AIChatEffect.ShowError -> {
+                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -90,19 +101,35 @@ fun AIChatContent(
     state: AIChatState,
     onEvent: (AIChatEvent) -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(state.messages.size, state.isLoading) {
+        if (state.messages.isNotEmpty()) {
+            listState.animateScrollToItem(0)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
     ) {
         LazyColumn(
+            state = listState,
+            reverseLayout = true,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(state.messages) { message ->
+            if (state.isLoading) {
+                item(key = "loading_indicator") {
+                    AiLoadingBubble()
+                }
+            }
+
+            items(state.messages.asReversed(), key = { it.id }) { message ->
                 when (message.type) {
                     ChatMessageType.TEXT -> {
                         TextMessageBubble(message = message)
@@ -122,6 +149,7 @@ fun AIChatContent(
 
         ChatInputBar(
             inputText = state.inputText,
+            isLoading = state.isLoading,
             onInputChange = { onEvent(AIChatEvent.OnInputTextChanged(it)) },
             onSendClick = { onEvent(AIChatEvent.OnSendMessage) }
         )
@@ -129,7 +157,47 @@ fun AIChatContent(
 }
 
 @Composable
+fun AiLoadingBubble() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Surface(
+            shape = RoundedCornerShape(
+                topStart = 24.dp,
+                topEnd = 24.dp,
+                bottomStart = 4.dp,
+                bottomEnd = 24.dp
+            ),
+            color = Theme.colors.surface,
+            shadowElevation = 2.dp
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    color = Theme.colors.primary,
+                    strokeWidth = 2.dp
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "AI is thinking...",
+                    style = Theme.typography.body.large.copy(fontSize = 14.sp),
+                    color = Theme.colors.secondaryFont
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun TextMessageBubble(message: ChatMessage) {
+    val formattedTime = remember(message.sentAtEpochMillis) {
+        formatMessageTime(message.sentAtEpochMillis)
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = if (message.isUser) Alignment.End else Alignment.Start
@@ -150,7 +218,12 @@ fun TextMessageBubble(message: ChatMessage) {
                     val annotatedString = buildAnnotatedString {
                         val parts = message.text.split("Hypertension")
                         append(parts[0])
-                        withStyle(style = SpanStyle(color = if (message.isUser) Theme.colors.surface else Theme.colors.primary, fontWeight = FontWeight.Bold)) {
+                        withStyle(
+                            style = SpanStyle(
+                                color = if (message.isUser) Theme.colors.surface else Theme.colors.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
                             append("Hypertension")
                         }
                         if (parts.size > 1) {
@@ -181,7 +254,7 @@ fun TextMessageBubble(message: ChatMessage) {
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Just now",
+            text = formattedTime,
             style = Theme.typography.body.small.copy(fontSize = 12.sp),
             color = Theme.colors.secondaryFont.copy(alpha = 0.7f),
             modifier = Modifier.padding(horizontal = 4.dp)
@@ -310,9 +383,12 @@ fun ServiceRecommendationCard(
 @Composable
 fun ChatInputBar(
     inputText: String,
+    isLoading: Boolean = false,
     onInputChange: (String) -> Unit,
     onSendClick: () -> Unit
 ) {
+    val canSend = inputText.isNotBlank() && !isLoading
+
     Surface(
         color = Theme.colors.surface,
         shadowElevation = 8.dp,
@@ -336,6 +412,7 @@ fun ChatInputBar(
                         value = inputText,
                         onValueChange = onInputChange,
                         modifier = Modifier.weight(1f),
+                        enabled = !isLoading,
                         textStyle = Theme.typography.body.large.copy(
                             color = Theme.colors.primaryFont,
                             fontSize = 15.sp
@@ -369,9 +446,9 @@ fun ChatInputBar(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(if (inputText.isNotBlank()) Theme.colors.primary else Theme.colors.primary.copy(alpha = 0.5f))
+                    .background(if (canSend) Theme.colors.primary else Theme.colors.primary.copy(alpha = 0.4f))
                     .clickable(
-                        enabled = inputText.isNotBlank(),
+                        enabled = canSend,
                         onClick = onSendClick
                     ),
                 contentAlignment = Alignment.Center
@@ -396,22 +473,9 @@ fun AIChatScreenLightPreview() {
                 messages = listOf(
                     ChatMessage(
                         id = "1",
-                        text = "Hello Elena, based on your health profile and recent reports, I see you are managing Hypertension. Would you like to schedule a blood pressure check or a follow-up consultation?",
+                        text = "Hello, I'm your AI health assistant. How can I help you today?",
                         isUser = false,
                         type = ChatMessageType.TEXT
-                    ),
-                    ChatMessage(
-                        id = "2",
-                        text = "",
-                        isUser = false,
-                        type = ChatMessageType.SERVICE_RECOMMENDATION,
-                        serviceData = ServiceRecommendationData(
-                            categoryId = "hydration",
-                            title = "IV Hydration Therapy",
-                            subtitle = "A 15-minute clinical assessment with a registered nurse to ensure your medication is managing your hypertension effectively.",
-                            price = "$49",
-                            duration = ""
-                        )
                     )
                 ),
                 inputText = ""
@@ -430,22 +494,9 @@ fun AIChatScreenDarkPreview() {
                 messages = listOf(
                     ChatMessage(
                         id = "1",
-                        text = "Hello Elena, based on your health profile and recent reports, I see you are managing Hypertension. Would you like to schedule a blood pressure check or a follow-up consultation?",
+                        text = "Hello, I'm your AI health assistant. How can I help you today?",
                         isUser = false,
                         type = ChatMessageType.TEXT
-                    ),
-                    ChatMessage(
-                        id = "2",
-                        text = "",
-                        isUser = false,
-                        type = ChatMessageType.SERVICE_RECOMMENDATION,
-                        serviceData = ServiceRecommendationData(
-                            categoryId = "hydration",
-                            title = "IV Hydration Therapy",
-                            subtitle = "A 15-minute clinical assessment with a registered nurse to ensure your medication is managing your hypertension effectively.",
-                            price = "$49",
-                            duration = ""
-                        )
                     )
                 ),
                 inputText = ""
@@ -454,40 +505,3 @@ fun AIChatScreenDarkPreview() {
         )
     }
 }
-
-@Preview(showBackground = true, name = "Component - Text Bubble")
-@Composable
-fun TextMessageBubblePreview() {
-    SpTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            TextMessageBubble(
-                message = ChatMessage(
-                    id = "1",
-                    text = "Hello Elena, based on your health profile and recent reports, I see you are managing Hypertension. Would you like to schedule a blood pressure check?",
-                    isUser = false
-                )
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "Component - Service Card")
-@Composable
-fun ServiceRecommendationCardPreview() {
-    SpTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            ServiceRecommendationCard(
-                serviceData = ServiceRecommendationData(
-                    categoryId = "hydration",
-                    title = "IV Hydration Therapy",
-                    subtitle = "A 15-minute clinical assessment with a registered nurse to ensure your medication is managing your hypertension effectively.",
-                    price = "$49",
-                    duration = ""
-                ),
-                onBookNowClick = {},
-                onViewServiceClick = {}
-            )
-        }
-    }
-}
-

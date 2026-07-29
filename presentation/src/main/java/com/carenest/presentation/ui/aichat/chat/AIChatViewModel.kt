@@ -2,68 +2,50 @@ package com.carenest.presentation.ui.aichat.chat
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.carenest.domain.usecase.aichat.SendAiChatMessageUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class AIChatViewModel @Inject constructor(
+    private val sendAiChatMessageUseCase: SendAiChatMessageUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateHolder<AIChatState> by DefaultStateHolder(AIChatState()),
     EffectPublisher<AIChatEffect> by DefaultEffectPublisher() {
 
     init {
-        // Patient ID would typically be passed in and retrieved here, 
-        // but since we are mocking, we just set initial messages.
-        val mockMessages = listOf(
+        val patientIdParam: String? = savedStateHandle["patientId"]
+        val initialMessages = listOf(
             ChatMessage(
                 id = UUID.randomUUID().toString(),
-                text = "Hello Elena, I'm your AI assistant. Would you like to schedule a blood pressure check or receive guidance on your recent symptoms?",
+                text = "Hello, I'm your AI health assistant. How can I help you today?",
                 isUser = false,
                 type = ChatMessageType.TEXT
-            ),
-            ChatMessage(
-                id = UUID.randomUUID().toString(),
-                text = "",
-                isUser = false,
-                type = ChatMessageType.SERVICE_RECOMMENDATION,
-                serviceData = ServiceRecommendationData(
-                    categoryId = "IV_DRIP", // using IV_DRIP to match ServiceCategory enum
-                    title = "IV Hydration Therapy",
-                    subtitle = "Personalized hydration and vitamin infusion.",
-                    price = "$189.00",
-                    duration = "45–60 min"
-                )
             )
         )
-        updateState { copy(messages = mockMessages) }
+        updateState {
+            copy(
+                patientId = patientIdParam ?: "",
+                messages = initialMessages
+            )
+        }
     }
 
     fun onEvent(event: AIChatEvent) {
         when (event) {
             is AIChatEvent.OnInputTextChanged -> {
-                updateState { copy(inputText = event.text) }
+                updateState { copy(inputText = event.text, errorMessage = null) }
             }
             is AIChatEvent.OnSendMessage -> {
-                val currentText = currentState.inputText
-                if (currentText.isNotBlank()) {
-                    val newMessage = ChatMessage(
-                        id = UUID.randomUUID().toString(),
-                        text = currentText,
-                        isUser = true
-                    )
-                    updateState { 
-                        copy(
-                            messages = messages + newMessage,
-                            inputText = ""
-                        )
-                    }
-                }
+                sendMessage()
             }
             is AIChatEvent.OnBackClicked -> {
                 sendEffect(AIChatEffect.NavigateBack)
@@ -74,6 +56,58 @@ class AIChatViewModel @Inject constructor(
             is AIChatEvent.OnViewServiceClicked -> {
                 sendEffect(AIChatEffect.NavigateToServiceDetails(event.categoryId))
             }
+            is AIChatEvent.OnDismissError -> {
+                updateState { copy(errorMessage = null) }
+            }
+        }
+    }
+
+    private fun sendMessage() {
+        val textToSend = currentState.inputText.trim()
+        if (textToSend.isBlank() || currentState.isLoading) return
+
+        val userMessage = ChatMessage(
+            id = UUID.randomUUID().toString(),
+            text = textToSend,
+            isUser = true
+        )
+
+        updateState {
+            copy(
+                messages = messages + userMessage,
+                inputText = "",
+                isLoading = true,
+                errorMessage = null
+            )
+        }
+
+        viewModelScope.launch {
+            val result = sendAiChatMessageUseCase(textToSend)
+            result.fold(
+                onSuccess = { reply ->
+                    val aiMessage = ChatMessage(
+                        id = UUID.randomUUID().toString(),
+                        text = reply,
+                        isUser = false
+                    )
+                    updateState {
+                        copy(
+                            messages = messages + aiMessage,
+                            isLoading = false
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    val errorMsg = error.message ?: "Failed to get AI response. Please try again."
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            errorMessage = errorMsg
+                        )
+                    }
+                    sendEffect(AIChatEffect.ShowError(errorMsg))
+                }
+            )
         }
     }
 }
