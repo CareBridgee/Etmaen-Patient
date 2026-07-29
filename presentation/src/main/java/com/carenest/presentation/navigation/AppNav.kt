@@ -14,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +42,6 @@ import com.carenest.designsystem.components.topbar.TopBarAction
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.LocationDetails
-import com.carenest.presentation.MainIntent
 import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
@@ -62,8 +60,8 @@ import com.carenest.presentation.ui.profile.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
-import com.carenest.presentation.ui.services.details.ServiceDetailsScreen
-import com.carenest.presentation.ui.services.list.ServicesScreen
+import com.carenest.presentation.ui.servicedetails.ServiceDetailsScreen
+import com.carenest.presentation.ui.servicelist.ServicesScreen
 import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
 import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
