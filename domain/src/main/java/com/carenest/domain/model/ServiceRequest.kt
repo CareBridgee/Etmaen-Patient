@@ -18,6 +18,7 @@ data class PreferredTime(
     val hour: Int,
     val minute: Int,
     val second: Int = 0,
+    val nano: Int = 0,
 )
 
 /**

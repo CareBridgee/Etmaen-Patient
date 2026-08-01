@@ -1,34 +1,28 @@
 package com.carenest.presentation.ui.request_service
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.carenest.domain.repository.HomeRepository
+import com.carenest.domain.repository.ProfileRepository
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
-import com.carenest.presentation.model.toDomainModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-
-import com.carenest.domain.repository.HomeRepository
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RequestServiceViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val profileRepository: ProfileRepository
 ): ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
-            preferredDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date()),
+            preferredDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date()),
             preferredHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
             preferredMinute = java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE),
-            location = com.carenest.domain.model.LocationDetails(
-                address = "Cairo, Egypt",
-                apartment = "",
-                district = "",
-                latitude = 30.0444,
-                longitude = 31.2357
-            )
         )
     ),
     EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
@@ -36,8 +30,29 @@ class RequestServiceViewModel @Inject constructor(
     fun onIntent(intent: RequestServiceIntent) {
         when (intent) {
             is RequestServiceIntent.OnStart -> {
-                intent.serviceId?.let { id ->
-                    viewModelScope.launch {
+                viewModelScope.launch {
+                    // Fetch default profile if no patient is selected
+                    if (currentState.selectedPatient == null) {
+                        profileRepository.getDefaultProfile().onSuccess { profile ->
+                            val defaultPatient = com.carenest.domain.model.Patient(
+                                id = profile.id,
+                                phoneNumber = "",
+                                firstName = profile.firstName,
+                                lastName = profile.lastName,
+                                dateOfBirth = profile.dateOfBirth,
+                                gender = profile.gender,
+                                profileImageUrl = null,
+                                isDeleted = false,
+                                createdAt = "",
+                                updatedAt = "",
+                                lastLoginAt = null,
+                                defaultProfileId = profile.id
+                            )
+                            updateState { copy(selectedPatient = defaultPatient) }
+                        }
+                    }
+
+                    intent.serviceId?.let { id ->
                         homeRepository.getServiceDetails(id).onSuccess { serviceDetails ->
                             val healthcareService = com.carenest.domain.model.home.HealthcareService(
                                 id = serviceDetails.id,
@@ -114,11 +129,15 @@ class RequestServiceViewModel @Inject constructor(
     private fun submitServiceRequest() {
         val currentState = state.value
         val serviceId = currentState.selectedService?.id
-        val profileId = currentState.selectedPatient?.defaultProfileId
+        val selectedPatient = currentState.selectedPatient
+        val profileId = selectedPatient?.defaultProfileId ?: selectedPatient?.id
         val location = currentState.location
 
-        if (serviceId == null || profileId == null || location == null) {
-            sendEffect(RequestServiceEffect.ShowError("Please fill all required fields"))
+        Log.d("RequestServiceVM", "Submitting request: serviceId=$serviceId, profileId=$profileId")
+        Log.d("RequestServiceVM", "Location: lat=${location?.latitude}, lng=${location?.longitude}, address=${location?.address}")
+
+        if (serviceId == null || location == null || profileId == null) {
+            sendEffect(RequestServiceEffect.ShowError("Please fill all required fields and select a patient"))
             return
         }
 
@@ -139,8 +158,10 @@ class RequestServiceViewModel @Inject constructor(
                     preferredTime = com.carenest.domain.model.PreferredTime(
                         hour = currentState.preferredHour,
                         minute = currentState.preferredMinute,
+                        second = 0,
+                        nano = 0
                     ),
-                    serviceDescription = currentState.description,
+                    serviceDescription = currentState.description.ifBlank { "No description provided" },
                 )
             ).onSuccess { result ->
                 updateState { copy(isSubmitting = false) }

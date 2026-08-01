@@ -17,8 +17,8 @@ data class CreateServiceRequestDto(
     @SerialName("serviceTypeId") val serviceTypeId: String,
     @SerialName("latitude") val latitude: Double,
     @SerialName("longitude") val longitude: Double,
-    @SerialName("preferredDate") val preferredDate: String,
-    @SerialName("preferredTime") val preferredTime: PreferredTimeDto,
+    @SerialName("preferredDate") val preferredDate: List<Int>, // [yyyy, mm, dd]
+    @SerialName("preferredTime") val preferredTime: List<Int>, // [HH, mm, ss, ns]
     @SerialName("serviceDescription") val serviceDescription: String,
 )
 
