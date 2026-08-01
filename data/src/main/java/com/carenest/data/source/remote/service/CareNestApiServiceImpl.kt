@@ -35,7 +35,7 @@ class CareNestApiServiceImpl @Inject constructor(
         return httpClient.executeRequest<ServiceDto>(json) {
             method = HttpMethod.Get
             url {
-                path("/api/v1/service-types/${serviceId}")
+                path("api/v1/service-types/${serviceId}")
             }
         }
     }
@@ -45,7 +45,7 @@ class CareNestApiServiceImpl @Inject constructor(
         return httpClient.executeRequest<UserDto>(json) {
             method = HttpMethod.Get
             url {
-                path("/api/v1/users/${userId}")
+                path("api/v1/users/${userId}")
             }
         }
     }
@@ -53,7 +53,7 @@ class CareNestApiServiceImpl @Inject constructor(
     override suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto> {
         return httpClient.executeRequest<ServiceRequestResponseDto>(json) {
             method = HttpMethod.Post
-            url { path("/api/v1/service-requests") }
+            url { path("api/v1/service-requests") }
             contentType(ContentType.Application.Json)
             setBody(body)
         }

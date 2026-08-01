@@ -1,15 +1,16 @@
 package com.carenest.data.repository
 
+import android.util.Log
 import com.carenest.data.di.IoDispatcher
 import com.carenest.data.mapper.toDomain
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
-import com.carenest.domain.model.Patient
 import com.carenest.domain.model.auth.AuthResult
 import com.carenest.domain.repository.AuthRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -19,11 +20,6 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> {
-        val digitsOnly = phoneNumber.replace(Regex("[^0-9]"), "")
-        if (digitsOnly.contains("0123456789") || phoneNumber.contains("0123456789")) {
-            delay(300)
-            return Result.success(Unit)
-        }
         return authDatasource.loginWithPhone(phoneNumber)
     }
 
@@ -32,39 +28,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun verifyOtp(phoneNumber: String, otp: String): Result<AuthResult> {
-        val digitsOnly = phoneNumber.replace(Regex("[^0-9]"), "")
-        if (digitsOnly.contains("0123456789") || phoneNumber.contains("0123456789")) {
-            delay(300)
-            val mockUser = Patient(
-                id = "usr_0123456789",
-                phoneNumber = phoneNumber,
-                firstName = "Elena",
-                lastName = "Smith",
-                dateOfBirth = "1990-01-01",
-                gender = "Female",
-                profileImageUrl = null,
-                isDeleted = false,
-                createdAt = "2026-01-01T00:00:00Z",
-                updatedAt = "2026-01-01T00:00:00Z",
-                lastLoginAt = "2026-07-22T00:00:00Z",
-                defaultProfileId = null
-            )
-            val mockAuthResult = AuthResult(
-                accessToken = "mock_access_token_0123456789",
-                refreshToken = "mock_refresh_token_0123456789",
-                expiresIn = 3600L,
-                patient = mockUser
-            )
-            return runCatching {
-                datastore.saveAuthTokens(
-                    accessToken = mockAuthResult.accessToken,
-                    refreshToken = mockAuthResult.refreshToken
-                )
-                datastore.setUserId(mockUser.id)
-                datastore.setLoggedIn(true)
-                mockAuthResult
-            }
-        }
         return authDatasource.verifyOtp(phoneNumber, otp).fold(
             onSuccess = { response ->
                 runCatching {
@@ -72,13 +35,45 @@ class AuthRepositoryImpl @Inject constructor(
                         accessToken = response.accessToken,
                         refreshToken = response.refreshToken,
                     )
-
                     datastore.setUserId(response.user.id)
                     datastore.setLoggedIn(true)
                     response.toDomain()
                 }
             },
             onFailure = { Result.failure(it) }
+        )
+    }
+
+    override suspend fun refreshToken(): Result<Unit> = withContext(dispatcher) {
+        val tokens = datastore.authTokens.first()
+        val refreshToken = tokens?.refreshToken ?: return@withContext Result.failure(Exception("No refresh token"))
+
+        authDatasource.refreshToken(refreshToken).fold(
+            onSuccess = { response ->
+                if(response.refreshToken?.isBlank() == true || response.accessToken?.isBlank() == true){
+                    datastore.clearAuthTokens()
+                    datastore.setLoggedIn(false)
+                    return@withContext Result.failure(Exception("User not found"))
+                }
+                datastore.saveAuthTokens(
+                    accessToken = response.accessToken ?: "",
+                    refreshToken = response.refreshToken ?: ""
+                )
+                Result.success(Unit)
+            },
+            onFailure = { throwable ->
+                // If refresh token is invalid (401 or 403), we should log out the user
+                val isAuthError = (throwable is io.ktor.client.plugins.ResponseException && 
+                    (throwable.response.status.value == 401 || throwable.response.status.value == 403)) ||
+                    (throwable.message?.contains("401") == true || throwable.message?.contains("403") == true)
+
+                if (isAuthError) {
+                    Log.e("AuthRepository", "Manual refresh failed with auth error. Logging out.", throwable)
+                    datastore.clearAuthTokens()
+                    datastore.setLoggedIn(false)
+                }
+                Result.failure(throwable)
+            }
         )
     }
 }
