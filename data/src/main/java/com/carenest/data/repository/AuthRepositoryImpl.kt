@@ -60,6 +60,8 @@ class AuthRepositoryImpl @Inject constructor(
                     accessToken = mockAuthResult.accessToken,
                     refreshToken = mockAuthResult.refreshToken
                 )
+                datastore.setUserId(mockUser.id)
+                datastore.setLoggedIn(true)
                 mockAuthResult
             }
         }
@@ -72,6 +74,7 @@ class AuthRepositoryImpl @Inject constructor(
                     )
 
                     datastore.setUserId(response.user.id)
+                    datastore.setLoggedIn(true)
                     response.toDomain()
                 }
             },

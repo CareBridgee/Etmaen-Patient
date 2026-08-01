@@ -2,7 +2,16 @@ package com.carenest.presentation.navigation
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -86,6 +97,24 @@ fun AppNav(
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
+        
+        var showNotificationRationale by remember { mutableStateOf(false) }
+
+        if (mainState.isLoggedIn) {
+            com.carenest.presentation.util.NotificationPermissionHandler(
+                onPermissionGranted = {
+                    showNotificationRationale = false
+                },
+                onPermissionDenied = {
+                    showNotificationRationale = true
+                },
+                showRationale = showNotificationRationale,
+                onRationaleDismissed = {
+                    showNotificationRationale = false
+                    coroutineScope.launch { snackbarHostState.showSnackbar("Notifications are disabled. The app needs this to show background service status.") }
+                }
+            )
+        }
 
         val onShowSnackbar: (String) -> Unit = { message ->
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
@@ -221,7 +250,14 @@ fun AppNav(
                         onNavigateToAddPatient = { /* TODO */ },
                         onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
                         onNavigateToAddressPicker = { /* TODO */ },
-                        onSubmitRequestClick = { backStack.add(AppRoute.SearchForNurse) },
+                        onSubmitRequestClick = { serviceRequestId ->
+                            backStack.add(
+                                AppRoute.SearchForNurse(
+                                    reservationId = serviceRequestId,
+                                    serviceRequestId = serviceRequestId
+                                )
+                            )
+                        },
                         selectServiceId = route.serviceId,
                         mapResultLocation = mapResultLocation,
                         onMapResultConsumed = { mapResultLocation = null }
@@ -238,8 +274,10 @@ fun AppNav(
                     )
                 }
 
-                entry<AppRoute.SearchForNurse> {
+                entry<AppRoute.SearchForNurse> { route ->
                     NurseSearchScreen(
+                        reservationId = route.reservationId,
+                        serviceRequestId = route.serviceRequestId,
                         onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         onMatched = { replaceWith(AppRoute.AcceptOffer) }
                     )
