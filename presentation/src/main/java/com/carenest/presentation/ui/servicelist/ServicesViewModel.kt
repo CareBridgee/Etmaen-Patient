@@ -1,16 +1,15 @@
-package com.carenest.presentation.ui.services.list
+package com.carenest.presentation.ui.servicelist
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import com.carenest.domain.usecase.home.GetServicesUseCase
-import com.carenest.presentation.model.HealthcareServiceUiModel
+import javax.inject.Inject
 
 @HiltViewModel
 class ServicesViewModel @Inject constructor(
@@ -52,20 +51,12 @@ class ServicesViewModel @Inject constructor(
             }
 
             is ServicesIntent.CategoryClicked -> {
-                sendEffect(ServicesEffect.NavigateToDetails(event.service))
+                sendEffect(ServicesEffect.NavigateToDetails(event.serviceId))
             }
 
             ServicesIntent.FilterClicked -> sendEffect(ServicesEffect.OpenFilters)
             ServicesIntent.ChronicCareClicked -> {
-                val chronicCareService = HealthcareServiceUiModel(
-                    id = "CHRONIC_CARE",
-                    name = "Chronic Care",
-                    iconResName = "ic_heart_beat",
-                    estimatedDurationMinutes = 60,
-                    basePrice = 150.0,
-                    description = "Comprehensive chronic care management."
-                )
-                sendEffect(ServicesEffect.NavigateToDetails(chronicCareService))
+                sendEffect(ServicesEffect.NavigateToDetails("CHRONIC_CARE"))
             }
             ServicesIntent.ConsultationClicked -> sendEffect(ServicesEffect.OpenCareCoordinator)
         }

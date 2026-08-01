@@ -30,7 +30,7 @@ fun RequestServiceScreen(
     onNavigateToServiceSelection: () -> Unit,
     onNavigateToAddressPicker: () -> Unit,
     onSubmitRequestClick: () -> Unit,
-    selectedService: HealthcareServiceUiModel? = null,
+    selectServiceId : String? = null,
     mapResultLocation: LocationDetails? = null,
     onMapResultConsumed: () -> Unit = {},
     viewModel: RequestServiceViewModel = hiltViewModel(),
@@ -46,7 +46,7 @@ fun RequestServiceScreen(
     )
 
     LaunchedEffect(Unit) {
-        viewModel.onIntent(RequestServiceIntent.OnStart(selectedService))
+        viewModel.onIntent(RequestServiceIntent.OnStart(selectServiceId))
     }
 
     LaunchedEffect(mapResultLocation) {

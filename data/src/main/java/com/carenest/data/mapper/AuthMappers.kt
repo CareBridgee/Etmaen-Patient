@@ -4,6 +4,7 @@ import com.carenest.data.source.remote.dto.AuthResponse
 import com.carenest.data.source.remote.dto.UserDto
 import com.carenest.domain.model.Patient
 import com.carenest.domain.model.auth.AuthResult
+import com.carenest.domain.model.home.User
 
 fun AuthResponse.toDomain(): AuthResult {
     return AuthResult(
@@ -30,3 +31,9 @@ fun UserDto.toDomain(): Patient {
         defaultProfileId = defaultProfileId
     )
 }
+
+fun UserDto.toUser() : User = User(
+    id = id,
+    name = firstName,
+    avatarUrl = profileImageUrl
+)

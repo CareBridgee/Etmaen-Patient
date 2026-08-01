@@ -20,9 +20,9 @@ import com.carenest.data.repository.NurseTrackingRepositoryImpl
 import com.carenest.data.repository.VisitSummaryRepositoryImpl
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
-import com.carenest.data.source.local.datasource.home.HomeDatasource
-import com.carenest.data.source.local.datasource.home.HomeFakeDatasourceImpl
 import com.carenest.data.repository.GeocodingRepositoryImpl
+import com.carenest.data.source.remote.datasource.CareNestRemoteDataSourceImpl
+import com.carenest.data.source.remote.datasource.CareNestRemoteDatasource
 import com.carenest.data.source.remote.service.GeocodingApiService
 import com.carenest.data.source.remote.service.GeocodingApiServiceImpl
 import com.carenest.domain.repository.GeocodingRepository
@@ -92,9 +92,6 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun provideAuthDatasource(authDatasourceImpl: AuthDatasourceImpl): AuthDatasource
 
-    @Binds
-    @Singleton
-    abstract fun provideHomeDatasource(homeDatasourceImpl: HomeFakeDatasourceImpl): HomeDatasource
 
     @Binds
     @Singleton
@@ -107,6 +104,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindVisitSummaryDataSource(visitSummaryDataSource: VisitSummaryDataSourceImp): VisitSummaryDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindCareNestRemoteDatasource(careNestRemoteDatasource: CareNestRemoteDataSourceImpl): CareNestRemoteDatasource
 
     //endregion
 }

@@ -1,5 +1,6 @@
-package com.carenest.presentation.ui.services.details
+package com.carenest.presentation.ui.servicedetails
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,42 +46,59 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.components.button.ButtonIconPosition
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
-import com.carenest.domain.model.home.HealthcareService
+import com.carenest.domain.model.ServiceDetailsModel
 import com.carenest.presentation.R
+import com.carenest.presentation.ui.home.components.HomeShimmerLoading
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
-import com.carenest.presentation.ui.services.components.ServiceChecklistItem
-import com.carenest.presentation.ui.services.components.ServiceInformationNote
-import com.carenest.presentation.ui.services.components.ServiceMetricCard
-import com.carenest.presentation.ui.services.components.ServiceSurfaceCard
-import com.carenest.presentation.model.HealthcareServiceUiModel
+import com.carenest.presentation.ui.servicedetails.components.ServiceChecklistItem
+import com.carenest.presentation.ui.servicedetails.components.ServiceInformationNote
+import com.carenest.presentation.ui.servicedetails.components.ServiceMetricCard
+import com.carenest.presentation.ui.servicedetails.components.ServiceSurfaceCard
 import com.carenest.designsystem.R as RD
 
 @Composable
 fun ServiceDetailsScreen(
-    service: HealthcareServiceUiModel,
+    serviceId : String,
     onNavigateBack: () -> Unit,
-    onShareService: () -> Unit = {},
-    onRequestService: (service: HealthcareServiceUiModel) -> Unit = {},
+    onRequestService: (serviceId: String) -> Unit = {},
     viewModel: ServiceDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    LaunchedEffect(service) {
-        viewModel.onEvent(ServiceDetailsIntent.ServiceReceived(service))
+    LaunchedEffect(serviceId) {
+        viewModel.onEvent(ServiceDetailsIntent.GetServiceDetails(serviceId))
     }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             ServiceDetailsEffect.NavigateBack -> onNavigateBack()
-            ServiceDetailsEffect.ShareService -> onShareService()
+            is ServiceDetailsEffect.ShareService -> {
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_SUBJECT, effect.serviceName)
+                    
+                    val shareMessage = """
+                        CareNest Service: ${effect.serviceName}
+                        
+                        ${effect.description}
+                        
+                        Download CareNest to book now!
+                    """.trimIndent()
+                    
+                    putExtra(Intent.EXTRA_TEXT, shareMessage)
+                }
+                context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+            }
             is ServiceDetailsEffect.RequestService ->{
-                onRequestService(effect.service)
+                onRequestService(effect.serviceId)
             }
         }
     }
@@ -92,13 +113,29 @@ internal fun ServiceDetailsScreenContent(
 ) {
     HideTopBar()
 
-    when (state.service) {
-        ServiceDetails.IV_HYDRATION -> IvHydrationDetails(onEvent)
+    if (state.healthcareService != null) {
+        ServiceDetailsLayout(service = state.healthcareService, onEvent = onEvent)
+    } else if (state.errorMessage != null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            BasicText(text = state.errorMessage, style = Theme.typography.body.large)
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(Theme.spacing.medium)
+        ) {
+            HomeShimmerLoading()
+        }
     }
 }
 
 @Composable
-private fun IvHydrationDetails(onEvent: (ServiceDetailsIntent) -> Unit) {
+private fun ServiceDetailsLayout(
+    service: ServiceDetailsModel,
+    onEvent: (ServiceDetailsIntent) -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Theme.colors.backGround,
@@ -144,18 +181,18 @@ private fun IvHydrationDetails(onEvent: (ServiceDetailsIntent) -> Unit) {
                 ),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.space20),
         ) {
-            ServiceImagePlaceholder()
+            ServiceImageHeader(imageUrl = service.imageUrl)
 
             Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
                 BasicText(
-                    text = stringResource(R.string.service_details_service_title),
+                    text = service.name,
                     style = Theme.typography.title.copy(
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
                 BasicText(
-                    text = stringResource(R.string.service_details_service_subtitle),
+                    text = service.description,
                     style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                 )
             }
@@ -166,7 +203,7 @@ private fun IvHydrationDetails(onEvent: (ServiceDetailsIntent) -> Unit) {
             ) {
                 ServiceMetricCard(
                     label = stringResource(R.string.service_details_average_price),
-                    value = stringResource(R.string.service_details_price),
+                    value = "$${service.basePrice}",
                     icon = rememberVectorPainter(Icons.Outlined.Payments),
                     modifier = Modifier
                         .weight(1f)
@@ -174,7 +211,7 @@ private fun IvHydrationDetails(onEvent: (ServiceDetailsIntent) -> Unit) {
                 )
                 ServiceMetricCard(
                     label = stringResource(R.string.service_details_duration),
-                    value = stringResource(R.string.service_details_duration_value),
+                    value = "${service.estimatedDurationMinutes} min",
                     icon = rememberVectorPainter(Icons.Outlined.Schedule),
                     modifier = Modifier
                         .weight(1f)
@@ -186,36 +223,33 @@ private fun IvHydrationDetails(onEvent: (ServiceDetailsIntent) -> Unit) {
                 DetailsSectionTitle(stringResource(R.string.service_details_about_title))
                 Spacer(Modifier.height(Theme.spacing.space12))
                 BasicText(
-                    text = stringResource(R.string.service_details_about_body),
+                    text = service.description,
                     style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                 )
             }
 
-            ServiceSurfaceCard {
-                DetailsSectionTitle(stringResource(R.string.service_details_included_title))
-                Spacer(Modifier.height(Theme.spacing.medium))
-                val includedItems = listOf(
-                    R.string.service_details_included_nurse,
-                    R.string.service_details_included_monitoring,
-                    R.string.service_details_included_solution,
-                    R.string.service_details_included_booster,
-                    R.string.service_details_included_supplies,
-                )
-                includedItems.forEachIndexed { index, item ->
-                    ServiceChecklistItem(
-                        text = stringResource(item),
-                        checkIcon = painterResource(RD.drawable.ic_check),
-                    )
-                    if (index != includedItems.lastIndex) {
-                        Spacer(Modifier.height(Theme.spacing.space12))
+            if (service.includedItems.isNotEmpty()) {
+                ServiceSurfaceCard {
+                    DetailsSectionTitle(stringResource(R.string.service_details_included_title))
+                    Spacer(Modifier.height(Theme.spacing.medium))
+                    service.includedItems.forEachIndexed { index, item ->
+                        ServiceChecklistItem(
+                            text = item,
+                            checkIcon = painterResource(RD.drawable.ic_check),
+                        )
+                        if (index != service.includedItems.lastIndex) {
+                            Spacer(Modifier.height(Theme.spacing.space12))
+                        }
                     }
                 }
             }
 
-            ServiceInformationNote(
-                text = stringResource(R.string.service_details_information_note),
-                infoIcon = painterResource(RD.drawable.ic_info),
-            )
+            if (service.preparationNote.isNotBlank()) {
+                ServiceInformationNote(
+                    text = service.preparationNote,
+                    infoIcon = painterResource(RD.drawable.ic_info),
+                )
+            }
         }
     }
 }
@@ -259,7 +293,7 @@ private fun ServiceDetailsTopBar(
 
 @Composable
 private fun TopBarAction(
-    icon: androidx.compose.ui.graphics.painter.Painter,
+    icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -282,7 +316,7 @@ private fun TopBarAction(
 }
 
 @Composable
-private fun ServiceImagePlaceholder() {
+private fun ServiceImageHeader(imageUrl: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -298,14 +332,23 @@ private fun ServiceImagePlaceholder() {
                 ),
             ),
     ) {
-        Icon(
-            imageVector = Icons.Outlined.Image,
-            contentDescription = null,
-            tint = Theme.colors.primaryVariant.copy(alpha = 0.75f),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(38.dp),
-        )
+        if (imageUrl.isNotEmpty()) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Outlined.Image,
+                contentDescription = null,
+                tint = Theme.colors.primaryVariant.copy(alpha = 0.75f),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(38.dp),
+            )
+        }
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)

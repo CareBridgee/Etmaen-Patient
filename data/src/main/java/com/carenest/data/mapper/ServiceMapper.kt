@@ -1,0 +1,29 @@
+package com.carenest.data.mapper
+
+import com.carenest.data.source.remote.dto.ServiceDto
+import com.carenest.domain.model.ServiceDetailsModel
+import com.carenest.domain.model.home.HealthcareService
+
+internal fun ServiceDto.toDomain() : HealthcareService = HealthcareService(
+    id = id,
+    name = name,
+    estimatedDurationMinutes = estimatedDurationMinutes.toLong(),
+    basePrice = basePrice,
+    description = description,
+    iconResName = imageUrl,
+)
+
+
+internal fun ServiceDto.toServiceDetails() : ServiceDetailsModel = ServiceDetailsModel(
+    id = id,
+    name = name,
+    description = description,
+    imageUrl = imageUrl?:"",
+    category = category,
+    minimumDurationMinutes = minimumDurationMinutes,
+    estimatedDurationMinutes = estimatedDurationMinutes,
+    basePrice = basePrice,
+    includedItems = includedItems,
+    preparationNote = preparationNote,
+    createdAt = createdAt,
+)

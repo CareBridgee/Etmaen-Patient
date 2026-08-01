@@ -9,7 +9,7 @@ import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
 import com.carenest.domain.usecase.settings.UpdateOnboardingStatusUseCase
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.usecase.home.GetServicesUseCase
-import com.carenest.domain.usecase.home.GetUpcomingBookingUseCase
+import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
 import com.carenest.domain.usecase.home.GetUserUseCase
 import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
 import dagger.Module
@@ -106,8 +106,8 @@ object DomainModule {
     @Singleton
     fun provideGetUpcomingBookingUseCase(
         homeRepository: HomeRepository
-    ): GetUpcomingBookingUseCase {
-        return GetUpcomingBookingUseCase(homeRepository)
+    ): GetUserRequestHistoryUseCase {
+        return GetUserRequestHistoryUseCase(homeRepository)
     }
 }
 

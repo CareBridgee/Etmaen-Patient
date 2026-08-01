@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.usecase.home.GetServicesUseCase
-import com.carenest.presentation.model.toUiModel
-import com.carenest.domain.usecase.home.GetUpcomingBookingUseCase
+import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
 import com.carenest.domain.usecase.home.GetUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
@@ -21,7 +20,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getServicesUseCase: GetServicesUseCase,
-    private val getUpcomingBookingUseCase: GetUpcomingBookingUseCase
+    private val getUpcomingBookingUseCase: GetUserRequestHistoryUseCase
 ) : ViewModel(),
     StateHolder<HomeState> by DefaultStateHolder(HomeState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -41,11 +40,7 @@ class HomeViewModel @Inject constructor(
             HomeIntent.StartAIChatClicked -> sendEffect(HomeEffect.NavigateToAIChat)
             HomeIntent.ViewAllServicesClicked -> sendEffect(HomeEffect.NavigateToServices)
             is HomeIntent.ServiceClicked -> {
-                if (event.service.id == "MORE_SERVICES") {
-                    sendEffect(HomeEffect.NavigateToServices)
-                } else {
-                    sendEffect(HomeEffect.NavigateToServiceDetails(event.service.toUiModel()))
-                }
+                sendEffect(HomeEffect.NavigateToServiceDetails(event.service.id))
             }
             HomeIntent.ManageBookingsClicked -> sendEffect(HomeEffect.NavigateToBookings)
             is HomeIntent.BookingClicked -> sendEffect(HomeEffect.NavigateToBookings)
@@ -75,22 +70,11 @@ class HomeViewModel @Inject constructor(
 
                 val user = userResult.getOrNull()
                 val services = servicesResult.getOrDefault(emptyList())
-                val booking = bookingResult.getOrNull()
+                val booking = bookingResult.getOrNull() ?: emptyList()
 
                 val trimmedQuery = currentState.searchQuery.trim()
                 val filtered = if (trimmedQuery.isBlank()) {
-                    val topServices = services.take(5).toMutableList()
-                    topServices.add(
-                        HealthcareService(
-                            id = "MORE_SERVICES",
-                            name = "More Services",
-                            iconResName = "ic_services",
-                            estimatedDurationMinutes = 1,
-                            basePrice = 1.0,
-                            description = "",
-                        )
-                    )
-                    topServices
+                    services.take(5)
                 } else {
                     services.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
                 }
@@ -122,18 +106,7 @@ class HomeViewModel @Inject constructor(
         val trimmedQuery = query.trim()
         val services = currentState.allServices
         val filtered = if (trimmedQuery.isBlank()) {
-            val topServices = services.take(5).toMutableList()
-            topServices.add(
-                HealthcareService(
-                    id = "MORE_SERVICES",
-                    name = "More Services",
-                    iconResName = "ic_services",
-                    estimatedDurationMinutes = 1,
-                    basePrice = 1.0,
-                    description = "",
-                )
-            )
-            topServices
+            services.take(5)
         } else {
             services.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
         }

@@ -6,5 +6,5 @@ data class HealthcareService(
     val estimatedDurationMinutes: Long,
     val basePrice: Double,
     val description: String,
-    val iconResName: String = "",
+    val iconResName: String?,
 )

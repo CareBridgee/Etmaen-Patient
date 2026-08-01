@@ -2,7 +2,6 @@ package com.carenest.presentation.ui.home
 
 import com.carenest.domain.model.home.Booking
 import com.carenest.domain.model.home.HealthcareService
-import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.domain.model.home.User
 
 sealed interface HomeIntent {
@@ -22,7 +21,7 @@ data class HomeState(
     val allServices: List<HealthcareService> = emptyList(),
     val filteredServices: List<HealthcareService> = emptyList(),
     val searchQuery: String = "",
-    val upcomingBooking: Booking? = null,
+    val upcomingBooking: List<Booking> = emptyList(),
     val isLoading: Boolean = true,
     val isError: Boolean = false,
     val errorMessage: String? = null
@@ -40,14 +39,14 @@ data class HomeState(
         get() = !isSearchActive && allServices.isEmpty() && !isLoading && !isError
 
     val isBookingEmpty: Boolean
-        get() = upcomingBooking == null && !isLoading && !isError
+        get() = upcomingBooking.isEmpty() && !isLoading && !isError
 }
 
 sealed class HomeEffect {
     object NavigateToServices : HomeEffect()
     object NavigateToBookings : HomeEffect()
     object NavigateToAIChat : HomeEffect()
-    data class NavigateToServiceDetails(val service: HealthcareServiceUiModel) : HomeEffect()
+    data class NavigateToServiceDetails(val serviceId: String) : HomeEffect()
     data class ShowToast(
         val message: String, 
         val type: com.carenest.designsystem.components.toast.ToastType = com.carenest.designsystem.components.toast.ToastType.Info
