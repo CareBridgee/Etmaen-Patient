@@ -78,7 +78,7 @@ fun DateTimeSelectionSection(
             }
 
             Box(modifier = Modifier.weight(1f)) {
-                val timeString = String.format("%02d:%02d", preferredHour, preferredMinute)
+                val timeString = String.format(java.util.Locale.US, "%02d:%02d", preferredHour, preferredMinute)
                 CustomTextField(
                     text = timeString,
                     onTextChange = {},

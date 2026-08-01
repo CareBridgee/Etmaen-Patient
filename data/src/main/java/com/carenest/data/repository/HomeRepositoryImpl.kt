@@ -39,16 +39,19 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun submitServiceRequest(params: CreateServiceRequestParams): Result<ServiceRequestResult> {
+        val dateParts = params.preferredDate.split("-").mapNotNull { it.toIntOrNull() }
+        
         val dto = CreateServiceRequestDto(
             profileId = params.profileId,
             serviceTypeId = params.serviceTypeId,
             latitude = params.latitude,
             longitude = params.longitude,
-            preferredDate = params.preferredDate,
-            preferredTime = com.carenest.data.source.remote.dto.PreferredTimeDto(
-                hour = params.preferredTime.hour,
-                minute = params.preferredTime.minute,
-                second = params.preferredTime.second,
+            preferredDate = dateParts,
+            preferredTime = listOf(
+                params.preferredTime.hour,
+                params.preferredTime.minute,
+                params.preferredTime.second,
+                params.preferredTime.nano
             ),
             serviceDescription = params.serviceDescription,
         )

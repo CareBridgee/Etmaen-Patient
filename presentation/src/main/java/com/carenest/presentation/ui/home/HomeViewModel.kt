@@ -69,7 +69,10 @@ class HomeViewModel @Inject constructor(
                 }
 
                 val user = userResult.getOrNull()
-                val services = servicesResult.getOrDefault(emptyList())
+                val services = servicesResult.getOrElse { err ->
+                    Log.e(TAG, "Services failed to load: ${err.message}", err)
+                    emptyList()
+                }
                 val booking = bookingResult.getOrNull() ?: emptyList()
 
                 val trimmedQuery = currentState.searchQuery.trim()
