@@ -48,6 +48,7 @@ class SocketForegroundService : Service() {
         socketConnectionManager.connect()
         
         serviceScope.launch {
+            var lastMessage = ""
             socketConnectionManager.connectionState.collect { state ->
                 val message = when (state) {
                     is ConnectionState.Connected -> "Connected"
@@ -56,7 +57,10 @@ class SocketForegroundService : Service() {
                     is ConnectionState.Failed -> "Connection Failed"
                     is ConnectionState.Disconnected -> "Disconnected"
                 }
-                updateNotification(message)
+                if (message != lastMessage) {
+                    updateNotification(message)
+                    lastMessage = message
+                }
             }
         }
         

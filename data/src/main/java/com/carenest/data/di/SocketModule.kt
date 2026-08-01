@@ -10,7 +10,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import android.util.Log
+import com.carenest.data.BuildConfig
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -35,8 +38,14 @@ abstract class SocketModule {
         @Singleton
         @SocketOkHttpClient
         fun provideSocketOkHttpClient(): OkHttpClient {
+            val loggingInterceptor = HttpLoggingInterceptor { message ->
+                Log.d("CareNestSocket", message)
+            }.apply {
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            }
             // A separate OkHttpClient for WebSockets with different timeout config than REST calls.
             return OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
                 .readTimeout(0, TimeUnit.MILLISECONDS) // Disable read timeout for WebSockets
                 .pingInterval(0, TimeUnit.MILLISECONDS) // Using STOMP heartbeats instead
                 .build()
