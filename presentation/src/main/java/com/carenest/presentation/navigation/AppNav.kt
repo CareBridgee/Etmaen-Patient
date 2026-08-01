@@ -132,6 +132,15 @@ fun AppNav(
             savedStateConfiguration, initialRoute
         )
 
+        LaunchedEffect(mainState.isLoggedIn) {
+            if (!mainState.isLoggedIn && backStack.lastOrNull() != AppRoute.Login && backStack.lastOrNull() != AppRoute.Splash && backStack.lastOrNull() != AppRoute.OnBoarding) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(AppRoute.Login)
+                }
+            }
+        }
+
         val topBarState = remember { mutableStateOf(TopBarConfiguration()) }
 
         CompositionLocalProvider(LocalTopBarState provides topBarState) {
