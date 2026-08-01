@@ -16,11 +16,14 @@ import javax.inject.Inject
 
 import com.carenest.domain.repository.SettingsRepository
 
+import com.carenest.domain.socket.SocketServiceController
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
     private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val socketServiceController: SocketServiceController
 ) : ViewModel(),
     StateHolder<MainState> by DefaultStateHolder(MainState()),
     EffectPublisher<MainEffect> by DefaultEffectPublisher() {
@@ -36,6 +39,13 @@ class MainViewModel @Inject constructor(
                 getLoggedInStatusUseCase()
             ) { onboardingDone, isLoggedIn ->
                 Log.d("MainViewModel", "observeAppState: onboardingDone=$onboardingDone, isLoggedIn=$isLoggedIn")
+                
+                if (isLoggedIn) {
+                    socketServiceController.startService()
+                } else {
+                    socketServiceController.stopService()
+                }
+
                 updateState {
                     copy(
                         onboardingDone = onboardingDone,
