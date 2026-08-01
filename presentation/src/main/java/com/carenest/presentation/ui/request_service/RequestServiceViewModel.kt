@@ -19,6 +19,9 @@ class RequestServiceViewModel @Inject constructor(
 ): ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
+            preferredDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date()),
+            preferredHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
+            preferredMinute = java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE),
             location = com.carenest.domain.model.LocationDetails(
                 address = "Cairo, Egypt",
                 apartment = "",
@@ -86,9 +89,7 @@ class RequestServiceViewModel @Inject constructor(
                 // Implement help logic if needed
             }
 
-            RequestServiceIntent.OnSubmitClicked -> {
-                sendEffect(RequestServiceEffect.RequestSubmittedSuccessfully)
-            }
+            RequestServiceIntent.OnSubmitClicked -> submitServiceRequest()
 
             RequestServiceIntent.OnBackClicked -> {
                 sendEffect(RequestServiceEffect.NavigateBack)
@@ -100,6 +101,57 @@ class RequestServiceViewModel @Inject constructor(
 
             is RequestServiceIntent.OnLocationDetailsReceived -> {
                 updateState { copy(location = intent.locationDetails) }
+            }
+            is RequestServiceIntent.OnPreferredDateChanged -> {
+                updateState { copy(preferredDate = intent.date) }
+            }
+            is RequestServiceIntent.OnPreferredTimeChanged -> {
+                updateState { copy(preferredHour = intent.hour, preferredMinute = intent.minute) }
+            }
+        }
+    }
+
+    private fun submitServiceRequest() {
+        val currentState = state.value
+        val serviceId = currentState.selectedService?.id
+        val profileId = currentState.selectedPatient?.defaultProfileId
+        val location = currentState.location
+
+        if (serviceId == null || profileId == null || location == null) {
+            sendEffect(RequestServiceEffect.ShowError("Please fill all required fields"))
+            return
+        }
+
+        if (currentState.preferredDate.isBlank()) {
+            sendEffect(RequestServiceEffect.ShowError("Please select a preferred date"))
+            return
+        }
+
+        updateState { copy(isSubmitting = true) }
+        viewModelScope.launch {
+            homeRepository.submitServiceRequest(
+                com.carenest.domain.model.CreateServiceRequestParams(
+                    profileId = profileId,
+                    serviceTypeId = serviceId,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    preferredDate = currentState.preferredDate,
+                    preferredTime = com.carenest.domain.model.PreferredTime(
+                        hour = currentState.preferredHour,
+                        minute = currentState.preferredMinute,
+                    ),
+                    serviceDescription = currentState.description,
+                )
+            ).onSuccess { result ->
+                updateState { copy(isSubmitting = false) }
+                sendEffect(
+                    RequestServiceEffect.RequestSubmittedSuccessfully(
+                        serviceRequestId = result.serviceRequestId
+                    )
+                )
+            }.onFailure { error ->
+                updateState { copy(isSubmitting = false) }
+                sendEffect(RequestServiceEffect.ShowError(error.message ?: "Failed to submit request"))
             }
         }
     }
