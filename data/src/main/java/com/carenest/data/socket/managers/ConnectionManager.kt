@@ -1,13 +1,14 @@
 package com.carenest.data.socket.managers
 
 import com.carenest.data.BuildConfig
-import com.carenest.data.source.local.preferences.CarenestDatastore
-import com.carenest.domain.socket.ConnectionState
-import com.carenest.domain.socket.SocketError
 import com.carenest.data.socket.logger.SocketLogger
 import com.carenest.data.socket.stomp.StompClient
 import com.carenest.data.socket.stomp.StompClientEvent
 import com.carenest.data.socket.stomp.StompFrame
+import com.carenest.data.source.local.preferences.CarenestDatastore
+import com.carenest.domain.repository.AuthRepository
+import com.carenest.domain.socket.ConnectionState
+import com.carenest.domain.socket.SocketError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +29,7 @@ import javax.inject.Singleton
 class ConnectionManager @Inject constructor(
     private val stompClient: StompClient,
     private val datastore: CarenestDatastore,
+    private val authRepository: AuthRepository,
     private val reconnectManager: ReconnectManager,
     private val heartbeatManager: HeartbeatManager,
     private val topicRegistry: TopicRegistry,
@@ -46,6 +48,11 @@ class ConnectionManager @Inject constructor(
     private val socketUrl = BuildConfig.base_url.replace("http", "ws").removeSuffix("/") + "/ws"
 
     fun connect(isReconnect: Boolean = false, attempt: Int = 0) {
+        if (_connectionState.value is ConnectionState.Connecting && !isReconnect) {
+            logger.log("Already connecting, ignoring request")
+            return
+        }
+
         if (!isReconnect) {
             isIntentionallyDisconnected = false
             reconnectManager.cancel()
@@ -61,6 +68,18 @@ class ConnectionManager @Inject constructor(
 
         connectionScope?.launch {
             try {
+                logger.log("Refreshing tokens before connection...")
+                val refreshResult = authRepository.refreshToken()
+                
+                if (refreshResult.isFailure) {
+                    val error = refreshResult.exceptionOrNull()
+                    logger.error("Token refresh failed", error)
+                    _socketErrors.tryEmit(SocketError.AuthFailed("Token refresh failed: ${error?.message}"))
+                    _connectionState.value = ConnectionState.Failed(error ?: Exception("Token refresh failed"))
+                    // Don't auto-reconnect if it's an auth failure (user needs to log in)
+                    return@launch
+                }
+
                 val authTokens = datastore.authTokens.first()
                 val token = authTokens?.accessToken
                 
