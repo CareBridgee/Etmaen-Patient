@@ -3,9 +3,14 @@ package com.carenest.data.source.remote.service
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.ServiceDto
 import com.carenest.data.source.remote.dto.UserDto
+import com.carenest.data.source.remote.dto.CreateServiceRequestDto
+import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
@@ -42,6 +47,15 @@ class CareNestApiServiceImpl @Inject constructor(
             url {
                 path("/api/v1/users/${userId}")
             }
+        }
+    }
+
+    override suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto> {
+        return httpClient.executeRequest<ServiceRequestResponseDto>(json) {
+            method = HttpMethod.Post
+            url { path("/api/v1/service-requests") }
+            contentType(ContentType.Application.Json)
+            setBody(body)
         }
     }
 }

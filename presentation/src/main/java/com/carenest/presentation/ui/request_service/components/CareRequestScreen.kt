@@ -38,6 +38,8 @@ fun CareRequestScreenContent(
     onMapClick: () -> Unit,
     onMicClick: () -> Unit,
     onSubmitClick: () -> Unit,
+    onDateChanged: (String) -> Unit,
+    onTimeChanged: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -92,6 +94,14 @@ fun CareRequestScreenContent(
             isListening = state.isListening,
             onMicClick = { showAudioPermissionHandler = true }
         )
+        
+        DateTimeSelectionSection(
+            preferredDate = state.preferredDate,
+            preferredHour = state.preferredHour,
+            preferredMinute = state.preferredMinute,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged
+        )
 
         AddressSection(
             location = state.location,
@@ -123,7 +133,9 @@ private fun CareRequestScreenPreview() {
             onFillWithAiClick = {},
             onMapClick = {},
             onMicClick = {},
-            onSubmitClick = {}
+            onSubmitClick = {},
+            onDateChanged = {},
+            onTimeChanged = { _, _ -> }
         )
     }
 }
