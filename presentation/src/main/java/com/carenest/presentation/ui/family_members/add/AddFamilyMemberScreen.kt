@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,14 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.FamilyRestroom
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -51,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.carenest.designsystem.components.button.SegmentedControl
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -85,7 +83,7 @@ fun AddFamilyMemberScreenRoute(
                 Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }
             AddFamilyMemberEffect.ShowSuccess -> {
-                Toast.makeText(context, "Family member added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Family member saved successfully", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -102,6 +100,8 @@ fun AddFamilyMemberContent(
     state: AddFamilyMemberState,
     onEvent: (AddFamilyMemberEvent) -> Unit
 ) {
+    var showDatePicker by remember { mutableStateOf(false) }
+
     val screenTitle = if (state.isEditMode) {
         stringResource(R.string.edit_family_member_title)
     } else {
@@ -160,41 +160,112 @@ fun AddFamilyMemberContent(
                     onRelationshipSelected = { onEvent(AddFamilyMemberEvent.RelationshipSelected(it)) }
                 )
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
+                ) {
+                    CustomTextField(
+                        text = state.firstName,
+                        onTextChange = { onEvent(AddFamilyMemberEvent.FirstNameChanged(it)) },
+                        title = "First Name",
+                        hint = "e.g. Sarah",
+                        borderColor = Theme.colors.cardBackground,
+                        containerColor = Theme.colors.cardBackground,
+                        enabled = !state.isSubmitting && !state.isLoadingData,
+                        isError = state.firstNameError != null,
+                        errorMessage = state.firstNameError,
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    CustomTextField(
+                        text = state.lastName,
+                        onTextChange = { onEvent(AddFamilyMemberEvent.LastNameChanged(it)) },
+                        title = "Last Name",
+                        hint = "e.g. Jenkins",
+                        borderColor = Theme.colors.cardBackground,
+                        containerColor = Theme.colors.cardBackground,
+                        enabled = !state.isSubmitting && !state.isLoadingData,
+                        isError = state.lastNameError != null,
+                        errorMessage = state.lastNameError,
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
                 CustomTextField(
-                    text = state.contactName,
-                    onTextChange = { onEvent(AddFamilyMemberEvent.ContactNameChanged(it)) },
-                    title = stringResource(R.string.emergency_contact_name),
-                    hint = stringResource(R.string.emergency_contact_name_hint),
+                    text = state.dateOfBirth,
+                    onTextChange = { onEvent(AddFamilyMemberEvent.DateOfBirthChanged(it)) },
+                    title = "Date of birth",
+                    hint = "YYYY-MM-DD",
+                    trailingIcon = rememberVectorPainter(Icons.Outlined.CalendarToday),
+                    onClickTrailingIcon = { if (!state.isSubmitting && !state.isLoadingData) showDatePicker = true },
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
                     enabled = !state.isSubmitting && !state.isLoadingData,
-                    isError = state.contactNameError != null,
-                    errorMessage = state.contactNameError,
+                    isError = state.dateOfBirthError != null,
+                    errorMessage = state.dateOfBirthError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                CustomTextField(
-                    text = state.phoneNumber,
-                    onTextChange = { onEvent(AddFamilyMemberEvent.PhoneNumberChanged(it)) },
-                    title = stringResource(R.string.emergency_contact_phone),
-                    hint = stringResource(R.string.emergency_contact_phone_hint),
-                    borderColor = Theme.colors.cardBackground,
-                    containerColor = Theme.colors.cardBackground,
-                    enabled = !state.isSubmitting && !state.isLoadingData,
-                    isError = state.phoneNumberError != null,
-                    errorMessage = state.phoneNumberError,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                    BasicText(
+                        text = "Gender",
+                        style = Theme.typography.body.medium.copy(
+                            color = Theme.colors.primaryFont,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.sp
+                        )
+                    )
+
+                    val genderOptions = listOf("Male", "Female")
+                    val genderValues = listOf("MALE", "FEMALE")
+                    val selectedIdx = genderValues.indexOf(state.gender).coerceAtLeast(0)
+
+                    SegmentedControl(
+                        items = genderOptions,
+                        selectedIndex = selectedIdx,
+                        onItemSelected = { idx ->
+                            onEvent(AddFamilyMemberEvent.GenderSelected(genderValues[idx]))
+                        }
+                    )
+                }
+            }
+        }
+
+        if (showDatePicker) {
+            val datePickerState = rememberDatePickerState()
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let { millis ->
+                                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                                val formattedDate = formatter.format(Date(millis))
+                                onEvent(AddFamilyMemberEvent.DateOfBirthChanged(formattedDate))
+                            }
+                            showDatePicker = false
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
             }
         }
 
         val isInputValid = state.relationship != null &&
-                state.contactName.trim().isNotBlank() &&
-                state.contactNameError == null &&
-                state.phoneNumber.trim().isNotBlank() &&
-                state.phoneNumberError == null
+                state.firstName.trim().isNotBlank() &&
+                state.lastName.trim().isNotBlank() &&
+                state.dateOfBirth.trim().isNotBlank()
 
         ProfileScreenNavigation(
             onBack = { onEvent(AddFamilyMemberEvent.BackClicked) },
@@ -203,36 +274,6 @@ fun AddFamilyMemberContent(
             stackButtons = true,
             continueEnabled = !state.isSubmitting && !state.isLoadingData && isInputValid,
             isLoading = state.isSubmitting
-        )
-    }
-}
-
-@Composable
-private fun GenderOptionButton(
-    text: String,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clip(RoundedCornerShape(10.dp))
-            .background(if (isSelected) Theme.colors.primary else Theme.colors.cardBackground)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        BasicText(
-            text = text,
-            style = Theme.typography.body.medium.copy(
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                color = if (isSelected) Theme.colors.surface else Theme.colors.primaryFont,
-                fontSize = 15.sp
-            )
         )
     }
 }
@@ -361,9 +402,11 @@ private fun AddFamilyMemberContentPreview() {
     SpTheme {
         AddFamilyMemberContent(
             state = AddFamilyMemberState(
-                contactName = "Sarah Jenkins",
-                phoneNumber = "+15550000000",
-                relationship = FamilyRelationship.Mother
+                firstName = "Sarah",
+                lastName = "Jenkins",
+                relationship = FamilyRelationship.Mother,
+                dateOfBirth = "1990-05-15",
+                gender = "FEMALE"
             ),
             onEvent = {}
         )

@@ -6,20 +6,42 @@ data class AddFamilyMemberState(
     val memberId: String? = null,
     val isEditMode: Boolean = false,
     val relationship: FamilyRelationship? = null,
-    val contactName: String = "",
-    val phoneNumber: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val dateOfBirth: String = "",
+    val gender: String = "MALE",
+    val bloodType: String = "",
+    val height: String = "",
+    val weight: String = "",
+    val mobilityStatus: String = "",
+    val mobilityNotes: String = "",
+    val previousSurgeries: String = "",
+    val previousHospitalizations: String = "",
     val isSubmitting: Boolean = false,
     val isLoadingData: Boolean = false,
     val relationshipError: String? = null,
-    val contactNameError: String? = null,
-    val phoneNumberError: String? = null,
+    val firstNameError: String? = null,
+    val lastNameError: String? = null,
+    val dateOfBirthError: String? = null,
+    val genderError: String? = null,
+    val heightError: String? = null,
+    val weightError: String? = null,
     val errorMessage: String? = null
 )
 
 sealed interface AddFamilyMemberEvent {
     data class RelationshipSelected(val relationship: FamilyRelationship) : AddFamilyMemberEvent
-    data class ContactNameChanged(val value: String) : AddFamilyMemberEvent
-    data class PhoneNumberChanged(val value: String) : AddFamilyMemberEvent
+    data class FirstNameChanged(val value: String) : AddFamilyMemberEvent
+    data class LastNameChanged(val value: String) : AddFamilyMemberEvent
+    data class DateOfBirthChanged(val value: String) : AddFamilyMemberEvent
+    data class GenderSelected(val gender: String) : AddFamilyMemberEvent
+    data class BloodTypeChanged(val value: String) : AddFamilyMemberEvent
+    data class HeightChanged(val value: String) : AddFamilyMemberEvent
+    data class WeightChanged(val value: String) : AddFamilyMemberEvent
+    data class MobilityStatusChanged(val value: String) : AddFamilyMemberEvent
+    data class MobilityNotesChanged(val value: String) : AddFamilyMemberEvent
+    data class PreviousSurgeriesChanged(val value: String) : AddFamilyMemberEvent
+    data class PreviousHospitalizationsChanged(val value: String) : AddFamilyMemberEvent
     data object BackClicked : AddFamilyMemberEvent
     data object SaveClicked : AddFamilyMemberEvent
 }

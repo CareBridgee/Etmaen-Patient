@@ -3,7 +3,6 @@ package com.carenest.presentation.ui.aichat.choosepatient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.family_members.GetFamilyMembersUseCase
-import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -14,7 +13,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChoosePatientViewModel @Inject constructor(
-    private val getDefaultProfileUseCase: GetDefaultProfileUseCase,
     private val getFamilyMembersUseCase: GetFamilyMembersUseCase
 ) : ViewModel(),
     StateHolder<ChoosePatientState> by DefaultStateHolder(ChoosePatientState()),
@@ -30,32 +28,17 @@ class ChoosePatientViewModel @Inject constructor(
 
             val patientsList = mutableListOf<PatientItem>()
 
-            // First load default profile (Self)
-            getDefaultProfileUseCase().onSuccess { defaultProfile ->
-                val fullName = listOfNotNull(defaultProfile.firstName, defaultProfile.lastName)
-                    .joinToString(" ")
-                    .ifBlank { "Self" }
-                patientsList.add(
-                    PatientItem(
-                        id = defaultProfile.id,
-                        name = fullName,
-                        relationship = "Self",
-                        isSelected = true
-                    )
-                )
-            }
-
-            // Then load family members
             getFamilyMembersUseCase().onSuccess { members ->
-                members.forEach { member ->
-                    if (patientsList.none { it.id == member.id }) {
-                        val name = member.contactName.ifBlank { member.relationship ?: "Family Member" }
+                members.forEachIndexed { index, member ->
+                    if (!member.isDeleted && patientsList.none { it.id == member.id }) {
+                        val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
+                        val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
                         patientsList.add(
                             PatientItem(
                                 id = member.id,
-                                name = name,
-                                relationship = member.relationship ?: "Member",
-                                isSelected = false
+                                name = member.fullName,
+                                relationship = relationshipLabel,
+                                isSelected = index == 0
                             )
                         )
                     }

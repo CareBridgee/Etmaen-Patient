@@ -3,11 +3,11 @@ package com.carenest.presentation.ui.family_members.add
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.family_members.FamilyMemberInput
 import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.domain.usecase.family_members.CreateFamilyMemberUseCase
 import com.carenest.domain.usecase.family_members.GetFamilyMemberByIdUseCase
 import com.carenest.domain.usecase.family_members.UpdateFamilyMemberUseCase
-import com.carenest.domain.validation.PhoneValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -46,13 +46,22 @@ class AddFamilyMemberViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isLoadingData = true) }
             getFamilyMemberByIdUseCase(id).fold(
-                onSuccess = { familyMember ->
-                    val relEnum = FamilyRelationship.fromBackend(familyMember.relationship)
+                onSuccess = { member ->
+                    val relEnum = FamilyRelationship.fromBackend(member.relationship)
                     updateState {
                         copy(
-                            contactName = familyMember.contactName,
+                            firstName = member.firstName.orEmpty(),
+                            lastName = member.lastName.orEmpty(),
                             relationship = relEnum,
-                            phoneNumber = familyMember.phoneNumber,
+                            dateOfBirth = member.dateOfBirth.orEmpty(),
+                            gender = member.gender?.uppercase() ?: "MALE",
+                            bloodType = member.bloodType.orEmpty(),
+                            height = member.height?.toString().orEmpty(),
+                            weight = member.weight?.toString().orEmpty(),
+                            mobilityStatus = member.mobilityStatus.orEmpty(),
+                            mobilityNotes = member.mobilityNotes.orEmpty(),
+                            previousSurgeries = member.previousSurgeries.orEmpty(),
+                            previousHospitalizations = member.previousHospitalizations.orEmpty(),
                             isLoadingData = false
                         )
                     }
@@ -69,18 +78,43 @@ class AddFamilyMemberViewModel @Inject constructor(
             is AddFamilyMemberEvent.RelationshipSelected -> {
                 updateState { copy(relationship = event.relationship, relationshipError = null) }
             }
-            is AddFamilyMemberEvent.ContactNameChanged -> {
-                val nameError = if (event.value.trim().isBlank()) "Contact name is required" else null
-                updateState { copy(contactName = event.value, contactNameError = nameError) }
+            is AddFamilyMemberEvent.FirstNameChanged -> {
+                val err = if (event.value.trim().isBlank()) "First name is required" else null
+                updateState { copy(firstName = event.value, firstNameError = err) }
             }
-            is AddFamilyMemberEvent.PhoneNumberChanged -> {
-                val cleaned = PhoneValidator.clean(event.value)
-                val phoneError = when {
-                    cleaned.isBlank() -> "Phone number is required"
-                    !PhoneValidator.isValid(cleaned) -> "Please enter a valid international phone number e.g. +1234567890"
-                    else -> null
-                }
-                updateState { copy(phoneNumber = cleaned, phoneNumberError = phoneError) }
+            is AddFamilyMemberEvent.LastNameChanged -> {
+                val err = if (event.value.trim().isBlank()) "Last name is required" else null
+                updateState { copy(lastName = event.value, lastNameError = err) }
+            }
+            is AddFamilyMemberEvent.DateOfBirthChanged -> {
+                val err = if (event.value.trim().isBlank()) "Date of birth is required" else null
+                updateState { copy(dateOfBirth = event.value, dateOfBirthError = err) }
+            }
+            is AddFamilyMemberEvent.GenderSelected -> {
+                updateState { copy(gender = event.gender, genderError = null) }
+            }
+            is AddFamilyMemberEvent.BloodTypeChanged -> {
+                updateState { copy(bloodType = event.value) }
+            }
+            is AddFamilyMemberEvent.HeightChanged -> {
+                val err = if (event.value.isNotBlank() && event.value.toDoubleOrNull() == null) "Must be a number" else null
+                updateState { copy(height = event.value, heightError = err) }
+            }
+            is AddFamilyMemberEvent.WeightChanged -> {
+                val err = if (event.value.isNotBlank() && event.value.toDoubleOrNull() == null) "Must be a number" else null
+                updateState { copy(weight = event.value, weightError = err) }
+            }
+            is AddFamilyMemberEvent.MobilityStatusChanged -> {
+                updateState { copy(mobilityStatus = event.value) }
+            }
+            is AddFamilyMemberEvent.MobilityNotesChanged -> {
+                updateState { copy(mobilityNotes = event.value) }
+            }
+            is AddFamilyMemberEvent.PreviousSurgeriesChanged -> {
+                updateState { copy(previousSurgeries = event.value) }
+            }
+            is AddFamilyMemberEvent.PreviousHospitalizationsChanged -> {
+                updateState { copy(previousHospitalizations = event.value) }
             }
             AddFamilyMemberEvent.BackClicked -> {
                 sendEffect(AddFamilyMemberEffect.NavigateBack)
@@ -99,16 +133,28 @@ class AddFamilyMemberViewModel @Inject constructor(
             updateState { copy(relationshipError = "Please select a relationship") }
             hasError = true
         }
-        if (currentState.contactName.trim().isBlank()) {
-            updateState { copy(contactNameError = "Contact name is required") }
+        if (currentState.firstName.trim().isBlank()) {
+            updateState { copy(firstNameError = "First name is required") }
             hasError = true
         }
-        val cleanedPhone = PhoneValidator.clean(currentState.phoneNumber)
-        if (cleanedPhone.isBlank()) {
-            updateState { copy(phoneNumberError = "Phone number is required") }
+        if (currentState.lastName.trim().isBlank()) {
+            updateState { copy(lastNameError = "Last name is required") }
             hasError = true
-        } else if (!PhoneValidator.isValid(cleanedPhone)) {
-            updateState { copy(phoneNumberError = "Please enter a valid international phone number e.g. +1234567890") }
+        }
+        if (currentState.dateOfBirth.trim().isBlank()) {
+            updateState { copy(dateOfBirthError = "Date of birth is required") }
+            hasError = true
+        }
+
+        val heightVal = currentState.height.toDoubleOrNull()
+        if (currentState.height.isNotBlank() && heightVal == null) {
+            updateState { copy(heightError = "Height must be a number") }
+            hasError = true
+        }
+
+        val weightVal = currentState.weight.toDoubleOrNull()
+        if (currentState.weight.isNotBlank() && weightVal == null) {
+            updateState { copy(weightError = "Weight must be a number") }
             hasError = true
         }
 
@@ -117,21 +163,27 @@ class AddFamilyMemberViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isSubmitting = true) }
             val relStr = currentState.relationship?.backendValue ?: "Other"
-            val currentId = currentState.memberId
 
+            val input = FamilyMemberInput(
+                relationship = relStr,
+                firstName = currentState.firstName.trim(),
+                lastName = currentState.lastName.trim(),
+                dateOfBirth = currentState.dateOfBirth.trim(),
+                gender = currentState.gender,
+                bloodType = currentState.bloodType.ifBlank { null },
+                height = heightVal,
+                weight = weightVal,
+                mobilityStatus = currentState.mobilityStatus.ifBlank { null },
+                mobilityNotes = currentState.mobilityNotes.ifBlank { null },
+                previousSurgeries = currentState.previousSurgeries.ifBlank { null },
+                previousHospitalizations = currentState.previousHospitalizations.ifBlank { null }
+            )
+
+            val currentId = currentState.memberId
             val result = if (currentState.isEditMode && !currentId.isNullOrBlank()) {
-                updateFamilyMemberUseCase(
-                    id = currentId,
-                    relationship = relStr,
-                    contactName = currentState.contactName.trim(),
-                    phoneNumber = cleanedPhone
-                )
+                updateFamilyMemberUseCase(currentId, input)
             } else {
-                createFamilyMemberUseCase(
-                    relationship = relStr,
-                    contactName = currentState.contactName.trim(),
-                    phoneNumber = cleanedPhone
-                )
+                createFamilyMemberUseCase(input)
             }
 
             result.fold(

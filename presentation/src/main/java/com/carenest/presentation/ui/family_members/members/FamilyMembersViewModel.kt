@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.family_members.DeleteFamilyMemberUseCase
 import com.carenest.domain.usecase.family_members.GetFamilyMembersUseCase
-import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FamilyMembersViewModel @Inject constructor(
-    private val getDefaultProfileUseCase: GetDefaultProfileUseCase,
     private val getFamilyMembersUseCase: GetFamilyMembersUseCase,
     private val deleteFamilyMemberUseCase: DeleteFamilyMemberUseCase
 ) : ViewModel(),
@@ -32,32 +30,15 @@ class FamilyMembersViewModel @Inject constructor(
 
             val memberItems = mutableListOf<FamilyMemberItem>()
 
-            // Load Self profile first
-            getDefaultProfileUseCase().onSuccess { defaultProfile ->
-                val fullName = listOfNotNull(defaultProfile.firstName, defaultProfile.lastName)
-                    .joinToString(" ")
-                    .ifBlank { "Self" }
-                memberItems.add(
-                    FamilyMemberItem(
-                        id = defaultProfile.id,
-                        name = fullName,
-                        relationship = "Self",
-                        lastCheckup = "N/A",
-                        upcomingService = "Checkup"
-                    )
-                )
-            }
-
-            // Load family members
             getFamilyMembersUseCase().onSuccess { members ->
                 members.forEach { member ->
-                    if (memberItems.none { it.id == member.id }) {
-                        val displayName = member.contactName.ifBlank { member.relationship ?: "Family Member" }
-                        val relationshipLabel = member.relationship ?: "Member"
+                    if (!member.isDeleted && memberItems.none { it.id == member.id }) {
+                        val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
+                        val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
                         memberItems.add(
                             FamilyMemberItem(
                                 id = member.id,
-                                name = displayName,
+                                name = member.fullName,
                                 relationship = relationshipLabel,
                                 lastCheckup = "N/A",
                                 upcomingService = "Checkup"
