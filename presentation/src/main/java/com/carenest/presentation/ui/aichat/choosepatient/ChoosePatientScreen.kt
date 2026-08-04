@@ -60,10 +60,15 @@ import com.carenest.designsystem.R as RD
 @Composable
 fun ChoosePatientScreen(
     onNavigateToChat: (String) -> Unit,
+    onNavigateToAddFamilyMember: () -> Unit = {},
     onNavigateBack: () -> Unit,
     viewModel: ChoosePatientViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadPatients()
+    }
 
     ScreenTopBar(
         title = "Choose Patient",
@@ -74,6 +79,9 @@ fun ChoosePatientScreen(
         when (effect) {
             is ChoosePatientEffect.NavigateToChat -> {
                 onNavigateToChat(effect.patientId)
+            }
+            ChoosePatientEffect.NavigateToAddFamilyMember -> {
+                onNavigateToAddFamilyMember()
             }
         }
     }

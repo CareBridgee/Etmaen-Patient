@@ -20,4 +20,5 @@ sealed class ChoosePatientEvent {
 
 sealed class ChoosePatientEffect {
     data class NavigateToChat(val patientId: String) : ChoosePatientEffect()
+    object NavigateToAddFamilyMember : ChoosePatientEffect()
 }

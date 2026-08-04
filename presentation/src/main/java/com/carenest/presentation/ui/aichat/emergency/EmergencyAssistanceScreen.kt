@@ -54,7 +54,7 @@ import com.carenest.presentation.ui.aichat.chat.ChatInputBar
 fun EmergencyAssistanceScreen(
     onNavigateBack: () -> Unit,
     onCallAmbulance: () -> Unit = {},
-    onCallEmergencyContact: () -> Unit = {},
+    onCallFamilyMember: () -> Unit = {},
     onDismiss: () -> Unit = {},
     viewModel: EmergencyAssistanceViewModel = hiltViewModel()
 ) {
@@ -64,7 +64,7 @@ fun EmergencyAssistanceScreen(
         when (effect) {
             EmergencyAssistanceEffect.NavigateBack -> onNavigateBack()
             EmergencyAssistanceEffect.CallAmbulance -> onCallAmbulance()
-            EmergencyAssistanceEffect.CallEmergencyContact -> onCallEmergencyContact()
+            EmergencyAssistanceEffect.CallFamilyMember -> onCallFamilyMember()
             EmergencyAssistanceEffect.DismissEmergency -> onDismiss()
         }
     }
@@ -97,7 +97,7 @@ fun EmergencyAssistanceContent(
         ) {
             EmergencyAssistanceCard(
                 onCallAmbulanceClick = { onEvent(EmergencyAssistanceEvent.OnCallAmbulanceClicked) },
-                onCallEmergencyContactClick = { onEvent(EmergencyAssistanceEvent.OnCallEmergencyContactClicked) },
+                onCallEmergencyContactClick = { onEvent(EmergencyAssistanceEvent.OnCallFamilyMemberClicked) },
                 onDismissClick = { onEvent(EmergencyAssistanceEvent.OnDismissClicked) }
             )
         }
