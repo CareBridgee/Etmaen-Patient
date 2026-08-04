@@ -40,10 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,7 +72,7 @@ fun AIChatScreen(
     val context = LocalContext.current
 
     ScreenTopBar(
-        title = "AI Health Assistant",
+        title = stringResource(R.string.ai_health_assistant),
         onLeadingClick = onNavigateBack
     )
 
@@ -145,6 +142,18 @@ fun AIChatContent(
                     }
                 }
             }
+
+            if (state.messages.isEmpty()) {
+                item(key = "initial_welcome_message") {
+                    TextMessageBubble(
+                        message = ChatMessage(
+                            id = "welcome",
+                            text = stringResource(R.string.ai_chat_welcome_message),
+                            isUser = false
+                        )
+                    )
+                }
+            }
         }
 
         ChatInputBar(
@@ -183,7 +192,7 @@ fun AiLoadingBubble() {
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "AI is thinking...",
+                    text = stringResource(R.string.ai_is_thinking),
                     style = Theme.typography.body.large.copy(fontSize = 14.sp),
                     color = Theme.colors.secondaryFont
                 )
@@ -214,40 +223,14 @@ fun TextMessageBubble(message: ChatMessage) {
             modifier = Modifier.fillMaxWidth(0.85f)
         ) {
             Box(modifier = Modifier.padding(20.dp)) {
-                if (message.text.contains("Hypertension")) {
-                    val annotatedString = buildAnnotatedString {
-                        val parts = message.text.split("Hypertension")
-                        append(parts[0])
-                        withStyle(
-                            style = SpanStyle(
-                                color = if (message.isUser) Theme.colors.surface else Theme.colors.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("Hypertension")
-                        }
-                        if (parts.size > 1) {
-                            append(parts[1])
-                        }
-                    }
-                    Text(
-                        text = annotatedString,
-                        style = Theme.typography.body.large.copy(
-                            fontSize = 15.sp,
-                            lineHeight = 22.sp
-                        ),
-                        color = if (message.isUser) Theme.colors.surface else Theme.colors.primaryFont
-                    )
-                } else {
-                    Text(
-                        text = message.text,
-                        style = Theme.typography.body.large.copy(
-                            fontSize = 15.sp,
-                            lineHeight = 22.sp
-                        ),
-                        color = if (message.isUser) Theme.colors.surface else Theme.colors.primaryFont
-                    )
-                }
+                Text(
+                    text = message.text,
+                    style = Theme.typography.body.large.copy(
+                        fontSize = 15.sp,
+                        lineHeight = 22.sp
+                    ),
+                    color = if (message.isUser) Theme.colors.surface else Theme.colors.primaryFont
+                )
             }
         }
 
@@ -302,7 +285,7 @@ fun ServiceRecommendationCard(
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "RECOMMENDED",
+                        text = stringResource(R.string.recommended_service),
                         style = Theme.typography.body.small.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 11.sp,
@@ -433,7 +416,7 @@ fun ChatInputBar(
 
                     Icon(
                         imageVector = Icons.Default.Mic,
-                        contentDescription = "Voice Input",
+                        contentDescription = stringResource(R.string.voice_input),
                         tint = Theme.colors.secondaryFont,
                         modifier = Modifier.size(22.dp)
                     )
@@ -455,7 +438,7 @@ fun ChatInputBar(
             ) {
                 Icon(
                     painter = painterResource(id = RD.drawable.ic_send),
-                    contentDescription = "Send",
+                    contentDescription = stringResource(R.string.send),
                     tint = Theme.colors.surface,
                     modifier = Modifier.size(20.dp)
                 )

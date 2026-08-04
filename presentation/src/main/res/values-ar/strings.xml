@@ -375,6 +375,11 @@
   <string name="ask_health_profile">اسأل عن ملفك الصحي...</string>
   <string name="book_now">احجز الآن</string>
   <string name="view_service">عرض الخدمة</string>
+  <string name="ai_is_thinking">الذكاء الاصطناعي يفكر...</string>
+  <string name="voice_input">إدخال صوتي</string>
+  <string name="send">إرسال</string>
+  <string name="ai_chat_welcome_message">مرحباً، أنا مساعدك الصحي بالذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟</string>
+  <string name="ai_chat_error_failed_response">فشل في الحصول على رد من الذكاء الاصطناعي. يرجى المحاولة مرة أخرى.</string>
   <string name="emergency_urgent_badge">عاجل</string>
   <string name="emergency_assistance_required">مطلوب مساعدة طارئة</string>
   <string name="emergency_description">اكتشف نظام الذكاء الاصطناعي أعراضاً حرجة. يرجى التزام الهدوء واتباع خطوات الطوارئ أدناه.</string>

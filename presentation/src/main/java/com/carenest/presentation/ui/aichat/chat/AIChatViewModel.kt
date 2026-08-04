@@ -23,18 +23,9 @@ class AIChatViewModel @Inject constructor(
 
     init {
         val patientIdParam: String? = savedStateHandle["patientId"]
-        val initialMessages = listOf(
-            ChatMessage(
-                id = UUID.randomUUID().toString(),
-                text = "Hello, I'm your AI health assistant. How can I help you today?",
-                isUser = false,
-                type = ChatMessageType.TEXT
-            )
-        )
         updateState {
             copy(
-                patientId = patientIdParam ?: "",
-                messages = initialMessages
+                patientId = patientIdParam ?: ""
             )
         }
     }
