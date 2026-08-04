@@ -416,4 +416,18 @@
   <string name="relationship">صلة القرابة (مثل: الأم، الأب، الابن)</string>
   <string name="age">العمر</string>
   <string name="save_family_member">حفظ فرد العائلة</string>
+
+  <!-- Missing Translations -->
+  <string name="view_service">عرض الخدمة</string>
+  <string name="add_family_member_button">إضافة فرد عائلة</string>
+  <string name="edit_family_member_title">تعديل فرد العائلة</string>
+  <string name="save_changes_button">حفظ التغييرات</string>
+  <string name="delete_family_member_title">حذف فرد العائلة</string>
+  <string name="delete_family_member_confirmation">هل أنت تأكد من أنك تريد حذف فرد العائلة هذا؟</string>
+  <string name="delete_family_member_success">تم حذف فرد العائلة بنجاح</string>
+  <string name="phone_number_invalid_error">يرجى إدخال رقم هاتف صحيح (مثال: +1234567890)</string>
+  <string name="phone_number_required_error">رقم الهاتف مطلوب</string>
+  <string name="contact_name_required_error">اسم جهة الاتصال مطلوب</string>
+  <string name="relationship_required_error">يرجى اختيار صلة القرابة</string>
+  <string name="confirm">تأكيد</string>
 </resources>
