@@ -33,5 +33,9 @@ data class ProfileResponseDto(
     val mobilityStatus: String? = null,
     val mobilityNotes: String? = null,
     val previousSurgeries: String? = null,
-    val previousHospitalizations: String? = null
+    val previousHospitalizations: String? = null,
+    val isPrimary: Boolean? = null,
+    val isDeleted: Boolean? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null
 )

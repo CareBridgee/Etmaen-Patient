@@ -1,7 +1,7 @@
 package com.carenest.data.source.remote.service
 
-import com.carenest.data.source.remote.dto.family_members.FamilyMemberRequestDto
-import com.carenest.data.source.remote.dto.family_members.FamilyMemberResponseDto
+import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
+import com.carenest.data.source.remote.dto.profile.ProfileResponseDto
 import com.carenest.data.utils.executeRequest
 import com.carenest.data.utils.executeUnitRequest
 import io.ktor.client.HttpClient
@@ -20,46 +20,37 @@ class FamilyMembersApiServiceImpl @Inject constructor(
     private val json: Json
 ) : FamilyMembersApiService {
 
-    override suspend fun getFamilyMembers(profileId: String?): Result<List<FamilyMemberResponseDto>> {
-        val pathStr = if (!profileId.isNullOrBlank()) {
-            "api/v1/profiles/$profileId/emergency-contacts"
-        } else {
-            "api/v1/profiles"
-        }
-        return httpClient.executeRequest<List<FamilyMemberResponseDto>>(json) {
+    override suspend fun getFamilyMembers(): Result<List<ProfileResponseDto>> =
+        httpClient.executeRequest<List<ProfileResponseDto>>(json) {
             method = HttpMethod.Get
-            url { path(pathStr) }
+            url { path("api/v1/profiles") }
         }
-    }
 
-    override suspend fun getFamilyMemberById(id: String) = httpClient.executeRequest<FamilyMemberResponseDto>(json) {
-        method = HttpMethod.Get
-        url { path("api/v1/emergency-contacts/$id") }
-    }
-
-    override suspend fun createFamilyMember(profileId: String?, request: FamilyMemberRequestDto): Result<FamilyMemberResponseDto> {
-        val pathStr = if (!profileId.isNullOrBlank()) {
-            "api/v1/profiles/$profileId/emergency-contacts"
-        } else {
-            "api/v1/profiles"
+    override suspend fun getFamilyMemberById(id: String): Result<ProfileResponseDto> =
+        httpClient.executeRequest<ProfileResponseDto>(json) {
+            method = HttpMethod.Get
+            url { path("api/v1/profiles/$id") }
         }
-        return httpClient.executeRequest<FamilyMemberResponseDto>(json) {
+
+    override suspend fun createFamilyMember(request: ProfileRequestDto): Result<ProfileResponseDto> =
+        httpClient.executeRequest<ProfileResponseDto>(json) {
             method = HttpMethod.Post
-            url { path(pathStr) }
+            url { path("api/v1/profiles") }
             contentType(ContentType.Application.Json)
             setBody(request)
         }
-    }
 
-    override suspend fun updateFamilyMember(id: String, request: FamilyMemberRequestDto) = httpClient.executeRequest<FamilyMemberResponseDto>(json) {
-        method = HttpMethod.Put
-        url { path("api/v1/emergency-contacts/$id") }
-        contentType(ContentType.Application.Json)
-        setBody(request)
-    }
+    override suspend fun updateFamilyMember(id: String, request: ProfileRequestDto): Result<ProfileResponseDto> =
+        httpClient.executeRequest<ProfileResponseDto>(json) {
+            method = HttpMethod.Put
+            url { path("api/v1/profiles/$id") }
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
 
-    override suspend fun deleteFamilyMember(id: String) = httpClient.executeUnitRequest(json) {
-        method = HttpMethod.Delete
-        url { path("api/v1/emergency-contacts/$id") }
-    }
+    override suspend fun deleteFamilyMember(id: String): Result<Unit> =
+        httpClient.executeUnitRequest(json) {
+            method = HttpMethod.Delete
+            url { path("api/v1/profiles/$id") }
+        }
 }
