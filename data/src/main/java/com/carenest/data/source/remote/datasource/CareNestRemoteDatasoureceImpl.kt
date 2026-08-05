@@ -1,7 +1,6 @@
 package com.carenest.data.source.remote.datasource
 
 import com.carenest.data.source.remote.dto.ServiceDto
-import com.carenest.data.source.remote.dto.UserDto
 import com.carenest.data.source.remote.service.CareNestApiService
 import com.carenest.domain.model.home.Booking
 import kotlinx.coroutines.delay
@@ -17,10 +16,6 @@ class CareNestRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getServiceDetails(serviceId: String): Result<ServiceDto> {
         return careNestApiService.getServiceDetails(serviceId)
-    }
-
-    override suspend fun getUser(): Result<UserDto> {
-        return careNestApiService.getUser()
     }
 
     override suspend fun getUserRequestsHistory(): Result<List<Booking>> {
