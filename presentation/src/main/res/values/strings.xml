@@ -263,6 +263,12 @@
   <string name="relationship_friend">Friend</string>
   <string name="relationship_relative">Relative</string>
   <string name="relationship_guardian">Guardian</string>
+  <string name="ai_is_thinking">AI is thinking...</string>
+  <string name="voice_input">Voice Input</string>
+  <string name="send">Send</string>
+  <string name="ai_chat_welcome_message">Hello, I\'m your AI health assistant. How can I help you today?</string>
+  <string name="ai_chat_error_failed_response">Failed to get AI response. Please try again.</string>
+
 
   <!-- Search For Nurse -->
   <string name="profile_greeting">Good morning, Elena</string>

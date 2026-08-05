@@ -42,6 +42,8 @@ import com.carenest.data.source.local.datasource.UserLocalDataSourceImpl
 import com.carenest.data.source.remote.datasource.user.UserRemoteDataSource
 import com.carenest.data.source.remote.datasource.user.UserRemoteDataSourceImpl
 import com.carenest.domain.repository.UserRepository
+import com.carenest.data.repository.AiChatRepositoryImpl
+import com.carenest.domain.repository.AiChatRepository
 
 import com.carenest.data.repository.FamilyMembersRepositoryImpl
 import com.carenest.domain.repository.FamilyMembersRepository
@@ -94,6 +96,10 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindAiChatRepository(impl: AiChatRepositoryImpl): AiChatRepository
+
     //endregion
 
     //region datasource
@@ -129,7 +135,7 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUserLocalDataSource(impl: UserLocalDataSourceImpl): UserLocalDataSource
-    
+
     @Binds
     @Singleton
     abstract fun provideFamilyMembersDataSource(impl: FamilyMembersDataSourceImpl): FamilyMembersDataSource

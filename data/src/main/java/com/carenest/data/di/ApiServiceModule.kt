@@ -1,5 +1,7 @@
 package com.carenest.data.di
 
+import com.carenest.data.source.remote.service.AiChatApiService
+import com.carenest.data.source.remote.service.AiChatApiServiceImpl
 import com.carenest.data.source.remote.service.AuthApiService
 import com.carenest.data.source.remote.service.AuthApiServiceImpl
 import com.carenest.data.source.remote.service.CareNestApiService
@@ -21,13 +23,14 @@ import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
 @InstallIn(SingletonComponent::class)
 abstract class ApiServiceModule {
 
-
     @Binds
     abstract fun provideAuthApiService(authApiServiceImpl: AuthApiServiceImpl): AuthApiService
 
     @Binds
     abstract fun provideProfileApiService(profileApiServiceImpl: ProfileApiServiceImpl): ProfileApiService
 
+    @Binds
+    abstract fun provideAiChatApiService(aiChatApiServiceImpl: AiChatApiServiceImpl): AiChatApiService
     @Binds
     abstract fun provideCareNestApiService(careNestApiServiceImpl: CareNestApiServiceImpl): CareNestApiService
 
@@ -37,3 +40,4 @@ abstract class ApiServiceModule {
     @Binds
     abstract fun provideFamilyMembersApiService(impl: FamilyMembersApiServiceImpl): FamilyMembersApiService
 }
+
