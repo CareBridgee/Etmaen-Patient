@@ -9,6 +9,7 @@ data class ProfileState(
     val paymentMethodInfo: String = "Visa ending in ••42",
     val appVersion: String = "Serene Care v2.4.1",
     val isLoading: Boolean = false,
+    val errorMessage: String? = null,
 )
 
 sealed interface ProfileEvent {

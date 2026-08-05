@@ -13,9 +13,11 @@ import com.carenest.domain.model.profile.ProfileMedicalCondition
 
 interface ProfileRepository {
     suspend fun getDefaultProfile(): Result<Profile>
+    suspend fun getProfile(profileId: String): Result<Profile>
     suspend fun updatePersonalInfo(profileId: String, update: PersonalInfoUpdate): Result<Profile>
     suspend fun updateBasicHealth(profileId: String, update: BasicHealthUpdate): Result<Profile>
     suspend fun updateMedicalHistory(profileId: String, update: MedicalHistoryUpdate): Result<Profile>
+    suspend fun updateMobility(profileId: String, mobilityStatus: String, mobilityNotes: String): Result<Profile>
 
     suspend fun getMedicalConditionCatalog(): Result<List<MedicalCondition>>
     suspend fun getProfileMedicalConditions(profileId: String): Result<List<ProfileMedicalCondition>>
