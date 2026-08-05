@@ -2,14 +2,12 @@ package com.carenest.data.repository
 
 import android.util.Log
 import com.carenest.data.di.IoDispatcher
-import com.carenest.data.mapper.toDomain
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
 import com.carenest.domain.model.auth.AuthResult
 import com.carenest.domain.repository.AuthRepository
 import com.carenest.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,12 +15,10 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val authDatasource: AuthDatasource,
     private val datastore: CarenestDatastore,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    @param:IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : AuthRepository {
 
-    override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> {
-        return authDatasource.loginWithPhone(phoneNumber)
-    }
     override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> =
         authDatasource.loginWithPhone(phoneNumber)
 
@@ -38,9 +34,6 @@ class AuthRepositoryImpl @Inject constructor(
                         accessToken = response.accessToken,
                         refreshToken = response.refreshToken,
                     )
-                    datastore.setUserId(response.user.id)
-                    datastore.setLoggedIn(true)
-                    response.toDomain()
 
                     val user = userRepository.refreshCurrentUser().getOrThrow()
                     datastore.setUserId(user.id)

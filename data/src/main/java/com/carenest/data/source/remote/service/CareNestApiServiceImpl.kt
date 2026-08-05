@@ -2,7 +2,7 @@ package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.ServiceDto
-import com.carenest.data.source.remote.dto.UserDto
+import com.carenest.data.source.remote.dto.user.UserResponseDto
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 import com.carenest.data.utils.executeRequest
@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 class CareNestApiServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
-    private val json: Json
+    private val json: Json,
+    private val datastore: CarenestDatastore
 ): CareNestApiService {
     override suspend fun getServices(): Result<List<ServiceDto>> {
         return httpClient.executeRequest<List<ServiceDto>>(json) {
@@ -39,9 +40,9 @@ class CareNestApiServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUser(): Result<UserDto> {
+    override suspend fun getUser(): Result<UserResponseDto> {
         val userId = datastore.userId.first()
-        return httpClient.executeRequest<UserDto>(json) {
+        return httpClient.executeRequest<UserResponseDto>(json) {
             method = HttpMethod.Get
             url {
                 path("api/v1/users/${userId}")
