@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
 import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
+import com.carenest.domain.model.user.AuthenticatedDestination
+import com.carenest.domain.usecase.user.RefreshAuthenticatedSessionUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
-    private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase
+    private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
+    private val refreshSession: RefreshAuthenticatedSessionUseCase
 ) :
     ViewModel(),
     StateHolder<SplashState> by DefaultStateHolder(SplashState()),
@@ -38,7 +41,18 @@ class SplashViewModel @Inject constructor(
             val isLoggedIn = getLoggedInStatusUseCase().first()
             when {
                 !onboardingDone -> sendEffect(SplashEffect.NavigateToOnBoarding)
-                isLoggedIn -> sendEffect(SplashEffect.NavigateToHome)
+                isLoggedIn -> refreshSession().fold(
+                    onSuccess = { destination ->
+                        sendEffect(
+                            when (destination) {
+                                AuthenticatedDestination.Registration -> SplashEffect.NavigateToRegister
+                                AuthenticatedDestination.CompleteProfile -> SplashEffect.NavigateToCompleteProfile
+                                AuthenticatedDestination.Home -> SplashEffect.NavigateToHome
+                            }
+                        )
+                    },
+                    onFailure = { sendEffect(SplashEffect.NavigateToLogin) }
+                )
                 else -> sendEffect(SplashEffect.NavigateToLogin)
             }
         }

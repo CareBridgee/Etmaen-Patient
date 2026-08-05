@@ -8,7 +8,6 @@ data class RegisterState(
     val lastName: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",
-    val profileId: String? = null,
     val isInitializing: Boolean = true,
     val isSubmitting: Boolean = false,
     val errorMessage: String? = null,
@@ -27,4 +26,5 @@ sealed interface RegisterIntent {
 sealed interface RegisterEffect {
     data object NavigateBack : RegisterEffect
     data object NavigateToWelcome : RegisterEffect
+    data object NavigateToHome : RegisterEffect
 }

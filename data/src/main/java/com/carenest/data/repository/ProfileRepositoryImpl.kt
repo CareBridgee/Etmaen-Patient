@@ -30,7 +30,10 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun getDefaultProfile(): Result<Profile> =
         api.getDefaultProfile().mapCatching { it.toDomain() }.profileFailure()
 
-    override suspend fun getProfiles(): Result<List<Profile>> =
+    override suspend fun getProfile(profileId: String): Result<Profile> =
+        api.getProfile(profileId).mapCatching { it.toDomain() }.profileFailure()
+    
+  override suspend fun getProfiles(): Result<List<Profile>> =
         api.getProfiles().mapCatching { list -> list.map { it.toDomain() } }.profileFailure()
 
     override suspend fun createFamilyMember(
@@ -82,6 +85,18 @@ class ProfileRepositoryImpl @Inject constructor(
         ProfileRequestDto(
             previousSurgeries = update.previousSurgeries,
             previousHospitalizations = update.previousHospitalizations
+        )
+    )
+
+    override suspend fun updateMobility(
+        profileId: String,
+        mobilityStatus: String,
+        mobilityNotes: String
+    ): Result<Profile> = updateProfile(
+        profileId,
+        ProfileRequestDto(
+            mobilityStatus = mobilityStatus,
+            mobilityNotes = mobilityNotes
         )
     )
 

@@ -93,11 +93,7 @@ fun AppNav(
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
         }
 
-        val initialRoute: NavKey = when {
-            !mainState.onboardingDone -> AppRoute.OnBoarding
-            mainState.isLoggedIn -> AppRoute.Home
-            else -> AppRoute.Splash
-        }
+        val initialRoute: NavKey = AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
 
@@ -120,7 +116,9 @@ fun AppNav(
                     SplashScreen(
                         onNavigateToOnBoarding = { replaceWith(AppRoute.OnBoarding) },
                         onNavigateToHome = { replaceWith(AppRoute.Home) },
-                        onNavigateToLogin = { replaceWith(AppRoute.Login) }
+                        onNavigateToLogin = { replaceWith(AppRoute.Login) },
+                        onNavigateToRegister = { replaceWith(AppRoute.Register) },
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion) }
                     )
                 }
 
@@ -135,13 +133,9 @@ fun AppNav(
                 entry<AppRoute.Otp> { route ->
                     OtpScreen(
                         entry = route,
-                        onVerificationSuccess = {
-                            Snapshot.withMutableSnapshot {
-                                backStack.clear()
-                                backStack.add(AppRoute.Register)
-                            }
-                        },
-                        onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                        onNavigateToRegister = { replaceWith(AppRoute.Register) },
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion) },
+                        onNavigateToHome = { replaceWith(AppRoute.Home) },
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
@@ -194,7 +188,7 @@ fun AppNav(
 
                 entry<AppRoute.Profile> {
                     ProfileScreen(
-                        onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) }
+                        onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) }, onLogout = { replaceWith(AppRoute.Login) }
                     )
                 }
 
