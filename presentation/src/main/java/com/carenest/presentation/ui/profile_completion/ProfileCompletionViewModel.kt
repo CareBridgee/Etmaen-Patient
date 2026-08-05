@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile
+package com.carenest.presentation.ui.profile_completion
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,8 +19,8 @@ import com.carenest.domain.usecase.profile.SyncAllergiesUseCase
 import com.carenest.domain.usecase.profile.SyncMedicalConditionsUseCase
 import com.carenest.domain.usecase.profile.UpdateBasicHealthUseCase
 import com.carenest.domain.usecase.profile.UpdateMedicalHistoryUseCase
-import com.carenest.domain.usecase.profile.ValidateMedicationsUseCase
 import com.carenest.domain.usecase.profile.UpdateMobilityUseCase
+import com.carenest.domain.usecase.profile.ValidateMedicationsUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -639,4 +639,3 @@ class ProfileCompletionViewModel @Inject constructor(
         )
     }
 }
-

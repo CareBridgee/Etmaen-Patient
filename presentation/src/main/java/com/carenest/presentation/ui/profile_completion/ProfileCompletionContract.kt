@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile
+package com.carenest.presentation.ui.profile_completion
 
 import com.carenest.domain.model.profile.AllergyType
 import com.carenest.domain.model.profile.EmergencyContact
@@ -9,7 +9,6 @@ import com.carenest.domain.model.profile.MobilityStatus
 import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
-
 
 enum class ProfileStep {
     Welcome, BasicHealthInfo, MedicalConditions, Allergies, CurrentMedications,

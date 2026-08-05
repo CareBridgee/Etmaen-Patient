@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.steps
+package com.carenest.presentation.ui.profile_completion.steps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -32,20 +33,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.R
-import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
-import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.presentation.ui.profile_completion.components.ProfileProgressIndicator
+import com.carenest.presentation.ui.profile_completion.components.ProfileScreenNavigation
 
 @Composable
 fun BasicHealthInfoScreen(

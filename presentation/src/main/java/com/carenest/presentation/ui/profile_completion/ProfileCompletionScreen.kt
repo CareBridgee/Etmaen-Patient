@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile
+package com.carenest.presentation.ui.profile_completion
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -17,16 +17,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.ui.profile.components.ProfileLoadingShimmer
-import com.carenest.presentation.ui.profile.steps.AllergiesScreen
-import com.carenest.presentation.ui.profile.steps.BasicHealthInfoScreen
-import com.carenest.presentation.ui.profile.steps.CurrentMedicationsScreen
-import com.carenest.presentation.ui.profile.steps.EmergencyContactScreen
-import com.carenest.presentation.ui.profile.steps.MedicalConditionsScreen
-import com.carenest.presentation.ui.profile.steps.MedicalHistoryScreen
-import com.carenest.presentation.ui.profile.steps.MobilityStatusScreen
-import com.carenest.presentation.ui.profile.steps.WelcomeScreen
-import com.carenest.presentation.ui.profile.validation.localizedMessage
+import com.carenest.presentation.ui.profile_completion.components.ProfileLoadingShimmer
+import com.carenest.presentation.ui.profile_completion.steps.AllergiesScreen
+import com.carenest.presentation.ui.profile_completion.steps.BasicHealthInfoScreen
+import com.carenest.presentation.ui.profile_completion.steps.CurrentMedicationsScreen
+import com.carenest.presentation.ui.profile_completion.steps.EmergencyContactScreen
+import com.carenest.presentation.ui.profile_completion.steps.MedicalConditionsScreen
+import com.carenest.presentation.ui.profile_completion.steps.MedicalHistoryScreen
+import com.carenest.presentation.ui.profile_completion.steps.MobilityStatusScreen
+import com.carenest.presentation.ui.profile_completion.steps.WelcomeScreen
+import com.carenest.presentation.ui.profile_completion.validation.localizedMessage
 
 @Composable
 fun ProfileCompletionScreen(

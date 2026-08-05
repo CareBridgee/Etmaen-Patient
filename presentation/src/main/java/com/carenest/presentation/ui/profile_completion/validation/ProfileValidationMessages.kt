@@ -1,9 +1,9 @@
-package com.carenest.presentation.ui.profile.validation
+package com.carenest.presentation.ui.profile_completion.validation
 
-import com.carenest.domain.model.profile.ProfileValidationError
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.carenest.domain.model.profile.ProfileValidationError
 import com.carenest.presentation.R
 
 @Composable

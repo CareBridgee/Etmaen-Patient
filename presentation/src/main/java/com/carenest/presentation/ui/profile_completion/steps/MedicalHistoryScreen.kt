@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.steps
+package com.carenest.presentation.ui.profile_completion.steps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,8 +36,8 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
-import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.presentation.ui.profile_completion.components.ProfileProgressIndicator
+import com.carenest.presentation.ui.profile_completion.components.ProfileScreenNavigation
 
 @Composable
 fun MedicalHistoryScreen(
