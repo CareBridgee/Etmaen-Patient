@@ -9,43 +9,43 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 data class ReservationEventDto(
-    val type: String,
+    val type: ReservationEventType,
     val reservationId: String,
     val data: JsonElement? = null
 ) {
     fun toDomain(json: Json): ReservationEvent {
         return when (type) {
-            "OFFER_CREATED" -> ReservationEvent.OfferCreated(
+            ReservationEventType.OFFER_CREATED -> ReservationEvent.OfferCreated(
                 reservationId,
                 json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
             )
-            "OFFER_UPDATED" -> ReservationEvent.OfferUpdated(
+            ReservationEventType.OFFER_UPDATED -> ReservationEvent.OfferUpdated(
                 reservationId,
                 json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
             )
-            "OFFER_COUNTERED" -> ReservationEvent.OfferCountered(
+            ReservationEventType.OFFER_COUNTERED -> ReservationEvent.OfferCountered(
                 reservationId,
                 json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
             )
-            "OFFER_ACCEPTED" -> ReservationEvent.OfferAccepted(
+            ReservationEventType.OFFER_ACCEPTED -> ReservationEvent.OfferAccepted(
                 reservationId,
                 json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
             )
-            "OFFER_WITHDRAWN" -> ReservationEvent.OfferWithdrawn(
+            ReservationEventType.OFFER_WITHDRAWN -> ReservationEvent.OfferWithdrawn(
                 reservationId,
                 json.decodeFromJsonElement<OfferIdPayloadDto>(data!!).offerId
             )
-            "OFFER_REJECTED" -> ReservationEvent.OfferRejected(
+            ReservationEventType.OFFER_REJECTED -> ReservationEvent.OfferRejected(
                 reservationId,
                 json.decodeFromJsonElement<OfferIdPayloadDto>(data!!).offerId
             )
-            "REQUEST_CANCELLED" -> ReservationEvent.RequestCancelled(reservationId)
-            "COMPLETED" -> ReservationEvent.Completed
-            "OFFERS_LIST" -> ReservationEvent.OffersList(
+            ReservationEventType.REQUEST_CANCELLED -> ReservationEvent.RequestCancelled(reservationId)
+            ReservationEventType.COMPLETED -> ReservationEvent.Completed
+            ReservationEventType.OFFERS_LIST -> ReservationEvent.OffersList(
                 reservationId,
                 json.decodeFromJsonElement<List<NurseOfferResponseDto>>(data!!).map { it.toDomain() }
             )
-            else -> ReservationEvent.Unknown(reservationId, type)
+            ReservationEventType.UNKNOWN -> ReservationEvent.Unknown(reservationId, "UNKNOWN")
         }
     }
 }
