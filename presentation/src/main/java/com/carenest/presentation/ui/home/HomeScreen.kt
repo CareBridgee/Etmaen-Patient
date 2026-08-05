@@ -168,7 +168,11 @@ fun HomeScreenPreview() {
     SpTheme {
         HomeScreenContent(
             state = HomeState(
-                user = com.carenest.domain.model.home.User("1", "Elena Doe", null),
+            user = com.carenest.domain.model.home.User(
+                id = "1",
+                firstName = "Elena",
+                lastName = "Doe"
+            ),
                 searchQuery = "",
                 isLoading = false
             ),

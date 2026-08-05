@@ -2,7 +2,6 @@ package com.carenest.presentation.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.carenest.domain.config.TemporaryCompleteProfileTestConfig
 import com.carenest.domain.model.profile.EmergencyContact
 import com.carenest.domain.model.profile.EmergencyRelationship
 import com.carenest.domain.model.profile.MedicationInput
@@ -21,7 +20,7 @@ import com.carenest.domain.usecase.profile.SyncMedicalConditionsUseCase
 import com.carenest.domain.usecase.profile.UpdateBasicHealthUseCase
 import com.carenest.domain.usecase.profile.UpdateMedicalHistoryUseCase
 import com.carenest.domain.usecase.profile.ValidateMedicationsUseCase
-import com.carenest.domain.usecase.profile.ValidateMobilityUseCase
+import com.carenest.domain.usecase.profile.UpdateMobilityUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -40,7 +39,7 @@ class ProfileCompletionViewModel @Inject constructor(
     private val loadAllergies: LoadAllergiesUseCase,
     private val syncAllergies: SyncAllergiesUseCase,
     private val validateMedications: ValidateMedicationsUseCase,
-    private val validateMobility: ValidateMobilityUseCase,
+    private val updateMobility: UpdateMobilityUseCase,
     private val loadEmergencyContacts: LoadEmergencyContactsUseCase,
     private val saveEmergencyContact: SaveEmergencyContactUseCase
 ) : ViewModel(),
@@ -167,13 +166,9 @@ class ProfileCompletionViewModel @Inject constructor(
         if (currentState.initialized) return
         updateState { copy(initialized = true, isInitializing = true, errorMessage = null) }
         viewModelScope.launch {
-            val profile = if (TemporaryCompleteProfileTestConfig.ENABLED) {
-                temporaryDebugProfile(TemporaryCompleteProfileTestConfig.PROFILE_ID)
-            } else {
-                getDefaultProfile().getOrElse {
-                    updateState { copy(isInitializing = false, errorMessage = it.userMessage()) }
-                    return@launch
-                }
+            val profile = getDefaultProfile().getOrElse {
+                updateState { copy(isInitializing = false, errorMessage = it.userMessage()) }
+                return@launch
             }
             val contactsResult = loadEmergencyContacts(profile.id)
             updateState {
@@ -332,15 +327,14 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitMobility() {
+        val profileId = requireProfileId() ?: return
         val snapshot = currentState
         launchSubmission {
-            validateMobility(snapshot.mobilityStatus, snapshot.mobilityNotes).fold(
-                onSuccess = { mobility ->
+            updateMobility(profileId, snapshot.mobilityStatus, snapshot.mobilityNotes).fold(
+                onSuccess = { profile ->
                     updateState {
-                        copy(
+                        hydrateProfile(profile).copy(
                             isSubmitting = false,
-                            mobilityStatus = mobility.status,
-                            mobilityNotes = mobility.notes,
                             validationErrors = validationErrors - MOBILITY_FIELDS
                         )
                     }
@@ -579,7 +573,11 @@ class ProfileCompletionViewModel @Inject constructor(
         weight = profile.weight?.displayNumber().orEmpty(),
         bloodType = profile.bloodType?.replace('−', '-').orEmpty(),
         previousSurgeries = profile.previousSurgeries.orEmpty(),
-        previousHospitalizations = profile.previousHospitalizations.orEmpty()
+        previousHospitalizations = profile.previousHospitalizations.orEmpty(),
+        mobilityStatus = profile.mobilityStatus?.let { value ->
+            MobilityStatus.entries.firstOrNull { it.name.equals(value, ignoreCase = true) }
+        },
+        mobilityNotes = profile.mobilityNotes.orEmpty()
     )
 
     private fun ProfileCompletionState.hydrateContacts(
@@ -641,22 +639,4 @@ class ProfileCompletionViewModel @Inject constructor(
         )
     }
 }
-
-private fun temporaryDebugProfile(profileId: String) = Profile(
-    id = profileId,
-    userId = null,
-    relationship = null,
-    firstName = null,
-    lastName = null,
-    dateOfBirth = null,
-    gender = null,
-    bloodType = null,
-    height = null,
-    weight = null,
-    mobilityStatus = null,
-    mobilityNotes = null,
-    previousSurgeries = null,
-    previousHospitalizations = null
-)
-
 

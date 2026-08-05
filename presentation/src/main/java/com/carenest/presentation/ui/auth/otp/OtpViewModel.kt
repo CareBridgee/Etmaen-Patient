@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.auth.VerifyOtpUseCase
+import com.carenest.domain.model.user.AuthenticatedDestination
+import com.carenest.domain.usecase.user.GetAuthenticatedDestinationUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OtpViewModel @Inject constructor(
-    private val verifyOtpUseCase: VerifyOtpUseCase
+    private val verifyOtpUseCase: VerifyOtpUseCase,
+    private val getDestination: GetAuthenticatedDestinationUseCase
 ) : ViewModel(),
     StateHolder<OtpState> by DefaultStateHolder(OtpState()),
     EffectPublisher<OtpEffect> by DefaultEffectPublisher() {
@@ -45,15 +48,33 @@ class OtpViewModel @Inject constructor(
             
             val result = verifyOtpUseCase(sanitizedPhone, currentState.otpCode)
             
-            updateState { copy(isLoading = false) }
-
             result.fold(
                 onSuccess = { authResult ->
-                    // Save tokens to DataStore
-                    sendEffect(OtpEffect.NavigateToRegister)
+                    getDestination(authResult.user).fold(
+                        onSuccess = { destination ->
+                            updateState { copy(isLoading = false) }
+                            sendEffect(
+                                when (destination) {
+                                    AuthenticatedDestination.Registration -> OtpEffect.NavigateToRegister
+                                    AuthenticatedDestination.CompleteProfile -> OtpEffect.NavigateToCompleteProfile
+                                    AuthenticatedDestination.Home -> OtpEffect.NavigateToHome
+                                }
+                            )
+                        },
+                        onFailure = { error ->
+                            updateState {
+                                copy(
+                                    isLoading = false,
+                                    errorMessage = error.message ?: "Unable to load your profile"
+                                )
+                            }
+                        }
+                    )
                 },
                 onFailure = { error ->
-                    updateState { copy(errorMessage = error.message ?: "Verification failed") }
+                    updateState {
+                        copy(isLoading = false, errorMessage = error.message ?: "Verification failed")
+                    }
                 }
             )
         }

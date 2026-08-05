@@ -36,6 +36,12 @@ import javax.inject.Singleton
 import com.carenest.data.source.remote.datasource.ChatDataSource
 import com.carenest.data.source.remote.datasource.ChatDataSourceImp
 import com.carenest.domain.repository.ChatRepository
+import com.carenest.data.repository.UserRepositoryImpl
+import com.carenest.data.source.local.datasource.UserLocalDataSource
+import com.carenest.data.source.local.datasource.UserLocalDataSourceImpl
+import com.carenest.data.source.remote.datasource.user.UserRemoteDataSource
+import com.carenest.data.source.remote.datasource.user.UserRemoteDataSourceImpl
+import com.carenest.domain.repository.UserRepository
 
 import com.carenest.data.repository.FamilyMembersRepositoryImpl
 import com.carenest.domain.repository.FamilyMembersRepository
@@ -84,6 +90,10 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
+
     //endregion
 
     //region datasource
@@ -112,6 +122,14 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindCareNestRemoteDatasource(careNestRemoteDatasource: CareNestRemoteDataSourceImpl): CareNestRemoteDatasource
 
+    @Binds
+    @Singleton
+    abstract fun bindUserRemoteDataSource(impl: UserRemoteDataSourceImpl): UserRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindUserLocalDataSource(impl: UserLocalDataSourceImpl): UserLocalDataSource
+    
     @Binds
     @Singleton
     abstract fun provideFamilyMembersDataSource(impl: FamilyMembersDataSourceImpl): FamilyMembersDataSource

@@ -66,6 +66,7 @@ fun RegisterScreen(
         when (effect) {
             RegisterEffect.NavigateBack -> onNavigateBack()
             RegisterEffect.NavigateToWelcome -> onNavigateToWelcome()
+            RegisterEffect.NavigateToHome -> onNavigateHome()
         }
     }
 
