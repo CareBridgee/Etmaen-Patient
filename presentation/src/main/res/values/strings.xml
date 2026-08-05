@@ -242,6 +242,27 @@
   <string name="ask_health_profile">Ask about your health profile...</string>
   <string name="book_now">Book Now</string>
   <string name="view_service">View Service</string>
+  <string name="emergency_contacts_title">Emergency Contacts</string>
+  <string name="emergency_contacts_subtitle">Manage emergency contact details</string>
+  <string name="no_emergency_contacts_title">No Emergency Contacts</string>
+  <string name="no_emergency_contacts_description">Add an emergency contact so they can be alerted during critical situations.</string>
+  <string name="add_emergency_contact">Add Contact</string>
+  <string name="delete_contact_dialog_title">Delete Contact</string>
+  <string name="delete_contact_dialog_message">Are you sure you want to delete %1$s from your emergency contacts?</string>
+  <string name="delete">Delete</string>
+  <string name="cancel">Cancel</string>
+  <string name="edit">Edit</string>
+  <string name="relationship_father">Father</string>
+  <string name="relationship_mother">Mother</string>
+  <string name="relationship_brother">Brother</string>
+  <string name="relationship_sister">Sister</string>
+  <string name="relationship_son">Son</string>
+  <string name="relationship_daughter">Daughter</string>
+  <string name="relationship_husband">Husband</string>
+  <string name="relationship_wife">Wife</string>
+  <string name="relationship_friend">Friend</string>
+  <string name="relationship_relative">Relative</string>
+  <string name="relationship_guardian">Guardian</string>
 
   <!-- Search For Nurse -->
   <string name="profile_greeting">Good morning, Elena</string>
@@ -411,4 +432,15 @@
   <string name="relationship">Relationship (e.g. Mother, Father, Child)</string>
   <string name="age">Age</string>
   <string name="save_family_member">Save Family Member</string>
+  <string name="add_family_member_button">Add Family Member</string>
+  <string name="edit_family_member_title">Edit Family Member</string>
+  <string name="save_changes_button">Save Changes</string>
+  <string name="delete_family_member_title">Delete Family Member</string>
+  <string name="delete_family_member_confirmation">Are you sure you want to delete this family member?</string>
+  <string name="delete_family_member_success">Family member deleted successfully</string>
+  <string name="phone_number_invalid_error">Please enter a valid phone number (e.g. +1234567890)</string>
+  <string name="phone_number_required_error">Phone number is required</string>
+  <string name="contact_name_required_error">Contact name is required</string>
+  <string name="relationship_required_error">Please select a relationship</string>
+  <string name="confirm">Confirm</string>
 </resources>

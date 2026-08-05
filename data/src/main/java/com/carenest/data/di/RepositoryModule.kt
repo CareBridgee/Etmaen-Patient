@@ -37,11 +37,20 @@ import com.carenest.data.source.remote.datasource.ChatDataSource
 import com.carenest.data.source.remote.datasource.ChatDataSourceImp
 import com.carenest.domain.repository.ChatRepository
 
+import com.carenest.data.repository.FamilyMembersRepositoryImpl
+import com.carenest.domain.repository.FamilyMembersRepository
+import com.carenest.data.source.remote.datasource.FamilyMembersDataSource
+import com.carenest.data.source.remote.datasource.FamilyMembersDataSourceImpl
+
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
     //region repository
+    @Binds
+    @Singleton
+    abstract fun provideFamilyMembersRepository(impl: FamilyMembersRepositoryImpl): FamilyMembersRepository
+
     @Binds
     @Singleton
     abstract fun provideSettingsRepositoryImpl(settingsRepository: SettingsRepositoryImpl): SettingsRepository
@@ -102,6 +111,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCareNestRemoteDatasource(careNestRemoteDatasource: CareNestRemoteDataSourceImpl): CareNestRemoteDatasource
+
+    @Binds
+    @Singleton
+    abstract fun provideFamilyMembersDataSource(impl: FamilyMembersDataSourceImpl): FamilyMembersDataSource
 
     //endregion
 }
