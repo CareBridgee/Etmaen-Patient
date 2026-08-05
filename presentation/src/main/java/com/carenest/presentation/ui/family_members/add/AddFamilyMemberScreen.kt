@@ -21,14 +21,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.SegmentedControl
+import com.carenest.designsystem.components.dialog.SPDatePickerDialog
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -236,30 +234,20 @@ fun AddFamilyMemberContent(
 
         if (showDatePicker) {
             val datePickerState = rememberDatePickerState()
-            DatePickerDialog(
+            SPDatePickerDialog(
+                state = datePickerState,
                 onDismissRequest = { showDatePicker = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            datePickerState.selectedDateMillis?.let { millis ->
-                                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                                val formattedDate = formatter.format(Date(millis))
-                                onEvent(AddFamilyMemberEvent.DateOfBirthChanged(formattedDate))
-                            }
-                            showDatePicker = false
-                        }
-                    ) {
-                        Text("OK")
+                confirmLabel = stringResource(R.string.personal_info_date_confirm),
+                dismissLabel = stringResource(R.string.personal_info_date_cancel),
+                onConfirm = { millis ->
+                    millis?.let {
+                        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                        val formattedDate = formatter.format(Date(it))
+                        onEvent(AddFamilyMemberEvent.DateOfBirthChanged(formattedDate))
                     }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) {
-                        Text("Cancel")
-                    }
+                    showDatePicker = false
                 }
-            ) {
-                DatePicker(state = datePickerState)
-            }
+            )
         }
 
         val isInputValid = state.relationship != null &&

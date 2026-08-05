@@ -29,7 +29,7 @@ import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.home.components.HomeAICard
 import com.carenest.presentation.ui.home.components.HomeBookingEmpty
 import com.carenest.presentation.ui.home.components.HomeBookingHeader
-import com.carenest.presentation.ui.home.components.HomeBookingItem
+import com.carenest.presentation.ui.home.components.HomeHistoryItem
 import com.carenest.presentation.ui.home.components.HomeGreetingBar
 import com.carenest.presentation.ui.home.components.HomeSearchBar
 import com.carenest.presentation.ui.home.components.HomeServicesGrid
@@ -40,7 +40,7 @@ import com.carenest.designsystem.R as RD
 fun HomeScreen(
     onNavigateToServices: () -> Unit,
     onNavigateToServiceDetails: (String) -> Unit,
-    onNavigateToBookings: () -> Unit,
+    onNavigateToHistory: () -> Unit,
     onNavigateToAIChat: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -57,7 +57,7 @@ fun HomeScreen(
         when (effect) {
             HomeEffect.NavigateToServices -> onNavigateToServices()
             is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.serviceId)
-            HomeEffect.NavigateToBookings -> onNavigateToBookings()
+            HomeEffect.NavigateToBookings -> onNavigateToHistory()
             HomeEffect.NavigateToAIChat -> onNavigateToAIChat()
             is HomeEffect.ShowToast -> {
                 toastState.show(effect.message, effect.type)
@@ -151,7 +151,7 @@ fun HomeScreenContent(
                     }
                 } else {
                     items(state.upcomingBooking) { booking ->
-                        HomeBookingItem(
+                        HomeHistoryItem(
                             booking = booking,
                             onClick = { onEvent(HomeIntent.BookingClicked(it)) }
                         )

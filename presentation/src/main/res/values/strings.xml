@@ -2,7 +2,7 @@
 <resources>
 
   <string name="nav_home">Home</string>
-  <string name="nav_booking">Bookings</string>
+  <string name="nav_booking">History</string>
   <string name="nav_services">Services</string>
   <string name="nav_profile">Profile</string>
   <string name="auth_title">CareConnect</string>
@@ -214,6 +214,9 @@
   <string name="home_history_title">History</string>
   <string name="home_bookings_manage">See All</string>
   <string name="home_bookings_empty">No upcoming bookings</string>
+  <string name="history_empty_title">No history found</string>
+  <string name="history_empty_description">Your history is empty. Start your journey with us by booking a service today!</string>
+  <string name="history_explore_services">Explore Services</string>
   <string name="home_services_title">Healthcare Services</string>
   <string name="home_services_view_all">View All</string>
   <string name="home_services_search_empty_title">No services found</string>

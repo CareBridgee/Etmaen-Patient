@@ -16,12 +16,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SegmentedControl
+import com.carenest.designsystem.components.dialog.SPDatePickerDialog
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -224,68 +220,22 @@ internal fun RegisterScreenContent(
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = parseDateOfBirth(state.dateOfBirth)
         )
-        val datePickerColors = DatePickerDefaults.colors(
-            containerColor = Theme.colors.surface,
-            titleContentColor = Theme.colors.primaryFont,
-            headlineContentColor = Theme.colors.primaryFont,
-            weekdayContentColor = Theme.colors.secondaryFont,
-            subheadContentColor = Theme.colors.primaryFont,
-            navigationContentColor = Theme.colors.primary,
-            yearContentColor = Theme.colors.primaryFont,
-            disabledYearContentColor = Theme.colors.onDisable,
-            currentYearContentColor = Theme.colors.primary,
-            selectedYearContentColor = Theme.colors.onPrimary,
-            disabledSelectedYearContentColor = Theme.colors.onDisable,
-            selectedYearContainerColor = Theme.colors.primary,
-            disabledSelectedYearContainerColor = Theme.colors.disable,
-            dayContentColor = Theme.colors.primaryFont,
-            disabledDayContentColor = Theme.colors.onDisable,
-            selectedDayContentColor = Theme.colors.onPrimary,
-            disabledSelectedDayContentColor = Theme.colors.onDisable,
-            selectedDayContainerColor = Theme.colors.primary,
-            disabledSelectedDayContainerColor = Theme.colors.disable,
-            todayContentColor = Theme.colors.primary,
-            todayDateBorderColor = Theme.colors.primary,
-            dayInSelectionRangeContainerColor = Theme.colors.primaryContainer,
-            dayInSelectionRangeContentColor = Theme.colors.onPrimaryContainer,
-            dividerColor = Theme.colors.divider
-        )
-        DatePickerDialog(
+        SPDatePickerDialog(
+            state = datePickerState,
             onDismissRequest = { showDatePicker = false },
-            colors = datePickerColors,
-            tonalElevation = 0.dp,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { selectedDate ->
-                            onEvent(
-                                RegisterIntent.DateOfBirthChanged(
-                                    formatDateOfBirth(selectedDate)
-                                )
-                            )
-                        }
-                        showDatePicker = false
-                    },
-                    enabled = datePickerState.selectedDateMillis != null,
-                    colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.primary)
-                ) {
-                    Text(stringResource(R.string.personal_info_date_confirm))
+            confirmLabel = stringResource(R.string.personal_info_date_confirm),
+            dismissLabel = stringResource(R.string.personal_info_date_cancel),
+            onConfirm = { selectedDate ->
+                selectedDate?.let {
+                    onEvent(
+                        RegisterIntent.DateOfBirthChanged(
+                            formatDateOfBirth(it)
+                        )
+                    )
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDatePicker = false },
-                    colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.primary)
-                ) {
-                    Text(stringResource(R.string.personal_info_date_cancel))
-                }
+                showDatePicker = false
             }
-        ) {
-            DatePicker(
-                state = datePickerState,
-                colors = datePickerColors
-            )
-        }
+        )
     }
 }
 
