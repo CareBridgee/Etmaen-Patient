@@ -13,4 +13,6 @@ sealed interface SplashEffect {
     data object NavigateToOnBoarding : SplashEffect
     data object NavigateToHome : SplashEffect
     data object NavigateToLogin : SplashEffect
+    data object NavigateToRegister : SplashEffect
+    data object NavigateToCompleteProfile : SplashEffect
 }

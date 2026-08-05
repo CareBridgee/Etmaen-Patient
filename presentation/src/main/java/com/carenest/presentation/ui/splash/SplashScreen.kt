@@ -36,6 +36,8 @@ fun SplashScreen(
     onNavigateToOnBoarding: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToCompleteProfile: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,6 +47,8 @@ fun SplashScreen(
             SplashEffect.NavigateToOnBoarding -> onNavigateToOnBoarding()
             SplashEffect.NavigateToHome -> onNavigateToHome()
             SplashEffect.NavigateToLogin -> onNavigateToLogin()
+            SplashEffect.NavigateToRegister -> onNavigateToRegister()
+            SplashEffect.NavigateToCompleteProfile -> onNavigateToCompleteProfile()
         }
     }
 
