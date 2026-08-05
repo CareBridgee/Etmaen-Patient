@@ -1,14 +1,6 @@
-package com.carenest.domain.model.profile
+package com.carenest.domain.model.family_members
 
-enum class MobilityStatus {
-    Independent,
-    NeedsAssistance,
-    UsesWalkingAid,
-    WheelchairUser,
-    Bedridden
-}
-
-enum class EmergencyRelationship(val backendValue: String) {
+enum class FamilyRelationship(val backendValue: String) {
     Father("Father"),
     Mother("Mother"),
     Brother("Brother"),
@@ -28,7 +20,7 @@ enum class EmergencyRelationship(val backendValue: String) {
     Other("Other");
 
     companion object {
-        fun fromBackend(value: String?): EmergencyRelationship? = entries.firstOrNull {
+        fun fromBackend(value: String?): FamilyRelationship? = entries.firstOrNull {
             it.backendValue.equals(value, ignoreCase = true) ||
                 it.name.equals(value, ignoreCase = true)
         }

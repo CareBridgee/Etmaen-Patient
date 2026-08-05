@@ -24,8 +24,8 @@ class EmergencyAssistanceViewModel @Inject constructor(
             is EmergencyAssistanceEvent.OnCallAmbulanceClicked -> {
                 sendEffect(EmergencyAssistanceEffect.CallAmbulance)
             }
-            is EmergencyAssistanceEvent.OnCallEmergencyContactClicked -> {
-                sendEffect(EmergencyAssistanceEffect.CallEmergencyContact)
+            is EmergencyAssistanceEvent.OnCallFamilyMemberClicked -> {
+                sendEffect(EmergencyAssistanceEffect.CallFamilyMember)
             }
             is EmergencyAssistanceEvent.OnDismissClicked -> {
                 sendEffect(EmergencyAssistanceEffect.DismissEmergency)

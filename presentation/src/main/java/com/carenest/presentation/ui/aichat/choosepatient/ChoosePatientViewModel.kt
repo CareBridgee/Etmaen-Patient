@@ -1,25 +1,58 @@
 package com.carenest.presentation.ui.aichat.choosepatient
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.carenest.domain.usecase.family_members.GetFamilyMembersUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChoosePatientViewModel @Inject constructor() : ViewModel(),
-    StateHolder<ChoosePatientState> by DefaultStateHolder(
-        ChoosePatientState(
-            patients = listOf(
-                PatientItem(id = "p_1", name = "Elena Rodriguez", relationship = "Self", isSelected = true),
-                PatientItem(id = "p_2", name = "Robert Chen", relationship = "Dad", isSelected = false),
-                PatientItem(id = "p_3", name = "Margaret Chen", relationship = "Mom", isSelected = false)
-            )
-        )
-    ),
+class ChoosePatientViewModel @Inject constructor(
+    private val getFamilyMembersUseCase: GetFamilyMembersUseCase
+) : ViewModel(),
+    StateHolder<ChoosePatientState> by DefaultStateHolder(ChoosePatientState()),
     EffectPublisher<ChoosePatientEffect> by DefaultEffectPublisher() {
+
+    init {
+        loadPatients()
+    }
+
+    fun loadPatients() {
+        viewModelScope.launch {
+            updateState { copy(isLoading = true) }
+
+            val patientsList = mutableListOf<PatientItem>()
+
+            getFamilyMembersUseCase().onSuccess { members ->
+                members.forEachIndexed { index, member ->
+                    if (!member.isDeleted && patientsList.none { it.id == member.id }) {
+                        val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
+                        val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
+                        patientsList.add(
+                            PatientItem(
+                                id = member.id,
+                                name = member.fullName,
+                                relationship = relationshipLabel,
+                                isSelected = index == 0
+                            )
+                        )
+                    }
+                }
+            }
+
+            updateState {
+                copy(
+                    patients = if (patientsList.isNotEmpty()) patientsList else patients,
+                    isLoading = false
+                )
+            }
+        }
+    }
 
     fun onEvent(event: ChoosePatientEvent) {
         when (event) {
@@ -33,7 +66,7 @@ class ChoosePatientViewModel @Inject constructor() : ViewModel(),
                 }
             }
             is ChoosePatientEvent.OnAddFamilyMemberClicked -> {
-                // Not implemented yet
+                sendEffect(ChoosePatientEffect.NavigateToAddFamilyMember)
             }
             is ChoosePatientEvent.OnContinueClicked -> {
                 val selectedPatient = currentState.patients.find { it.isSelected }
