@@ -65,7 +65,7 @@ fun EmergencyContactScreen(
     isSubmitting: Boolean = false
 ) {
     ScreenTopBar(
-        title = "Emergency Contact",
+        title = stringResource(R.string.emergency_contact_title),
         showLeadingIcon = true,
         onLeadingClick = onBack
     )
@@ -87,7 +87,7 @@ fun EmergencyContactScreen(
         ) {
             ProfileProgressIndicator(
                 step = 7,
-                title = "Emergency Contact"
+                title = stringResource(R.string.emergency_contact_progress_title)
             )
 
             Column(
@@ -100,13 +100,20 @@ fun EmergencyContactScreen(
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)
             ) {
                 BasicText(
-                    text = "Emergency Contact Details",
+                    text = stringResource(R.string.emergency_contact_title),
                     style = Theme.typography.title.copy(
                         color = Theme.colors.primaryFont,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
+
+                if (editingUnavailable) {
+                    BasicText(
+                        text = stringResource(R.string.emergency_contact_multiple_unavailable),
+                        style = Theme.typography.body.medium.copy(color = Theme.colors.error)
+                    )
+                }
 
                 RelationshipDropdown(
                     relationship = relationship,
@@ -118,8 +125,8 @@ fun EmergencyContactScreen(
                 CustomTextField(
                     text = contactName,
                     onTextChange = onContactNameChange,
-                    title = "Contact Name",
-                    hint = "Enter contact name",
+                    title = stringResource(R.string.emergency_contact_name),
+                    hint = stringResource(R.string.emergency_contact_name_hint),
                     leadingIcon = rememberVectorPainter(Icons.Outlined.PersonOutline),
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
@@ -133,8 +140,8 @@ fun EmergencyContactScreen(
                 CustomTextField(
                     text = phoneNumber,
                     onTextChange = onPhoneNumberChange,
-                    title = "Phone Number",
-                    hint = "+1234567890",
+                    title = stringResource(R.string.emergency_contact_phone),
+                    hint = stringResource(R.string.emergency_contact_phone_hint),
                     leadingIcon = rememberVectorPainter(Icons.Outlined.Call),
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
@@ -151,7 +158,7 @@ fun EmergencyContactScreen(
         ProfileScreenNavigation(
             onBack = onBack,
             onContinue = onContinue,
-            continueCaption = "Continue",
+            continueCaption = stringResource(R.string.emergency_contact_continue),
             stackButtons = true,
             continueEnabled = !isSubmitting && dataLoaded && !editingUnavailable &&
                     relationship != null && contactName.isNotBlank() && phoneNumber.isNotBlank(),
@@ -173,7 +180,7 @@ private fun RelationshipDropdown(
     Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         Row {
             BasicText(
-                text = "Relationship ",
+                text = stringResource(R.string.emergency_contact_relationship),
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Medium,
@@ -181,7 +188,7 @@ private fun RelationshipDropdown(
                 )
             )
             BasicText(
-                text = "*",
+                text = " *",
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.error,
                     fontWeight = FontWeight.Bold,
@@ -210,7 +217,7 @@ private fun RelationshipDropdown(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BasicText(
-                    text = relationship?.localizedLabel() ?: "Select relationship",
+                    text = relationship?.localizedLabel() ?: stringResource(R.string.emergency_contact_relationship_hint),
                     modifier = Modifier.weight(1f),
                     style = Theme.typography.body.medium.copy(
                         color = if (relationship == null) Theme.colors.hint else Theme.colors.primaryFont,
