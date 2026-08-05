@@ -44,6 +44,7 @@ import com.carenest.presentation.ui.tracking.components.NurseOnTheWayActionButto
 import com.carenest.presentation.ui.tracking.components.StatInfoCard
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.core.util.dialPhoneNumber
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.tracking.components.CancelVisitConfirmationDialog
 
 @Composable
@@ -74,10 +75,15 @@ fun NurseOnTheWayScreen(
         }
     }
 
-        NurseOnTheWayLanding(
-            state = state,
-            onIntent = viewModel::handleIntent,
-        )
+    ScreenTopBar(
+        title = stringResource(R.string.nurse_on_the_way_title),
+        onLeadingClick = onNavigateBack
+    )
+
+    NurseOnTheWayLanding(
+        state = state,
+        onIntent = viewModel::handleIntent,
+    )
 }
 
 @Composable

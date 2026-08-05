@@ -27,4 +27,9 @@ class NurseTrackingDataSourceImp @Inject constructor(): NurseTrackingDataSource{
         // Mock: always within the free-cancellation window.
         return true
     }
+
+    override suspend fun fetchVerificationCode(requestId: String): String {
+        delay(1500) // simulate network delay
+        return "carenest://verify-visit?id=$requestId&token=VERIFY_${System.currentTimeMillis() / 1000}"
+    }
 }
