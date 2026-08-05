@@ -184,7 +184,10 @@ fun AppNav(
 
                 entry<AppRoute.History> {
                     HistoryScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateBack = { 
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                            else replaceWith(AppRoute.Home)
+                        },
                         onNavigateToDetails = { historyId: String -> /* TODO: Navigate to History Details */ },
                         onNavigateToServices = { replaceWith(AppRoute.Services) }
                     )
@@ -326,10 +329,12 @@ fun AppNav(
             }
 
             val currentRoute = backStack.lastOrNull()
-            val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-            val shouldShowBottomBar = currentRoute in bottomNavRoutes
-            val shouldHandleBackToHome = currentRoute != null && currentRoute !in listOf(
-                AppRoute.Home,
+            val selectedIndex = if (currentRoute != null) {
+                bottomNavRoutes.indexOfFirst { it::class == currentRoute::class }
+            } else -1
+
+            val shouldShowBottomBar = selectedIndex != -1
+            val shouldHandleBackToHome = currentRoute != null && currentRoute != AppRoute.Home && currentRoute !in listOf(
                 AppRoute.Splash,
                 AppRoute.OnBoarding,
                 AppRoute.Login
@@ -348,7 +353,9 @@ fun AppNav(
 
             fun onBottomNavItemSelected(index: Int) {
                 val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
-                if (currentRoute != targetRoute) {
+                val current = backStack.lastOrNull()
+                // Check if targetRoute is already the current route by comparing classes
+                if (current == null || current::class != targetRoute::class) {
                     Snapshot.withMutableSnapshot {
                         backStack.clear()
                         backStack.add(targetRoute)
@@ -415,7 +422,7 @@ fun AppNav(
                                 BottomNavItem(stringResource(R.string.nav_profile), RD.drawable.ic_bottom_nav_profile),
                                 BottomNavItem(stringResource(R.string.nav_wallet), RD.drawable.ic_bottom_nav_wallet)
                             ),
-                            selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                            selectedIndex = selectedIndex,
                             onItemSelected = ::onBottomNavItemSelected,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
