@@ -34,3 +34,8 @@ data class MedicalHistoryUpdate(
     val previousSurgeries: String,
     val previousHospitalizations: String
 )
+
+data class MobilityInput(
+    val status: MobilityStatus,
+    val notes: String
+)

@@ -68,6 +68,8 @@ import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
 import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
+import com.carenest.presentation.ui.family_members.add.AddFamilyMemberScreenRoute
+import com.carenest.presentation.ui.family_members.members.FamilyMembersScreen
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
 
@@ -185,7 +187,9 @@ fun AppNav(
                 }
 
                 entry<AppRoute.Profile> {
-                    ProfileScreen(onLogout = { replaceWith(AppRoute.Login) })
+                    ProfileScreen(
+                        onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) }, onLogout = { replaceWith(AppRoute.Login) }
+                    )
                 }
 
                 entry<AppRoute.Wallet> {
@@ -252,7 +256,22 @@ fun AppNav(
                 entry<AppRoute.ChoosePatient> {
                     ChoosePatientScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToChat = { patientId -> backStack.add(AppRoute.AIChat(patientId)) }
+                        onNavigateToChat = { patientId -> backStack.add(AppRoute.AIChat(patientId)) },
+                        onNavigateToAddFamilyMember = { backStack.add(AppRoute.AddFamilyMember()) }
+                    )
+                }
+
+                entry<AppRoute.FamilyMembers> {
+                    FamilyMembersScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateToAddMember = { memberId -> backStack.add(AppRoute.AddFamilyMember(memberId)) }
+                    )
+                }
+
+                entry<AppRoute.AddFamilyMember> { route ->
+                    AddFamilyMemberScreenRoute(
+                        memberId = route.memberId,
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
 
@@ -270,6 +289,7 @@ fun AppNav(
                 entry<AppRoute.EmergencyAssistance> {
                     EmergencyAssistanceScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onCallFamilyMember = { backStack.add(AppRoute.AddFamilyMember()) },
                         onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }

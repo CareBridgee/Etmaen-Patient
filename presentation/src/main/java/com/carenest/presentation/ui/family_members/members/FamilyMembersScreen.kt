@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.familymembers
+package com.carenest.presentation.ui.family_members.members
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -53,20 +53,52 @@ import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 
+import android.widget.Toast
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalContext
+
 @Composable
 fun FamilyMembersScreen(
     onNavigateBack: () -> Unit = {},
-    onNavigateToAddMember: () -> Unit = {},
+    onNavigateToAddMember: (String?) -> Unit = {},
     viewModel: FamilyMembersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadFamilyMembers()
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is FamilyMembersEffect.NavigateBack -> onNavigateBack()
-            is FamilyMembersEffect.NavigateToAddFamilyMember -> onNavigateToAddMember()
-            else -> {}
+            is FamilyMembersEffect.NavigateToAddFamilyMember -> onNavigateToAddMember(null)
+            is FamilyMembersEffect.NavigateToEditPersonalInfo -> onNavigateToAddMember(effect.memberId)
+            is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToAddMember(effect.memberId)
+            is FamilyMembersEffect.ShowToast -> {
+                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    if (state.deleteConfirmationMemberId != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) },
+            title = { Text(text = stringResource(R.string.delete_family_member_title)) },
+            text = { Text(text = stringResource(R.string.delete_family_member_confirmation)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onEvent(FamilyMembersEvent.OnConfirmDeleteClicked) }) {
+                    Text(text = stringResource(R.string.confirm), color = Theme.colors.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) }) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 
     FamilyMembersContent(
@@ -97,7 +129,7 @@ fun FamilyMembersContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             FamilyMembersHeader(
-                greeting = state.greeting,
+                greeting = stringResource(R.string.family_members_screen_title),
                 onBackClick = { onEvent(FamilyMembersEvent.OnBackClicked) },
                 onNotificationClick = { onEvent(FamilyMembersEvent.OnNotificationClicked) }
             )
@@ -234,6 +266,7 @@ fun FamilyMemberCard(
     onEditHealthClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+    val isSelf = member.relationship.equals("Self", ignoreCase = true)
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -292,25 +325,27 @@ fun FamilyMemberCard(
                     }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.primary.copy(alpha = 0.08f))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onDeleteClick
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = null,
-                        tint = Theme.colors.secondaryFont,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+                if (!isSelf) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Theme.colors.primary.copy(alpha = 0.08f))
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = onDeleteClick
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = null,
+                                tint = Theme.colors.secondaryFont,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -354,46 +389,48 @@ fun FamilyMemberCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            if (!isSelf) {
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Button(
-                    onClick = onEditPersonalClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(44.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.family_members_edit_personal),
-                        style = Theme.typography.body.small.copy(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 13.sp
-                        ),
-                        color = Theme.colors.surface
-                    )
-                }
+                    Button(
+                        onClick = onEditPersonalClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.family_members_edit_personal),
+                            style = Theme.typography.body.small.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.sp
+                            ),
+                            color = Theme.colors.surface
+                        )
+                    }
 
-                Button(
-                    onClick = onEditHealthClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(44.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary.copy(alpha = 0.08f))
-                ) {
-                    Text(
-                        text = stringResource(R.string.family_members_edit_health),
-                        style = Theme.typography.body.small.copy(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 13.sp
-                        ),
-                        color = Theme.colors.primaryFont
-                    )
+                    Button(
+                        onClick = onEditHealthClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary.copy(alpha = 0.08f))
+                    ) {
+                        Text(
+                            text = stringResource(R.string.family_members_edit_health),
+                            style = Theme.typography.body.small.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.sp
+                            ),
+                            color = Theme.colors.primaryFont
+                        )
+                    }
                 }
             }
         }

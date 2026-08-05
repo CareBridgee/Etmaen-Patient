@@ -32,6 +32,25 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun getProfile(profileId: String): Result<Profile> =
         api.getProfile(profileId).mapCatching { it.toDomain() }.profileFailure()
+    
+  override suspend fun getProfiles(): Result<List<Profile>> =
+        api.getProfiles().mapCatching { list -> list.map { it.toDomain() } }.profileFailure()
+
+    override suspend fun createFamilyMember(
+        relationship: String,
+        firstName: String,
+        lastName: String,
+        dateOfBirth: String,
+        gender: String
+    ): Result<Profile> = api.createProfile(
+        ProfileRequestDto(
+            relationship = relationship,
+            firstName = firstName,
+            lastName = lastName,
+            dateOfBirth = dateOfBirth,
+            gender = gender
+        )
+    ).mapCatching { it.toDomain() }.profileFailure()
 
     override suspend fun updatePersonalInfo(
         profileId: String,
@@ -144,6 +163,11 @@ class ProfileRepositoryImpl @Inject constructor(
             .mapCatching { list -> list.map { it.toDomain() } }
             .profileFailure()
 
+    override suspend fun getEmergencyContactById(emergencyContactId: String): Result<EmergencyContact> =
+        api.getEmergencyContactById(emergencyContactId)
+            .mapCatching { it.toDomain() }
+            .profileFailure()
+
     override suspend fun createEmergencyContact(
         profileId: String,
         input: EmergencyContactInput
@@ -157,6 +181,10 @@ class ProfileRepositoryImpl @Inject constructor(
     ): Result<EmergencyContact> = api.updateEmergencyContact(emergencyContactId, input.toDto())
         .mapCatching { it.toDomain() }
         .profileFailure()
+
+    override suspend fun deleteEmergencyContact(emergencyContactId: String): Result<Unit> =
+        api.deleteEmergencyContact(emergencyContactId)
+            .profileFailure()
 
     private fun EmergencyContactInput.toDto() =
         EmergencyContactRequestDto(contactName, relationship, phoneNumber)
@@ -179,13 +207,13 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 }
 
-private fun Throwable.toDomainFailure(): Throwable = when (this) {
+internal fun Throwable.toDomainFailure(): Throwable = when (this) {
     is ProfileException -> this
     is ApiException -> ProfileException(message ?: "Profile request failed", statusCode, backendCode)
     else -> this
 }
 
-private fun <T> Result<T>.profileFailure(): Result<T> =
+internal fun <T> Result<T>.profileFailure(): Result<T> =
     exceptionOrNull()?.let { Result.failure(it.toDomainFailure()) } ?: this
 
 private fun Throwable.hasHttpStatus(statusCode: Int): Boolean =

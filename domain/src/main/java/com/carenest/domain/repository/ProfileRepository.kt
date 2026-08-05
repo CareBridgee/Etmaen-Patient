@@ -14,6 +14,14 @@ import com.carenest.domain.model.profile.ProfileMedicalCondition
 interface ProfileRepository {
     suspend fun getDefaultProfile(): Result<Profile>
     suspend fun getProfile(profileId: String): Result<Profile>
+    suspend fun getProfiles(): Result<List<Profile>>
+    suspend fun createFamilyMember(
+        relationship: String,
+        firstName: String,
+        lastName: String,
+        dateOfBirth: String,
+        gender: String
+    ): Result<Profile>
     suspend fun updatePersonalInfo(profileId: String, update: PersonalInfoUpdate): Result<Profile>
     suspend fun updateBasicHealth(profileId: String, update: BasicHealthUpdate): Result<Profile>
     suspend fun updateMedicalHistory(profileId: String, update: MedicalHistoryUpdate): Result<Profile>
@@ -36,6 +44,7 @@ interface ProfileRepository {
     ): Result<Set<String>>
 
     suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>>
+    suspend fun getEmergencyContactById(emergencyContactId: String): Result<EmergencyContact>
     suspend fun createEmergencyContact(
         profileId: String,
         input: EmergencyContactInput
@@ -44,4 +53,5 @@ interface ProfileRepository {
         emergencyContactId: String,
         input: EmergencyContactInput
     ): Result<EmergencyContact>
+    suspend fun deleteEmergencyContact(emergencyContactId: String): Result<Unit>
 }

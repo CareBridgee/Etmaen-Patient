@@ -14,6 +14,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
 
+import com.carenest.data.source.remote.service.FamilyMembersApiService
+import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
+
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ApiServiceModule {
@@ -31,5 +34,6 @@ abstract class ApiServiceModule {
     @Binds
     abstract fun provideUserApiService(userApiServiceImpl: UserApiServiceImpl): UserApiService
 
-
+    @Binds
+    abstract fun provideFamilyMembersApiService(impl: FamilyMembersApiServiceImpl): FamilyMembersApiService
 }
