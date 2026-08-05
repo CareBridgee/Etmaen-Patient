@@ -46,7 +46,7 @@ fun HomeBookingCard(
         if (booking == null) {
             HomeBookingEmpty()
         } else {
-            HomeBookingItem(
+            HomeHistoryItem(
                 booking = booking,
                 onClick = onBookingClick
             )
@@ -107,7 +107,7 @@ fun HomeBookingEmpty(
 }
 
 @Composable
-fun HomeBookingItem(
+fun HomeHistoryItem(
     booking: Booking,
     onClick: (Booking) -> Unit,
     modifier: Modifier = Modifier

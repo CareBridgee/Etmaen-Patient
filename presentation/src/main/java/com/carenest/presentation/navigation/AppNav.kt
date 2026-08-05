@@ -51,7 +51,7 @@ import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
 import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
-import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.history.HistoryScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
@@ -158,7 +158,7 @@ fun AppNav(
                 entry<AppRoute.Home> {
                     HomeScreen(
                         onNavigateToServices = { replaceWith(AppRoute.Services) },
-                        onNavigateToBookings = { replaceWith(AppRoute.Bookings) },
+                        onNavigateToHistory = { replaceWith(AppRoute.History) },
                         onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) },
                         onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
                     )
@@ -182,8 +182,12 @@ fun AppNav(
                     OnBoardingScreen(onNavigateToHome = { replaceWith(AppRoute.Login) })
                 }
 
-                entry<AppRoute.Bookings> {
-                    BookingsScreen()
+                entry<AppRoute.History> {
+                    HistoryScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateToDetails = { historyId: String -> /* TODO: Navigate to History Details */ },
+                        onNavigateToServices = { replaceWith(AppRoute.Services) }
+                    )
                 }
 
                 entry<AppRoute.Profile> {
@@ -279,7 +283,7 @@ fun AppNav(
                     AIChatScreen(
                         patientId = route.patientId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToBookings = { replaceWith(AppRoute.Bookings) },
+                        onNavigateToBookings = { replaceWith(AppRoute.History) },
                         onNavigateToServiceDetails = { categoryStr ->
                             backStack.add(AppRoute.ServiceDetails(categoryStr))
                         }
@@ -315,7 +319,7 @@ fun AppNav(
                 listOf<AppRoute>(
                     AppRoute.Home,
                     AppRoute.Services,
-                    AppRoute.Bookings,
+                    AppRoute.History,
                     AppRoute.Profile,
                     AppRoute.Wallet,
                 )

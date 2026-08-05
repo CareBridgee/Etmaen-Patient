@@ -38,7 +38,7 @@ sealed interface AppRoute : NavKey {
      data class ServiceDetails(val serviceId: String) : AppRoute
 
      @Serializable
-     data object Bookings : AppRoute
+     data object History : AppRoute
 
      @Serializable
      data object Profile : AppRoute
