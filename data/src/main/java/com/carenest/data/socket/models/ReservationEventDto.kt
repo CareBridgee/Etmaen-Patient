@@ -40,6 +40,7 @@ data class ReservationEventDto(
                 json.decodeFromJsonElement<OfferIdPayloadDto>(data!!).offerId
             )
             "REQUEST_CANCELLED" -> ReservationEvent.RequestCancelled(reservationId)
+            "COMPLETED" -> ReservationEvent.Completed
             "OFFERS_LIST" -> ReservationEvent.OffersList(
                 reservationId,
                 json.decodeFromJsonElement<List<NurseOfferResponseDto>>(data!!).map { it.toDomain() }
@@ -51,28 +52,28 @@ data class ReservationEventDto(
 
 @Serializable
 data class NurseOfferResponseDto(
-    val id: String,
-    val serviceRequestId: String,
-    val nurseId: String,
-    val proposedPrice: Double,
-    val proposedDate: String,
-    val proposedTime: String,
-    val message: String?,
-    val status: String,
-    val createdAt: String,
-    val updatedAt: String
+    val id: String? = null,
+    val serviceRequestId: String? = null,
+    val nurseId: String? = null,
+    val proposedPrice: Double? = null,
+    val proposedDate: String? = null,
+    val proposedTime: String? = null,
+    val message: String? = null,
+    val status: String? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null
 ) {
     fun toDomain() = NurseOfferResponse(
-        id,
-        serviceRequestId,
-        nurseId,
-        proposedPrice,
-        proposedDate,
-        proposedTime,
+        id ?: "",
+        serviceRequestId ?: "",
+        nurseId ?: "",
+        proposedPrice ?: 0.0,
+        proposedDate ?: "",
+        proposedTime ?: "",
         message,
-        status,
-        createdAt,
-        updatedAt
+        status ?: "PENDING",
+        createdAt ?: "",
+        updatedAt ?: ""
     )
 }
 
