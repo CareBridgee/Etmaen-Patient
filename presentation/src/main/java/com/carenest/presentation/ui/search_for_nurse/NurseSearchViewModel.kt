@@ -8,6 +8,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.ui.search_for_nurse.NurseSearchEffect.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -86,7 +87,7 @@ class NurseSearchViewModel @Inject constructor(
                 copy(offers = offers.map { if (it.id == event.offer.id) event.offer else it })
             }
             is ReservationEvent.OfferAccepted -> {
-                sendEffect(NurseSearchEffect.NavigateToEnRoute(event.offer.nurseId))
+                sendEffect(NavigateToEnRoute(event.offer.nurseId))
             }
             is ReservationEvent.OfferWithdrawn -> updateState {
                 copy(offers = offers.filter { it.id != event.offerId })
@@ -98,6 +99,7 @@ class NurseSearchViewModel @Inject constructor(
                 sendEffect(NurseSearchEffect.NavigateBack)
             }
             is ReservationEvent.Unknown -> Unit
+            ReservationEvent.Completed -> TODO()
         }
     }
 

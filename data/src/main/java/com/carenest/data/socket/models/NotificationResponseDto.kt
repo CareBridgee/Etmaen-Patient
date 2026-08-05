@@ -5,18 +5,27 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NotificationResponseDto(
-    val id: String,
-    val userId: String,
-    val title: String,
-    val message: String,
-    val type: String,
-    val isRead: Boolean,
-    val relatedEntityType: String?,
-    val relatedEntityId: String?,
-    val createdAt: String,
-    val updatedAt: String
+    val id: String? = null,
+    val userId: String? = null,
+    val title: String? = null,
+    val message: String? = null,
+    val type: String? = null,
+    val isRead: Boolean? = null,
+    val relatedEntityType: String? = null,
+    val relatedEntityId: String? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null
 ) {
     fun toDomain() = NotificationResponse(
-        id, userId, title, message, type, isRead, relatedEntityType, relatedEntityId, createdAt, updatedAt
+        id ?: "",
+        userId ?: "",
+        title ?: "",
+        message ?: "",
+        type ?: "SYSTEM",
+        isRead ?: false,
+        relatedEntityType,
+        relatedEntityId,
+        createdAt ?: "",
+        updatedAt ?: ""
     )
 }

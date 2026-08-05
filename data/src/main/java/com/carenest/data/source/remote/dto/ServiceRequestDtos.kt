@@ -4,21 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PreferredTimeDto(
-    @SerialName("hour") val hour: Int,
-    @SerialName("minute") val minute: Int,
-    @SerialName("second") val second: Int = 0,
-    @SerialName("nano") val nano: Int = 0,
-)
-
-@Serializable
 data class CreateServiceRequestDto(
     @SerialName("profileId") val profileId: String,
     @SerialName("serviceTypeId") val serviceTypeId: String,
     @SerialName("latitude") val latitude: Double,
     @SerialName("longitude") val longitude: Double,
-    @SerialName("preferredDate") val preferredDate: List<Int>, // [yyyy, mm, dd]
-    @SerialName("preferredTime") val preferredTime: List<Int>, // [HH, mm, ss, ns]
+    @SerialName("preferredDate") val preferredDate: String, // "yyyy-MM-dd"
+    @SerialName("preferredTime") val preferredTime: String, // "HH:mm:ss"
     @SerialName("serviceDescription") val serviceDescription: String,
 )
 
@@ -39,6 +31,6 @@ data class ServiceRequestResponseDto(
     @SerialName("latitude") val latitude: Double,
     @SerialName("longitude") val longitude: Double,
     @SerialName("nearbyNurses") val nearbyNurses: List<NearbyNurseDto> = emptyList(),
-    @SerialName("createdAt") val createdAt: String,
+    @SerialName("createdAt") val createdAt: String? = null,
 )
 

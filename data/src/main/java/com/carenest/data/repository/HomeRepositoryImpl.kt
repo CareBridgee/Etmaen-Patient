@@ -39,19 +39,18 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun submitServiceRequest(params: CreateServiceRequestParams): Result<ServiceRequestResult> {
-        val dateParts = params.preferredDate.split("-").mapNotNull { it.toIntOrNull() }
-        
         val dto = CreateServiceRequestDto(
             profileId = params.profileId,
             serviceTypeId = params.serviceTypeId,
             latitude = params.latitude,
             longitude = params.longitude,
-            preferredDate = dateParts,
-            preferredTime = listOf(
+            preferredDate = params.preferredDate,
+            preferredTime = String.format(
+                java.util.Locale.US,
+                "%02d:%02d:%02d",
                 params.preferredTime.hour,
                 params.preferredTime.minute,
-                params.preferredTime.second,
-                params.preferredTime.nano
+                params.preferredTime.second
             ),
             serviceDescription = params.serviceDescription,
         )

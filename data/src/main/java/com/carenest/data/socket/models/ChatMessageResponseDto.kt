@@ -5,11 +5,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChatMessageResponseDto(
-    val id: String,
-    val serviceRequestId: String,
-    val senderUserId: String,
-    val content: String,
-    val createdAt: String
+    val id: String? = null,
+    val serviceRequestId: String? = null,
+    val senderUserId: String? = null,
+    val senderName: String? = null,
+    val senderPhone: String? = null,
+    val content: String? = null,
+    val createdAt: String? = null
 ) {
-    fun toDomain() = ChatMessageResponse(id, serviceRequestId, senderUserId, content, createdAt)
+    fun toDomain() = ChatMessageResponse(
+        id = id ?: "",
+        serviceRequestId = serviceRequestId ?: "",
+        senderUserId = senderUserId ?: "",
+        senderName = senderName ?: "",
+        senderPhone = senderPhone ?: "",
+        content = content ?: "",
+        createdAt = createdAt ?: ""
+    )
 }
