@@ -44,8 +44,9 @@ import com.carenest.presentation.ui.auth.login.components.OtpTextField
 fun OtpScreen(
     entry: AppRoute.Otp,
     viewModel: OtpViewModel = hiltViewModel(),
-    onVerificationSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit = {},
+    onNavigateToCompleteProfile: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -59,8 +60,9 @@ fun OtpScreen(
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is OtpEffect.NavigateToRegistration -> onVerificationSuccess()
             is OtpEffect.NavigateToRegister -> onNavigateToRegister()
+            is OtpEffect.NavigateToCompleteProfile -> onNavigateToCompleteProfile()
+            is OtpEffect.NavigateToHome -> onNavigateToHome()
             is OtpEffect.NavigateBack -> onNavigateBack()
         }
     }

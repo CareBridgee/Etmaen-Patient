@@ -36,6 +36,19 @@ import javax.inject.Singleton
 import com.carenest.data.source.remote.datasource.ChatDataSource
 import com.carenest.data.source.remote.datasource.ChatDataSourceImp
 import com.carenest.domain.repository.ChatRepository
+import com.carenest.data.repository.UserRepositoryImpl
+import com.carenest.data.source.local.datasource.UserLocalDataSource
+import com.carenest.data.source.local.datasource.UserLocalDataSourceImpl
+import com.carenest.data.source.remote.datasource.user.UserRemoteDataSource
+import com.carenest.data.source.remote.datasource.user.UserRemoteDataSourceImpl
+import com.carenest.domain.repository.UserRepository
+import com.carenest.data.repository.AiChatRepositoryImpl
+import com.carenest.domain.repository.AiChatRepository
+
+import com.carenest.data.repository.FamilyMembersRepositoryImpl
+import com.carenest.domain.repository.FamilyMembersRepository
+import com.carenest.data.source.remote.datasource.FamilyMembersDataSource
+import com.carenest.data.source.remote.datasource.FamilyMembersDataSourceImpl
 
 import com.carenest.data.repository.ChatSocketRepositoryImpl
 import com.carenest.data.repository.NotificationSocketRepositoryImpl
@@ -61,6 +74,10 @@ abstract class RepositoryModule {
     abstract fun bindNotificationSocketRepository(impl: NotificationSocketRepositoryImpl): NotificationSocketRepository
 
     //region repository
+    @Binds
+    @Singleton
+    abstract fun provideFamilyMembersRepository(impl: FamilyMembersRepositoryImpl): FamilyMembersRepository
+
     @Binds
     @Singleton
     abstract fun provideSettingsRepositoryImpl(settingsRepository: SettingsRepositoryImpl): SettingsRepository
@@ -94,6 +111,14 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAiChatRepository(impl: AiChatRepositoryImpl): AiChatRepository
+
     //endregion
 
     //region datasource
@@ -121,6 +146,18 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCareNestRemoteDatasource(careNestRemoteDatasource: CareNestRemoteDataSourceImpl): CareNestRemoteDatasource
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRemoteDataSource(impl: UserRemoteDataSourceImpl): UserRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindUserLocalDataSource(impl: UserLocalDataSourceImpl): UserLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun provideFamilyMembersDataSource(impl: FamilyMembersDataSourceImpl): FamilyMembersDataSource
 
     //endregion
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="nav_home">الرئيسية</string>
-  <string name="nav_booking">الحجوزات</string>
+  <string name="nav_booking">السجل</string>
   <string name="nav_services">الخدمات</string>
   <string name="nav_profile">الملف الشخصي</string>
   <string name="auth_title">كير كونيكت</string>
@@ -208,6 +208,9 @@
   <string name="home_history_title">حجوزاتي</string>
   <string name="home_bookings_manage">الكل</string>
   <string name="home_bookings_empty">لا توجد حجوزات قادمة</string>
+  <string name="history_empty_title">لا يوجد سجلات</string>
+  <string name="history_empty_description">سجلك فارغ حالياً. ابدأ رحلتك معنا بحجز خدمة اليوم!</string>
+  <string name="history_explore_services">استكشف الخدمات</string>
   <string name="home_services_title">خدمات الرعاية الصحية</string>
   <string name="home_services_view_all">عرض الكل</string>
   <string name="home_services_search_empty_title">لم يتم العثور على خدمات</string>
@@ -374,7 +377,32 @@
   <string name="recommended_service">موصى به</string>
   <string name="ask_health_profile">اسأل عن ملفك الصحي...</string>
   <string name="book_now">احجز الآن</string>
-  <string name="view_service">عرض الخدمة</string>
+  <string name="emergency_contacts_title">جهات اتصال الطوارئ</string>
+  <string name="emergency_contacts_subtitle">إدارة تفاصيل جهات اتصال الطوارئ</string>
+  <string name="no_emergency_contacts_title">لا توجد جهات اتصال طوارئ</string>
+  <string name="no_emergency_contacts_description">أضف جهة اتصال طوارئ ليتم إخطارهم في الحالات الحرجة.</string>
+  <string name="add_emergency_contact">إضافة جهة اتصال</string>
+  <string name="delete_contact_dialog_title">حذف جهة الاتصال</string>
+  <string name="delete_contact_dialog_message">هل أنت تأكد من أنك تريد حذف %1$s من جهات اتصال الطوارئ؟</string>
+  <string name="delete">حذف</string>
+  <string name="cancel">إلغاء</string>
+  <string name="edit">تعديل</string>
+  <string name="relationship_father">الأب</string>
+  <string name="relationship_mother">الأم</string>
+  <string name="relationship_brother">الأخ</string>
+  <string name="relationship_sister">الأخت</string>
+  <string name="relationship_son">الابن</string>
+  <string name="relationship_daughter">الابنة</string>
+  <string name="relationship_husband">الزوج</string>
+  <string name="relationship_wife">الزوجة</string>
+  <string name="relationship_friend">صديق</string>
+  <string name="relationship_relative">قريب</string>
+  <string name="relationship_guardian">ولي الأمر</string>
+  <string name="ai_is_thinking">الذكاء الاصطناعي يفكر...</string>
+  <string name="voice_input">إدخال صوتي</string>
+  <string name="send">إرسال</string>
+  <string name="ai_chat_welcome_message">مرحباً، أنا مساعدك الصحي بالذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟</string>
+  <string name="ai_chat_error_failed_response">فشل في الحصول على رد من الذكاء الاصطناعي. يرجى المحاولة مرة أخرى.</string>
   <string name="emergency_urgent_badge">عاجل</string>
   <string name="emergency_assistance_required">مطلوب مساعدة طارئة</string>
   <string name="emergency_description">اكتشف نظام الذكاء الاصطناعي أعراضاً حرجة. يرجى التزام الهدوء واتباع خطوات الطوارئ أدناه.</string>
@@ -396,4 +424,18 @@
   <string name="relationship">صلة القرابة (مثل: الأم، الأب، الابن)</string>
   <string name="age">العمر</string>
   <string name="save_family_member">حفظ فرد العائلة</string>
+
+  <!-- Missing Translations -->
+  <string name="view_service">عرض الخدمة</string>
+  <string name="add_family_member_button">إضافة فرد عائلة</string>
+  <string name="edit_family_member_title">تعديل فرد العائلة</string>
+  <string name="save_changes_button">حفظ التغييرات</string>
+  <string name="delete_family_member_title">حذف فرد العائلة</string>
+  <string name="delete_family_member_confirmation">هل أنت تأكد من أنك تريد حذف فرد العائلة هذا؟</string>
+  <string name="delete_family_member_success">تم حذف فرد العائلة بنجاح</string>
+  <string name="phone_number_invalid_error">يرجى إدخال رقم هاتف صحيح (مثال: +1234567890)</string>
+  <string name="phone_number_required_error">رقم الهاتف مطلوب</string>
+  <string name="contact_name_required_error">اسم جهة الاتصال مطلوب</string>
+  <string name="relationship_required_error">يرجى اختيار صلة القرابة</string>
+  <string name="confirm">تأكيد</string>
 </resources>

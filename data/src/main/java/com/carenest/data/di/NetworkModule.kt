@@ -5,7 +5,6 @@ import com.carenest.data.BuildConfig
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.RefreshRequest
 import com.carenest.data.source.remote.dto.TokenPairResponse
-import com.carenest.domain.config.TemporaryCompleteProfileTestConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -120,16 +119,11 @@ internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: Carenest
     install(Auth) {
         bearer {
             loadTokens {
-                if (TemporaryCompleteProfileTestConfig.ENABLED) {
-                    BearerTokens(TemporaryCompleteProfileTestConfig.ACCESS_TOKEN, "")
-                } else {
-                    datastore.authTokens.first()?.let { tokens ->
-                        BearerTokens(tokens.accessToken, tokens.refreshToken)
-                    }
+                datastore.authTokens.first()?.let { tokens ->
+                    BearerTokens(tokens.accessToken, tokens.refreshToken)
                 }
             }
             refreshTokens {
-                if (TemporaryCompleteProfileTestConfig.ENABLED) return@refreshTokens null
                 val refreshToken = oldTokens?.refreshToken?.takeIf(String::isNotBlank)
                     ?: datastore.authTokens.first()?.refreshToken
                     ?: return@refreshTokens null

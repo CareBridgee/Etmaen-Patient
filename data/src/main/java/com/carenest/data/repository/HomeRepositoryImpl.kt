@@ -1,9 +1,7 @@
 package com.carenest.data.repository
 
-import com.carenest.data.di.IoDispatcher
 import com.carenest.data.mapper.toDomain
 import com.carenest.data.mapper.toServiceDetails
-import com.carenest.data.mapper.toUser
 import com.carenest.data.source.remote.datasource.CareNestRemoteDatasource
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.domain.model.CreateServiceRequestParams
@@ -13,17 +11,18 @@ import com.carenest.domain.model.home.Booking
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.User
 import com.carenest.domain.repository.HomeRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import com.carenest.domain.repository.UserRepository
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 class HomeRepositoryImpl @Inject constructor(
-    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val careNestRemoteDatasource: CareNestRemoteDatasource,
+    private val userRepository: UserRepository
 ) : HomeRepository {
 
     override suspend fun getUser(): Result<User> {
-        return careNestRemoteDatasource.getUser().map { it.toUser() }
+        val cached = userRepository.observeCurrentUser().first()
+        return cached?.let { Result.success(it) } ?: userRepository.refreshCurrentUser()
     }
 
     override suspend fun getServices(): Result<List<HealthcareService>> {

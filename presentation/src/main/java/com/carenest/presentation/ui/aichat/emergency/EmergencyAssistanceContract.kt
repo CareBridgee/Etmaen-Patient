@@ -10,7 +10,7 @@ data class EmergencyAssistanceState(
 sealed class EmergencyAssistanceEvent {
     object OnBackClicked : EmergencyAssistanceEvent()
     object OnCallAmbulanceClicked : EmergencyAssistanceEvent()
-    object OnCallEmergencyContactClicked : EmergencyAssistanceEvent()
+    object OnCallFamilyMemberClicked : EmergencyAssistanceEvent()
     object OnDismissClicked : EmergencyAssistanceEvent()
     data class OnInputTextChanged(val text: String) : EmergencyAssistanceEvent()
     object OnSendMessage : EmergencyAssistanceEvent()
@@ -19,6 +19,6 @@ sealed class EmergencyAssistanceEvent {
 sealed class EmergencyAssistanceEffect {
     object NavigateBack : EmergencyAssistanceEffect()
     object CallAmbulance : EmergencyAssistanceEffect()
-    object CallEmergencyContact : EmergencyAssistanceEffect()
+    object CallFamilyMember : EmergencyAssistanceEffect()
     object DismissEmergency : EmergencyAssistanceEffect()
 }

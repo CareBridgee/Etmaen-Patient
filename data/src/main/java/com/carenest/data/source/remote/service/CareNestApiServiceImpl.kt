@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 class CareNestApiServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
-    private val json: Json,
-    private val datastore: CarenestDatastore
+    private val json: Json
 ): CareNestApiService {
     override suspend fun getServices(): Result<List<ServiceDto>> {
         return httpClient.executeRequest<List<ServiceDto>>(json) {

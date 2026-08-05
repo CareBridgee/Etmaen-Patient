@@ -33,6 +33,23 @@ class ProfileApiServiceImpl @Inject constructor(
         url { path("api/v1/profiles/default") }
     }
 
+    override suspend fun getProfile(profileId: String) =
+        httpClient.executeRequest<ProfileResponseDto>(json) {
+            method = HttpMethod.Get
+            url { path("api/v1/profiles/$profileId") }
+        }
+    override suspend fun getProfiles() = httpClient.executeRequest<List<ProfileResponseDto>>(json) {
+        method = HttpMethod.Get
+        url { path("api/v1/profiles") }
+    }
+
+    override suspend fun createProfile(request: ProfileRequestDto) = httpClient.executeRequest<ProfileResponseDto>(json) {
+        method = HttpMethod.Post
+        url { path("api/v1/profiles") }
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }
+
     override suspend fun updateProfile(profileId: String, request: ProfileRequestDto) =
         httpClient.executeRequest<ProfileResponseDto>(json) {
             method = HttpMethod.Put
@@ -102,6 +119,12 @@ class ProfileApiServiceImpl @Inject constructor(
             url { path("api/v1/profiles/$profileId/emergency-contacts") }
         }
 
+    override suspend fun getEmergencyContactById(emergencyContactId: String) =
+        httpClient.executeRequest<EmergencyContactResponseDto>(json) {
+            method = HttpMethod.Get
+            url { path("api/v1/emergency-contacts/$emergencyContactId") }
+        }
+
     override suspend fun createEmergencyContact(
         profileId: String,
         request: EmergencyContactRequestDto
@@ -121,4 +144,10 @@ class ProfileApiServiceImpl @Inject constructor(
         contentType(ContentType.Application.Json)
         setBody(request)
     }
+
+    override suspend fun deleteEmergencyContact(emergencyContactId: String) =
+        httpClient.executeUnitRequest(json) {
+            method = HttpMethod.Delete
+            url { path("api/v1/emergency-contacts/$emergencyContactId") }
+        }
 }

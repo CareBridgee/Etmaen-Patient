@@ -7,6 +7,7 @@ import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
 import com.carenest.domain.model.auth.AuthResult
 import com.carenest.domain.repository.AuthRepository
+import com.carenest.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -15,13 +16,15 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDatasource: AuthDatasource,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val datastore: CarenestDatastore
+    private val datastore: CarenestDatastore,
+    private val userRepository: UserRepository
 ) : AuthRepository {
 
     override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> {
         return authDatasource.loginWithPhone(phoneNumber)
     }
+    override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> =
+        authDatasource.loginWithPhone(phoneNumber)
 
     override suspend fun requestDevOtp(phoneNumber: String): Result<String?> {
         return authDatasource.requestDevOtp(phoneNumber).map { it.otp }
@@ -38,6 +41,20 @@ class AuthRepositoryImpl @Inject constructor(
                     datastore.setUserId(response.user.id)
                     datastore.setLoggedIn(true)
                     response.toDomain()
+
+                    val user = userRepository.refreshCurrentUser().getOrThrow()
+                    datastore.setUserId(user.id)
+                    datastore.setLoggedIn(true)
+                    AuthResult(
+                        accessToken = response.accessToken,
+                        refreshToken = response.refreshToken,
+                        expiresIn = response.expiresIn,
+                        user = user
+                    )
+                }.onFailure {
+                    datastore.clearAuthTokens()
+                    userRepository.clearCurrentUser()
+                    datastore.setLoggedIn(false)
                 }
             },
             onFailure = { Result.failure(it) }
@@ -63,7 +80,7 @@ class AuthRepositoryImpl @Inject constructor(
             },
             onFailure = { throwable ->
                 // If refresh token is invalid (401 or 403), we should log out the user
-                val isAuthError = (throwable is io.ktor.client.plugins.ResponseException && 
+                val isAuthError = (throwable is io.ktor.client.plugins.ResponseException &&
                     (throwable.response.status.value == 401 || throwable.response.status.value == 403)) ||
                     (throwable.message?.contains("401") == true || throwable.message?.contains("403") == true)
 
@@ -75,5 +92,11 @@ class AuthRepositoryImpl @Inject constructor(
                 Result.failure(throwable)
             }
         )
+    }
+
+    override suspend fun logout(): Result<Unit> = runCatching {
+        datastore.clearAuthTokens()
+        userRepository.clearCurrentUser()
+        datastore.setLoggedIn(false)
     }
 }

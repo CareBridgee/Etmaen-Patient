@@ -38,7 +38,7 @@ sealed interface AppRoute : NavKey {
      data class ServiceDetails(val serviceId: String) : AppRoute
 
      @Serializable
-     data object Bookings : AppRoute
+     data object History : AppRoute
 
      @Serializable
      data object Profile : AppRoute
@@ -70,6 +70,9 @@ sealed interface AppRoute : NavKey {
      data object FamilyMembers : AppRoute
 
      @Serializable
+     data class AddFamilyMember(val memberId: String? = null) : AppRoute
+
+     @Serializable
      data object Settings : AppRoute
 
      @Serializable
@@ -87,5 +90,4 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data class VisitCompleted (val requestId: String): AppRoute
-
 }

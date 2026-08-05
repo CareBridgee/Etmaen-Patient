@@ -18,14 +18,16 @@ data class ChatMessage(
     val text: String,
     val isUser: Boolean,
     val type: ChatMessageType = ChatMessageType.TEXT,
-    val serviceData: ServiceRecommendationData? = null
+    val serviceData: ServiceRecommendationData? = null,
+    val sentAtEpochMillis: Long = System.currentTimeMillis()
 )
 
 data class AIChatState(
     val patientId: String = "",
     val messages: List<ChatMessage> = emptyList(),
     val inputText: String = "",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )
 
 sealed class AIChatEvent {
@@ -34,10 +36,12 @@ sealed class AIChatEvent {
     object OnBackClicked : AIChatEvent()
     object OnBookNowClicked : AIChatEvent()
     data class OnViewServiceClicked(val categoryId: String) : AIChatEvent()
+    object OnDismissError : AIChatEvent()
 }
 
 sealed class AIChatEffect {
     object NavigateBack : AIChatEffect()
     object NavigateToBookings : AIChatEffect()
     data class NavigateToServiceDetails(val categoryId: String) : AIChatEffect()
+    data class ShowError(val message: String) : AIChatEffect()
 }

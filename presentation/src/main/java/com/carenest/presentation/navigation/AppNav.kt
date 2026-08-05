@@ -62,12 +62,12 @@ import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
 import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
-import com.carenest.presentation.ui.bookings.BookingsScreen
+import com.carenest.presentation.ui.history.HistoryScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
-import com.carenest.presentation.ui.profile.ProfileCompletionScreen
+import com.carenest.presentation.ui.profile_completion.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
@@ -79,6 +79,8 @@ import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
 import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
+import com.carenest.presentation.ui.family_members.add.AddFamilyMemberScreenRoute
+import com.carenest.presentation.ui.family_members.members.FamilyMembersScreen
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
 
@@ -120,11 +122,7 @@ fun AppNav(
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
         }
 
-        val initialRoute: NavKey = when {
-            !mainState.onboardingDone -> AppRoute.OnBoarding
-            mainState.isLoggedIn -> AppRoute.Home
-            else -> AppRoute.Splash
-        }
+        val initialRoute: NavKey = AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
 
@@ -156,7 +154,9 @@ fun AppNav(
                     SplashScreen(
                         onNavigateToOnBoarding = { replaceWith(AppRoute.OnBoarding) },
                         onNavigateToHome = { replaceWith(AppRoute.Home) },
-                        onNavigateToLogin = { replaceWith(AppRoute.Login) }
+                        onNavigateToLogin = { replaceWith(AppRoute.Login) },
+                        onNavigateToRegister = { replaceWith(AppRoute.Register) },
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion) }
                     )
                 }
 
@@ -171,13 +171,9 @@ fun AppNav(
                 entry<AppRoute.Otp> { route ->
                     OtpScreen(
                         entry = route,
-                        onVerificationSuccess = {
-                            Snapshot.withMutableSnapshot {
-                                backStack.clear()
-                                backStack.add(AppRoute.Register)
-                            }
-                        },
-                        onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                        onNavigateToRegister = { replaceWith(AppRoute.Register) },
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion) },
+                        onNavigateToHome = { replaceWith(AppRoute.Home) },
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
@@ -200,7 +196,7 @@ fun AppNav(
                 entry<AppRoute.Home> {
                     HomeScreen(
                         onNavigateToServices = { replaceWith(AppRoute.Services) },
-                        onNavigateToBookings = { replaceWith(AppRoute.Bookings) },
+                        onNavigateToHistory = { replaceWith(AppRoute.History) },
                         onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) },
                         onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
                     )
@@ -224,12 +220,21 @@ fun AppNav(
                     OnBoardingScreen(onNavigateToHome = { replaceWith(AppRoute.Login) })
                 }
 
-                entry<AppRoute.Bookings> {
-                    BookingsScreen()
+                entry<AppRoute.History> {
+                    HistoryScreen(
+                        onNavigateBack = { 
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                            else replaceWith(AppRoute.Home)
+                        },
+                        onNavigateToDetails = { historyId: String -> /* TODO: Navigate to History Details */ },
+                        onNavigateToServices = { replaceWith(AppRoute.Services) }
+                    )
                 }
 
                 entry<AppRoute.Profile> {
-                    ProfileScreen()
+                    ProfileScreen(
+                        onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) }, onLogout = { replaceWith(AppRoute.Login) }
+                    )
                 }
 
                 entry<AppRoute.Wallet> {
@@ -305,7 +310,22 @@ fun AppNav(
                 entry<AppRoute.ChoosePatient> {
                     ChoosePatientScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToChat = { patientId -> backStack.add(AppRoute.AIChat(patientId)) }
+                        onNavigateToChat = { patientId -> backStack.add(AppRoute.AIChat(patientId)) },
+                        onNavigateToAddFamilyMember = { backStack.add(AppRoute.AddFamilyMember()) }
+                    )
+                }
+
+                entry<AppRoute.FamilyMembers> {
+                    FamilyMembersScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateToAddMember = { memberId -> backStack.add(AppRoute.AddFamilyMember(memberId)) }
+                    )
+                }
+
+                entry<AppRoute.AddFamilyMember> { route ->
+                    AddFamilyMemberScreenRoute(
+                        memberId = route.memberId,
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
 
@@ -313,7 +333,7 @@ fun AppNav(
                     AIChatScreen(
                         patientId = route.patientId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToBookings = { replaceWith(AppRoute.Bookings) },
+                        onNavigateToBookings = { replaceWith(AppRoute.History) },
                         onNavigateToServiceDetails = { categoryStr ->
                             backStack.add(AppRoute.ServiceDetails(categoryStr))
                         }
@@ -323,6 +343,7 @@ fun AppNav(
                 entry<AppRoute.EmergencyAssistance> {
                     EmergencyAssistanceScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onCallFamilyMember = { backStack.add(AppRoute.AddFamilyMember()) },
                         onDismiss = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
@@ -348,17 +369,19 @@ fun AppNav(
                 listOf<AppRoute>(
                     AppRoute.Home,
                     AppRoute.Services,
-                    AppRoute.Bookings,
+                    AppRoute.History,
                     AppRoute.Profile,
                     AppRoute.Wallet,
                 )
             }
 
             val currentRoute = backStack.lastOrNull()
-            val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-            val shouldShowBottomBar = currentRoute in bottomNavRoutes
-            val shouldHandleBackToHome = currentRoute != null && currentRoute !in listOf(
-                AppRoute.Home,
+            val selectedIndex = if (currentRoute != null) {
+                bottomNavRoutes.indexOfFirst { it::class == currentRoute::class }
+            } else -1
+
+            val shouldShowBottomBar = selectedIndex != -1
+            val shouldHandleBackToHome = currentRoute != null && currentRoute != AppRoute.Home && currentRoute !in listOf(
                 AppRoute.Splash,
                 AppRoute.OnBoarding,
                 AppRoute.Login
@@ -377,7 +400,9 @@ fun AppNav(
 
             fun onBottomNavItemSelected(index: Int) {
                 val targetRoute = bottomNavRoutes.getOrNull(index) ?: return
-                if (currentRoute != targetRoute) {
+                val current = backStack.lastOrNull()
+                // Check if targetRoute is already the current route by comparing classes
+                if (current == null || current::class != targetRoute::class) {
                     Snapshot.withMutableSnapshot {
                         backStack.clear()
                         backStack.add(targetRoute)
@@ -444,7 +469,7 @@ fun AppNav(
                                 BottomNavItem(stringResource(R.string.nav_profile), RD.drawable.ic_bottom_nav_profile),
                                 BottomNavItem(stringResource(R.string.nav_wallet), RD.drawable.ic_bottom_nav_wallet)
                             ),
-                            selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                            selectedIndex = selectedIndex,
                             onItemSelected = ::onBottomNavItemSelected,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)

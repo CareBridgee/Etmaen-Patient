@@ -9,7 +9,18 @@ enum class MobilityStatus {
 }
 
 enum class EmergencyRelationship(val backendValue: String) {
+    Father("Father"),
+    Mother("Mother"),
+    Brother("Brother"),
+    Sister("Sister"),
+    Son("Son"),
+    Daughter("Daughter"),
+    Husband("Husband"),
+    Wife("Wife"),
     Spouse("Spouse"),
+    Friend("Friend"),
+    Relative("Relative"),
+    Guardian("Guardian"),
     Parent("Parent"),
     Sibling("Sibling"),
     AdultChild("Adult Child"),
@@ -23,8 +34,3 @@ enum class EmergencyRelationship(val backendValue: String) {
         }
     }
 }
-
-data class MobilityInput(
-    val status: MobilityStatus,
-    val notes: String
-)
