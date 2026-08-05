@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.components
+package com.carenest.presentation.ui.profile_completion.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.components.shimmer.shimmerEffect
 import com.carenest.designsystem.theme.Theme
-import com.carenest.presentation.ui.profile.ProfileStep
+import com.carenest.presentation.ui.profile_completion.ProfileStep
 
 /**
  * Full-screen skeleton used while a Complete Profile step is loading remote data.

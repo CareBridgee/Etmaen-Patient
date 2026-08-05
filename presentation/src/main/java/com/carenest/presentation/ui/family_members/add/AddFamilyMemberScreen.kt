@@ -56,7 +56,7 @@ import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
+import com.carenest.presentation.ui.profile_completion.components.ProfileScreenNavigation
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

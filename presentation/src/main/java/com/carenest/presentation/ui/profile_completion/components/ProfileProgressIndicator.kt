@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.components
+package com.carenest.presentation.ui.profile_completion.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

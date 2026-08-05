@@ -56,7 +56,7 @@ import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
-import com.carenest.presentation.ui.profile.ProfileCompletionScreen
+import com.carenest.presentation.ui.profile_completion.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen

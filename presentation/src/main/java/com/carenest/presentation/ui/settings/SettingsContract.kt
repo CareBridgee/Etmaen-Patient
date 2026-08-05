@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.settings
+package com.carenest.presentation.ui.settings
 
 data class SettingsState(
     val patientName: String = "Patient Name",

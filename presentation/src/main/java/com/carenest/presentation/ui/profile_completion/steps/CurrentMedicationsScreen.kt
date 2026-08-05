@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.steps
+package com.carenest.presentation.ui.profile_completion.steps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,12 +36,12 @@ import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.profile.MedicationInput
+import com.carenest.domain.model.profile.MedicationValidationErrors
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.profile.components.ProfileProgressIndicator
-import com.carenest.presentation.ui.profile.components.ProfileScreenNavigation
-import com.carenest.domain.model.profile.MedicationValidationErrors
-import com.carenest.presentation.ui.profile.validation.localizedMessage
+import com.carenest.presentation.ui.profile_completion.components.ProfileProgressIndicator
+import com.carenest.presentation.ui.profile_completion.components.ProfileScreenNavigation
+import com.carenest.presentation.ui.profile_completion.validation.localizedMessage
 
 @Composable
 fun CurrentMedicationsScreen(

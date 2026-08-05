@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.steps
+package com.carenest.presentation.ui.profile_completion.steps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -1,4 +1,4 @@
-package com.carenest.presentation.ui.profile.settings
+package com.carenest.presentation.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
