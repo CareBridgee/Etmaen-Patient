@@ -33,6 +33,12 @@ class ProfileApiServiceImpl @Inject constructor(
         url { path("api/v1/profiles/default") }
     }
 
+    override suspend fun getProfile(profileId: String) =
+        httpClient.executeRequest<ProfileResponseDto>(json) {
+            method = HttpMethod.Get
+            url { path("api/v1/profiles/$profileId") }
+        }
+
     override suspend fun updateProfile(profileId: String, request: ProfileRequestDto) =
         httpClient.executeRequest<ProfileResponseDto>(json) {
             method = HttpMethod.Put
