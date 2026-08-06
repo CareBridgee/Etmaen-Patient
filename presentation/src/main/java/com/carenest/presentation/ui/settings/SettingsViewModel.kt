@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.settings.GetSettingsUseCase
 import com.carenest.domain.usecase.settings.UpdateSettingsUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -15,20 +16,24 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val updateSettingsUseCase: UpdateSettingsUseCase
+    private val updateSettingsUseCase: UpdateSettingsUseCase,
+    private val observeCurrentUser: ObserveCurrentUserUseCase
 ) : ViewModel(),
     StateHolder<SettingsState> by DefaultStateHolder(SettingsState()),
     EffectPublisher<SettingsEffect> by DefaultEffectPublisher() {
 
     init {
         viewModelScope.launch {
+            observeCurrentUser().collect { user ->
+                updateState { copy(patientName = user?.name.orEmpty()) }
+            }
+        }
+        viewModelScope.launch {
             getSettingsUseCase().collect { settings ->
                 updateState {
                     copy(
                         languageCode = settings.languageCode,
-                        isDarkMode = settings.isDarkMode,
-                        emailUpdatesEnabled = settings.emailUpdatesEnabled,
-                        smsAlertsEnabled = settings.smsAlertsEnabled
+                        themeMode = settings.themeMode
                     )
                 }
             }
@@ -45,34 +50,47 @@ class SettingsViewModel @Inject constructor(
             }
             is SettingsEvent.OnLanguageSelected -> {
                 updateState { copy(isLanguagePickerDialogVisible = false) }
-                viewModelScope.launch {
-                    updateSettingsUseCase.updateLanguage(event.languageCode)
+                if (event.languageCode in SUPPORTED_LANGUAGES) {
+                    persist { updateSettingsUseCase.updateLanguage(event.languageCode) }
                 }
             }
             SettingsEvent.OnDismissLanguagePicker -> {
                 updateState { copy(isLanguagePickerDialogVisible = false) }
             }
-            is SettingsEvent.OnDarkModeToggled -> {
-                viewModelScope.launch {
-                    updateSettingsUseCase.updateDarkMode(event.enabled)
-                }
+            SettingsEvent.OnThemeClicked -> {
+                updateState { copy(isThemePickerDialogVisible = true) }
             }
-            is SettingsEvent.OnEmailUpdatesToggled -> {
-                viewModelScope.launch {
-                    updateSettingsUseCase.updateEmailUpdates(event.enabled)
-                }
+            is SettingsEvent.OnThemeSelected -> {
+                updateState { copy(isThemePickerDialogVisible = false) }
+                persist { updateSettingsUseCase.updateThemeMode(event.themeMode) }
             }
-            is SettingsEvent.OnSmsAlertsToggled -> {
-                viewModelScope.launch {
-                    updateSettingsUseCase.updateSmsAlerts(event.enabled)
-                }
+            SettingsEvent.OnDismissThemePicker -> {
+                updateState { copy(isThemePickerDialogVisible = false) }
             }
-            SettingsEvent.OnPrivacyPolicyClicked -> {
-                sendEffect(SettingsEffect.NavigateToPrivacyPolicy)
-            }
-            SettingsEvent.OnTermsClicked -> {}
-            SettingsEvent.OnDeleteAccountClicked -> {}
-            SettingsEvent.OnContactSupportClicked -> {}
+            SettingsEvent.OnTermsClicked ->
+                sendEffect(SettingsEffect.ShowMessage(SettingsMessage.TermsUnavailable))
+            SettingsEvent.OnDeleteAccountClicked ->
+                sendEffect(SettingsEffect.ShowMessage(SettingsMessage.DeleteAccountUnavailable))
+            SettingsEvent.OnContactSupportClicked ->
+                sendEffect(SettingsEffect.ShowMessage(SettingsMessage.ContactSupportUnavailable))
         }
+    }
+
+    private fun persist(action: suspend () -> Unit) {
+        if (currentState.isLoading) return
+        updateState { copy(isLoading = true) }
+        viewModelScope.launch {
+            runCatching { action() }.fold(
+                onSuccess = { updateState { copy(isLoading = false) } },
+                onFailure = {
+                    updateState { copy(isLoading = false) }
+                    sendEffect(SettingsEffect.ShowMessage(SettingsMessage.SaveFailed))
+                }
+            )
+        }
+    }
+
+    private companion object {
+        val SUPPORTED_LANGUAGES = setOf("ar", "en")
     }
 }

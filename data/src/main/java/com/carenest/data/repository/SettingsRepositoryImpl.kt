@@ -2,11 +2,13 @@ package com.carenest.data.repository
 
 import com.carenest.data.di.IoDispatcher
 import com.carenest.data.source.local.preferences.CarenestDatastore
+import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.domain.repository.SettingsRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 
@@ -38,27 +40,11 @@ class SettingsRepositoryImpl @Inject constructor (
 
     override fun getLanguage(): Flow<String> = datastore.languageCode
 
-    override suspend fun updateDarkMode(isDark: Boolean) {
+    override suspend fun updateThemeMode(themeMode: ThemeMode) {
         withContext(dispatcher) {
-            datastore.setDarkMode(isDark)
+            datastore.setThemeMode(themeMode.name)
         }
     }
 
-    override fun getDarkMode(): Flow<Boolean> = datastore.isDarkMode
-
-    override suspend fun updateEmailUpdates(enabled: Boolean) {
-        withContext(dispatcher) {
-            datastore.setEmailUpdates(enabled)
-        }
-    }
-
-    override fun getEmailUpdates(): Flow<Boolean> = datastore.emailUpdates
-
-    override suspend fun updateSmsAlerts(enabled: Boolean) {
-        withContext(dispatcher) {
-            datastore.setSmsAlerts(enabled)
-        }
-    }
-
-    override fun getSmsAlerts(): Flow<Boolean> = datastore.smsAlerts
+    override fun getThemeMode(): Flow<ThemeMode> = datastore.themeMode.map(ThemeMode::fromStoredValue)
 }
