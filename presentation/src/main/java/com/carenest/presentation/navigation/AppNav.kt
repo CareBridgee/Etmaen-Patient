@@ -94,7 +94,7 @@ fun AppNav(
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
         }
 
-        val initialRoute: NavKey = AppRoute.NurseOnTheWay("")
+        val initialRoute: NavKey = AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
 
