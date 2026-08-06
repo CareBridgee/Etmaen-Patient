@@ -452,4 +452,10 @@
   <string name="contact_name_required_error">Contact name is required</string>
   <string name="relationship_required_error">Please select a relationship</string>
   <string name="confirm">Confirm</string>
+
+  <!-- QR Code Screen -->
+  <string name="qr_code_title">Verification QR</string>
+  <string name="qr_code_header">Ready for Verification</string>
+  <string name="qr_code_subtitle">Please show this QR code to your nurse when they arrive to begin the session safely.</string>
+  <string name="qr_code_instructions">Ensure your screen brightness is turned up for better scanning.</string>
 </resources>

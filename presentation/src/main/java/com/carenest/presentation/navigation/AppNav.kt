@@ -58,6 +58,7 @@ import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.profile_completion.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.qrcode.QrCodeScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
 import com.carenest.presentation.ui.servicedetails.ServiceDetailsScreen
@@ -255,9 +256,16 @@ fun AppNav(
                     NurseOnTheWayScreen(
                         requestId = route.requestId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToQrCode = {},
+                        onNavigateToQrCode = { backStack.add(AppRoute.QrCode(route.requestId)) },
                         onOpenChat = { nurseId -> /* TODO */ },
                         showSnackbar = onShowSnackbar
+                    )
+                }
+
+                entry<AppRoute.QrCode> { route ->
+                    QrCodeScreen(
+                        requestId = route.requestId,
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
 

@@ -438,4 +438,10 @@
   <string name="contact_name_required_error">اسم جهة الاتصال مطلوب</string>
   <string name="relationship_required_error">يرجى اختيار صلة القرابة</string>
   <string name="confirm">تأكيد</string>
+
+  <!-- QR Code Screen -->
+  <string name="qr_code_title">رمز QR للتحقق</string>
+  <string name="qr_code_header">جاهز للتحقق</string>
+  <string name="qr_code_subtitle">يرجى إظهار رمز QR هذا للممرض عند وصوله لبدء الجلسة بأمان.</string>
+  <string name="qr_code_instructions">تأكد من زيادة سطوع الشاشة لتحسين عملية المسح.</string>
 </resources>

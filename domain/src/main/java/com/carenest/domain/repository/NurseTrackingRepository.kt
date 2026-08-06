@@ -6,4 +6,5 @@ interface NurseTrackingRepository {
 
     suspend fun getNurseTrackingInfo(requestId: String): Result<NurseTrackingInfo>
     suspend fun cancelVisit(requestId: String): Result<Boolean>
+    suspend fun getVisitVerificationCode(requestId: String): Result<String>
 }
