@@ -7,6 +7,7 @@ import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
 import com.carenest.domain.usecase.profile.GetProfilesUseCase
 import com.carenest.domain.usecase.profile.UpdateProfileAvatarUseCase
 import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -14,11 +15,13 @@ import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalTime
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
+    private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val getDefaultProfile: GetDefaultProfileUseCase,
     private val getProfiles: GetProfilesUseCase,
     private val updateProfileAvatar: UpdateProfileAvatarUseCase,
@@ -28,6 +31,7 @@ class ProfileViewModel @Inject constructor(
     EffectPublisher<ProfileEffect> by DefaultEffectPublisher() {
 
     init {
+        observeUser()
         loadProfile(refresh = false)
     }
 
@@ -44,11 +48,23 @@ class ProfileViewModel @Inject constructor(
                 if (!currentState.isUpdatingAvatar) sendEffect(ProfileEffect.SelectAvatar)
             }
             is ProfileEvent.OnAvatarSelected -> updateAvatar(event)
-            ProfileEvent.OnNotificationClicked -> sendEffect(ProfileEffect.ShowNotificationsUnavailable)
             ProfileEvent.OnRetryClicked -> loadProfile(refresh = false)
             ProfileEvent.OnRefreshProfile -> loadProfile(refresh = currentState.profile != null)
             is ProfileEvent.OnAppVersionAvailable -> updateState {
                 copy(appVersion = event.versionName.trim())
+            }
+        }
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            observeCurrentUser().collect { user ->
+                updateState {
+                    copy(
+                        userName = user?.name.orEmpty(),
+                        userAvatarUrl = user?.profileImageUrl?.takeIf(String::isNotBlank)
+                    )
+                }
             }
         }
     }
@@ -61,14 +77,12 @@ class ProfileViewModel @Inject constructor(
                 isRefreshing = refresh,
                 errorMessage = null,
                 profile = if (refresh) profile else null,
-                userName = if (refresh) userName else "",
                 userRole = if (refresh) userRole else "",
-                userAvatarUrl = if (refresh) userAvatarUrl else null,
                 activeDependentsCount = if (refresh) activeDependentsCount else 0
             )
         }
         viewModelScope.launch {
-            val user = getCurrentUser().getOrElse {
+            getCurrentUser().getOrElse {
                 failLoading(refresh)
                 return@launch
             }
@@ -80,14 +94,10 @@ class ProfileViewModel @Inject constructor(
                 failLoading(refresh)
                 return@launch
             }
-            val profileName = listOfNotNull(profile.firstName, profile.lastName)
-                .joinToString(" ").trim()
             updateState {
                 copy(
                     profile = profile,
-                    userName = user.name ?: profileName,
                     userRole = profile.relationship.orEmpty(),
-                    userAvatarUrl = user.profileImageUrl?.takeIf(String::isNotBlank),
                     greeting = currentGreeting(),
                     activeDependentsCount = profiles.count { !it.isDeleted && it.id != profile.id },
                     isLoading = false,
@@ -117,11 +127,10 @@ class ProfileViewModel @Inject constructor(
         updateState { copy(isUpdatingAvatar = true) }
         viewModelScope.launch {
             updateProfileAvatar(event.fileName, event.contentType, event.bytes).fold(
-                onSuccess = { user ->
+                onSuccess = {
                     updateState {
                         copy(
-                            isUpdatingAvatar = false,
-                            userAvatarUrl = user.profileImageUrl?.takeIf(String::isNotBlank)
+                            isUpdatingAvatar = false
                         )
                     }
                     sendEffect(ProfileEffect.ShowAvatarUpdated)

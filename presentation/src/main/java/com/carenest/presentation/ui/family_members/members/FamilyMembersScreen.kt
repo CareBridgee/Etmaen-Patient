@@ -54,10 +54,10 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 
 import android.widget.Toast
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.platform.LocalContext
+import com.carenest.designsystem.components.dialog.CareNestDialog
 
 @Composable
 fun FamilyMembersScreen(
@@ -94,20 +94,14 @@ fun FamilyMembersScreen(
     }
 
     if (state.deleteConfirmationMemberId != null) {
-        AlertDialog(
-            onDismissRequest = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) },
-            title = { Text(text = stringResource(R.string.delete_family_member_title)) },
-            text = { Text(text = stringResource(R.string.delete_family_member_confirmation)) },
-            confirmButton = {
-                TextButton(onClick = { viewModel.onEvent(FamilyMembersEvent.OnConfirmDeleteClicked) }) {
-                    Text(text = stringResource(R.string.confirm), color = Theme.colors.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) }) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            }
+        CareNestDialog(
+            title = stringResource(R.string.delete_family_member_title),
+            message = stringResource(R.string.delete_family_member_confirmation),
+            confirmText = stringResource(R.string.remove),
+            dismissText = stringResource(R.string.cancel),
+            confirmColor = Theme.colors.error,
+            onConfirm = { viewModel.onEvent(FamilyMembersEvent.OnConfirmDeleteClicked) },
+            onDismiss = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) }
         )
     }
 

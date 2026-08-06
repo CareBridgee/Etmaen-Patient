@@ -34,7 +34,6 @@ sealed interface ProfileEvent {
         val contentType: String,
         val bytes: ByteArray
     ) : ProfileEvent
-    data object OnNotificationClicked : ProfileEvent
     data object OnRetryClicked : ProfileEvent
     data object OnRefreshProfile : ProfileEvent
     data class OnAppVersionAvailable(val versionName: String) : ProfileEvent
@@ -48,7 +47,6 @@ sealed interface ProfileEffect {
     data object NavigateToPayment : ProfileEffect
     data object NavigateToSettings : ProfileEffect
     data object NavigateToLogout : ProfileEffect
-    data object ShowNotificationsUnavailable : ProfileEffect
     data object SelectAvatar : ProfileEffect
     data object ShowAvatarUpdated : ProfileEffect
     data object ShowAvatarUpdateFailed : ProfileEffect

@@ -209,6 +209,8 @@
   <string name="service_details_information_note">Please note: A brief health questionnaire is required before the arrival of your specialist to ensure safety.</string>
   <string name="service_details_request_button">Request This Service</string>
   <string name="home_ai_powered">AI POWERED</string>
+  <string name="home_greeting_name">Hi, %1$s</string>
+  <string name="home_greeting_generic">Hi</string>
   <string name="home_ai_title">AI Health Assessment</string>
   <string name="home_ai_description">Describe your symptoms, get matched instantly with specialists.</string>
   <string name="home_ai_start_chat">Start Chat</string>
@@ -463,6 +465,7 @@
   <string name="save_changes_button">Save Changes</string>
   <string name="delete_family_member_title">Delete Family Member</string>
   <string name="delete_family_member_confirmation">Are you sure you want to delete this family member?</string>
+  <string name="remove">Remove</string>
   <string name="delete_family_member_success">Family member deleted successfully</string>
   <string name="phone_number_invalid_error">Please enter a valid phone number (e.g. +1234567890)</string>
   <string name="phone_number_required_error">Phone number is required</string>

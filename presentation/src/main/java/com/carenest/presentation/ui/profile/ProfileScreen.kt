@@ -82,7 +82,6 @@ fun ProfileScreen(
         showLeadingIcon = false
     )
     val state by viewModel.state.collectAsState()
-    val notificationsUnavailable = stringResource(R.string.profile_notifications_unavailable)
     val avatarUpdated = stringResource(R.string.profile_avatar_updated)
     val avatarUpdateFailed = stringResource(R.string.profile_avatar_update_failed)
     val profileRefreshFailed = stringResource(R.string.profile_load_failed)
@@ -120,7 +119,6 @@ fun ProfileScreen(
             is ProfileEffect.NavigateToPayment -> onNavigateToPayment()
             is ProfileEffect.NavigateToSettings -> onNavigateToSettings()
             is ProfileEffect.NavigateToLogout -> onLogout()
-            is ProfileEffect.ShowNotificationsUnavailable -> onShowMessage(notificationsUnavailable)
             ProfileEffect.SelectAvatar -> avatarPicker.launch("image/*")
             ProfileEffect.ShowAvatarUpdated -> onShowMessage(avatarUpdated)
             ProfileEffect.ShowAvatarUpdateFailed -> onShowMessage(avatarUpdateFailed)
@@ -235,10 +233,7 @@ fun ProfileContent(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            ProfileHeaderSection(
-                greeting = greeting,
-                onNotificationClick = { onEvent(ProfileEvent.OnNotificationClicked) }
-            )
+            ProfileHeaderSection(greeting = greeting)
 
             Spacer(modifier = Modifier.height(28.dp))
 
@@ -280,8 +275,7 @@ fun ProfileContent(
 
 @Composable
 fun ProfileHeaderSection(
-    greeting: String,
-    onNotificationClick: () -> Unit
+    greeting: String
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -301,25 +295,6 @@ fun ProfileHeaderSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onNotificationClick
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = RD.drawable.ic_notification),
-                    contentDescription = null,
-                    tint = Theme.colors.primary,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
             Box(
                 modifier = Modifier
                     .size(40.dp)

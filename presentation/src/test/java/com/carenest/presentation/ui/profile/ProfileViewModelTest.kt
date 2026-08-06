@@ -11,6 +11,7 @@ import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
 import com.carenest.domain.usecase.profile.GetProfilesUseCase
 import com.carenest.domain.usecase.profile.UpdateProfileAvatarUseCase
 import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.domain.model.user.UserUpdate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -129,6 +130,7 @@ class ProfileViewModelTest {
 
     private fun viewModel() = ProfileViewModel(
         GetCurrentUserUseCase(users),
+        ObserveCurrentUserUseCase(users),
         GetDefaultProfileUseCase(profiles, users),
         GetProfilesUseCase(profiles),
         UpdateProfileAvatarUseCase(users),
