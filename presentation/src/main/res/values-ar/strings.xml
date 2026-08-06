@@ -210,6 +210,16 @@
   <string name="home_bookings_empty">لا يوجد طلبات تمت حتى الان</string>
   <string name="home_history_unassigned">الممرض غير معين</string>
   <string name="history_details_title">تفاصيل الزيارة</string>
+  <string name="history_section_visit">تفاصيل الزيارة</string>
+  <string name="history_section_provider">مقدم الرعاية</string>
+  <string name="history_provider_role">ممرض مختص</string>
+  <string name="history_label_status">الحالة</string>
+  <string name="history_label_service">الخدمة</string>
+  <string name="history_label_description">الوصف</string>
+  <string name="history_label_date">التاريخ</string>
+  <string name="history_label_time">الوقت</string>
+  <string name="history_label_nurse">الممرض</string>
+  <string name="history_value_unassigned">غير معين</string>
   <string name="history_empty_title">لا يوجد سجلات</string>
   <string name="history_empty_description">سجلك فارغ حالياً. ابدأ رحلتك معنا بحجز خدمة اليوم!</string>
   <string name="history_explore_services">استكشف الخدمات</string>

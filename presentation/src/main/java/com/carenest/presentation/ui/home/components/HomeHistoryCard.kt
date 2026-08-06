@@ -42,7 +42,7 @@ fun HomeHistoryHeader(
     ) {
         Text(
             text = stringResource(R.string.home_history_title),
-            style = Theme.typography.body.large.copy(
+            style = Theme.typography.title.copy(
                 fontWeight = FontWeight.Bold,
                 color = Theme.colors.primaryFont,
                 fontSize = 18.sp
@@ -68,9 +68,9 @@ fun HomeHistoryEmpty(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
-            .padding(20.dp),
+            .padding(Theme.spacing.space20),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -91,28 +91,28 @@ fun HomeHistoryItem(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
             .clickable { onClick(serviceHistory) }
-            .padding(16.dp)
+            .padding(Theme.spacing.medium)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space14),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = RD.drawable.img_placeholder),
+                painter = painterResource(id = RD.drawable.nurse_image),
                 contentDescription = serviceHistory.nurseName,
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .size(Theme.size.large - Theme.spacing.small)
+                    .clip(Theme.shapes.large),
                 contentScale = ContentScale.Crop
             )
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -129,17 +129,17 @@ fun HomeHistoryItem(
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(Theme.shapes.medium)
                             .background(Theme.colors.primaryContainer)
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .padding(horizontal = Theme.spacing.small, vertical = Theme.spacing.extraSmall / 2)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(6.dp)
+                                    .size(Theme.spacing.space6)
                                     .clip(CircleShape)
                                     .background(Theme.colors.primary)
                             )
@@ -165,13 +165,13 @@ fun HomeHistoryItem(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)
                 ) {
                     Icon(
                         painter = painterResource(id = RD.drawable.ic_time),
                         contentDescription = null,
                         tint = Theme.colors.hint,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(Theme.spacing.space14)
                     )
                     Text(
                         text = "${serviceHistory.preferredDate}, ${serviceHistory.preferredTime.hour}:${serviceHistory.preferredTime.minute.toString().padStart(2, '0')}",
