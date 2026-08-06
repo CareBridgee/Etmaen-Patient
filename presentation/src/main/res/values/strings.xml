@@ -53,6 +53,7 @@
   <string name="personal_info_account_type_family">Family</string>
   <string name="personal_info_account_type_personal">Personal</string>
   <string name="personal_info_continue_btn">Continue</string>
+  <string name="personal_info_save_btn">Save changes</string>
   <string name="profile_step_format">Step %1$d of %2$d</string>
   <string name="profile_onboarding_label">ONBOARDING</string>
   <string name="profile_health_profile">Health Profile</string>
@@ -274,8 +275,14 @@
 
 
   <!-- Search For Nurse -->
-  <string name="profile_greeting">Good morning, Elena</string>
-  <string name="profile_primary_caregiver">Primary Caregiver</string>
+  <string name="profile_greeting">Good morning</string>
+  <string name="profile_primary_caregiver">Primary profile</string>
+  <string name="profile_greeting_morning">Good morning, %1$s</string>
+  <string name="profile_greeting_day">Good afternoon, %1$s</string>
+  <string name="profile_greeting_evening">Good evening, %1$s</string>
+  <string name="profile_greeting_morning_generic">Good morning</string>
+  <string name="profile_greeting_day_generic">Good afternoon</string>
+  <string name="profile_greeting_evening_generic">Good evening</string>
   <string name="profile_personal_info_title">Personal Info</string>
   <string name="profile_personal_info_subtitle">Update your account details</string>
   <string name="profile_health_profile_title">Health Profile</string>
@@ -289,7 +296,14 @@
   <string name="profile_settings_title">Settings</string>
   <string name="profile_settings_subtitle">Security &amp; App preferences</string>
   <string name="profile_logout_title">Logout</string>
-  <string name="profile_app_version">Serene Care v2.4.1</string>
+  <string name="profile_app_version">CareNest v%1$s</string>
+  <string name="profile_load_failed">We couldn\'t load your profile. Check your connection and try again.</string>
+  <string name="retry">Retry</string>
+  <string name="profile_notifications_unavailable">Notifications are not available in this version.</string>
+  <string name="profile_avatar_updated">Profile photo updated.</string>
+  <string name="profile_avatar_update_failed">Unable to update the profile photo.</string>
+  <string name="profile_logout_failed">Unable to log out. Please try again.</string>
+  <string name="profile_avatar_content_description">Profile photo</string>
 
   <!-- Family Members Screen -->
   <string name="family_members_screen_title">Family Members</string>
@@ -306,11 +320,14 @@
   <string name="settings_section_app_preferences">App Preferences</string>
   <string name="settings_language_title">Language</string>
   <string name="settings_dark_mode_title">Dark Mode</string>
-  <string name="settings_section_notifications">Notifications</string>
-  <string name="settings_email_updates_title">Email Updates</string>
-  <string name="settings_sms_alerts_title">SMS Alerts</string>
+  <string name="settings_theme_title">Theme</string>
+  <string name="settings_select_theme_title">Select theme</string>
+  <string name="settings_theme_light">Light</string>
+  <string name="settings_theme_dark">Dark</string>
+  <string name="settings_theme_system">System</string>
   <string name="settings_section_security_privacy">Security &amp; Privacy</string>
-  <string name="settings_privacy_policy_title">Privacy Policy</string>
+  <string name="settings_security_privacy_description">Your privacy and security are important to CareNest.\n\n• Your personal and medical information is securely stored.\n• Your data is only used to provide healthcare services and improve your experience.\n• CareNest does not share your personal information with unauthorized third parties.\n• All communication with our services is encrypted whenever possible.</string>
+  <string name="settings_security_privacy_got_it">Got it</string>
   <string name="settings_select_language_title">Select Language</string>
   <string name="settings_language_english">English</string>
   <string name="settings_language_arabic">العربية</string>
@@ -458,4 +475,17 @@
   <string name="qr_code_header">Ready for Verification</string>
   <string name="qr_code_subtitle">Please show this QR code to your nurse when they arrive to begin the session safely.</string>
   <string name="qr_code_instructions">Ensure your screen brightness is turned up for better scanning.</string>
+  <string name="family_members_load_failed">Unable to load family members.</string>
+  <string name="profile_app_version_dynamic">CareNest v%1$s</string>
+  <string name="settings_save_failed">Unable to save this setting. Please try again.</string>
+  <string name="settings_privacy_unavailable">No Privacy Policy destination is configured.</string>
+  <string name="settings_terms_unavailable">No Terms and Conditions destination is configured.</string>
+  <string name="settings_delete_account_unavailable">Account deletion is not available from Settings.</string>
+  <string name="settings_contact_support_unavailable">No support destination is configured.</string>
+  <string name="family_member_saved">Family member saved successfully.</string>
+  <string name="family_member_save_failed">Unable to save the family member.</string>
+  <string name="family_member_load_failed">Unable to load the family member.</string>
+  <string name="profile_health_operation_failed_retry">Unable to update the health profile — tap to retry.</string>
+  <string name="family_member_deleted">Family member deleted successfully.</string>
+  <string name="family_member_delete_failed">Unable to delete the family member.</string>
 </resources>

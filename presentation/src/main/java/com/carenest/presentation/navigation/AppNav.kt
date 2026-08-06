@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -42,6 +43,7 @@ import com.carenest.designsystem.components.topbar.TopBarAction
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.LocationDetails
+import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
@@ -51,6 +53,7 @@ import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
 import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
+import com.carenest.presentation.ui.auth.register.PersonalInformationMode
 import com.carenest.presentation.ui.history.HistoryScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
@@ -71,20 +74,28 @@ import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
 import com.carenest.presentation.ui.family_members.add.AddFamilyMemberScreenRoute
 import com.carenest.presentation.ui.family_members.members.FamilyMembersScreen
+import com.carenest.presentation.ui.settings.SettingsScreen
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNav(
+    appVersion: String,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val mainState by mainViewModel.state.collectAsStateWithLifecycle()
 
     if (!mainState.isReady) return
 
+    val isDarkTheme = when (mainState.themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
+
     SpTheme(
-        isDarkTheme = mainState.isDarkTheme,
+        isDarkTheme = isDarkTheme,
         languageCode = mainState.languageCode
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
@@ -97,6 +108,8 @@ fun AppNav(
         val initialRoute: NavKey = AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
+        var familyMembersRefreshKey by remember { mutableStateOf(0) }
+        var profileRefreshKey by remember { mutableStateOf(0) }
 
         val backStack = rememberNavBackStack(
             savedStateConfiguration, initialRoute
@@ -197,12 +210,53 @@ fun AppNav(
 
                 entry<AppRoute.Profile> {
                     ProfileScreen(
-                        onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) }, onLogout = { replaceWith(AppRoute.Login) }
+                        appVersion = appVersion,
+                        refreshKey = profileRefreshKey,
+                        onNavigateToPersonalInfo = { backStack.add(AppRoute.PersonalInfo) },
+                        onNavigateToHealthProfile = { backStack.add(AppRoute.HealthProfile) },
+                        onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) },
+                        onNavigateToPayment = { backStack.add(AppRoute.Wallet) },
+                        onNavigateToSettings = { backStack.add(AppRoute.Settings) },
+                        onLogout = { replaceWith(AppRoute.Login) },
+                        onShowMessage = onShowSnackbar
+                    )
+                }
+
+                entry<AppRoute.PersonalInfo> {
+                    RegisterScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateToWelcome = {},
+                        onNavigateHome = {},
+                        mode = PersonalInformationMode.EditProfile,
+                        onEditComplete = {
+                            profileRefreshKey += 1
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                        }
+                    )
+                }
+
+                entry<AppRoute.HealthProfile> {
+                    ProfileCompletionScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateToHome = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        isEditMode = true,
+                        onEditComplete = {
+                            profileRefreshKey += 1
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                        }
+                    )
+                }
+
+                entry<AppRoute.Settings> {
+                    SettingsScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onShowMessage = onShowSnackbar
                     )
                 }
 
                 entry<AppRoute.Wallet> {
                     WalletScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         onAddFunds = { backStack.add(AppRoute.AddFunds) },
                         onAddPaymentMethod = { backStack.add(AppRoute.AddPaymentMethod) }
                     )
@@ -210,6 +264,7 @@ fun AppNav(
 
                 entry<AppRoute.AddFunds> {
                     AddFundsScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         onAddPaymentMethod = { backStack.add(AppRoute.AddPaymentMethod) },
                         onTermsClick = {},
                         onAddFunds = {}
@@ -217,7 +272,14 @@ fun AppNav(
                 }
 
                 entry<AppRoute.AddPaymentMethod> {
-                    AddPaymentMethodScreen({}, {}, {}, {}, {})
+                    AddPaymentMethodScreen(
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onCreditCardClick = {},
+                        onPayPalClick = {},
+                        onFawryCashClick = {},
+                        onMeezaCardClick = {},
+                        onMobileWalletClick = {}
+                    )
                 }
 
                 entry<AppRoute.RequestService> { route ->
@@ -279,15 +341,20 @@ fun AppNav(
 
                 entry<AppRoute.FamilyMembers> {
                     FamilyMembersScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToAddMember = { memberId -> backStack.add(AppRoute.AddFamilyMember(memberId)) }
+                        onNavigateBack = {
+                            profileRefreshKey += 1
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                        },
+                        onNavigateToAddMember = { memberId -> backStack.add(AppRoute.AddFamilyMember(memberId)) },
+                        refreshKey = familyMembersRefreshKey
                     )
                 }
 
                 entry<AppRoute.AddFamilyMember> { route ->
                     AddFamilyMemberScreenRoute(
                         memberId = route.memberId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onMemberSaved = { familyMembersRefreshKey += 1 }
                     )
                 }
 
@@ -333,7 +400,6 @@ fun AppNav(
                     AppRoute.Services,
                     AppRoute.History,
                     AppRoute.Profile,
-                    AppRoute.Wallet,
                 )
             }
 
@@ -428,8 +494,7 @@ fun AppNav(
                                 BottomNavItem(stringResource(R.string.nav_home), RD.drawable.ic_bottom_nav_home),
                                 BottomNavItem(stringResource(R.string.nav_services), RD.drawable.ic_bottom_nav_services),
                                 BottomNavItem(stringResource(R.string.nav_booking), RD.drawable.ic_bottom_nav_bookings),
-                                BottomNavItem(stringResource(R.string.nav_profile), RD.drawable.ic_bottom_nav_profile),
-                                BottomNavItem(stringResource(R.string.nav_wallet), RD.drawable.ic_bottom_nav_wallet)
+                                BottomNavItem(stringResource(R.string.nav_profile), RD.drawable.ic_bottom_nav_profile)
                             ),
                             selectedIndex = selectedIndex,
                             onItemSelected = ::onBottomNavItemSelected,
