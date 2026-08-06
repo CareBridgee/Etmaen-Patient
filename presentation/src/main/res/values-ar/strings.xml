@@ -207,7 +207,9 @@
   <string name="home_ai_start_chat">ابدأ المحادثة</string>
   <string name="home_history_title">حجوزاتي</string>
   <string name="home_bookings_manage">الكل</string>
-  <string name="home_bookings_empty">لا توجد حجوزات قادمة</string>
+  <string name="home_bookings_empty">لا يوجد طلبات تمت حتى الان</string>
+  <string name="home_history_unassigned">الممرض غير معين</string>
+  <string name="history_details_title">تفاصيل الزيارة</string>
   <string name="history_empty_title">لا يوجد سجلات</string>
   <string name="history_empty_description">سجلك فارغ حالياً. ابدأ رحلتك معنا بحجز خدمة اليوم!</string>
   <string name="history_explore_services">استكشف الخدمات</string>
