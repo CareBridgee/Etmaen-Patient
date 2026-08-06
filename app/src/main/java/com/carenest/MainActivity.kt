@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-                AppNav()
+                AppNav(appVersion = BuildConfig.VERSION_NAME)
         }
     }
 }
