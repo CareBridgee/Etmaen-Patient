@@ -56,18 +56,23 @@ import com.carenest.presentation.navigation.HideTopBar
 import android.widget.Toast
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun FamilyMembersScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToAddMember: (String?) -> Unit = {},
+    refreshKey: Int = 0,
     viewModel: FamilyMembersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    val deletedMessage = stringResource(R.string.family_member_deleted)
+    val deleteFailedMessage = stringResource(R.string.family_member_delete_failed)
+    val notificationsUnavailable = stringResource(R.string.profile_notifications_unavailable)
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    androidx.compose.runtime.LaunchedEffect(refreshKey) {
         viewModel.loadFamilyMembers()
     }
 
@@ -77,8 +82,13 @@ fun FamilyMembersScreen(
             is FamilyMembersEffect.NavigateToAddFamilyMember -> onNavigateToAddMember(null)
             is FamilyMembersEffect.NavigateToEditPersonalInfo -> onNavigateToAddMember(effect.memberId)
             is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToAddMember(effect.memberId)
-            is FamilyMembersEffect.ShowToast -> {
-                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            is FamilyMembersEffect.ShowMessage -> {
+                val message = when (effect.message) {
+                    FamilyMembersMessage.Deleted -> deletedMessage
+                    FamilyMembersMessage.DeleteFailed -> deleteFailedMessage
+                    FamilyMembersMessage.NotificationsUnavailable -> notificationsUnavailable
+                }
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -135,6 +145,24 @@ fun FamilyMembersContent(
             )
 
             Spacer(modifier = Modifier.height(28.dp))
+
+            if (state.isLoading && state.members.isEmpty()) {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Theme.colors.primary)
+                }
+                return@Column
+            }
+
+            if (state.loadFailed) {
+                Text(
+                    text = stringResource(R.string.family_members_load_failed),
+                    color = Theme.colors.error
+                )
+                TextButton(onClick = { onEvent(FamilyMembersEvent.OnRetryClicked) }) {
+                    Text(stringResource(R.string.retry))
+                }
+                return@Column
+            }
 
             Text(
                 text = stringResource(R.string.family_members_screen_title),
@@ -348,12 +376,13 @@ fun FamilyMemberCard(
                     }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            if (member.lastCheckup.isNotBlank() || member.upcomingService.isNotBlank()) {
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Row(
+                Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+                ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.family_members_last_checkup),
@@ -386,6 +415,7 @@ fun FamilyMemberCard(
                         ),
                         color = Theme.colors.primary
                     )
+                }
                 }
             }
 

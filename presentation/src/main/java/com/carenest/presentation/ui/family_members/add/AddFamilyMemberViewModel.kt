@@ -68,6 +68,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                 },
                 onFailure = {
                     updateState { copy(isLoadingData = false) }
+                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_load_failed"))
                 }
             )
         }
@@ -127,6 +128,7 @@ class AddFamilyMemberViewModel @Inject constructor(
 
     private fun submitForm() {
         val currentState = state.value
+        if (currentState.isSubmitting || currentState.isLoadingData) return
         var hasError = false
 
         if (currentState.relationship == null) {
@@ -192,11 +194,10 @@ class AddFamilyMemberViewModel @Inject constructor(
                     sendEffect(AddFamilyMemberEffect.ShowSuccess)
                     sendEffect(AddFamilyMemberEffect.NavigateBack)
                 },
-                onFailure = { error ->
+                onFailure = {
                     updateState { copy(isSubmitting = false) }
-                    val msg = error.message ?: "Failed to save family member"
-                    updateState { copy(errorMessage = msg) }
-                    sendEffect(AddFamilyMemberEffect.ShowError(msg))
+                    updateState { copy(errorMessage = "family_member_save_failed") }
+                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_save_failed"))
                 }
             )
         }
