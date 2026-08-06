@@ -30,17 +30,23 @@ import com.carenest.designsystem.R as DR
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.wallet.components.WalletActionRow
 import com.carenest.presentation.ui.wallet.components.RequiredPaymentMethodRow
 import com.carenest.presentation.ui.wallet.components.dashedRoundedBorder
 
 @Composable
 fun AddFundsScreen(
+    onNavigateBack: () -> Unit,
     onAddPaymentMethod: () -> Unit,
     onTermsClick: () -> Unit,
     onAddFunds: () -> Unit,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
+    ScreenTopBar(
+        title = stringResource(R.string.wallet_add_funds),
+        onLeadingClick = onNavigateBack
+    )
     val state by viewModel.state.collectAsStateWithLifecycle()
     AddFundsContent(state, viewModel::onEvent, onAddPaymentMethod, onTermsClick, onAddFunds)
 }
