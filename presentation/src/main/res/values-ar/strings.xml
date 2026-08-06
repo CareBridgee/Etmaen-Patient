@@ -155,7 +155,7 @@
   <string name="phone_input_secure_care_desc">يستخدم رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
   <string name="phone_input_via_whatsapp">عبر واتساب</string>
   <string name="phone_input_via_sms">عبر رسالة نصية</string>
-  <string name="services_greeting">صباح الخير، إيلينا</string>
+  <string name="services_greeting">صباح الخير</string>
   <string name="services_greeting_subtitle">ابحثي عن الرعاية التي تحتاجينها اليوم</string>
   <string name="services_search_hint">ابحثي عن خدمة (مثال: حقن)</string>
   <string name="services_categories_title">فئات الخدمات</string>

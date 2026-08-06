@@ -178,7 +178,7 @@ private fun GreetingHeader(userName: String) {
         }
         Column {
             BasicText(
-                text = "Good morning, $userName",
+                text = "${stringResource(R.string.services_greeting)}, $userName",
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primary,
                     fontWeight = FontWeight.Medium,
