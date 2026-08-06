@@ -27,6 +27,8 @@ interface CarenestDatastore {
 
     suspend fun clearAll()
 
+    suspend fun clearUserId()
+
 }
 
 data class AuthTokens(
