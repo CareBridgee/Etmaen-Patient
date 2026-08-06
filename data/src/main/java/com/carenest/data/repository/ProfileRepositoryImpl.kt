@@ -4,6 +4,7 @@ import com.carenest.data.mapper.profile.toDomain
 import com.carenest.data.source.remote.dto.profile.EmergencyContactRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileAllergyRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionRequestDto
+import com.carenest.data.source.remote.dto.profile.ProfileMedicationRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
 import com.carenest.data.source.remote.ApiException
 import com.carenest.data.source.remote.service.ProfileApiService
@@ -18,6 +19,7 @@ import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileAllergy
 import com.carenest.domain.model.profile.ProfileException
 import com.carenest.domain.model.profile.ProfileMedicalCondition
+import com.carenest.domain.model.profile.ProfileMedication
 import com.carenest.domain.repository.ProfileRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,6 +28,31 @@ import javax.inject.Singleton
 class ProfileRepositoryImpl @Inject constructor(
     private val api: ProfileApiService
 ) : ProfileRepository {
+
+    override suspend fun getProfileMedications(profileId: String): Result<List<ProfileMedication>> =
+        api.getProfileMedications(profileId)
+            .mapCatching { list -> list.map { it.toDomain() } }
+            .profileFailure()
+
+    override suspend fun syncProfileMedications(
+        profileId: String,
+        names: List<String>
+    ): Result<List<String>> {
+        val current = getProfileMedications(profileId).getOrElse { return Result.failure(it) }
+        val requested = names.map(String::trim).filter(String::isNotBlank).distinctBy(String::lowercase)
+        val requestedKeys = requested.mapTo(mutableSetOf()) { it.lowercase() }
+        current.filter { it.name.lowercase() !in requestedKeys }.forEach { medication ->
+            val relationId = medication.medicationId ?: medication.id
+            api.removeProfileMedication(profileId, relationId).profileFailure()
+                .getOrElse { return Result.failure(it) }
+        }
+        val currentKeys = current.mapTo(mutableSetOf()) { it.name.lowercase() }
+        requested.filter { it.lowercase() !in currentKeys }.forEach { name ->
+            api.addProfileMedication(profileId, ProfileMedicationRequestDto(name = name))
+                .profileFailure().getOrElse { return Result.failure(it) }
+        }
+        return Result.success(requested)
+    }
 
     override suspend fun getDefaultProfile(): Result<Profile> =
         api.getDefaultProfile().mapCatching { it.toDomain() }.profileFailure()
@@ -133,6 +160,14 @@ class ProfileRepositoryImpl @Inject constructor(
         remove = { id -> api.removeMedicalCondition(profileId, id).profileFailure() }
     )
 
+    override suspend fun addCustomMedicalCondition(
+        profileId: String,
+        name: String
+    ): Result<ProfileMedicalCondition> = api.addMedicalCondition(
+        profileId,
+        ProfileMedicalConditionRequestDto(name = name)
+    ).mapCatching { it.toDomain() }.profileFailure()
+
     override suspend fun getAllergyCatalog(): Result<List<Allergy>> =
         api.getAllergies()
             .mapCatching { list -> list.map { it.toDomain() } }
@@ -157,6 +192,14 @@ class ProfileRepositoryImpl @Inject constructor(
         },
         remove = { id -> api.removeAllergy(profileId, id).profileFailure() }
     )
+
+    override suspend fun addCustomAllergy(
+        profileId: String,
+        name: String
+    ): Result<ProfileAllergy> = api.addAllergy(
+        profileId,
+        ProfileAllergyRequestDto(name = name, type = "OTHER")
+    ).mapCatching { it.toDomain() }.profileFailure()
 
     override suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>> =
         api.getEmergencyContacts(profileId)

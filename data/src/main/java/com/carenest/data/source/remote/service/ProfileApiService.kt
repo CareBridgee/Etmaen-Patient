@@ -3,6 +3,9 @@ package com.carenest.data.source.remote.service
 import com.carenest.data.source.remote.dto.profile.*
 
 interface ProfileApiService {
+    suspend fun getProfileMedications(profileId: String): Result<List<ProfileMedicationResponseDto>>
+    suspend fun addProfileMedication(profileId: String, request: ProfileMedicationRequestDto): Result<ProfileMedicationResponseDto>
+    suspend fun removeProfileMedication(profileId: String, medicationId: String): Result<Unit>
     suspend fun getDefaultProfile(): Result<ProfileResponseDto>
     suspend fun getProfile(profileId: String): Result<ProfileResponseDto>
     suspend fun getProfiles(): Result<List<ProfileResponseDto>>

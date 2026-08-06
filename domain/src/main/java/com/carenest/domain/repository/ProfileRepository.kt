@@ -10,8 +10,11 @@ import com.carenest.domain.model.profile.PersonalInfoUpdate
 import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileAllergy
 import com.carenest.domain.model.profile.ProfileMedicalCondition
+import com.carenest.domain.model.profile.ProfileMedication
 
 interface ProfileRepository {
+    suspend fun getProfileMedications(profileId: String): Result<List<ProfileMedication>>
+    suspend fun syncProfileMedications(profileId: String, names: List<String>): Result<List<String>>
     suspend fun getDefaultProfile(): Result<Profile>
     suspend fun getProfile(profileId: String): Result<Profile>
     suspend fun getProfiles(): Result<List<Profile>>
@@ -34,6 +37,10 @@ interface ProfileRepository {
         originalBackendIds: Set<String>,
         selectedBackendIds: Set<String>
     ): Result<Set<String>>
+    suspend fun addCustomMedicalCondition(
+        profileId: String,
+        name: String
+    ): Result<ProfileMedicalCondition>
 
     suspend fun getAllergyCatalog(): Result<List<Allergy>>
     suspend fun getProfileAllergies(profileId: String): Result<List<ProfileAllergy>>
@@ -42,6 +49,7 @@ interface ProfileRepository {
         originalBackendIds: Set<String>,
         selectedBackendIds: Set<String>
     ): Result<Set<String>>
+    suspend fun addCustomAllergy(profileId: String, name: String): Result<ProfileAllergy>
 
     suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>>
     suspend fun getEmergencyContactById(emergencyContactId: String): Result<EmergencyContact>
