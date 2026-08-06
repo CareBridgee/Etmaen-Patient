@@ -26,36 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.theme.Theme
-import com.carenest.domain.model.home.Booking
+import com.carenest.domain.model.history.ServiceHistory
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.R
 
 @Composable
-fun HomeBookingCard(
-    booking: Booking?,
-    onManageClick: () -> Unit,
-    onBookingClick: (Booking) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        HomeBookingHeader(onManageClick = onManageClick)
-
-        if (booking == null) {
-            HomeBookingEmpty()
-        } else {
-            HomeHistoryItem(
-                booking = booking,
-                onClick = onBookingClick
-            )
-        }
-    }
-}
-
-@Composable
-fun HomeBookingHeader(
+fun HomeHistoryHeader(
     onManageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -86,7 +62,7 @@ fun HomeBookingHeader(
 }
 
 @Composable
-fun HomeBookingEmpty(
+fun HomeHistoryEmpty(
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -108,8 +84,8 @@ fun HomeBookingEmpty(
 
 @Composable
 fun HomeHistoryItem(
-    booking: Booking,
-    onClick: (Booking) -> Unit,
+    serviceHistory: ServiceHistory,
+    onClick: (ServiceHistory) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -117,7 +93,7 @@ fun HomeHistoryItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .background(Theme.colors.surface)
-            .clickable { onClick(booking) }
+            .clickable { onClick(serviceHistory) }
             .padding(16.dp)
     ) {
         Row(
@@ -127,7 +103,7 @@ fun HomeHistoryItem(
         ) {
             Image(
                 painter = painterResource(id = RD.drawable.img_placeholder),
-                contentDescription = booking.providerName,
+                contentDescription = serviceHistory.nurseName,
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(16.dp)),
@@ -144,7 +120,7 @@ fun HomeHistoryItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = booking.providerName,
+                        text = serviceHistory.nurseName ?: stringResource(R.string.home_history_unassigned),
                         style = Theme.typography.body.medium.copy(
                             fontWeight = FontWeight.Bold,
                             color = Theme.colors.primaryFont
@@ -168,7 +144,7 @@ fun HomeHistoryItem(
                                     .background(Theme.colors.primary)
                             )
                             Text(
-                                text = booking.statusText,
+                                text = serviceHistory.status,
                                 style = Theme.typography.body.small.copy(
                                     color = Theme.colors.onPrimaryContainer,
                                     fontWeight = FontWeight.Medium,
@@ -180,7 +156,7 @@ fun HomeHistoryItem(
                 }
 
                 Text(
-                    text = booking.serviceName,
+                    text = serviceHistory.serviceName,
                     style = Theme.typography.body.medium.copy(
                         color = Theme.colors.secondaryFont,
                         fontSize = 13.sp
@@ -198,7 +174,7 @@ fun HomeHistoryItem(
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
-                        text = booking.timeText,
+                        text = "${serviceHistory.preferredDate}, ${serviceHistory.preferredTime.hour}:${serviceHistory.preferredTime.minute.toString().padStart(2, '0')}",
                         style = Theme.typography.body.small.copy(
                             color = Theme.colors.hint,
                             fontSize = 12.sp

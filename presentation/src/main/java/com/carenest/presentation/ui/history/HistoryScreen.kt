@@ -122,8 +122,8 @@ fun HistoryScreenContent(
             ) {
                 items(state.historyItems) { item ->
                     HomeHistoryItem(
-                        booking = item,
-                        onClick = { onEvent(HistoryIntent.HistoryItemClicked(it.id)) }
+                        serviceHistory = item,
+                        onClick = { onEvent(HistoryIntent.HistoryItemClicked(it.serviceRequestId)) }
                     )
                 }
             }

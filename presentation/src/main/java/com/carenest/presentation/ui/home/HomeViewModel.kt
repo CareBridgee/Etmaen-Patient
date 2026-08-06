@@ -3,7 +3,6 @@ package com.carenest.presentation.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
 import com.carenest.domain.usecase.home.GetUserUseCase
@@ -20,7 +19,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getServicesUseCase: GetServicesUseCase,
-    private val getUpcomingBookingUseCase: GetUserRequestHistoryUseCase
+    private val getServiceHistoryUseCase: GetUserRequestHistoryUseCase
 ) : ViewModel(),
     StateHolder<HomeState> by DefaultStateHolder(HomeState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -42,8 +41,8 @@ class HomeViewModel @Inject constructor(
             is HomeIntent.ServiceClicked -> {
                 sendEffect(HomeEffect.NavigateToServiceDetails(event.service.id))
             }
-            HomeIntent.ManageBookingsClicked -> sendEffect(HomeEffect.NavigateToBookings)
-            is HomeIntent.BookingClicked -> sendEffect(HomeEffect.NavigateToBookings)
+            HomeIntent.ManageAllHistoryClicked -> sendEffect(HomeEffect.NavigateToHistory)
+            is HomeIntent.HistoryItemClicked -> sendEffect(HomeEffect.NavigateToServiceHistoryDetails(event.serviceHistory.serviceRequestId))
             HomeIntent.RetryClicked -> loadHomeData()
             HomeIntent.NotificationClicked -> sendEffect(HomeEffect.ShowToast("No new notifications"))
         }
@@ -56,7 +55,7 @@ class HomeViewModel @Inject constructor(
             try {
                 val userDeferred = async { getUserUseCase() }
                 val servicesDeferred = async { getServicesUseCase() }
-                val bookingDeferred = async { getUpcomingBookingUseCase() }
+                val bookingDeferred = async { getServiceHistoryUseCase() }
 
                 val userResult = userDeferred.await()
                 val servicesResult = servicesDeferred.await()
