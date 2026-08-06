@@ -3,6 +3,7 @@ package com.carenest.data.di
 import android.content.Context
 import androidx.room.Room
 import com.carenest.data.source.local.database.CareNestDatabase
+import com.carenest.data.source.local.database.dao.ServiceHistoryDao
 import com.carenest.data.source.local.database.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -21,8 +22,11 @@ object DatabaseModule {
             context,
             CareNestDatabase::class.java,
             "carenest.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
 
     @Provides
     fun provideUserDao(database: CareNestDatabase): UserDao = database.userDao()
+
+    @Provides
+    fun provideServiceHistoryDao(database: CareNestDatabase): ServiceHistoryDao = database.serviceHistoryDao()
 }
