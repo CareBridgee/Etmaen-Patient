@@ -5,7 +5,8 @@ import com.carenest.domain.model.home.HealthcareService
 data class ServicesState(
     val searchQuery: String = "",
     val services: List<HealthcareService> = emptyList(),
-    val filteredServices: List<HealthcareService> = emptyList()
+    val filteredServices: List<HealthcareService> = emptyList(),
+    val userName: String = ""
 )
 
 sealed interface ServicesIntent {
