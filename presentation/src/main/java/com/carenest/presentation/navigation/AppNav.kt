@@ -166,7 +166,8 @@ fun AppNav(
 
                 entry<AppRoute.Services> {
                     ServicesScreen(
-                        onNavigateToDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
+                        onNavigateToDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) },
+                        onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) }
                     )
                 }
 
