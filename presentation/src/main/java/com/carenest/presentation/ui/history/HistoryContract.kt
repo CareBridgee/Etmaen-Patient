@@ -1,9 +1,9 @@
 package com.carenest.presentation.ui.history
 
-import com.carenest.domain.model.home.Booking
+import com.carenest.domain.model.history.ServiceHistory
 
 data class HistoryState(
-    val historyItems: List<Booking> = emptyList(),
+    val historyItems: List<ServiceHistory> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )

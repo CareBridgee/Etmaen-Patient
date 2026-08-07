@@ -138,6 +138,14 @@ class CarenestDatastoreImpl @Inject constructor (
         }
     }
 
+    override suspend fun clearUserId() {
+        withContext(coroutineDispatcher) {
+            dataStore.edit { preferences ->
+                preferences.remove(PreferenceKeys.USER_ID)
+            }
+        }
+    }
+
 
 }
 

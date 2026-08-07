@@ -89,5 +89,11 @@ sealed interface AppRoute : NavKey {
      data class NurseOnTheWay(val requestId: String) : AppRoute
 
      @Serializable
+     data class ServiceHistoryDetails(val requestId: String) : AppRoute
+
+     @Serializable
      data class VisitCompleted (val requestId: String): AppRoute
+
+     @Serializable
+     data class QrCode(val requestId: String) : AppRoute
 }

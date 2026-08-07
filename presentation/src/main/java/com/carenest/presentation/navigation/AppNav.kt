@@ -63,12 +63,14 @@ import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.history.HistoryScreen
+import com.carenest.presentation.ui.history_details.ServiceHistoryDetailsScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
 import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
 import com.carenest.presentation.ui.profile_completion.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
+import com.carenest.presentation.ui.qrcode.QrCodeScreen
 import com.carenest.presentation.ui.request_service.RequestServiceScreen
 import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
 import com.carenest.presentation.ui.servicedetails.ServiceDetailsScreen
@@ -198,13 +200,15 @@ fun AppNav(
                         onNavigateToServices = { replaceWith(AppRoute.Services) },
                         onNavigateToHistory = { replaceWith(AppRoute.History) },
                         onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) },
-                        onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
+                        onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) },
+                        onNavigateToServiceHistoryDetails = { requestId -> backStack.add(AppRoute.ServiceHistoryDetails(requestId)) }
                     )
                 }
 
                 entry<AppRoute.Services> {
                     ServicesScreen(
-                        onNavigateToDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
+                        onNavigateToDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) },
+                        onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) }
                     )
                 }
 
@@ -226,8 +230,15 @@ fun AppNav(
                             if (backStack.size > 1) backStack.removeLastOrNull()
                             else replaceWith(AppRoute.Home)
                         },
-                        onNavigateToDetails = { historyId: String -> /* TODO: Navigate to History Details */ },
+                        onNavigateToDetails = { historyId: String -> backStack.add(AppRoute.ServiceHistoryDetails(historyId)) },
                         onNavigateToServices = { replaceWith(AppRoute.Services) }
+                    )
+                }
+
+                entry<AppRoute.ServiceHistoryDetails> { route ->
+                    ServiceHistoryDetailsScreen(
+                        requestId = route.requestId,
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
 
@@ -301,9 +312,16 @@ fun AppNav(
                     NurseOnTheWayScreen(
                         requestId = route.requestId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToQrCode = {},
+                        onNavigateToQrCode = { backStack.add(AppRoute.QrCode(route.requestId)) },
                         onOpenChat = { nurseId -> /* TODO */ },
                         showSnackbar = onShowSnackbar
+                    )
+                }
+
+                entry<AppRoute.QrCode> { route ->
+                    QrCodeScreen(
+                        requestId = route.requestId,
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
 

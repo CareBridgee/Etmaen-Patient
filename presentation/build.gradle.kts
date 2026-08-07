@@ -74,6 +74,9 @@ dependencies {
     // Camera
     implementation(libs.bundles.camera)
 
+    // QR Code
+    implementation(libs.zxing.core)
+
     // Unit tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

@@ -6,6 +6,7 @@ import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 import com.carenest.domain.model.home.Booking
 
+import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 
 interface CareNestRemoteDatasource {
     suspend fun getServices(): Result<List<ServiceDto>>

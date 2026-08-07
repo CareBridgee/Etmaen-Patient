@@ -24,7 +24,6 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.SupportAgent
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -55,8 +55,8 @@ import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
 @Composable
 fun ServicesScreen(
     onNavigateToDetails: (String) -> Unit,
+    onNavigateToAIChat: () -> Unit = {},
     onOpenFilters: () -> Unit = {},
-    onOpenCareCoordinator: () -> Unit = {},
     viewModel: ServicesViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -65,7 +65,7 @@ fun ServicesScreen(
         when (effect) {
             is ServicesEffect.NavigateToDetails -> onNavigateToDetails(effect.serviceId)
             ServicesEffect.OpenFilters -> onOpenFilters()
-            ServicesEffect.OpenCareCoordinator -> onOpenCareCoordinator()
+            ServicesEffect.OpenCareCoordinator -> onNavigateToAIChat()
         }
     }
 
@@ -95,15 +95,13 @@ internal fun ServicesScreenContent(
         ),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {
-        item { GreetingHeader() }
+        item { GreetingHeader(userName = state.userName) }
         item {
             CustomTextField(
                 text = state.searchQuery,
                 onTextChange = { onEvent(ServicesIntent.SearchQueryChanged(it)) },
                 hint = stringResource(R.string.services_search_hint),
                 leadingIcon = rememberVectorPainter(Icons.Outlined.Search),
-                trailingIcon = rememberVectorPainter(Icons.Outlined.Tune),
-                onClickTrailingIcon = { onEvent(ServicesIntent.FilterClicked) },
                 fieldHeight = 54.dp,
                 shape = Theme.shapes.large,
                 borderColor = Color.Transparent,
@@ -127,16 +125,30 @@ internal fun ServicesScreenContent(
                     style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
                 )
                 Spacer(Modifier.height(Theme.spacing.space12))
-                CategoryGrid(
-                    services = state.filteredServices,
-                    onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.id)) },
-                )
+
+                if (state.filteredServices.isEmpty() && state.searchQuery.isNotBlank()) {
+                    EmptyState(
+                        title = stringResource(R.string.home_services_search_empty_title),
+                        description = stringResource(R.string.home_services_search_empty_desc),
+                        accentColor = Theme.colors.primary,
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+                } else if (state.filteredServices.isEmpty()) {
+                    EmptyState(
+                        title = stringResource(R.string.home_services_empty_title),
+                        description = stringResource(R.string.home_services_empty_desc),
+                        accentColor = Theme.colors.primary,
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+                } else {
+                    CategoryGrid(
+                        services = state.filteredServices,
+                        onCategoryClick = { onEvent(ServicesIntent.CategoryClicked(it.id)) },
+                    )
+                }
             }
         }
         item { Spacer(Modifier.height(Theme.spacing.extraLarge)) }
-        item {
-            ChronicCareCard(onClick = { onEvent(ServicesIntent.ChronicCareClicked) })
-        }
         item {
             CareCoordinatorCard(onClick = { onEvent(ServicesIntent.ConsultationClicked) })
         }
@@ -144,7 +156,7 @@ internal fun ServicesScreenContent(
 }
 
 @Composable
-private fun GreetingHeader() {
+private fun GreetingHeader(userName: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
@@ -166,7 +178,7 @@ private fun GreetingHeader() {
         }
         Column {
             BasicText(
-                text = stringResource(R.string.services_greeting),
+                text = "${stringResource(R.string.services_greeting)}, $userName",
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primary,
                     fontWeight = FontWeight.Medium,

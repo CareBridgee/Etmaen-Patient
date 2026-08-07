@@ -5,6 +5,7 @@ import com.carenest.data.source.remote.dto.ServiceDto
 import com.carenest.data.source.remote.dto.user.UserResponseDto
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
+import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
@@ -35,20 +36,20 @@ class CareNestApiServiceImpl @Inject constructor(
         return httpClient.executeRequest<ServiceDto>(json) {
             method = HttpMethod.Get
             url {
-                path("api/v1/service-types/${serviceId}")
+                path("/api/v1/service-types/${serviceId}")
             }
         }
     }
 
-    override suspend fun getUser(): Result<UserResponseDto> {
-        val userId = datastore.userId.first()
-        return httpClient.executeRequest<UserResponseDto>(json) {
+    override suspend fun getServiceHistory(): Result<List<ServiceHistoryDto>> {
+        return httpClient.executeRequest<List<ServiceHistoryDto>>(json) {
             method = HttpMethod.Get
             url {
-                path("api/v1/users/${userId}")
+                path("api/v1/service-requests/confirmed")
             }
         }
     }
+}
 
     override suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto> {
         return httpClient.executeRequest<ServiceRequestResponseDto>(json) {

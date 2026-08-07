@@ -14,4 +14,8 @@ class NurseTrackingRepositoryImpl @Inject constructor(
 
     override suspend fun cancelVisit(requestId: String): Result<Boolean> =
         runCatching { dataSource.cancelVisit(requestId) }
+
+    override suspend fun getVisitVerificationCode(requestId: String): Result<String> = runCatching {
+        dataSource.fetchVerificationCode(requestId)
+    }
 }
