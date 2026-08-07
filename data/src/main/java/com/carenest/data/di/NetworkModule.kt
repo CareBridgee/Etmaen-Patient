@@ -134,6 +134,7 @@ internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: Carenest
                     setBody(RefreshRequest(refreshToken))
                 }
                 
+
                 if (response.status.value == 401 || response.status.value == 403) {
                     Log.e("NetworkModule", "Refresh token expired or invalid (Status ${response.status.value}). Logging out.")
                     datastore.clearAuthTokens()
@@ -141,9 +142,7 @@ internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: Carenest
                     return@refreshTokens null
                 }
 
-                if (!response.status.isSuccess()) {
-                    return@refreshTokens null
-                }
+                if (!response.status.isSuccess()) return@refreshTokens null
 
                 val refreshed = response.body<TokenPairResponse>()
                 val accessToken = refreshed.accessToken?.takeIf(String::isNotBlank)

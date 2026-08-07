@@ -97,7 +97,7 @@ class RegisterViewModel @Inject constructor(
                                     if (destination == AuthenticatedDestination.Home) {
                                         RegisterEffect.NavigateToHome
                                     } else {
-                                        RegisterEffect.NavigateToWelcome
+                                        RegisterEffect.NavigateToWelcome(user.defaultProfileId)
                                     }
                                 )
                             },
@@ -145,8 +145,27 @@ class RegisterViewModel @Inject constructor(
     }
 }
 
-private fun String.toDisplayDate(): String = runCatching {
-    val source = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { isLenient = false }
-    val target = SimpleDateFormat("MM/dd/yyyy", Locale.US).apply { isLenient = false }
-    target.format(source.parse(this)!!)
-}.getOrDefault("")
+private fun String.toDisplayDate(): String {
+    if (isBlank()) return ""
+    val trimmed = trim()
+    if (trimmed.matches(Regex("^\\d{2}/\\d{2}/\\d{4}$"))) return trimmed
+    val utc = java.util.TimeZone.getTimeZone("UTC")
+    val parsers = listOf(
+        "yyyy-MM-dd",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+        "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "yyyy-MM-dd'T'HH:mm:ss"
+    )
+    for (pattern in parsers) {
+        val parser = SimpleDateFormat(pattern, Locale.US).apply {
+            isLenient = false
+            timeZone = utc
+        }
+        val parsed = runCatching { parser.parse(trimmed) }.getOrNull()
+        if (parsed != null) {
+            val target = SimpleDateFormat("MM/dd/yyyy", Locale.US).apply { timeZone = utc }
+            return target.format(parsed)
+        }
+    }
+    return ""
+}
