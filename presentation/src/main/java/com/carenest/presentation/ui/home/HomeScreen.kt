@@ -27,8 +27,8 @@ import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.home.components.HomeAICard
-import com.carenest.presentation.ui.home.components.HomeBookingEmpty
-import com.carenest.presentation.ui.home.components.HomeBookingHeader
+import com.carenest.presentation.ui.home.components.HomeHistoryEmpty
+import com.carenest.presentation.ui.home.components.HomeHistoryHeader
 import com.carenest.presentation.ui.home.components.HomeHistoryItem
 import com.carenest.presentation.ui.home.components.HomeGreetingBar
 import com.carenest.presentation.ui.home.components.HomeSearchBar
@@ -40,6 +40,7 @@ import com.carenest.designsystem.R as RD
 fun HomeScreen(
     onNavigateToServices: () -> Unit,
     onNavigateToServiceDetails: (String) -> Unit,
+    onNavigateToServiceHistoryDetails: (String) -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToAIChat: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
@@ -57,7 +58,8 @@ fun HomeScreen(
         when (effect) {
             HomeEffect.NavigateToServices -> onNavigateToServices()
             is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.serviceId)
-            HomeEffect.NavigateToBookings -> onNavigateToHistory()
+            is HomeEffect.NavigateToServiceHistoryDetails -> onNavigateToServiceHistoryDetails(effect.requestId)
+            HomeEffect.NavigateToHistory -> onNavigateToHistory()
             HomeEffect.NavigateToAIChat -> onNavigateToAIChat()
             is HomeEffect.ShowToast -> {
                 toastState.show(effect.message, effect.type)
@@ -121,14 +123,12 @@ fun HomeScreenContent(
                     )
                 }
 
-                // AI Hero Assessment Card
                 item {
                     HomeAICard(
                         onStartChatClick = { onEvent(HomeIntent.StartAIChatClicked) }
                     )
                 }
 
-                // Healthcare Services Grid
                 item {
                     HomeServicesGrid(
                         services = state.filteredServices,
@@ -138,22 +138,21 @@ fun HomeScreenContent(
                     )
                 }
 
-                // Upcoming Bookings Section
                 item {
-                    HomeBookingHeader(
-                        onManageClick = { onEvent(HomeIntent.ManageBookingsClicked) }
+                    HomeHistoryHeader(
+                        onManageClick = { onEvent(HomeIntent.ManageAllHistoryClicked) }
                     )
                 }
 
-                if (state.isBookingEmpty) {
+                if (state.isHistoryEmpty) {
                     item {
-                        HomeBookingEmpty()
+                        HomeHistoryEmpty()
                     }
                 } else {
-                    items(state.upcomingBooking) { booking ->
+                    items(state.upcomingBooking) { serviceHistory ->
                         HomeHistoryItem(
-                            booking = booking,
-                            onClick = { onEvent(HomeIntent.BookingClicked(it)) }
+                            serviceHistory = serviceHistory,
+                            onClick = { onEvent(HomeIntent.HistoryItemClicked(it)) }
                         )
                     }
                 }

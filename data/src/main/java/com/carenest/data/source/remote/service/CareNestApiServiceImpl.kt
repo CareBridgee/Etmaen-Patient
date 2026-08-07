@@ -1,6 +1,7 @@
 package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.remote.dto.ServiceDto
+import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
 import io.ktor.http.HttpMethod
@@ -27,6 +28,15 @@ class CareNestApiServiceImpl @Inject constructor(
             method = HttpMethod.Get
             url {
                 path("/api/v1/service-types/${serviceId}")
+            }
+        }
+    }
+
+    override suspend fun getServiceHistory(): Result<List<ServiceHistoryDto>> {
+        return httpClient.executeRequest<List<ServiceHistoryDto>>(json) {
+            method = HttpMethod.Get
+            url {
+                path("api/v1/service-requests/confirmed")
             }
         }
     }

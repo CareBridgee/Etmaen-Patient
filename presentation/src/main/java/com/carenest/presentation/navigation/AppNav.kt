@@ -52,6 +52,7 @@ import com.carenest.presentation.ui.auth.login.LoginScreen
 import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.history.HistoryScreen
+import com.carenest.presentation.ui.history_details.ServiceHistoryDetailsScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
@@ -161,7 +162,8 @@ fun AppNav(
                         onNavigateToServices = { replaceWith(AppRoute.Services) },
                         onNavigateToHistory = { replaceWith(AppRoute.History) },
                         onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) },
-                        onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) }
+                        onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) },
+                        onNavigateToServiceHistoryDetails = { requestId -> backStack.add(AppRoute.ServiceHistoryDetails(requestId)) }
                     )
                 }
 
@@ -190,8 +192,15 @@ fun AppNav(
                             if (backStack.size > 1) backStack.removeLastOrNull()
                             else replaceWith(AppRoute.Home)
                         },
-                        onNavigateToDetails = { historyId: String -> /* TODO: Navigate to History Details */ },
+                        onNavigateToDetails = { historyId: String -> backStack.add(AppRoute.ServiceHistoryDetails(historyId)) },
                         onNavigateToServices = { replaceWith(AppRoute.Services) }
+                    )
+                }
+
+                entry<AppRoute.ServiceHistoryDetails> { route ->
+                    ServiceHistoryDetailsScreen(
+                        requestId = route.requestId,
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
                 }
 
