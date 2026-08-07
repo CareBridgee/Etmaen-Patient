@@ -13,7 +13,6 @@ import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -64,7 +63,7 @@ class HomeViewModel @Inject constructor(
             updateState { copy(isLoading = true, isError = false, errorMessage = null) }
 
             try {
-                val userDeferred = async { getUserUseCase() }
+                val userDeferred = async { getCurrentUser() }
                 val servicesDeferred = async { getServicesUseCase() }
                 val bookingDeferred = async { getServiceHistoryUseCase() }
 
