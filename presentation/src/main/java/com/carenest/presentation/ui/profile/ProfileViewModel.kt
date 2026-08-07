@@ -13,7 +13,7 @@ import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalTime
+import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -152,7 +152,9 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
-    private fun currentGreeting(): ProfileGreeting = when (LocalTime.now().hour) {
+    private fun currentGreeting(): ProfileGreeting = when (
+        Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    ) {
         in 5..11 -> ProfileGreeting.Morning
         in 12..17 -> ProfileGreeting.Day
         else -> ProfileGreeting.Evening
