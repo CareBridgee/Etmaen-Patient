@@ -22,12 +22,13 @@ class QrCodeViewModel @Inject constructor(
         when (event) {
             is QrCodeIntent.LoadQrCode -> loadQrCode(event.requestId)
             QrCodeIntent.BackClicked -> sendEffect(QrCodeEffect.NavigateBack)
+            is QrCodeIntent.RetryClicked -> loadQrCode(event.requestId)
         }
     }
 
     private fun loadQrCode(requestId: String) {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, error = null) }
+            updateState { copy(isLoading = true, error = null, requestId = requestId) }
             
             getVisitVerificationCodeUseCase(requestId)
                 .onSuccess { qrContent ->
@@ -42,7 +43,7 @@ class QrCodeViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = error.message ?: "Failed to load QR code"
+                            error =  "Failed to load QR code"
                         )
                     }
                 }
