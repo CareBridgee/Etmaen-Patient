@@ -41,6 +41,11 @@ import com.carenest.presentation.ui.onBoarding.components.OnBoardingPageIndicato
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.HideTopBar
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+
 @Composable
 fun OnBoardingScreen(
     onNavigateToHome: () -> Unit,
@@ -48,9 +53,22 @@ fun OnBoardingScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { _ -> onNavigateToHome() }
+    )
+
+    fun handleComplete() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            onNavigateToHome()
+        }
+    }
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            OnBoardingEffect.NavigateToHome -> onNavigateToHome()
+            OnBoardingEffect.NavigateToHome -> handleComplete()
         }
     }
 

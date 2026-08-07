@@ -25,9 +25,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.ContentScale
 import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.home.HealthcareService
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import androidx.compose.ui.platform.LocalContext
 import com.carenest.designsystem.R as RD
 import com.carenest.presentation.R
 
@@ -109,7 +114,9 @@ private fun ServiceCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val iconRes = when (service.iconResName) {
+    val context = LocalContext.current
+    val isUrl = service.iconResName?.startsWith("http") == true
+    val fallbackIcon = when (service.iconResName) {
         "ic_syringe" -> RD.drawable.ic_syringe
         "ic_pill" -> RD.drawable.ic_pill
         "ic_physical_therapy" -> RD.drawable.ic_physical_therapy
@@ -134,12 +141,25 @@ private fun ServiceCard(
                     .background(Theme.colors.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = service.name,
-                    tint = Theme.colors.primary,
-                    modifier = Modifier.size(22.dp)
-                )
+                if (isUrl) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(service.iconResName)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = service.name,
+                        modifier = Modifier.size(28.dp),
+                        contentScale = ContentScale.Fit,
+                        error = painterResource(id = fallbackIcon),
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = fallbackIcon),
+                        contentDescription = service.name,
+                        tint = Theme.colors.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
 
             Text(

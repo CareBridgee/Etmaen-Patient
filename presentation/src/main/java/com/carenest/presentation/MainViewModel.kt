@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
 import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
 import com.carenest.domain.usecase.settings.GetSettingsUseCase
-import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.domain.model.settings.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -18,12 +18,16 @@ import javax.inject.Inject
 
 import com.carenest.domain.repository.SettingsRepository
 
+import com.carenest.domain.socket.SocketServiceController
+import kotlinx.coroutines.flow.collect
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
     private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
+    private val settingsRepository: SettingsRepository,
+    private val socketServiceController: SocketServiceController,
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val settingsRepository: SettingsRepository
 ) : ViewModel(),
     StateHolder<MainState> by DefaultStateHolder(MainState()),
     EffectPublisher<MainEffect> by DefaultEffectPublisher() {
@@ -40,6 +44,12 @@ class MainViewModel @Inject constructor(
                 getSettingsUseCase()
             ) { onboardingDone, isLoggedIn, settings ->
                 Log.d("MainViewModel", "observeAppState: onboardingDone=$onboardingDone, isLoggedIn=$isLoggedIn")
+                if (isLoggedIn) {
+                    socketServiceController.startService()
+                } else {
+                    socketServiceController.stopService()
+                }
+
                 Triple(onboardingDone, isLoggedIn, settings)
             }.collect { (onboardingDone, isLoggedIn, settings) ->
                 updateState {
@@ -57,6 +67,8 @@ class MainViewModel @Inject constructor(
 
     fun onIntent(intent: MainIntent) {
         when (intent) {
+            is MainIntent.ChangeLanguage -> updateState { copy(languageCode = intent.languageCode) }
+            is MainIntent.ToggleTheme -> updateState { copy(themeMode = intent.themeMode) }
             MainIntent.ResetApp -> viewModelScope.launch {
                 settingsRepository.updateOnboardingStatus(false)
                 settingsRepository.updateLoggedInStatus(false)
@@ -75,6 +87,8 @@ data class MainState(
 )
 
 sealed interface MainIntent {
+    data class ChangeLanguage(val languageCode: String) : MainIntent
+    data class ToggleTheme(val themeMode:ThemeMode) : MainIntent
     data object ResetApp : MainIntent
 }
 
