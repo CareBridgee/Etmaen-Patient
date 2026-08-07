@@ -458,6 +458,8 @@
   <string name="profile_greeting_day_generic">مساء الخير</string>
   <string name="profile_greeting_evening_generic">مساء الخير</string>
   <string name="profile_load_failed">تعذر تحميل ملفك الشخصي. تحقق من الاتصال وحاول مرة أخرى.</string>
+  <string name="profile_load_error_title">تعذر تحميل ملفك الشخصي</string>
+  <string name="profile_load_error_description">يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.</string>
   <string name="retry">إعادة المحاولة</string>
   <string name="profile_notifications_unavailable">الإشعارات غير متاحة في هذا الإصدار.</string>
   <string name="profile_avatar_updated">تم تحديث صورة الملف الشخصي.</string>

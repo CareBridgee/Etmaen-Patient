@@ -26,9 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,6 +53,8 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.R as RD
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
@@ -185,21 +187,9 @@ fun ProfileContent(
         return
     }
     if (state.errorMessage != null && state.profile == null) {
-        Box(
-            modifier = Modifier.fillMaxSize().background(Theme.colors.backGround),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = stringResource(R.string.profile_load_failed),
-                    color = Theme.colors.secondaryFont
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(onClick = { onEvent(ProfileEvent.OnRetryClicked) }) {
-                    Text(text = stringResource(R.string.retry))
-                }
-            }
-        }
+        ProfileLoadError(
+            onRetry = { onEvent(ProfileEvent.OnRetryClicked) }
+        )
         return
     }
     val greeting = when (state.greeting) {
@@ -269,6 +259,38 @@ fun ProfileContent(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+private fun ProfileLoadError(onRetry: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EmptyState(
+                title = stringResource(R.string.profile_load_error_title),
+                description = stringResource(R.string.profile_load_error_description),
+                icon = Icons.Outlined.Refresh,
+                accentColor = Theme.colors.primary
+            )
+
+            Spacer(modifier = Modifier.height(Theme.spacing.space28))
+
+            PrimaryButton(
+                caption = stringResource(R.string.retry),
+                onClick = onRetry,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Theme.spacing.extraLarge)
+            )
         }
     }
 }
@@ -605,6 +627,38 @@ fun ProfileScreenDarkPreview() {
         ProfileContent(
             state = ProfileState(),
             onEvent = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Profile Load Error - Light",
+    widthDp = 390,
+    heightDp = 844
+)
+@Composable
+private fun ProfileLoadErrorLightPreview() {
+    SpTheme(isDarkTheme = false) {
+        ProfileLoadError(
+            onRetry = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Profile Load Error - Dark",
+    widthDp = 390,
+    heightDp = 844
+)
+@Composable
+private fun ProfileLoadErrorDarkPreview() {
+    SpTheme(isDarkTheme = true) {
+        ProfileLoadError(
+            onRetry = {}
         )
     }
 }

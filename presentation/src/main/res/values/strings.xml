@@ -300,6 +300,8 @@
   <string name="profile_logout_title">Logout</string>
   <string name="profile_app_version">CareNest v%1$s</string>
   <string name="profile_load_failed">We couldn\'t load your profile. Check your connection and try again.</string>
+  <string name="profile_load_error_title">Unable to load your profile</string>
+  <string name="profile_load_error_description">Please check your internet connection and try again.</string>
   <string name="retry">Retry</string>
   <string name="profile_notifications_unavailable">Notifications are not available in this version.</string>
   <string name="profile_avatar_updated">Profile photo updated.</string>
