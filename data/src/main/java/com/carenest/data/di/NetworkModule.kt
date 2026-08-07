@@ -71,26 +71,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @AuthHttpClient
-    fun provideAuthHttpClient(
-        json: Json,
-    ): HttpClient =
-        HttpClient(Android) {
-            install(ContentNegotiation) {
-                json(json)
-            }
-
-            defaultRequest {
-                url(BuildConfig.base_url)
-            }
-
-            if (BuildConfig.DEBUG) {
-                install(SafeNetworkLogging)
-            }
-        }
-
-    @Provides
-    @Singleton
     @Named("locationiq")
     fun provideLocationIqHttpClient(
         json: Json,
