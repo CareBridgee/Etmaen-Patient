@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -49,25 +50,31 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.R as RD
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 
 import android.widget.Toast
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.platform.LocalContext
+import com.carenest.designsystem.components.dialog.CareNestDialog
 
 @Composable
 fun FamilyMembersScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToAddMember: (String?) -> Unit = {},
+    reloadTrigger: Int = 0,
     viewModel: FamilyMembersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    val deletedMessage = stringResource(R.string.family_member_deleted)
+    val deleteFailedMessage = stringResource(R.string.family_member_delete_failed)
+    val notificationsUnavailable = stringResource(R.string.profile_notifications_unavailable)
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    androidx.compose.runtime.LaunchedEffect(reloadTrigger) {
         viewModel.loadFamilyMembers()
     }
 
@@ -77,27 +84,26 @@ fun FamilyMembersScreen(
             is FamilyMembersEffect.NavigateToAddFamilyMember -> onNavigateToAddMember(null)
             is FamilyMembersEffect.NavigateToEditPersonalInfo -> onNavigateToAddMember(effect.memberId)
             is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToAddMember(effect.memberId)
-            is FamilyMembersEffect.ShowToast -> {
-                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            is FamilyMembersEffect.ShowMessage -> {
+                val message = when (effect.message) {
+                    FamilyMembersMessage.Deleted -> deletedMessage
+                    FamilyMembersMessage.DeleteFailed -> deleteFailedMessage
+                    FamilyMembersMessage.NotificationsUnavailable -> notificationsUnavailable
+                }
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     if (state.deleteConfirmationMemberId != null) {
-        AlertDialog(
-            onDismissRequest = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) },
-            title = { Text(text = stringResource(R.string.delete_family_member_title)) },
-            text = { Text(text = stringResource(R.string.delete_family_member_confirmation)) },
-            confirmButton = {
-                TextButton(onClick = { viewModel.onEvent(FamilyMembersEvent.OnConfirmDeleteClicked) }) {
-                    Text(text = stringResource(R.string.confirm), color = Theme.colors.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) }) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            }
+        CareNestDialog(
+            title = stringResource(R.string.delete_family_member_title),
+            message = stringResource(R.string.delete_family_member_confirmation),
+            confirmText = stringResource(R.string.remove),
+            dismissText = stringResource(R.string.cancel),
+            confirmColor = Theme.colors.error,
+            onConfirm = { viewModel.onEvent(FamilyMembersEvent.OnConfirmDeleteClicked) },
+            onDismiss = { viewModel.onEvent(FamilyMembersEvent.OnDismissDeleteDialogClicked) }
         )
     }
 
@@ -114,7 +120,7 @@ fun FamilyMembersContent(
 ) {
     HideTopBar()
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
@@ -122,8 +128,6 @@ fun FamilyMembersContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
@@ -135,45 +139,106 @@ fun FamilyMembersContent(
             )
 
             Spacer(modifier = Modifier.height(28.dp))
+        }
 
-            Text(
-                text = stringResource(R.string.family_members_screen_title),
-                style = Theme.typography.display.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp,
-                    letterSpacing = (-0.5).sp
-                ),
-                color = Theme.colors.primaryFont
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.family_members_screen_subtitle),
-                style = Theme.typography.body.large.copy(
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp
-                ),
-                color = Theme.colors.secondaryFont
-            )
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            state.members.forEach { member ->
-                FamilyMemberCard(
-                    member = member,
-                    onEditPersonalClick = { onEvent(FamilyMembersEvent.OnEditPersonalInfoClicked(member.id)) },
-                    onEditHealthClick = { onEvent(FamilyMembersEvent.OnEditHealthProfileClicked(member.id)) },
-                    onDeleteClick = { onEvent(FamilyMembersEvent.OnDeleteMemberClicked(member.id)) }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+        when {
+            state.isLoading && state.members.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Theme.colors.primary)
+                }
             }
+            state.loadFailed -> {
+                FamilyMembersLoadError(
+                    onRetry = { onEvent(FamilyMembersEvent.OnRetryClicked) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.family_members_screen_title),
+                        style = Theme.typography.display.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            letterSpacing = (-0.5).sp
+                        ),
+                        color = Theme.colors.primaryFont
+                    )
 
-            AddFamilyMemberDashedCard(
-                onClick = { onEvent(FamilyMembersEvent.OnAddFamilyMemberClicked) }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.family_members_screen_subtitle),
+                        style = Theme.typography.body.large.copy(
+                            fontSize = 15.sp,
+                            lineHeight = 22.sp
+                        ),
+                        color = Theme.colors.secondaryFont
+                    )
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    state.members.forEach { member ->
+                        FamilyMemberCard(
+                            member = member,
+                            onEditPersonalClick = { onEvent(FamilyMembersEvent.OnEditPersonalInfoClicked(member.id)) },
+                            onEditHealthClick = { onEvent(FamilyMembersEvent.OnEditHealthProfileClicked(member.id)) },
+                            onDeleteClick = { onEvent(FamilyMembersEvent.OnDeleteMemberClicked(member.id)) }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    AddFamilyMemberDashedCard(
+                        onClick = { onEvent(FamilyMembersEvent.OnAddFamilyMemberClicked) }
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FamilyMembersLoadError(
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EmptyState(
+                title = stringResource(R.string.family_members_load_failed),
+                description = stringResource(R.string.family_members_load_failed_description),
+                icon = Icons.Outlined.Refresh,
+                accentColor = Theme.colors.primary
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Theme.spacing.space28))
+
+            PrimaryButton(
+                caption = stringResource(R.string.retry),
+                onClick = onRetry,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Theme.spacing.extraLarge)
+            )
         }
     }
 }
@@ -207,7 +272,7 @@ fun FamilyMembersHeader(
             ) {
                 Icon(
                     painter = painterResource(id = RD.drawable.ic_arrow_back),
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = Theme.colors.primary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -348,12 +413,13 @@ fun FamilyMemberCard(
                     }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            if (member.lastCheckup.isNotBlank() || member.upcomingService.isNotBlank()) {
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Row(
+                Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+                ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.family_members_last_checkup),
@@ -386,6 +452,7 @@ fun FamilyMemberCard(
                         ),
                         color = Theme.colors.primary
                     )
+                }
                 }
             }
 

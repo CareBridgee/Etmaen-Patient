@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.settings.GetLoggedInStatusUseCase
 import com.carenest.domain.usecase.settings.GetOnboardingStatusUseCase
+import com.carenest.domain.usecase.settings.GetSettingsUseCase
+import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -20,6 +22,7 @@ import com.carenest.domain.repository.SettingsRepository
 class MainViewModel @Inject constructor(
     private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
     private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase,
     private val settingsRepository: SettingsRepository
 ) : ViewModel(),
     StateHolder<MainState> by DefaultStateHolder(MainState()),
@@ -33,24 +36,27 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 getOnboardingStatusUseCase(),
-                getLoggedInStatusUseCase()
-            ) { onboardingDone, isLoggedIn ->
+                getLoggedInStatusUseCase(),
+                getSettingsUseCase()
+            ) { onboardingDone, isLoggedIn, settings ->
                 Log.d("MainViewModel", "observeAppState: onboardingDone=$onboardingDone, isLoggedIn=$isLoggedIn")
+                Triple(onboardingDone, isLoggedIn, settings)
+            }.collect { (onboardingDone, isLoggedIn, settings) ->
                 updateState {
                     copy(
                         onboardingDone = onboardingDone,
                         isLoggedIn = isLoggedIn,
-                        isReady = true
+                        isReady = true,
+                        themeMode = settings.themeMode,
+                        languageCode = settings.languageCode
                     )
                 }
-            }.collect {}
+            }
         }
     }
 
     fun onIntent(intent: MainIntent) {
         when (intent) {
-            is MainIntent.ChangeLanguage -> updateState { copy(languageCode = intent.languageCode) }
-            is MainIntent.ToggleTheme -> updateState { copy(isDarkTheme = !isDarkTheme) }
             MainIntent.ResetApp -> viewModelScope.launch {
                 settingsRepository.updateOnboardingStatus(false)
                 settingsRepository.updateLoggedInStatus(false)
@@ -64,13 +70,11 @@ data class MainState(
     val onboardingDone: Boolean = false,
     val isLoggedIn: Boolean = false,
     val isReady: Boolean = false,
-    val isDarkTheme: Boolean = false,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val languageCode: String = "en"
 )
 
 sealed interface MainIntent {
-    data class ChangeLanguage(val languageCode: String) : MainIntent
-    data object ToggleTheme : MainIntent
     data object ResetApp : MainIntent
 }
 

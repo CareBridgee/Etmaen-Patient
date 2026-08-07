@@ -27,6 +27,7 @@ data class ProfileAllergyOption(
 )
 
 data class ProfileCompletionState(
+    val isEditMode: Boolean = false,
     val currentStep: ProfileStep = ProfileStep.Welcome,
     val profile: Profile? = null,
     val profileId: String? = null,
@@ -63,6 +64,7 @@ data class ProfileCompletionState(
 )
 
 sealed interface ProfileCompletionIntent {
+    data object ConfigureEditMode : ProfileCompletionIntent
     data class HeightChanged(val height: String) : ProfileCompletionIntent
     data class WeightChanged(val weight: String) : ProfileCompletionIntent
     data class BloodTypeChanged(val bloodType: String) : ProfileCompletionIntent
@@ -93,4 +95,5 @@ sealed interface ProfileCompletionIntent {
 sealed interface ProfileCompletionEffect {
     data object NavigateBack : ProfileCompletionEffect
     data object NavigateToHome : ProfileCompletionEffect
+    data object NavigateAfterEdit : ProfileCompletionEffect
 }

@@ -67,6 +67,12 @@ private class FakeRemoteDataSource(
 
     override suspend fun getCurrentUser() = Result.success(response)
 
+    override suspend fun uploadProfileImage(
+        fileName: String,
+        contentType: String,
+        bytes: ByteArray
+    ) = Result.success("https://example.com/profile.jpg")
+
     override suspend fun updateCurrentUser(request: UpdateUserRequestDto): Result<UserResponseDto> {
         lastUpdate = request
         return Result.success(response)

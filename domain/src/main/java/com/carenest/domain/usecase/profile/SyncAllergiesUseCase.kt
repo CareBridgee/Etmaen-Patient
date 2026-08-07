@@ -19,14 +19,31 @@ class SyncAllergiesUseCase @Inject constructor(private val repository: ProfileRe
             )
         }.getOrElse { return Result.failure(it) }
 
-        val currentBackendIds = repository.getProfileAllergies(profileId)
+        val customName = if (hasNoKnownAllergies) "" else otherAllergies.trim()
+        val catalogIds = repository.getAllergyCatalog()
             .getOrElse { return Result.failure(it) }
+            .mapTo(hashSetOf()) { it.id }
+        val current = repository.getProfileAllergies(profileId)
+            .getOrElse { return Result.failure(it) }
+        val matchingCustomIds = if (customName.isBlank()) emptySet() else current
+            .filter {
+                it.allergyId !in catalogIds &&
+                    it.allergyName.equals(customName, ignoreCase = true)
+            }
             .mapTo(linkedSetOf()) { it.allergyId }
+        val customIds = when {
+            customName.isBlank() || matchingCustomIds.isNotEmpty() -> matchingCustomIds
+            else -> setOf(
+                repository.addCustomAllergy(profileId, customName)
+                    .getOrElse { return Result.failure(it) }
+                    .allergyId
+            )
+        }
 
         return repository.syncProfileAllergies(
             profileId = profileId,
-            originalBackendIds = currentBackendIds,
-            selectedBackendIds = validatedIds
+            originalBackendIds = current.mapTo(linkedSetOf()) { it.allergyId },
+            selectedBackendIds = validatedIds + customIds
         )
     }
 }

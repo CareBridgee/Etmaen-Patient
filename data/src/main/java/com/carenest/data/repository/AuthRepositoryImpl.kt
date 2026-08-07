@@ -57,6 +57,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout(): Result<Unit> = runCatching {
         datastore.clearAuthTokens()
+        datastore.clearUserId()
         clearBearerTokenCache()
         userRepository.clearCurrentUser()
         datastore.setLoggedIn(false)

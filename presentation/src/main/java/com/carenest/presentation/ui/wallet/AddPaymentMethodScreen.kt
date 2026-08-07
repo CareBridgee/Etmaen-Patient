@@ -21,16 +21,22 @@ import com.carenest.designsystem.R as DR
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.wallet.components.PaymentOptionRow
 
 @Composable
 fun AddPaymentMethodScreen(
+    onNavigateBack: () -> Unit,
     onCreditCardClick: () -> Unit,
     onPayPalClick: () -> Unit,
     onFawryCashClick: () -> Unit,
     onMeezaCardClick: () -> Unit,
     onMobileWalletClick: () -> Unit,
 ) {
+    ScreenTopBar(
+        title = stringResource(R.string.wallet_add_payment_method_title),
+        onLeadingClick = onNavigateBack
+    )
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 22.dp),
     ) {
@@ -70,4 +76,4 @@ fun AddPaymentMethodScreen(
     }
 }
 
-@Preview @Composable private fun AddPaymentPreview() = SpTheme { AddPaymentMethodScreen({}, {}, {}, {}, {}) }
+@Preview @Composable private fun AddPaymentPreview() = SpTheme { AddPaymentMethodScreen({}, {}, {}, {}, {}, {}) }

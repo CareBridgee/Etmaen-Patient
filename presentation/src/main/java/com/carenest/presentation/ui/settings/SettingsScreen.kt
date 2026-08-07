@@ -20,23 +20,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,29 +47,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.R as RD
+import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit = {},
+    onShowMessage: (String) -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    var isSecurityPrivacySheetVisible by rememberSaveable { mutableStateOf(false) }
+    val saveFailed = stringResource(R.string.settings_save_failed)
+    val termsUnavailable = stringResource(R.string.settings_terms_unavailable)
+    val deleteUnavailable = stringResource(R.string.settings_delete_account_unavailable)
+    val supportUnavailable = stringResource(R.string.settings_contact_support_unavailable)
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is SettingsEffect.NavigateBack -> onNavigateBack()
-            else -> {}
+            is SettingsEffect.ShowMessage -> onShowMessage(
+                when (effect.message) {
+                    SettingsMessage.SaveFailed -> saveFailed
+                    SettingsMessage.TermsUnavailable -> termsUnavailable
+                    SettingsMessage.DeleteAccountUnavailable -> deleteUnavailable
+                    SettingsMessage.ContactSupportUnavailable -> supportUnavailable
+                }
+            )
         }
     }
 
     SettingsContent(
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onSecurityPrivacyClick = { isSecurityPrivacySheetVisible = true }
     )
 
     if (state.isLanguagePickerDialogVisible) {
@@ -77,12 +96,27 @@ fun SettingsScreen(
             onDismiss = { viewModel.onEvent(SettingsEvent.OnDismissLanguagePicker) }
         )
     }
+
+    if (state.isThemePickerDialogVisible) {
+        ThemePickerDialog(
+            currentThemeMode = state.themeMode,
+            onThemeSelected = { viewModel.onEvent(SettingsEvent.OnThemeSelected(it)) },
+            onDismiss = { viewModel.onEvent(SettingsEvent.OnDismissThemePicker) }
+        )
+    }
+
+    if (isSecurityPrivacySheetVisible) {
+        SecurityPrivacyBottomSheet(
+            onDismiss = { isSecurityPrivacySheetVisible = false }
+        )
+    }
 }
 
 @Composable
 fun SettingsContent(
     state: SettingsState,
-    onEvent: (SettingsEvent) -> Unit
+    onEvent: (SettingsEvent) -> Unit,
+    onSecurityPrivacyClick: () -> Unit = {}
 ) {
     HideTopBar()
 
@@ -143,43 +177,23 @@ fun SettingsContent(
                     SettingsRowClickable(
                         iconRes = RD.drawable.ic_language,
                         title = stringResource(R.string.settings_language_title),
-                        trailingText = if (state.languageCode == "ar") "العربية" else "English",
+                        trailingText = if (state.languageCode == "ar") {
+                            stringResource(R.string.settings_language_arabic)
+                        } else {
+                            stringResource(R.string.settings_language_english)
+                        },
                         onClick = { onEvent(SettingsEvent.OnLanguageClicked) }
                     )
                     HorizontalDivider(color = Theme.colors.divider, modifier = Modifier.padding(horizontal = 16.dp))
-                    SettingsRowSwitch(
+                    SettingsRowClickable(
                         iconRes = RD.drawable.ic_dark_mode,
-                        title = stringResource(R.string.settings_dark_mode_title),
-                        checked = state.isDarkMode,
-                        onCheckedChange = { onEvent(SettingsEvent.OnDarkModeToggled(it)) }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Notifications Section
-            SettingsSectionTitle(text = stringResource(R.string.settings_section_notifications))
-            Spacer(modifier = Modifier.height(12.dp))
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                color = Theme.colors.surface,
-                shadowElevation = 0.dp
-            ) {
-                Column {
-                    SettingsRowSwitch(
-                        iconRes = RD.drawable.ic_outline_email,
-                        title = stringResource(R.string.settings_email_updates_title),
-                        checked = state.emailUpdatesEnabled,
-                        onCheckedChange = { onEvent(SettingsEvent.OnEmailUpdatesToggled(it)) }
-                    )
-                    HorizontalDivider(color = Theme.colors.divider, modifier = Modifier.padding(horizontal = 16.dp))
-                    SettingsRowSwitch(
-                        iconRes = RD.drawable.comment_sms,
-                        title = stringResource(R.string.settings_sms_alerts_title),
-                        checked = state.smsAlertsEnabled,
-                        onCheckedChange = { onEvent(SettingsEvent.OnSmsAlertsToggled(it)) }
+                        title = stringResource(R.string.settings_theme_title),
+                        trailingText = when (state.themeMode) {
+                            ThemeMode.LIGHT -> stringResource(R.string.settings_theme_light)
+                            ThemeMode.DARK -> stringResource(R.string.settings_theme_dark)
+                            ThemeMode.SYSTEM -> stringResource(R.string.settings_theme_system)
+                        },
+                        onClick = { onEvent(SettingsEvent.OnThemeClicked) }
                     )
                 }
             }
@@ -198,8 +212,8 @@ fun SettingsContent(
                 Column {
                     SettingsRowClickable(
                         iconRes = RD.drawable.ic_verified,
-                        title = stringResource(R.string.settings_privacy_policy_title),
-                        onClick = { onEvent(SettingsEvent.OnPrivacyPolicyClicked) }
+                        title = stringResource(R.string.settings_section_security_privacy),
+                        onClick = onSecurityPrivacyClick
                     )
                 }
             }
@@ -337,48 +351,45 @@ fun SettingsRowClickable(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsRowSwitch(
-    iconRes: Int,
-    title: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+private fun SecurityPrivacyBottomSheet(
+    onDismiss: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = Theme.colors.surface
     ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            tint = Theme.colors.secondaryFont,
-            modifier = Modifier.size(22.dp)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Text(
-            text = title,
-            style = Theme.typography.body.large.copy(
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
-            ),
-            color = Theme.colors.primaryFont,
-            modifier = Modifier.weight(1f)
-        )
-
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedTrackColor = Theme.colors.primary,
-                uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Theme.colors.secondaryFont.copy(alpha = 0.3f)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.settings_section_security_privacy),
+                style = Theme.typography.title.copy(
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                color = Theme.colors.primaryFont
             )
-        )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.settings_security_privacy_description),
+                style = Theme.typography.body.large.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp
+                ),
+                color = Theme.colors.secondaryFont
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            PrimaryButton(
+                caption = stringResource(R.string.settings_security_privacy_got_it),
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -443,7 +454,66 @@ fun LanguagePickerDialog(
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
+                    color = Theme.colors.primary
+                )
+            }
+        },
+        containerColor = Theme.colors.surface
+    )
+}
+
+@Composable
+fun ThemePickerDialog(
+    currentThemeMode: ThemeMode,
+    onThemeSelected: (ThemeMode) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val options = listOf(
+        ThemeMode.LIGHT to stringResource(R.string.settings_theme_light),
+        ThemeMode.DARK to stringResource(R.string.settings_theme_dark),
+        ThemeMode.SYSTEM to stringResource(R.string.settings_theme_system)
+    )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.settings_select_theme_title),
+                style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
+                color = Theme.colors.primaryFont
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                options.forEach { (mode, label) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onThemeSelected(mode) }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentThemeMode == mode,
+                            onClick = { onThemeSelected(mode) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Theme.colors.primary
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = label,
+                            style = Theme.typography.body.large,
+                            color = Theme.colors.primaryFont
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = stringResource(R.string.cancel),
                     color = Theme.colors.primary
                 )
             }

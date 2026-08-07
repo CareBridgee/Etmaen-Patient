@@ -14,13 +14,15 @@ import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
 import com.carenest.domain.usecase.profile.LoadAllergiesUseCase
 import com.carenest.domain.usecase.profile.LoadEmergencyContactsUseCase
 import com.carenest.domain.usecase.profile.LoadMedicalConditionsUseCase
+import com.carenest.domain.usecase.profile.LoadMedicationsUseCase
 import com.carenest.domain.usecase.profile.SaveEmergencyContactUseCase
 import com.carenest.domain.usecase.profile.SyncAllergiesUseCase
 import com.carenest.domain.usecase.profile.SyncMedicalConditionsUseCase
+import com.carenest.domain.usecase.profile.SyncMedicationsUseCase
 import com.carenest.domain.usecase.profile.UpdateBasicHealthUseCase
 import com.carenest.domain.usecase.profile.UpdateMedicalHistoryUseCase
 import com.carenest.domain.usecase.profile.UpdateMobilityUseCase
-import com.carenest.domain.usecase.profile.ValidateMedicationsUseCase
+import com.carenest.domain.validation.EgyptianPhoneNumberValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -38,7 +40,8 @@ class ProfileCompletionViewModel @Inject constructor(
     private val syncMedicalConditions: SyncMedicalConditionsUseCase,
     private val loadAllergies: LoadAllergiesUseCase,
     private val syncAllergies: SyncAllergiesUseCase,
-    private val validateMedications: ValidateMedicationsUseCase,
+    private val loadMedications: LoadMedicationsUseCase,
+    private val syncMedications: SyncMedicationsUseCase,
     private val updateMobility: UpdateMobilityUseCase,
     private val loadEmergencyContacts: LoadEmergencyContactsUseCase,
     private val saveEmergencyContact: SaveEmergencyContactUseCase
@@ -54,6 +57,9 @@ class ProfileCompletionViewModel @Inject constructor(
 
     fun onEvent(event: ProfileCompletionIntent) {
         when (event) {
+            ProfileCompletionIntent.ConfigureEditMode -> updateState {
+                copy(isEditMode = true, currentStep = ProfileStep.BasicHealthInfo)
+            }
             is ProfileCompletionIntent.HeightChanged -> edit(ProfileField.Height) {
                 copy(height = event.height.filter(Char::isDigit).take(3))
             }
@@ -150,9 +156,9 @@ class ProfileCompletionViewModel @Inject constructor(
             is ProfileCompletionIntent.EmergencyPhoneNumberChanged ->
                 edit(ProfileField.EmergencyPhoneNumber) {
                     copy(
-                        emergencyPhoneNumber = event.phoneNumber
-                            .filter { it.isDigit() || it in "+ -" }
-                            .take(20)
+                        emergencyPhoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(
+                            event.phoneNumber
+                        )
                     )
                 }
             ProfileCompletionIntent.BackClicked -> navigateBack()
@@ -281,17 +287,22 @@ class ProfileCompletionViewModel @Inject constructor(
     }
 
     private fun submitMedications() {
+        val profileId = requireProfileId() ?: return
         val snapshot = currentState
         launchSubmission {
-            validateMedications(
+            syncMedications(
+                profileId = profileId,
                 hasNoCurrentMedications = snapshot.hasNoCurrentMedications,
                 entries = snapshot.currentMedications
             ).fold(
-                onSuccess = { entries ->
+                onSuccess = { names ->
                     updateState {
                         copy(
                             isSubmitting = false,
-                            currentMedications = entries,
+                            currentMedications = names.map { name ->
+                                MedicationInput(uiKey = nextMedicationUiKey++, name = name)
+                            },
+                            hasNoCurrentMedications = names.isEmpty(),
                             validationErrors = validationErrors - MEDICATION_FIELDS,
                             medicationValidationErrors = emptyMap()
                         )
@@ -384,7 +395,10 @@ class ProfileCompletionViewModel @Inject constructor(
 
     private fun finishHealthOnboarding() {
         if (currentState.isInitializing || currentState.isSubmitting) return
-        sendEffect(ProfileCompletionEffect.NavigateToHome)
+        sendEffect(
+            if (currentState.isEditMode) ProfileCompletionEffect.NavigateAfterEdit
+            else ProfileCompletionEffect.NavigateToHome
+        )
     }
 
     private fun moveTo(step: ProfileStep) {
@@ -400,19 +414,20 @@ class ProfileCompletionViewModel @Inject constructor(
             when (step) {
                 ProfileStep.MedicalConditions -> loadMedicalConditions(profileId).fold(
                     onSuccess = { data ->
-                        val options = (
-                            data.catalog.map { ProfileCatalogOption(it.id, it.name) } +
-                                data.saved.map {
-                                    ProfileCatalogOption(it.medicalConditionId, it.conditionName)
-                                }
-                            ).distinctBy { it.id }
+                        val catalogIds = data.catalog.mapTo(hashSetOf()) { it.id }
+                        val options = data.catalog.map { ProfileCatalogOption(it.id, it.name) }
                         updateState {
                             copy(
                                 isLoadingStep = false,
                                 conditionCatalog = options,
-                                selectedConditionIds = data.saved.map {
+                                selectedConditionIds = data.saved.filter {
+                                    it.medicalConditionId in catalogIds
+                                }.map {
                                     it.medicalConditionId
                                 }.toSet(),
+                                otherConditions = data.saved.filter {
+                                    it.medicalConditionId !in catalogIds
+                                }.joinToString(", ") { it.conditionName },
                                 loadedSteps = loadedSteps + step
                             )
                         }
@@ -421,21 +436,39 @@ class ProfileCompletionViewModel @Inject constructor(
                 )
                 ProfileStep.Allergies -> loadAllergies(profileId).fold(
                     onSuccess = { data ->
-                        val options = (
-                            data.catalog.map { ProfileAllergyOption(it.id, it.name, it.type) } +
-                                data.saved.map {
-                                    ProfileAllergyOption(it.allergyId, it.allergyName, it.type)
-                                }
-                            ).distinctBy { it.id }
+                        val catalogIds = data.catalog.mapTo(hashSetOf()) { it.id }
+                        val options = data.catalog.map {
+                            ProfileAllergyOption(it.id, it.name, it.type)
+                        }
                         updateState {
                             copy(
                                 isLoadingStep = false,
                                 allergyCatalog = options,
-                                selectedAllergyIds = if (hasNoKnownAllergies) {
-                                    emptySet()
-                                } else {
-                                    data.saved.map { it.allergyId }.toSet()
+                                selectedAllergyIds = data.saved.filter {
+                                    it.allergyId in catalogIds
+                                }.mapTo(linkedSetOf()) { it.allergyId },
+                                otherAllergies = data.saved.filter {
+                                    it.allergyId !in catalogIds
+                                }.joinToString(", ") { it.allergyName },
+                                hasNoKnownAllergies = data.saved.isEmpty(),
+                                loadedSteps = loadedSteps + step
+                            )
+                        }
+                    },
+                    onFailure = ::finishLoadFailure
+                )
+                ProfileStep.CurrentMedications -> loadMedications(profileId).fold(
+                    onSuccess = { medications ->
+                        updateState {
+                            copy(
+                                isLoadingStep = false,
+                                currentMedications = medications.map { medication ->
+                                    MedicationInput(
+                                        uiKey = nextMedicationUiKey++,
+                                        name = medication.name
+                                    )
                                 },
+                                hasNoCurrentMedications = medications.isEmpty(),
                                 loadedSteps = loadedSteps + step
                             )
                         }
@@ -465,7 +498,11 @@ class ProfileCompletionViewModel @Inject constructor(
         if (currentState.isSubmitting) return
         when (currentState.currentStep) {
             ProfileStep.Welcome -> sendEffect(ProfileCompletionEffect.NavigateBack)
-            ProfileStep.BasicHealthInfo -> moveTo(ProfileStep.Welcome)
+            ProfileStep.BasicHealthInfo -> if (currentState.isEditMode) {
+                sendEffect(ProfileCompletionEffect.NavigateBack)
+            } else {
+                moveTo(ProfileStep.Welcome)
+            }
             ProfileStep.MedicalConditions -> moveTo(ProfileStep.BasicHealthInfo)
             ProfileStep.Allergies -> moveTo(ProfileStep.MedicalConditions)
             ProfileStep.CurrentMedications -> moveTo(ProfileStep.Allergies)
@@ -583,7 +620,7 @@ class ProfileCompletionViewModel @Inject constructor(
     private fun ProfileCompletionState.hydrateContacts(
         contacts: List<EmergencyContact>
     ): ProfileCompletionState {
-        val editable = contacts.singleOrNull()
+        val editable = contacts.firstOrNull()
         return copy(
             emergencyContacts = contacts,
             emergencyContactsLoaded = true,
@@ -597,8 +634,7 @@ class ProfileCompletionViewModel @Inject constructor(
     private fun Set<String>.toggle(value: String): Set<String> =
         if (value in this) this - value else this + value
 
-    private fun Throwable.userMessage(): String =
-        message ?: "Something went wrong. Please try again."
+    private fun Throwable.userMessage(): String = "profile_operation_failed"
 
     private fun Double.displayNumber(): String =
         if (this % 1.0 == 0.0) toInt().toString() else toString()
@@ -635,6 +671,7 @@ class ProfileCompletionViewModel @Inject constructor(
         val REMOTE_STEPS = setOf(
             ProfileStep.MedicalConditions,
             ProfileStep.Allergies,
+            ProfileStep.CurrentMedications,
             ProfileStep.EmergencyContact
         )
     }

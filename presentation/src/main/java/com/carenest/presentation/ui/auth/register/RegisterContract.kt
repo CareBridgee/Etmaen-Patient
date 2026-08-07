@@ -4,6 +4,7 @@ import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
 
 data class RegisterState(
+    val mode: PersonalInformationMode = PersonalInformationMode.Registration,
     val firstName: String = "",
     val lastName: String = "",
     val dateOfBirth: String = "",
@@ -15,6 +16,7 @@ data class RegisterState(
 )
 
 sealed interface RegisterIntent {
+    data class ConfigureMode(val mode: PersonalInformationMode) : RegisterIntent
     data class FirstNameChanged(val firstName: String) : RegisterIntent
     data class LastNameChanged(val lastName: String) : RegisterIntent
     data class DateOfBirthChanged(val dateOfBirth: String) : RegisterIntent
@@ -27,4 +29,10 @@ sealed interface RegisterEffect {
     data object NavigateBack : RegisterEffect
     data object NavigateToWelcome : RegisterEffect
     data object NavigateToHome : RegisterEffect
+    data object NavigateAfterEdit : RegisterEffect
+}
+
+enum class PersonalInformationMode {
+    Registration,
+    EditProfile
 }

@@ -11,7 +11,9 @@ data class AllergyDto(
 
 @Serializable
 data class ProfileAllergyRequestDto(
-    val allergyId: String
+    val allergyId: String? = null,
+    val name: String? = null,
+    val type: String? = null
 )
 
 @Serializable

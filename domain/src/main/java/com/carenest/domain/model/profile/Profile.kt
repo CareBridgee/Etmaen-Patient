@@ -14,7 +14,9 @@ data class Profile(
     val mobilityStatus: String?,
     val mobilityNotes: String?,
     val previousSurgeries: String?,
-    val previousHospitalizations: String?
+    val previousHospitalizations: String?,
+    val isPrimary: Boolean = false,
+    val isDeleted: Boolean = false
 )
 
 data class PersonalInfoUpdate(

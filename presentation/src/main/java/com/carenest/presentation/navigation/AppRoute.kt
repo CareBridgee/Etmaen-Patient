@@ -44,6 +44,12 @@ sealed interface AppRoute : NavKey {
      data object Profile : AppRoute
 
      @Serializable
+     data object PersonalInfo : AppRoute
+
+     @Serializable
+     data object HealthProfile : AppRoute
+
+     @Serializable
      data object Wallet : AppRoute
 
      @Serializable
