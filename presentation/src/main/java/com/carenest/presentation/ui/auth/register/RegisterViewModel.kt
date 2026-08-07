@@ -51,6 +51,7 @@ class RegisterViewModel @Inject constructor(
 
     fun onEvent(event: RegisterIntent) {
         when (event) {
+            is RegisterIntent.ConfigureMode -> updateState { copy(mode = event.mode) }
             is RegisterIntent.FirstNameChanged -> edit(ProfileField.FirstName) {
                 copy(firstName = event.firstName.take(50))
             }
@@ -80,32 +81,37 @@ class RegisterViewModel @Inject constructor(
                 gender = snapshot.gender
             ).fold(
                 onSuccess = { user ->
-                    getDestination(user).fold(
-                        onSuccess = { destination ->
-                            updateState {
-                                copy(
-                                    isSubmitting = false,
-                                    validationErrors = emptyMap(),
-                                    errorMessage = null
+                    updateState {
+                        copy(
+                            isSubmitting = false,
+                            validationErrors = emptyMap(),
+                            errorMessage = null
+                        )
+                    }
+                    if (snapshot.mode == PersonalInformationMode.EditProfile) {
+                        sendEffect(RegisterEffect.NavigateAfterEdit)
+                    } else {
+                        getDestination(user).fold(
+                            onSuccess = { destination ->
+                                sendEffect(
+                                    if (destination == AuthenticatedDestination.Home) {
+                                        RegisterEffect.NavigateToHome
+                                    } else {
+                                        RegisterEffect.NavigateToWelcome(user.defaultProfileId)
+                                    }
                                 )
-                            }
-                            sendEffect(
-                                if (destination == AuthenticatedDestination.Home) {
-                                    RegisterEffect.NavigateToHome
-                                } else {
-                                    RegisterEffect.NavigateToWelcome(user.defaultProfileId)
+                            },
+                            onFailure = { error ->
+                                updateState {
+                                    copy(
+                                        isSubmitting = false,
+                                        errorMessage = error.message
+                                            ?: "Unable to load your profile"
+                                    )
                                 }
-                            )
-                        },
-                        onFailure = { error ->
-                            updateState {
-                                copy(
-                                    isSubmitting = false,
-                                    errorMessage = error.message ?: "Unable to load your profile"
-                                )
                             }
-                        }
-                    )
+                        )
+                    }
                 },
                 onFailure = { error ->
                     val validation = error as? ProfileValidationException

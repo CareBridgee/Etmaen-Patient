@@ -1,5 +1,6 @@
 package com.carenest.domain.repository
 
+import com.carenest.domain.model.settings.ThemeMode
 import kotlinx.coroutines.flow.Flow
 
 
@@ -14,12 +15,6 @@ interface SettingsRepository {
     suspend fun updateLanguage(languageCode: String)
     fun getLanguage(): Flow<String>
 
-    suspend fun updateDarkMode(isDark: Boolean)
-    fun getDarkMode(): Flow<Boolean>
-
-    suspend fun updateEmailUpdates(enabled: Boolean)
-    fun getEmailUpdates(): Flow<Boolean>
-
-    suspend fun updateSmsAlerts(enabled: Boolean)
-    fun getSmsAlerts(): Flow<Boolean>
+    suspend fun updateThemeMode(themeMode: ThemeMode)
+    fun getThemeMode(): Flow<ThemeMode>
 }

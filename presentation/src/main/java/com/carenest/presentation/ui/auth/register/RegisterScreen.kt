@@ -1,5 +1,6 @@
 package com.carenest.presentation.ui.auth.register
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,20 +56,32 @@ fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onNavigateToWelcome: (String?) -> Unit,
     onNavigateHome: () -> Unit,
+    mode: PersonalInformationMode = PersonalInformationMode.Registration,
+    onEditComplete: () -> Unit = onNavigateBack,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(mode) {
+        viewModel.onEvent(RegisterIntent.ConfigureMode(mode))
+    }
+
+    BackHandler(enabled = mode == PersonalInformationMode.EditProfile) {
+        viewModel.onEvent(RegisterIntent.BackClicked)
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             RegisterEffect.NavigateBack -> onNavigateBack()
             is RegisterEffect.NavigateToWelcome -> onNavigateToWelcome(effect.profileId)
             RegisterEffect.NavigateToHome -> onNavigateHome()
+            RegisterEffect.NavigateAfterEdit -> onEditComplete()
         }
     }
 
     RegisterScreenContent(
         state = state,
+        mode = mode,
         onEvent = viewModel::onEvent
     )
 }
@@ -76,13 +90,25 @@ fun RegisterScreen(
 @Composable
 internal fun RegisterScreenContent(
     state: RegisterState,
+    mode: PersonalInformationMode = PersonalInformationMode.Registration,
     onEvent: (RegisterIntent) -> Unit
 ) {
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
     ScreenTopBar(
-        title = stringResource(R.string.welcome_topbar_title),
-        showLeadingIcon = false
+        title = stringResource(
+            if (mode == PersonalInformationMode.EditProfile) {
+                R.string.personal_info_title
+            } else {
+                R.string.welcome_topbar_title
+            }
+        ),
+        showLeadingIcon = mode == PersonalInformationMode.EditProfile,
+        onLeadingClick = if (mode == PersonalInformationMode.EditProfile) {
+            { onEvent(RegisterIntent.BackClicked) }
+        } else {
+            null
+        }
     )
 
     if (state.isInitializing) {
@@ -97,9 +123,10 @@ internal fun RegisterScreenContent(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        RegisterProgressHeader()
-
-        Spacer(modifier = Modifier.height(24.dp))
+        if (mode == PersonalInformationMode.Registration) {
+            RegisterProgressHeader()
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
         Column(
             modifier = Modifier
@@ -201,7 +228,13 @@ internal fun RegisterScreenContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             PrimaryButton(
-                caption = stringResource(R.string.personal_info_continue_btn),
+                caption = stringResource(
+                    if (mode == PersonalInformationMode.EditProfile) {
+                        R.string.personal_info_save_btn
+                    } else {
+                        R.string.personal_info_continue_btn
+                    }
+                ),
                 onClick = { onEvent(RegisterIntent.ContinueClicked) },
                 modifier = Modifier.fillMaxWidth(),
                 isDisabled = state.isSubmitting,

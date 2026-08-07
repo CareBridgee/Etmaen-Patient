@@ -8,6 +8,8 @@ import com.carenest.data.source.remote.dto.profile.ProfileAllergyRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileAllergyResponseDto
 import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionResponseDto
+import com.carenest.data.source.remote.dto.profile.ProfileMedicationRequestDto
+import com.carenest.data.source.remote.dto.profile.ProfileMedicationResponseDto
 import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileResponseDto
 import com.carenest.data.utils.executeRequest
@@ -27,6 +29,28 @@ class ProfileApiServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
     private val json: Json
 ) : ProfileApiService {
+
+    override suspend fun getProfileMedications(profileId: String) =
+        httpClient.executeRequest<List<ProfileMedicationResponseDto>>(json) {
+            method = HttpMethod.Get
+            url { path("api/v1/profiles/$profileId/medications") }
+        }
+
+    override suspend fun addProfileMedication(
+        profileId: String,
+        request: ProfileMedicationRequestDto
+    ) = httpClient.executeRequest<ProfileMedicationResponseDto>(json) {
+        method = HttpMethod.Post
+        url { path("api/v1/profiles/$profileId/medications") }
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }
+
+    override suspend fun removeProfileMedication(profileId: String, medicationId: String) =
+        httpClient.executeUnitRequest(json) {
+            method = HttpMethod.Delete
+            url { path("api/v1/profiles/$profileId/medications/$medicationId") }
+        }
 
     override suspend fun getDefaultProfile() = httpClient.executeRequest<ProfileResponseDto>(json) {
         method = HttpMethod.Get

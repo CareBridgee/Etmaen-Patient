@@ -63,10 +63,14 @@ import java.util.Locale
 fun AddFamilyMemberScreenRoute(
     memberId: String? = null,
     onNavigateBack: () -> Unit,
+    onMemberSaved: () -> Unit = {},
     viewModel: AddFamilyMemberViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    val saveFailedMessage = stringResource(R.string.family_member_save_failed)
+    val loadFailedMessage = stringResource(R.string.family_member_load_failed)
+    val savedMessage = stringResource(R.string.family_member_saved)
 
     androidx.compose.runtime.LaunchedEffect(memberId) {
         if (!memberId.isNullOrBlank() && memberId != "null") {
@@ -78,10 +82,16 @@ fun AddFamilyMemberScreenRoute(
         when (effect) {
             AddFamilyMemberEffect.NavigateBack -> onNavigateBack()
             is AddFamilyMemberEffect.ShowError -> {
-                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                val message = if (effect.message == "family_member_load_failed") {
+                    loadFailedMessage
+                } else {
+                    saveFailedMessage
+                }
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
             AddFamilyMemberEffect.ShowSuccess -> {
-                Toast.makeText(context, "Family member saved successfully", Toast.LENGTH_SHORT).show()
+                onMemberSaved()
+                Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

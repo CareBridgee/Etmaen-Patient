@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.profile.ProfileField
+import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.profile_completion.components.ProfileLoadingShimmer
 import com.carenest.presentation.ui.profile_completion.steps.AllergiesScreen
@@ -32,14 +35,21 @@ import com.carenest.presentation.ui.profile_completion.validation.localizedMessa
 fun ProfileCompletionScreen(
     onNavigateBack: () -> Unit,
     onNavigateToHome: () -> Unit,
+    isEditMode: Boolean = false,
+    onEditComplete: () -> Unit = onNavigateBack,
     viewModel: ProfileCompletionViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isEditMode) {
+        if (isEditMode) viewModel.onEvent(ProfileCompletionIntent.ConfigureEditMode)
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             ProfileCompletionEffect.NavigateBack -> onNavigateBack()
             ProfileCompletionEffect.NavigateToHome -> onNavigateToHome()
+            ProfileCompletionEffect.NavigateAfterEdit -> onEditComplete()
         }
     }
     BackHandler { viewModel.onEvent(ProfileCompletionIntent.BackClicked) }
@@ -59,9 +69,9 @@ fun ProfileCompletionScreen(
             )
         }
 
-        state.errorMessage?.let { message ->
+        state.errorMessage?.let {
             Text(
-                text = "$message — tap to retry",
+                text = stringResource(R.string.profile_health_operation_failed_retry),
                 color = Theme.colors.onPrimary,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

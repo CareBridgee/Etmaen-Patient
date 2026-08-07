@@ -14,8 +14,7 @@ internal object PreferenceKeys {
     val REFRESH_TOKEN = stringPreferencesKey("REFRESH_TOKEN")
 
     val LANGUAGE_CODE = stringPreferencesKey("LANGUAGE_CODE")
+    val THEME_MODE = stringPreferencesKey("THEME_MODE")
     val IS_DARK_MODE = booleanPreferencesKey("IS_DARK_MODE")
-    val EMAIL_UPDATES = booleanPreferencesKey("EMAIL_UPDATES")
-    val SMS_ALERTS = booleanPreferencesKey("SMS_ALERTS")
     val USER_ID = stringPreferencesKey("USER_ID")
 }

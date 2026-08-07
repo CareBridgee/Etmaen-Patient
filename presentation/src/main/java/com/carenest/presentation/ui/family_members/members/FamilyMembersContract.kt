@@ -4,13 +4,14 @@ data class FamilyMemberItem(
     val id: String,
     val name: String,
     val relationship: String,
-    val lastCheckup: String = "N/A",
-    val upcomingService: String = "Checkup"
+    val lastCheckup: String = "",
+    val upcomingService: String = ""
 )
 
 data class FamilyMembersState(
     val members: List<FamilyMemberItem> = emptyList(),
     val isLoading: Boolean = false,
+    val loadFailed: Boolean = false,
     val deleteConfirmationMemberId: String? = null
 )
 
@@ -23,6 +24,7 @@ sealed interface FamilyMembersEvent {
     data object OnConfirmDeleteClicked : FamilyMembersEvent
     data object OnDismissDeleteDialogClicked : FamilyMembersEvent
     data object OnNotificationClicked : FamilyMembersEvent
+    data object OnRetryClicked : FamilyMembersEvent
 }
 
 sealed interface FamilyMembersEffect {
@@ -30,5 +32,7 @@ sealed interface FamilyMembersEffect {
     data object NavigateToAddFamilyMember : FamilyMembersEffect
     data class NavigateToEditPersonalInfo(val memberId: String) : FamilyMembersEffect
     data class NavigateToEditHealthProfile(val memberId: String) : FamilyMembersEffect
-    data class ShowToast(val message: String) : FamilyMembersEffect
+    data class ShowMessage(val message: FamilyMembersMessage) : FamilyMembersEffect
 }
+
+enum class FamilyMembersMessage { Deleted, DeleteFailed, NotificationsUnavailable }
