@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
     private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
     private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
     private val settingsRepository: SettingsRepository,
-    private val socketServiceController: SocketServiceController
+    private val socketServiceController: SocketServiceController,
     private val getSettingsUseCase: GetSettingsUseCase,
 ) : ViewModel(),
     StateHolder<MainState> by DefaultStateHolder(MainState()),
@@ -88,7 +88,7 @@ data class MainState(
 
 sealed interface MainIntent {
     data class ChangeLanguage(val languageCode: String) : MainIntent
-    data object ToggleTheme(val themeMode:ThemeMode) : MainIntent
+    data class ToggleTheme(val themeMode:ThemeMode) : MainIntent
     data object ResetApp : MainIntent
 }
 
