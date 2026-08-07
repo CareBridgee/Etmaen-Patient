@@ -158,7 +158,7 @@ fun AppNav(
                 entry<AppRoute.Register> {
                     RegisterScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToWelcome = { replaceWith(AppRoute.ProfileCompletion) },
+                        onNavigateToWelcome = { _ -> replaceWith(AppRoute.ProfileCompletion) },
                         onNavigateHome = { replaceWith(AppRoute.Home) }
                     )
                 }
