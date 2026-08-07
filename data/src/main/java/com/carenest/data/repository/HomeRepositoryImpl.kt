@@ -9,16 +9,15 @@ import com.carenest.data.source.remote.datasource.CareNestRemoteDatasource
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.domain.model.CreateServiceRequestParams
 import com.carenest.domain.model.ServiceDetailsModel
-import com.carenest.domain.model.history.ServiceHistory
 import com.carenest.domain.model.ServiceRequestResult
-import com.carenest.domain.model.home.Booking
+import com.carenest.domain.model.history.ServiceHistory
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.User
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.UserRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.first
 
 @Singleton
 class HomeRepositoryImpl @Inject constructor(
@@ -56,7 +55,6 @@ class HomeRepositoryImpl @Inject constructor(
             Result.failure(Exception("Service history details not found in database"))
         }
     }
-
     override suspend fun submitServiceRequest(params: CreateServiceRequestParams): Result<ServiceRequestResult> {
         val dto = CreateServiceRequestDto(
             profileId = params.profileId,

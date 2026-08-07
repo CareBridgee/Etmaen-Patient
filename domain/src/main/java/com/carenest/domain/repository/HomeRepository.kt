@@ -14,6 +14,5 @@ interface HomeRepository {
     suspend fun getServiceDetails(serviceId: String): Result<ServiceDetailsModel>
     suspend fun getServiceHistory(): Result<List<ServiceHistory>>
     suspend fun getServiceHistoryDetails(requestId: String): Result<ServiceHistory>
-    suspend fun getUserRequestsHistory(): Result<List<Booking>>
     suspend fun submitServiceRequest(params: CreateServiceRequestParams): Result<ServiceRequestResult>
 }
