@@ -50,9 +50,6 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.OnAvatarSelected -> updateAvatar(event)
             ProfileEvent.OnRetryClicked -> loadProfile(refresh = false)
             ProfileEvent.OnRefreshProfile -> loadProfile(refresh = currentState.profile != null)
-            is ProfileEvent.OnAppVersionAvailable -> updateState {
-                copy(appVersion = event.versionName.trim())
-            }
         }
     }
 

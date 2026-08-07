@@ -10,7 +10,6 @@ data class ProfileState(
     val greeting: ProfileGreeting = ProfileGreeting.Day,
     val activeDependentsCount: Int = 0,
     val paymentMethodInfo: String? = null,
-    val appVersion: String = "",
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isUpdatingAvatar: Boolean = false,
@@ -36,7 +35,6 @@ sealed interface ProfileEvent {
     ) : ProfileEvent
     data object OnRetryClicked : ProfileEvent
     data object OnRefreshProfile : ProfileEvent
-    data class OnAppVersionAvailable(val versionName: String) : ProfileEvent
 }
 
 sealed interface ProfileEffect {

@@ -81,7 +81,6 @@ import com.carenest.designsystem.R as RD
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNav(
-    appVersion: String,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val mainState by mainViewModel.state.collectAsStateWithLifecycle()
@@ -108,8 +107,9 @@ fun AppNav(
         val initialRoute: NavKey = AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
-        var familyMembersRefreshKey by remember { mutableStateOf(0) }
-        var profileRefreshKey by remember { mutableStateOf(0) }
+        // Retained destinations need an explicit trigger to reload after successful add/edit flows.
+        var familyMembersReloadTrigger by remember { mutableStateOf(0) }
+        var profileReloadTrigger by remember { mutableStateOf(0) }
 
         val backStack = rememberNavBackStack(
             savedStateConfiguration, initialRoute
@@ -210,8 +210,7 @@ fun AppNav(
 
                 entry<AppRoute.Profile> {
                     ProfileScreen(
-                        appVersion = appVersion,
-                        refreshKey = profileRefreshKey,
+                        reloadTrigger = profileReloadTrigger,
                         onNavigateToPersonalInfo = { backStack.add(AppRoute.PersonalInfo) },
                         onNavigateToHealthProfile = { backStack.add(AppRoute.HealthProfile) },
                         onNavigateToFamilyMembers = { backStack.add(AppRoute.FamilyMembers) },
@@ -229,7 +228,7 @@ fun AppNav(
                         onNavigateHome = {},
                         mode = PersonalInformationMode.EditProfile,
                         onEditComplete = {
-                            profileRefreshKey += 1
+                            profileReloadTrigger += 1
                             if (backStack.size > 1) backStack.removeLastOrNull()
                         }
                     )
@@ -241,7 +240,7 @@ fun AppNav(
                         onNavigateToHome = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         isEditMode = true,
                         onEditComplete = {
-                            profileRefreshKey += 1
+                            profileReloadTrigger += 1
                             if (backStack.size > 1) backStack.removeLastOrNull()
                         }
                     )
@@ -342,11 +341,11 @@ fun AppNav(
                 entry<AppRoute.FamilyMembers> {
                     FamilyMembersScreen(
                         onNavigateBack = {
-                            profileRefreshKey += 1
+                            profileReloadTrigger += 1
                             if (backStack.size > 1) backStack.removeLastOrNull()
                         },
                         onNavigateToAddMember = { memberId -> backStack.add(AppRoute.AddFamilyMember(memberId)) },
-                        refreshKey = familyMembersRefreshKey
+                        reloadTrigger = familyMembersReloadTrigger
                     )
                 }
 
@@ -354,7 +353,7 @@ fun AppNav(
                     AddFamilyMemberScreenRoute(
                         memberId = route.memberId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMemberSaved = { familyMembersRefreshKey += 1 }
+                        onMemberSaved = { familyMembersReloadTrigger += 1 }
                     )
                 }
 

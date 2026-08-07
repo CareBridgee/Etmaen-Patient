@@ -65,7 +65,7 @@ import com.carenest.designsystem.components.dialog.CareNestDialog
 fun FamilyMembersScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToAddMember: (String?) -> Unit = {},
-    refreshKey: Int = 0,
+    reloadTrigger: Int = 0,
     viewModel: FamilyMembersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -74,7 +74,7 @@ fun FamilyMembersScreen(
     val deleteFailedMessage = stringResource(R.string.family_member_delete_failed)
     val notificationsUnavailable = stringResource(R.string.profile_notifications_unavailable)
 
-    androidx.compose.runtime.LaunchedEffect(refreshKey) {
+    androidx.compose.runtime.LaunchedEffect(reloadTrigger) {
         viewModel.loadFamilyMembers()
     }
 
@@ -272,7 +272,7 @@ fun FamilyMembersHeader(
             ) {
                 Icon(
                     painter = painterResource(id = RD.drawable.ic_arrow_back),
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = Theme.colors.primary,
                     modifier = Modifier.size(20.dp)
                 )

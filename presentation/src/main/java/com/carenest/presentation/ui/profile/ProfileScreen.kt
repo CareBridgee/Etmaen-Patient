@@ -67,8 +67,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun ProfileScreen(
-    appVersion: String = "",
-    refreshKey: Int = 0,
+    reloadTrigger: Int = 0,
     onNavigateToPersonalInfo: () -> Unit = {},
     onNavigateToFamilyMembers: () -> Unit = {},
     onNavigateToHealthProfile: () -> Unit = {},
@@ -88,6 +87,7 @@ fun ProfileScreen(
     val profileRefreshFailed = stringResource(R.string.profile_load_failed)
     val logoutFailed = stringResource(R.string.profile_logout_failed)
     val context = LocalContext.current
+    val appVersion = remember(context) { context.getAppVersionName() }
     val coroutineScope = rememberCoroutineScope()
     val avatarPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri ?: return@rememberLauncherForActivityResult
@@ -107,8 +107,7 @@ fun ProfileScreen(
         }
     }
 
-    LaunchedEffect(refreshKey) {
-        viewModel.onEvent(ProfileEvent.OnAppVersionAvailable(appVersion))
+    LaunchedEffect(reloadTrigger) {
         viewModel.onEvent(ProfileEvent.OnRefreshProfile)
     }
 
@@ -131,9 +130,15 @@ fun ProfileScreen(
 
     ProfileContent(
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        appVersion = appVersion
     )
 }
+
+@Suppress("DEPRECATION")
+private fun Context.getAppVersionName(): String = runCatching {
+    packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
+}.getOrDefault("")
 
 private data class SelectedAvatar(
     val fileName: String,
@@ -173,7 +178,8 @@ private const val MAX_AVATAR_BYTES = 10 * 1024 * 1024
 @Composable
 fun ProfileContent(
     state: ProfileState,
-    onEvent: (ProfileEvent) -> Unit
+    onEvent: (ProfileEvent) -> Unit,
+    appVersion: String = ""
 ) {
     HideTopBar()
     if (state.isLoading) {
@@ -243,9 +249,9 @@ fun ProfileContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (state.appVersion.isNotBlank()) {
+            if (appVersion.isNotBlank()) {
                 Text(
-                    text = stringResource(R.string.profile_app_version_dynamic, state.appVersion),
+                    text = stringResource(R.string.profile_app_version_dynamic, appVersion),
                     style = Theme.typography.body.small.copy(fontSize = 12.sp),
                     color = Theme.colors.secondaryFont.copy(alpha = 0.6f),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -345,7 +351,7 @@ fun ProfileAvatarSection(
                 modifier = Modifier
                     .size(120.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE8E5FA)),
+                    .background(Theme.colors.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 if (userAvatarUrl != null) {
@@ -358,7 +364,7 @@ fun ProfileAvatarSection(
                     Icon(
                         painter = painterResource(id = RD.drawable.ic_profile),
                         contentDescription = null,
-                        tint = Color(0xFF7168F6),
+                        tint = Theme.colors.primary,
                         modifier = Modifier.size(48.dp)
                     )
                 }
@@ -379,7 +385,7 @@ fun ProfileAvatarSection(
                 Icon(
                     imageVector = Icons.Outlined.Edit,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = Theme.colors.onPrimary,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -578,7 +584,7 @@ fun ProfileLogoutCard(onClick: () -> Unit) {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFFFFDAD6)),
+                    .background(Theme.colors.errorContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
