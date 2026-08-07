@@ -21,14 +21,20 @@ import com.carenest.designsystem.R as DR
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.wallet.components.*
 
 @Composable
 fun WalletScreen(
+    onNavigateBack: () -> Unit,
     onAddFunds: () -> Unit,
     onAddPaymentMethod: () -> Unit,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
+    ScreenTopBar(
+        title = stringResource(R.string.wallet_title),
+        onLeadingClick = onNavigateBack
+    )
     val state by viewModel.state.collectAsStateWithLifecycle()
     WalletContent(state, onAddFunds, onAddPaymentMethod)
 }

@@ -49,6 +49,12 @@ private class FakeUserRepository : UserRepository {
         return Result.success(user)
     }
 
+    override suspend fun uploadProfileImage(
+        fileName: String,
+        contentType: String,
+        bytes: ByteArray
+    ) = Result.success("https://example.com/profile.jpg")
+
     override suspend fun updateCurrentUser(update: UserUpdate): Result<User> {
         lastUpdate = update
         return Result.success(user)

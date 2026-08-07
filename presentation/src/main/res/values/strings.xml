@@ -53,6 +53,7 @@
   <string name="personal_info_account_type_family">Family</string>
   <string name="personal_info_account_type_personal">Personal</string>
   <string name="personal_info_continue_btn">Continue</string>
+  <string name="personal_info_save_btn">Save changes</string>
   <string name="profile_step_format">Step %1$d of %2$d</string>
   <string name="profile_onboarding_label">ONBOARDING</string>
   <string name="profile_health_profile">Health Profile</string>
@@ -133,7 +134,7 @@
   <string name="emergency_contact_relationship">Relationship</string>
   <string name="emergency_contact_relationship_hint">Select relationship</string>
   <string name="emergency_contact_phone">Phone Number</string>
-  <string name="emergency_contact_phone_hint">(555) 000-0000</string>
+  <string name="emergency_contact_phone_hint">0100 000 0000</string>
   <string name="emergency_contact_security">Your data is encrypted and only shared with medical professionals during active care sessions.</string>
   <string name="emergency_contact_multiple_unavailable">Multiple emergency contacts are saved. Editing is unavailable here until contact selection is supported.</string>
   <string name="emergency_contact_continue">Continue to Final Step</string>
@@ -208,6 +209,8 @@
   <string name="service_details_information_note">Please note: A brief health questionnaire is required before the arrival of your specialist to ensure safety.</string>
   <string name="service_details_request_button">Request This Service</string>
   <string name="home_ai_powered">AI POWERED</string>
+  <string name="home_greeting_name">Hi, %1$s</string>
+  <string name="home_greeting_generic">Hi</string>
   <string name="home_ai_title">AI Health Assessment</string>
   <string name="home_ai_description">Describe your symptoms, get matched instantly with specialists.</string>
   <string name="home_ai_start_chat">Start Chat</string>
@@ -286,8 +289,14 @@
 
 
   <!-- Search For Nurse -->
-  <string name="profile_greeting">Good morning, Elena</string>
-  <string name="profile_primary_caregiver">Primary Caregiver</string>
+  <string name="profile_greeting">Good morning</string>
+  <string name="profile_primary_caregiver">Primary profile</string>
+  <string name="profile_greeting_morning">Good morning, %1$s</string>
+  <string name="profile_greeting_day">Good afternoon, %1$s</string>
+  <string name="profile_greeting_evening">Good evening, %1$s</string>
+  <string name="profile_greeting_morning_generic">Good morning</string>
+  <string name="profile_greeting_day_generic">Good afternoon</string>
+  <string name="profile_greeting_evening_generic">Good evening</string>
   <string name="profile_personal_info_title">Personal Info</string>
   <string name="profile_personal_info_subtitle">Update your account details</string>
   <string name="profile_health_profile_title">Health Profile</string>
@@ -301,7 +310,16 @@
   <string name="profile_settings_title">Settings</string>
   <string name="profile_settings_subtitle">Security &amp; App preferences</string>
   <string name="profile_logout_title">Logout</string>
-  <string name="profile_app_version">Serene Care v2.4.1</string>
+  <string name="profile_app_version">CareNest v%1$s</string>
+  <string name="profile_load_failed">We couldn\'t load your profile. Check your connection and try again.</string>
+  <string name="profile_load_error_title">Unable to load your profile</string>
+  <string name="profile_load_error_description">Please check your internet connection and try again.</string>
+  <string name="retry">Retry</string>
+  <string name="profile_notifications_unavailable">Notifications are not available in this version.</string>
+  <string name="profile_avatar_updated">Profile photo updated.</string>
+  <string name="profile_avatar_update_failed">Unable to update the profile photo.</string>
+  <string name="profile_logout_failed">Unable to log out. Please try again.</string>
+  <string name="profile_avatar_content_description">Profile photo</string>
 
   <!-- Family Members Screen -->
   <string name="family_members_screen_title">Family Members</string>
@@ -318,11 +336,14 @@
   <string name="settings_section_app_preferences">App Preferences</string>
   <string name="settings_language_title">Language</string>
   <string name="settings_dark_mode_title">Dark Mode</string>
-  <string name="settings_section_notifications">Notifications</string>
-  <string name="settings_email_updates_title">Email Updates</string>
-  <string name="settings_sms_alerts_title">SMS Alerts</string>
+  <string name="settings_theme_title">Theme</string>
+  <string name="settings_select_theme_title">Select theme</string>
+  <string name="settings_theme_light">Light</string>
+  <string name="settings_theme_dark">Dark</string>
+  <string name="settings_theme_system">System</string>
   <string name="settings_section_security_privacy">Security &amp; Privacy</string>
-  <string name="settings_privacy_policy_title">Privacy Policy</string>
+  <string name="settings_security_privacy_description">Your privacy and security are important to CareNest.\n\n• Your personal and medical information is securely stored.\n• Your data is only used to provide healthcare services and improve your experience.\n• CareNest does not share your personal information with unauthorized third parties.\n• All communication with our services is encrypted whenever possible.</string>
+  <string name="settings_security_privacy_got_it">Got it</string>
   <string name="settings_select_language_title">Select Language</string>
   <string name="settings_language_english">English</string>
   <string name="settings_language_arabic">العربية</string>
@@ -346,7 +367,9 @@
   <string name="validation_medication_name">Enter the medication name</string>
   <string name="validation_mobility_required">Select a mobility status</string>
   <string name="validation_emergency_name_length">Enter a contact name between 2 and 100 characters</string>
-  <string name="validation_invalid_phone">Enter a valid phone number with 7 to 15 digits</string>
+  <string name="validation_phone_required">Phone number is required.</string>
+  <string name="validation_phone_length">Phone number must be 11 digits.</string>
+  <string name="validation_invalid_phone">Enter a valid Egyptian mobile number.</string>
   <string name="request_status">Request Status</string>
   <string name="searching_for_available">Searching for an available nurse…</string>
   <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.\n</string>
@@ -458,6 +481,7 @@
   <string name="save_changes_button">Save Changes</string>
   <string name="delete_family_member_title">Delete Family Member</string>
   <string name="delete_family_member_confirmation">Are you sure you want to delete this family member?</string>
+  <string name="remove">Remove</string>
   <string name="delete_family_member_success">Family member deleted successfully</string>
   <string name="phone_number_invalid_error">Please enter a valid phone number (e.g. +1234567890)</string>
   <string name="phone_number_required_error">Phone number is required</string>
@@ -470,4 +494,20 @@
   <string name="qr_code_header">Ready for Verification</string>
   <string name="qr_code_subtitle">Please show this QR code to your nurse when they arrive to begin the session safely.</string>
   <string name="qr_code_instructions">Ensure your screen brightness is turned up for better scanning.</string>
+  <string name="family_members_load_failed">Unable to load family members</string>
+  <string name="family_members_load_failed_description">Please check your internet connection and try again.</string>
+  <string name="family_member_phone">Phone Number</string>
+  <string name="family_member_phone_hint">0100 000 0000</string>
+  <string name="profile_app_version_dynamic">CareNest v%1$s</string>
+  <string name="settings_save_failed">Unable to save this setting. Please try again.</string>
+  <string name="settings_privacy_unavailable">No Privacy Policy destination is configured.</string>
+  <string name="settings_terms_unavailable">No Terms and Conditions destination is configured.</string>
+  <string name="settings_delete_account_unavailable">Account deletion is not available from Settings.</string>
+  <string name="settings_contact_support_unavailable">No support destination is configured.</string>
+  <string name="family_member_saved">Family member saved successfully.</string>
+  <string name="family_member_save_failed">Unable to save the family member.</string>
+  <string name="family_member_load_failed">Unable to load the family member.</string>
+  <string name="profile_health_operation_failed_retry">Unable to update the health profile — tap to retry.</string>
+  <string name="family_member_deleted">Family member deleted successfully.</string>
+  <string name="family_member_delete_failed">Unable to delete the family member.</string>
 </resources>

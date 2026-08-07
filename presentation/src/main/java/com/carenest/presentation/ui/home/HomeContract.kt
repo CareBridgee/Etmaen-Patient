@@ -13,7 +13,6 @@ sealed interface HomeIntent {
     data object ManageAllHistoryClicked : HomeIntent
     data class HistoryItemClicked(val serviceHistory: ServiceHistory) : HomeIntent
     data object RetryClicked : HomeIntent
-    data object NotificationClicked : HomeIntent
 }
 
 data class HomeState(
@@ -26,9 +25,6 @@ data class HomeState(
     val isError: Boolean = false,
     val errorMessage: String? = null
 ) {
-    val greetingName: String
-        get() = if (user?.name.isNullOrBlank()) "Hello" else "Hi, ${user.name}"
-
     val isSearchActive: Boolean
         get() = searchQuery.trim().isNotBlank()
 

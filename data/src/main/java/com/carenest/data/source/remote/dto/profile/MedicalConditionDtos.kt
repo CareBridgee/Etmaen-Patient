@@ -11,7 +11,9 @@ data class MedicalConditionDto(
 
 @Serializable
 data class ProfileMedicalConditionRequestDto(
-    val medicalConditionId: String
+    val medicalConditionId: String? = null,
+    val name: String? = null,
+    val description: String? = null
 )
 
 @Serializable

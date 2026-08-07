@@ -5,19 +5,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
-import com.carenest.domain.usecase.home.GetUserUseCase
+import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getUserUseCase: GetUserUseCase,
+    private val getCurrentUser: GetCurrentUserUseCase,
+    private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val getServicesUseCase: GetServicesUseCase,
     private val getServiceHistoryUseCase: GetUserRequestHistoryUseCase
 ) : ViewModel(),
@@ -29,6 +32,7 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
+        observeUser()
         loadHomeData()
     }
 
@@ -44,7 +48,14 @@ class HomeViewModel @Inject constructor(
             HomeIntent.ManageAllHistoryClicked -> sendEffect(HomeEffect.NavigateToHistory)
             is HomeIntent.HistoryItemClicked -> sendEffect(HomeEffect.NavigateToServiceHistoryDetails(event.serviceHistory.serviceRequestId))
             HomeIntent.RetryClicked -> loadHomeData()
-            HomeIntent.NotificationClicked -> sendEffect(HomeEffect.ShowToast("No new notifications"))
+        }
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            observeCurrentUser().collect { user ->
+                updateState { copy(user = user) }
+            }
         }
     }
 
@@ -68,10 +79,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 val user = userResult.getOrNull()
-                val services = servicesResult.getOrElse { err ->
-                    Log.e(TAG, "Services failed to load: ${err.message}", err)
-                    emptyList()
-                }
+                val services = servicesResult.getOrDefault(emptyList())
                 val booking = bookingResult.getOrNull() ?: emptyList()
 
                 val trimmedQuery = currentState.searchQuery.trim()

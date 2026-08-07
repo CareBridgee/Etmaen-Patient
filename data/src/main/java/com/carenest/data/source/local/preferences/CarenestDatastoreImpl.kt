@@ -44,14 +44,16 @@ class CarenestDatastoreImpl @Inject constructor (
     override val languageCode: Flow<String>
         get() = dataStore.data.map { it[PreferenceKeys.LANGUAGE_CODE] ?: "en" }
 
-    override val isDarkMode: Flow<Boolean>
-        get() = dataStore.data.map { it[PreferenceKeys.IS_DARK_MODE] ?: false }
-
-    override val emailUpdates: Flow<Boolean>
-        get() = dataStore.data.map { it[PreferenceKeys.EMAIL_UPDATES] ?: true }
-
-    override val smsAlerts: Flow<Boolean>
-        get() = dataStore.data.map { it[PreferenceKeys.SMS_ALERTS] ?: false }
+    override val themeMode: Flow<String>
+        get() = dataStore.data.map { preferences ->
+            preferences[PreferenceKeys.THEME_MODE] ?: when (
+                preferences[PreferenceKeys.IS_DARK_MODE]
+            ) {
+                true -> "DARK"
+                false -> "LIGHT"
+                null -> "SYSTEM"
+            }
+        }
 
     override val userId: Flow<String>
         get() = dataStore.data.map { it[PreferenceKeys.USER_ID]?: "Not Found UserId" }
@@ -80,26 +82,11 @@ class CarenestDatastoreImpl @Inject constructor (
         }
     }
 
-    override suspend fun setDarkMode(isDark: Boolean) {
+    override suspend fun setThemeMode(themeMode: String) {
         withContext(coroutineDispatcher) {
-            dataStore.edit {
-                it[PreferenceKeys.IS_DARK_MODE] = isDark
-            }
-        }
-    }
-
-    override suspend fun setEmailUpdates(enabled: Boolean) {
-        withContext(coroutineDispatcher) {
-            dataStore.edit {
-                it[PreferenceKeys.EMAIL_UPDATES] = enabled
-            }
-        }
-    }
-
-    override suspend fun setSmsAlerts(enabled: Boolean) {
-        withContext(coroutineDispatcher) {
-            dataStore.edit {
-                it[PreferenceKeys.SMS_ALERTS] = enabled
+            dataStore.edit { preferences ->
+                preferences[PreferenceKeys.THEME_MODE] = themeMode
+                preferences.remove(PreferenceKeys.IS_DARK_MODE)
             }
         }
     }

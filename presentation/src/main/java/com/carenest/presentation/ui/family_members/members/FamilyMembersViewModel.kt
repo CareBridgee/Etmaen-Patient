@@ -20,17 +20,14 @@ class FamilyMembersViewModel @Inject constructor(
     StateHolder<FamilyMembersState> by DefaultStateHolder(FamilyMembersState()),
     EffectPublisher<FamilyMembersEffect> by DefaultEffectPublisher() {
 
-    init {
-        loadFamilyMembers()
-    }
-
     fun loadFamilyMembers() {
+        if (currentState.isLoading) return
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
+            updateState { copy(isLoading = true, loadFailed = false) }
 
             val memberItems = mutableListOf<FamilyMemberItem>()
 
-            getFamilyMembersUseCase().onSuccess { members ->
+            getFamilyMembersUseCase().fold(onSuccess = { members ->
                 members.forEach { member ->
                     if (!member.isDeleted && memberItems.none { it.id == member.id }) {
                         val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
@@ -40,13 +37,16 @@ class FamilyMembersViewModel @Inject constructor(
                                 id = member.id,
                                 name = member.fullName,
                                 relationship = relationshipLabel,
-                                lastCheckup = "N/A",
-                                upcomingService = "Checkup"
+                                lastCheckup = "",
+                                upcomingService = ""
                             )
                         )
                     }
                 }
-            }
+            }, onFailure = {
+                updateState { copy(isLoading = false, loadFailed = true) }
+                return@launch
+            })
 
             updateState { copy(members = memberItems, isLoading = false) }
         }
@@ -57,13 +57,13 @@ class FamilyMembersViewModel @Inject constructor(
             updateState { copy(isLoading = true, deleteConfirmationMemberId = null) }
             deleteFamilyMemberUseCase(memberId).fold(
                 onSuccess = {
-                    sendEffect(FamilyMembersEffect.ShowToast("Family member deleted successfully"))
+                    updateState { copy(isLoading = false) }
+                    sendEffect(FamilyMembersEffect.ShowMessage(FamilyMembersMessage.Deleted))
                     loadFamilyMembers()
                 },
-                onFailure = { error ->
+                onFailure = {
                     updateState { copy(isLoading = false) }
-                    val msg = error.message ?: "Failed to delete family member"
-                    sendEffect(FamilyMembersEffect.ShowToast(msg))
+                    sendEffect(FamilyMembersEffect.ShowMessage(FamilyMembersMessage.DeleteFailed))
                 }
             )
         }
@@ -96,8 +96,11 @@ class FamilyMembersViewModel @Inject constructor(
                 updateState { copy(deleteConfirmationMemberId = null) }
             }
             FamilyMembersEvent.OnNotificationClicked -> {
-                // Notification handler
+                sendEffect(
+                    FamilyMembersEffect.ShowMessage(FamilyMembersMessage.NotificationsUnavailable)
+                )
             }
+            FamilyMembersEvent.OnRetryClicked -> loadFamilyMembers()
         }
     }
 }

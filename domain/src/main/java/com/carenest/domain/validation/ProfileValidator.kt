@@ -21,7 +21,6 @@ object ProfileValidator {
     private val allowedBloodTypes = setOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
     private val allowedGenders = setOf("MALE", "FEMALE")
     private val nameRegex = Regex("^[\\p{L}\\p{M}][\\p{L}\\p{M} .’'\\-]*$")
-    private val phoneRegex = Regex("^\\+?[0-9\\s\\-]{7,20}$")
 
     fun personalInfo(
         firstName: String,
@@ -165,17 +164,20 @@ object ProfileValidator {
             if (relationship == null) {
                 put(ProfileField.EmergencyRelationship, ProfileValidationError.Required)
             }
-            val digitsCount = trimmedPhone.count(Char::isDigit)
-            when {
-                trimmedPhone.isBlank() -> {
-                    put(ProfileField.EmergencyPhoneNumber, ProfileValidationError.Required)
-                    Unit
-                }
-                !phoneRegex.matches(trimmedPhone) || digitsCount !in 7..15 -> {
-                    put(ProfileField.EmergencyPhoneNumber, ProfileValidationError.InvalidPhone)
-                    Unit
-                }
-                else -> Unit
+            when (EgyptianPhoneNumberValidator.validate(trimmedPhone)) {
+                PhoneNumberValidationError.Required -> put(
+                    ProfileField.EmergencyPhoneNumber,
+                    ProfileValidationError.PhoneRequired
+                )
+                PhoneNumberValidationError.InvalidLength -> put(
+                    ProfileField.EmergencyPhoneNumber,
+                    ProfileValidationError.PhoneLength
+                )
+                PhoneNumberValidationError.InvalidFormat -> put(
+                    ProfileField.EmergencyPhoneNumber,
+                    ProfileValidationError.InvalidPhone
+                )
+                null -> Unit
             }
         }
         errors.throwIfNotEmpty()

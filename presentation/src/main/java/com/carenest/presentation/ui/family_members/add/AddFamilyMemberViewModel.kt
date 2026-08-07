@@ -8,6 +8,7 @@ import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.domain.usecase.family_members.CreateFamilyMemberUseCase
 import com.carenest.domain.usecase.family_members.GetFamilyMemberByIdUseCase
 import com.carenest.domain.usecase.family_members.UpdateFamilyMemberUseCase
+import com.carenest.domain.validation.EgyptianPhoneNumberValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -52,6 +53,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                         copy(
                             firstName = member.firstName.orEmpty(),
                             lastName = member.lastName.orEmpty(),
+                            phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(member.phoneNumber.orEmpty()),
                             relationship = relEnum,
                             dateOfBirth = member.dateOfBirth.orEmpty(),
                             gender = member.gender?.uppercase() ?: "MALE",
@@ -68,6 +70,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                 },
                 onFailure = {
                     updateState { copy(isLoadingData = false) }
+                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_load_failed"))
                 }
             )
         }
@@ -85,6 +88,15 @@ class AddFamilyMemberViewModel @Inject constructor(
             is AddFamilyMemberEvent.LastNameChanged -> {
                 val err = if (event.value.trim().isBlank()) "Last name is required" else null
                 updateState { copy(lastName = event.value, lastNameError = err) }
+            }
+            is AddFamilyMemberEvent.PhoneNumberChanged -> {
+                val phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(event.value)
+                updateState {
+                    copy(
+                        phoneNumber = phoneNumber,
+                        phoneNumberError = EgyptianPhoneNumberValidator.validate(phoneNumber)
+                    )
+                }
             }
             is AddFamilyMemberEvent.DateOfBirthChanged -> {
                 val err = if (event.value.trim().isBlank()) "Date of birth is required" else null
@@ -127,6 +139,7 @@ class AddFamilyMemberViewModel @Inject constructor(
 
     private fun submitForm() {
         val currentState = state.value
+        if (currentState.isSubmitting || currentState.isLoadingData) return
         var hasError = false
 
         if (currentState.relationship == null) {
@@ -139,6 +152,10 @@ class AddFamilyMemberViewModel @Inject constructor(
         }
         if (currentState.lastName.trim().isBlank()) {
             updateState { copy(lastNameError = "Last name is required") }
+            hasError = true
+        }
+        EgyptianPhoneNumberValidator.validate(currentState.phoneNumber)?.let { error ->
+            updateState { copy(phoneNumberError = error) }
             hasError = true
         }
         if (currentState.dateOfBirth.trim().isBlank()) {
@@ -168,6 +185,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                 relationship = relStr,
                 firstName = currentState.firstName.trim(),
                 lastName = currentState.lastName.trim(),
+                phoneNumber = currentState.phoneNumber,
                 dateOfBirth = currentState.dateOfBirth.trim(),
                 gender = currentState.gender,
                 bloodType = currentState.bloodType.ifBlank { null },
@@ -192,11 +210,10 @@ class AddFamilyMemberViewModel @Inject constructor(
                     sendEffect(AddFamilyMemberEffect.ShowSuccess)
                     sendEffect(AddFamilyMemberEffect.NavigateBack)
                 },
-                onFailure = { error ->
+                onFailure = {
                     updateState { copy(isSubmitting = false) }
-                    val msg = error.message ?: "Failed to save family member"
-                    updateState { copy(errorMessage = msg) }
-                    sendEffect(AddFamilyMemberEffect.ShowError(msg))
+                    updateState { copy(errorMessage = "family_member_save_failed") }
+                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_save_failed"))
                 }
             )
         }

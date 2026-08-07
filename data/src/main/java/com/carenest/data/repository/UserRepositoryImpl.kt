@@ -24,6 +24,12 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun refreshCurrentUser(): Result<User> =
         sync(remote.getCurrentUser())
 
+    override suspend fun uploadProfileImage(
+        fileName: String,
+        contentType: String,
+        bytes: ByteArray
+    ): Result<String> = remote.uploadProfileImage(fileName, contentType, bytes).userFailure()
+
     override suspend fun updateCurrentUser(update: UserUpdate): Result<User> =
         sync(remote.updateCurrentUser(update.toDto()))
 
