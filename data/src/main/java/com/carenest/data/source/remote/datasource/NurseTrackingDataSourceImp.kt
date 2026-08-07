@@ -1,12 +1,18 @@
 package com.carenest.data.source.remote.datasource
 
+import android.util.Log
+import com.carenest.data.source.remote.service.NurseTrackingService
 import com.carenest.domain.model.tracking.NurseTrackingInfo
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class NurseTrackingDataSourceImp @Inject constructor(): NurseTrackingDataSource{
+class NurseTrackingDataSourceImp @Inject constructor(
+    private val nurseTrackingService: NurseTrackingService
+): NurseTrackingDataSource{
 
     override suspend fun fetchNurseTrackingInfo(requestId: String): NurseTrackingInfo {
+        // Keeping mock for now or you want me to connect all? 
+        // The user specifically asked for the qr code endpoint.
         delay(600) // simulate network latency
         return NurseTrackingInfo(
             nurseId = "nurse_001",
@@ -29,7 +35,7 @@ class NurseTrackingDataSourceImp @Inject constructor(): NurseTrackingDataSource{
     }
 
     override suspend fun fetchVerificationCode(requestId: String): String {
-        delay(1500) // simulate network delay
-        return "carenest://verify-visit?id=$requestId&token=VERIFY_${System.currentTimeMillis() / 1000}"
+        Log.e("NurseTrackingDataSourceImp", "fetchVerificationCode: ${nurseTrackingService.fetchVisitCode(requestId).getOrThrow().code}")
+        return nurseTrackingService.fetchVisitCode(requestId).getOrThrow().code
     }
 }
