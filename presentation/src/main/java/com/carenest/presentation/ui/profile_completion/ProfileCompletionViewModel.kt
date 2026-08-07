@@ -22,6 +22,7 @@ import com.carenest.domain.usecase.profile.SyncMedicationsUseCase
 import com.carenest.domain.usecase.profile.UpdateBasicHealthUseCase
 import com.carenest.domain.usecase.profile.UpdateMedicalHistoryUseCase
 import com.carenest.domain.usecase.profile.UpdateMobilityUseCase
+import com.carenest.domain.validation.EgyptianPhoneNumberValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -155,9 +156,9 @@ class ProfileCompletionViewModel @Inject constructor(
             is ProfileCompletionIntent.EmergencyPhoneNumberChanged ->
                 edit(ProfileField.EmergencyPhoneNumber) {
                     copy(
-                        emergencyPhoneNumber = event.phoneNumber
-                            .filter { it.isDigit() || it in "+ -" }
-                            .take(20)
+                        emergencyPhoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(
+                            event.phoneNumber
+                        )
                     )
                 }
             ProfileCompletionIntent.BackClicked -> navigateBack()

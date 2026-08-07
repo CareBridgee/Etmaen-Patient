@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -49,12 +50,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.R as RD
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 
 import android.widget.Toast
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.platform.LocalContext
 import com.carenest.designsystem.components.dialog.CareNestDialog
@@ -118,7 +120,7 @@ fun FamilyMembersContent(
 ) {
     HideTopBar()
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
@@ -126,8 +128,6 @@ fun FamilyMembersContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
@@ -139,63 +139,106 @@ fun FamilyMembersContent(
             )
 
             Spacer(modifier = Modifier.height(28.dp))
+        }
 
-            if (state.isLoading && state.members.isEmpty()) {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        when {
+            state.isLoading && state.members.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator(color = Theme.colors.primary)
                 }
-                return@Column
             }
-
-            if (state.loadFailed) {
-                Text(
-                    text = stringResource(R.string.family_members_load_failed),
-                    color = Theme.colors.error
+            state.loadFailed -> {
+                FamilyMembersLoadError(
+                    onRetry = { onEvent(FamilyMembersEvent.OnRetryClicked) },
+                    modifier = Modifier.weight(1f)
                 )
-                TextButton(onClick = { onEvent(FamilyMembersEvent.OnRetryClicked) }) {
-                    Text(stringResource(R.string.retry))
+            }
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.family_members_screen_title),
+                        style = Theme.typography.display.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            letterSpacing = (-0.5).sp
+                        ),
+                        color = Theme.colors.primaryFont
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.family_members_screen_subtitle),
+                        style = Theme.typography.body.large.copy(
+                            fontSize = 15.sp,
+                            lineHeight = 22.sp
+                        ),
+                        color = Theme.colors.secondaryFont
+                    )
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    state.members.forEach { member ->
+                        FamilyMemberCard(
+                            member = member,
+                            onEditPersonalClick = { onEvent(FamilyMembersEvent.OnEditPersonalInfoClicked(member.id)) },
+                            onEditHealthClick = { onEvent(FamilyMembersEvent.OnEditHealthProfileClicked(member.id)) },
+                            onDeleteClick = { onEvent(FamilyMembersEvent.OnDeleteMemberClicked(member.id)) }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    AddFamilyMemberDashedCard(
+                        onClick = { onEvent(FamilyMembersEvent.OnAddFamilyMemberClicked) }
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
-                return@Column
             }
+        }
+    }
+}
 
-            Text(
-                text = stringResource(R.string.family_members_screen_title),
-                style = Theme.typography.display.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp,
-                    letterSpacing = (-0.5).sp
-                ),
-                color = Theme.colors.primaryFont
+@Composable
+private fun FamilyMembersLoadError(
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EmptyState(
+                title = stringResource(R.string.family_members_load_failed),
+                description = stringResource(R.string.family_members_load_failed_description),
+                icon = Icons.Outlined.Refresh,
+                accentColor = Theme.colors.primary
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Theme.spacing.space28))
 
-            Text(
-                text = stringResource(R.string.family_members_screen_subtitle),
-                style = Theme.typography.body.large.copy(
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp
-                ),
-                color = Theme.colors.secondaryFont
+            PrimaryButton(
+                caption = stringResource(R.string.retry),
+                onClick = onRetry,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Theme.spacing.extraLarge)
             )
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            state.members.forEach { member ->
-                FamilyMemberCard(
-                    member = member,
-                    onEditPersonalClick = { onEvent(FamilyMembersEvent.OnEditPersonalInfoClicked(member.id)) },
-                    onEditHealthClick = { onEvent(FamilyMembersEvent.OnEditHealthProfileClicked(member.id)) },
-                    onDeleteClick = { onEvent(FamilyMembersEvent.OnDeleteMemberClicked(member.id)) }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            AddFamilyMemberDashedCard(
-                onClick = { onEvent(FamilyMembersEvent.OnAddFamilyMemberClicked) }
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

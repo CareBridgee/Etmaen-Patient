@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.family_members.add
 
 import com.carenest.domain.model.family_members.FamilyRelationship
+import com.carenest.domain.validation.PhoneNumberValidationError
 
 data class AddFamilyMemberState(
     val memberId: String? = null,
@@ -8,6 +9,7 @@ data class AddFamilyMemberState(
     val relationship: FamilyRelationship? = null,
     val firstName: String = "",
     val lastName: String = "",
+    val phoneNumber: String = "",
     val dateOfBirth: String = "",
     val gender: String = "MALE",
     val bloodType: String = "",
@@ -22,6 +24,7 @@ data class AddFamilyMemberState(
     val relationshipError: String? = null,
     val firstNameError: String? = null,
     val lastNameError: String? = null,
+    val phoneNumberError: PhoneNumberValidationError? = null,
     val dateOfBirthError: String? = null,
     val genderError: String? = null,
     val heightError: String? = null,
@@ -33,6 +36,7 @@ sealed interface AddFamilyMemberEvent {
     data class RelationshipSelected(val relationship: FamilyRelationship) : AddFamilyMemberEvent
     data class FirstNameChanged(val value: String) : AddFamilyMemberEvent
     data class LastNameChanged(val value: String) : AddFamilyMemberEvent
+    data class PhoneNumberChanged(val value: String) : AddFamilyMemberEvent
     data class DateOfBirthChanged(val value: String) : AddFamilyMemberEvent
     data class GenderSelected(val gender: String) : AddFamilyMemberEvent
     data class BloodTypeChanged(val value: String) : AddFamilyMemberEvent

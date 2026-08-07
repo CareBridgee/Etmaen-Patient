@@ -29,5 +29,7 @@ private fun ProfileValidationError.stringRes(): Int = when (this) {
     ProfileValidationError.MedicationNameRequired -> R.string.validation_medication_name
     ProfileValidationError.MobilityRequired -> R.string.validation_mobility_required
     ProfileValidationError.EmergencyNameLength -> R.string.validation_emergency_name_length
+    ProfileValidationError.PhoneRequired -> R.string.validation_phone_required
+    ProfileValidationError.PhoneLength -> R.string.validation_phone_length
     ProfileValidationError.InvalidPhone -> R.string.validation_invalid_phone
 }

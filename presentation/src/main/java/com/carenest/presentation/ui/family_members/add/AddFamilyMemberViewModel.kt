@@ -8,6 +8,7 @@ import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.domain.usecase.family_members.CreateFamilyMemberUseCase
 import com.carenest.domain.usecase.family_members.GetFamilyMemberByIdUseCase
 import com.carenest.domain.usecase.family_members.UpdateFamilyMemberUseCase
+import com.carenest.domain.validation.EgyptianPhoneNumberValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -52,6 +53,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                         copy(
                             firstName = member.firstName.orEmpty(),
                             lastName = member.lastName.orEmpty(),
+                            phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(member.phoneNumber.orEmpty()),
                             relationship = relEnum,
                             dateOfBirth = member.dateOfBirth.orEmpty(),
                             gender = member.gender?.uppercase() ?: "MALE",
@@ -86,6 +88,15 @@ class AddFamilyMemberViewModel @Inject constructor(
             is AddFamilyMemberEvent.LastNameChanged -> {
                 val err = if (event.value.trim().isBlank()) "Last name is required" else null
                 updateState { copy(lastName = event.value, lastNameError = err) }
+            }
+            is AddFamilyMemberEvent.PhoneNumberChanged -> {
+                val phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(event.value)
+                updateState {
+                    copy(
+                        phoneNumber = phoneNumber,
+                        phoneNumberError = EgyptianPhoneNumberValidator.validate(phoneNumber)
+                    )
+                }
             }
             is AddFamilyMemberEvent.DateOfBirthChanged -> {
                 val err = if (event.value.trim().isBlank()) "Date of birth is required" else null
@@ -143,6 +154,10 @@ class AddFamilyMemberViewModel @Inject constructor(
             updateState { copy(lastNameError = "Last name is required") }
             hasError = true
         }
+        EgyptianPhoneNumberValidator.validate(currentState.phoneNumber)?.let { error ->
+            updateState { copy(phoneNumberError = error) }
+            hasError = true
+        }
         if (currentState.dateOfBirth.trim().isBlank()) {
             updateState { copy(dateOfBirthError = "Date of birth is required") }
             hasError = true
@@ -170,6 +185,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                 relationship = relStr,
                 firstName = currentState.firstName.trim(),
                 lastName = currentState.lastName.trim(),
+                phoneNumber = currentState.phoneNumber,
                 dateOfBirth = currentState.dateOfBirth.trim(),
                 gender = currentState.gender,
                 bloodType = currentState.bloodType.ifBlank { null },

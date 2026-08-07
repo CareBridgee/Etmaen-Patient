@@ -40,6 +40,8 @@ enum class ProfileValidationError {
     MedicationNameRequired,
     MobilityRequired,
     EmergencyNameLength,
+    PhoneRequired,
+    PhoneLength,
     InvalidPhone
 }
 

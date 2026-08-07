@@ -284,7 +284,9 @@
   <string name="validation_medication_name">أدخل اسم الدواء</string>
   <string name="validation_mobility_required">اختر حالة الحركة</string>
   <string name="validation_emergency_name_length">أدخل اسم جهة اتصال من حرفين إلى 100 حرف</string>
-  <string name="validation_invalid_phone">أدخل رقم هاتف صحيحًا يحتوي على 7 إلى 15 رقمًا</string>
+  <string name="validation_phone_required">رقم الهاتف مطلوب.</string>
+  <string name="validation_phone_length">يجب أن يتكون رقم الهاتف من 11 رقمًا.</string>
+  <string name="validation_invalid_phone">أدخل رقم هاتف محمول مصري صحيح.</string>
   <string name="request_status">حالة الطلب</string>
   <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
   <string name="searching_describtion">نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.\n</string>
@@ -466,7 +468,10 @@
   <string name="profile_avatar_update_failed">تعذر تحديث صورة الملف الشخصي.</string>
   <string name="profile_logout_failed">تعذر تسجيل الخروج. حاول مرة أخرى.</string>
   <string name="profile_avatar_content_description">صورة الملف الشخصي</string>
-  <string name="family_members_load_failed">تعذر تحميل أفراد العائلة.</string>
+  <string name="family_members_load_failed">تعذر تحميل أفراد العائلة</string>
+  <string name="family_members_load_failed_description">يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.</string>
+  <string name="family_member_phone">رقم الهاتف</string>
+  <string name="family_member_phone_hint">0100 000 0000</string>
   <string name="profile_app_version_dynamic">CareNest v%1$s</string>
   <string name="settings_save_failed">تعذر حفظ هذا الإعداد. حاول مرة أخرى.</string>
   <string name="settings_privacy_unavailable">لم يتم إعداد وجهة لسياسة الخصوصية.</string>
