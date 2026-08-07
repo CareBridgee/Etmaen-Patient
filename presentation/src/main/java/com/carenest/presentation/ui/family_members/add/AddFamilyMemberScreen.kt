@@ -17,11 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -43,7 +41,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +53,6 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.core.validation.localizedMessage
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.profile_completion.components.ProfileScreenNavigation
 import java.text.SimpleDateFormat
@@ -205,23 +201,6 @@ fun AddFamilyMemberContent(
                     )
                 }
 
-                val phoneNumberError = state.phoneNumberError.localizedMessage()
-                CustomTextField(
-                    text = state.phoneNumber,
-                    onTextChange = { onEvent(AddFamilyMemberEvent.PhoneNumberChanged(it)) },
-                    title = stringResource(R.string.family_member_phone),
-                    hint = stringResource(R.string.family_member_phone_hint),
-                    leadingIcon = rememberVectorPainter(Icons.Outlined.Call),
-                    borderColor = Theme.colors.cardBackground,
-                    containerColor = Theme.colors.cardBackground,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    enabled = !state.isSubmitting && !state.isLoadingData,
-                    isError = phoneNumberError != null,
-                    errorMessage = phoneNumberError,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
                 CustomTextField(
                     text = state.dateOfBirth,
                     onTextChange = { onEvent(AddFamilyMemberEvent.DateOfBirthChanged(it)) },
@@ -284,7 +263,6 @@ fun AddFamilyMemberContent(
         val isInputValid = state.relationship != null &&
                 state.firstName.trim().isNotBlank() &&
                 state.lastName.trim().isNotBlank() &&
-                state.phoneNumber.isNotBlank() &&
                 state.dateOfBirth.trim().isNotBlank()
 
         ProfileScreenNavigation(
