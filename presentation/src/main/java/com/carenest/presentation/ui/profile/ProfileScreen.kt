@@ -29,7 +29,6 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -178,12 +177,7 @@ fun ProfileContent(
 ) {
     HideTopBar()
     if (state.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize().background(Theme.colors.backGround),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(color = Theme.colors.primary)
-        }
+        ProfileLoadingShimmer()
         return
     }
     if (state.errorMessage != null && state.profile == null) {
