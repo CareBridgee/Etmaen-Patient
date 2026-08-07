@@ -49,7 +49,6 @@ class CareNestApiServiceImpl @Inject constructor(
             }
         }
     }
-}
 
     override suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto> {
         return httpClient.executeRequest<ServiceRequestResponseDto>(json) {

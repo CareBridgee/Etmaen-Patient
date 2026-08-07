@@ -7,11 +7,11 @@ import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 import com.carenest.domain.model.home.Booking
 
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
+import com.carenest.domain.model.history.ServiceHistory
 
 interface CareNestRemoteDatasource {
     suspend fun getServices(): Result<List<ServiceDto>>
     suspend fun getServiceDetails(serviceId: String) : Result<ServiceDto>
-    suspend fun getUser() : Result<UserResponseDto>
-    suspend fun getUserRequestsHistory() : Result<List<Booking>>
+    suspend fun getUserRequestsHistory() : Result<List<ServiceHistoryDto>>
     suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto>
 }

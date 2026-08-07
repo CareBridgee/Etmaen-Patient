@@ -10,6 +10,5 @@ interface CareNestApiService {
      suspend fun getServices(): Result<List<ServiceDto>>
      suspend fun getServiceDetails(serviceId: String): Result<ServiceDto>
      suspend fun getServiceHistory(): Result<List<ServiceHistoryDto>>
-     suspend fun getUser(): Result<UserResponseDto>
      suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto>
 }
