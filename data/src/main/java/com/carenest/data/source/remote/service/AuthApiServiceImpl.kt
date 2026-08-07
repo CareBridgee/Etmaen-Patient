@@ -1,5 +1,6 @@
 package com.carenest.data.source.remote.service
 
+import com.carenest.data.di.AuthHttpClient
 import com.carenest.data.source.remote.dto.AuthResponse
 import com.carenest.data.source.remote.dto.LoginRequest
 import com.carenest.data.source.remote.dto.LoginResponse
@@ -16,7 +17,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class AuthApiServiceImpl @Inject constructor(
-    private val httpClient: HttpClient,
+    @AuthHttpClient private val httpClient: HttpClient,
     private val json: Json
 ) : AuthApiService {
 

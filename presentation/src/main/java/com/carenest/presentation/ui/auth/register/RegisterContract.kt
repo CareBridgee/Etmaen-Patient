@@ -25,6 +25,6 @@ sealed interface RegisterIntent {
 
 sealed interface RegisterEffect {
     data object NavigateBack : RegisterEffect
-    data object NavigateToWelcome : RegisterEffect
+    data class NavigateToWelcome(val profileId: String? = null) : RegisterEffect
     data object NavigateToHome : RegisterEffect
 }

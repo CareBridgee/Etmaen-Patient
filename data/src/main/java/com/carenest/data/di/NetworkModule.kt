@@ -71,6 +71,26 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @AuthHttpClient
+    fun provideAuthHttpClient(
+        json: Json,
+    ): HttpClient =
+        HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(json)
+            }
+
+            defaultRequest {
+                url(BuildConfig.base_url)
+            }
+
+            if (BuildConfig.DEBUG) {
+                install(SafeNetworkLogging)
+            }
+        }
+
+    @Provides
+    @Singleton
     @Named("locationiq")
     fun provideLocationIqHttpClient(
         json: Json,
@@ -105,6 +125,14 @@ internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: Carenest
                     contentType(ContentType.Application.Json)
                     setBody(RefreshRequest(refreshToken))
                 }
+
+                if (response.status.value == 401 || response.status.value == 403) {
+                    Log.e("NetworkModule", "Refresh token expired or invalid (Status ${response.status.value}). Logging out.")
+                    datastore.clearAuthTokens()
+                    datastore.setLoggedIn(false)
+                    return@refreshTokens null
+                }
+
                 if (!response.status.isSuccess()) return@refreshTokens null
 
                 val refreshed = response.body<TokenPairResponse>()
