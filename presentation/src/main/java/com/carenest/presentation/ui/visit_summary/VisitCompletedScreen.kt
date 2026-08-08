@@ -61,13 +61,9 @@ fun VisitCompletedScreen(
         }
     }
 
-//    Scaffold(
-//        containerColor = Theme.colors.backGround,
-//    ) { paddingValues ->
     Box(
         modifier = Modifier
             .fillMaxSize()
-            //.padding(paddingValues)
             .background(Theme.colors.backGround),
         contentAlignment = Alignment.Center,
     ) {
@@ -86,14 +82,17 @@ fun VisitCompletedScreen(
                 onIntent = viewModel::handleIntent,
             )
         }
-        //  }
 
         if (state.showRatingDialog) {
             Dialog(onDismissRequest = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) }) {
                 VisitRatingDialogContent(
                     selectedRating = state.selectedRating,
+                    reviewText = state.reviewText,
+                    isAnonymous = state.isAnonymous,
                     isSubmitting = state.isSubmittingRating,
                     onStarSelected = { viewModel.handleIntent(VisitCompletedIntent.OnStarSelected(it)) },
+                    onReviewTextChanged = { viewModel.handleIntent(VisitCompletedIntent.OnReviewTextChanged(it)) },
+                    onAnonymousChanged = { viewModel.handleIntent(VisitCompletedIntent.OnAnonymousChanged(it)) },
                     onSubmit = { viewModel.handleIntent(VisitCompletedIntent.OnSubmitRatingClicked) },
                     onDismiss = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) },
                 )
