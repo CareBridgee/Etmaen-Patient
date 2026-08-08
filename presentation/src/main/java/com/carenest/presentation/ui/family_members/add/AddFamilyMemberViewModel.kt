@@ -167,9 +167,11 @@ class AddFamilyMemberViewModel @Inject constructor(
             updateState { copy(lastNameError = "Last name is required") }
             hasError = true
         }
-        EgyptianPhoneNumberValidator.validate(currentState.phoneNumber)?.let { error ->
-            updateState { copy(phoneNumberError = error) }
-            hasError = true
+        if (currentState.phoneNumber.isNotBlank()) {
+            EgyptianPhoneNumberValidator.validate(currentState.phoneNumber)?.let { error ->
+                updateState { copy(phoneNumberError = error) }
+                hasError = true
+            }
         }
         if (currentState.dateOfBirth.trim().isBlank()) {
             updateState { copy(dateOfBirthError = "Date of birth is required") }
