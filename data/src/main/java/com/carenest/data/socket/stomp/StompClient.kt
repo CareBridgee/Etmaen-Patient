@@ -1,16 +1,24 @@
 package com.carenest.data.socket.stomp
 
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
+import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.client.request.header
+import io.ktor.client.request.url
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.close
+import io.ktor.websocket.readText
+import io.ktor.websocket.send
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,9 +31,11 @@ sealed interface StompClientEvent {
 
 @Singleton
 class StompClient @Inject constructor(
-    private val okHttpClient: OkHttpClient
+    private val httpClient: HttpClient
 ) {
-    private var webSocket: WebSocket? = null
+    private var session: DefaultClientWebSocketSession? = null
+    private var clientJob: Job? = null
+    private val clientScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _events = MutableSharedFlow<StompClientEvent>(
         extraBufferCapacity = 64,
@@ -33,82 +43,91 @@ class StompClient @Inject constructor(
     )
     val events: SharedFlow<StompClientEvent> = _events.asSharedFlow()
 
-    fun connect(url: String, token: String) {
+    fun connect(urlString: String, token: String) {
         disconnect()
 
-        val httpUrl = url.replace("wss", "https").replace("ws", "http").toHttpUrl()
-        val origin = "${httpUrl.scheme}://${httpUrl.host}${if (httpUrl.port != HttpUrl.defaultPort(httpUrl.scheme)) ":${httpUrl.port}" else ""}"
+        clientJob = clientScope.launch {
+            try {
+                val wsSession = httpClient.webSocketSession {
+                    url(urlString)
+                    header("Authorization", "Bearer $token")
+                    header("accept-version", "1.2,1.1,1.0")
+                    header("heart-beat", "10000,10000")
+                }
+                session = wsSession
 
-        // Some servers expect the token as a query parameter in the handshake
-        val encodedToken = java.net.URLEncoder.encode(token, "UTF-8")
-        val socketUrl = if (url.contains("?")) {
-            "$url&token=$encodedToken"
-        } else {
-            "$url?token=$encodedToken"
-        }
-
-        val request = Request.Builder()
-            .url(socketUrl)
-            .addHeader("Authorization", "Bearer $token")
-            .addHeader("Origin", origin)
-            .addHeader("User-Agent", "CareNest-Android")
-            .addHeader("X-Requested-With", "XMLHttpRequest")
-            .build()
-
-        webSocket = okHttpClient.newWebSocket(request, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                // Send the STOMP CONNECT frame immediately upon opening
+                // Send STOMP CONNECT frame immediately upon opening
                 val connectFrame = StompFrame(
                     command = StompFrame.CONNECT,
                     headers = mapOf(
                         "Authorization" to "Bearer $token",
                         "accept-version" to "1.2,1.1,1.0",
-                        "heart-beat" to "10000,10000",
-                        "host" to httpUrl.host
+                        "heart-beat" to "10000,10000"
                     )
                 )
-                webSocket.send(StompFrameParser.serialize(connectFrame))
-            }
+                wsSession.send(Frame.Text(StompFrameParser.serialize(connectFrame)))
 
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                val frame = StompFrameParser.parse(text)
-                if (frame != null) {
-                    _events.tryEmit(StompClientEvent.Message(frame))
-                    if (frame.command == StompFrame.CONNECTED) {
-                        _events.tryEmit(StompClientEvent.Opened)
+                for (frame in wsSession.incoming) {
+                    if (frame is Frame.Text) {
+                        val text = frame.readText()
+                        val stompFrame = StompFrameParser.parse(text)
+                        if (stompFrame != null) {
+                            _events.tryEmit(StompClientEvent.Message(stompFrame))
+                            if (stompFrame.command == StompFrame.CONNECTED) {
+                                _events.tryEmit(StompClientEvent.Opened)
+                            } else if (stompFrame.command == StompFrame.ERROR) {
+                                // Terminal ERROR frame — server closes connection after sending it
+                                _events.tryEmit(
+                                    StompClientEvent.Failed(
+                                        Exception(stompFrame.headers["message"] ?: "STOMP Error")
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
-            }
-
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 _events.tryEmit(StompClientEvent.Closed)
+            } catch (e: Exception) {
+                _events.tryEmit(StompClientEvent.Failed(e))
+            } finally {
+                session = null
             }
-
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                _events.tryEmit(StompClientEvent.Failed(t))
-            }
-        })
+        }
     }
 
-    fun send(frame: StompFrame): Boolean {
-        val socket = webSocket ?: return false
+    suspend fun send(frame: StompFrame): Boolean {
+        val currentSession = session ?: return false
         val text = StompFrameParser.serialize(frame)
-        return socket.send(text)
+        return try {
+            currentSession.send(Frame.Text(text))
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
-    /**
-     * Sends a raw text string directly over the WebSocket without STOMP frame serialization.
-     * Used for STOMP protocol-level heartbeats (single newline character).
-     */
-    fun sendRaw(text: String): Boolean {
-        val socket = webSocket ?: return false
-        return socket.send(text)
+    suspend fun sendRaw(text: String): Boolean {
+        val currentSession = session ?: return false
+        return try {
+            currentSession.send(Frame.Text(text))
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun disconnect() {
-        val socket = webSocket ?: return
-        webSocket = null
-        // Only request close — the onClosed callback will emit the Closed event.
-        socket.close(1000, "Normal closure")
+        val currentSession = session
+        session = null
+        clientJob?.cancel()
+        clientJob = null
+        if (currentSession != null) {
+            clientScope.launch {
+                try {
+                    currentSession.close(CloseReason(CloseReason.Codes.NORMAL, "Normal closure"))
+                } catch (ignored: Exception) {
+                }
+            }
+        }
     }
 }

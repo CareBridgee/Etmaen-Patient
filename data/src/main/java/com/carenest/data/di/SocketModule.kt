@@ -1,20 +1,25 @@
 package com.carenest.data.di
 
-import com.carenest.domain.socket.SocketConnectionManager
+import com.carenest.data.BuildConfig
 import com.carenest.data.socket.SocketManagerImpl
 import com.carenest.data.socket.logger.DefaultSocketLogger
 import com.carenest.data.socket.logger.SocketLogger
 import com.carenest.data.socket.stomp.StompClient
+import com.carenest.domain.socket.SocketConnectionManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import android.util.Log
-import com.carenest.data.BuildConfig
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import java.util.concurrent.TimeUnit
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.logging.ANDROID
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.pingInterval
+import kotlin.time.Duration.Companion.seconds
 import javax.inject.Singleton
 
 @Module
@@ -36,25 +41,25 @@ abstract class SocketModule {
     companion object {
         @Provides
         @Singleton
-        @SocketOkHttpClient
-        fun provideSocketOkHttpClient(): OkHttpClient {
-            val loggingInterceptor = HttpLoggingInterceptor { message ->
-                Log.d("CareNestSocket", message)
-            }.apply {
-                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        @SocketHttpClient
+        fun provideSocketHttpClient(): HttpClient {
+            return HttpClient(Android) {
+                install(WebSockets) {
+                    pingInterval = 10.seconds
+                }
+                if (BuildConfig.DEBUG) {
+                    install(Logging) {
+                        logger = Logger.ANDROID
+                        level = LogLevel.BODY
+                    }
+                }
             }
-            // A separate OkHttpClient for WebSockets with different timeout config than REST calls.
-            return OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .readTimeout(0, TimeUnit.MILLISECONDS) // Disable read timeout for WebSockets
-                .pingInterval(0, TimeUnit.MILLISECONDS) // Using STOMP heartbeats instead
-                .build()
         }
 
         @Provides
         @Singleton
-        fun provideStompClient(@SocketOkHttpClient okHttpClient: OkHttpClient): StompClient {
-            return StompClient(okHttpClient)
+        fun provideStompClient(@SocketHttpClient httpClient: HttpClient): StompClient {
+            return StompClient(httpClient)
         }
     }
 }

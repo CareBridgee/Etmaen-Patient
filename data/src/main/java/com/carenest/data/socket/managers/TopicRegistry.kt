@@ -24,7 +24,10 @@ class TopicRegistry @Inject constructor(
     // Flow of raw messages per subscription ID
     private val messageFlows = ConcurrentHashMap<String, MutableSharedFlow<String>>()
 
+    private var registryScope: CoroutineScope? = null
+
     fun init(scope: CoroutineScope) {
+        registryScope = scope
         scope.launch {
             stompClient.events.collect { event ->
                 if (event is StompClientEvent.Message) {
@@ -74,7 +77,9 @@ class TopicRegistry @Inject constructor(
                 "ack" to "auto"
             )
         )
-        stompClient.send(frame)
+        registryScope?.launch {
+            stompClient.send(frame)
+        }
     }
 
     private fun sendUnsubscribeFrame(subId: String) {
@@ -82,7 +87,9 @@ class TopicRegistry @Inject constructor(
             command = StompFrame.UNSUBSCRIBE,
             headers = mapOf("id" to subId)
         )
-        stompClient.send(frame)
+        registryScope?.launch {
+            stompClient.send(frame)
+        }
     }
 
     private fun resubscribeAll() {

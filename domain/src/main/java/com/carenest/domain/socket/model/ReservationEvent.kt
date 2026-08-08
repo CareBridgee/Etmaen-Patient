@@ -17,17 +17,26 @@ sealed class ReservationEvent {
     data class Unknown(override val reservationId: String, val type: String) : ReservationEvent()
 }
 
+data class NurseInfo(
+    val id: String,
+    val firstName: String,
+    val lastName: String,
+    val ratingAvg: Double,
+    val totalReviews: Int
+)
+
 data class NurseOfferResponse(
     val id: String,
     val serviceRequestId: String,
-    val nurseId: String,
+    val nurse: NurseInfo? = null,
     val proposedPrice: Double,
     val proposedDate: String,
     val proposedTime: String,
     val message: String?,
     val status: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val nurseId: String = nurse?.id ?: ""
 )
 
 data class OfferIdPayload(
