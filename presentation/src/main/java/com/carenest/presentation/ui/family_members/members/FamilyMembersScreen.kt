@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,11 +68,12 @@ import com.carenest.designsystem.components.dialog.CareNestDialog
 fun FamilyMembersScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToAddMember: (String?) -> Unit = {},
+    onNavigateToEditHealthProfile: (String) -> Unit = {},
     reloadTrigger: Int = 0,
+    onShowMessage: (String) -> Unit = {},
     viewModel: FamilyMembersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
     val deletedMessage = stringResource(R.string.family_member_deleted)
     val deleteFailedMessage = stringResource(R.string.family_member_delete_failed)
     val notificationsUnavailable = stringResource(R.string.profile_notifications_unavailable)
@@ -83,14 +87,14 @@ fun FamilyMembersScreen(
             is FamilyMembersEffect.NavigateBack -> onNavigateBack()
             is FamilyMembersEffect.NavigateToAddFamilyMember -> onNavigateToAddMember(null)
             is FamilyMembersEffect.NavigateToEditPersonalInfo -> onNavigateToAddMember(effect.memberId)
-            is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToAddMember(effect.memberId)
+            is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToEditHealthProfile(effect.memberId)
             is FamilyMembersEffect.ShowMessage -> {
                 val message = when (effect.message) {
                     FamilyMembersMessage.Deleted -> deletedMessage
                     FamilyMembersMessage.DeleteFailed -> deleteFailedMessage
                     FamilyMembersMessage.NotificationsUnavailable -> notificationsUnavailable
                 }
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                onShowMessage(message)
             }
         }
     }
@@ -469,14 +473,18 @@ fun FamilyMemberCard(
                             .weight(1f)
                             .height(44.dp),
                         shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
                     ) {
                         Text(
                             text = stringResource(R.string.family_members_edit_personal),
                             style = Theme.typography.body.small.copy(
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 13.sp
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp
                             ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
                             color = Theme.colors.surface
                         )
                     }
@@ -487,14 +495,18 @@ fun FamilyMemberCard(
                             .weight(1f)
                             .height(44.dp),
                         shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary.copy(alpha = 0.08f))
                     ) {
                         Text(
                             text = stringResource(R.string.family_members_edit_health),
                             style = Theme.typography.body.small.copy(
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 13.sp
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp
                             ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
                             color = Theme.colors.primaryFont
                         )
                     }
