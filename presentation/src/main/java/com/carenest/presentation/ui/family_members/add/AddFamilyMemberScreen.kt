@@ -50,6 +50,8 @@ import com.carenest.designsystem.components.dialog.SPDatePickerDialog
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.validation.EgyptianPhoneNumberValidator
+import com.carenest.domain.validation.PhoneNumberValidationError
 import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -64,10 +66,11 @@ fun AddFamilyMemberScreenRoute(
     memberId: String? = null,
     onNavigateBack: () -> Unit,
     onMemberSaved: () -> Unit = {},
+    onNavigateToCompleteProfile: (String) -> Unit = {},
+    onShowMessage: (String) -> Unit = {},
     viewModel: AddFamilyMemberViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
     val saveFailedMessage = stringResource(R.string.family_member_save_failed)
     val loadFailedMessage = stringResource(R.string.family_member_load_failed)
     val savedMessage = stringResource(R.string.family_member_saved)
@@ -81,17 +84,21 @@ fun AddFamilyMemberScreenRoute(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             AddFamilyMemberEffect.NavigateBack -> onNavigateBack()
+            is AddFamilyMemberEffect.NavigateToCompleteProfile -> {
+                onMemberSaved()
+                onNavigateToCompleteProfile(effect.memberId)
+            }
             is AddFamilyMemberEffect.ShowError -> {
-                val message = if (effect.message == "family_member_load_failed") {
-                    loadFailedMessage
-                } else {
-                    saveFailedMessage
+                val message = when (effect.message) {
+                    "family_member_load_failed" -> loadFailedMessage
+                    "family_member_save_failed" -> saveFailedMessage
+                    else -> effect.message
                 }
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                onShowMessage(message)
             }
             AddFamilyMemberEffect.ShowSuccess -> {
                 onMemberSaved()
-                Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
+                onShowMessage(savedMessage)
             }
         }
     }
@@ -217,6 +224,26 @@ fun AddFamilyMemberContent(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                CustomTextField(
+                    text = state.phoneNumber,
+                    onTextChange = { onEvent(AddFamilyMemberEvent.PhoneNumberChanged(it)) },
+                    title = "Phone Number (Optional)",
+                    hint = "e.g. 01012345678",
+                    borderColor = Theme.colors.cardBackground,
+                    containerColor = Theme.colors.cardBackground,
+                    enabled = !state.isSubmitting && !state.isLoadingData,
+                    isError = state.phoneNumberError != null,
+                    errorMessage = state.phoneNumberError?.let {
+                        when (it) {
+                            PhoneNumberValidationError.Required -> "Phone number is required"
+                            PhoneNumberValidationError.InvalidLength -> "Phone number must be 11 digits"
+                            PhoneNumberValidationError.InvalidFormat -> "Must start with 010, 011, 012, or 015"
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
                 Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                     BasicText(
                         text = "Gender",
@@ -260,10 +287,12 @@ fun AddFamilyMemberContent(
             )
         }
 
+        val isPhoneValid = state.phoneNumber.isBlank() || EgyptianPhoneNumberValidator.validate(state.phoneNumber) == null
         val isInputValid = state.relationship != null &&
                 state.firstName.trim().isNotBlank() &&
                 state.lastName.trim().isNotBlank() &&
-                state.dateOfBirth.trim().isNotBlank()
+                state.dateOfBirth.trim().isNotBlank() &&
+                isPhoneValid
 
         ProfileScreenNavigation(
             onBack = { onEvent(AddFamilyMemberEvent.BackClicked) },
