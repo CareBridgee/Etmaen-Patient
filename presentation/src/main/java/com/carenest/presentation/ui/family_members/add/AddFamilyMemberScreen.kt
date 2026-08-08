@@ -216,54 +216,30 @@ fun AddFamilyMemberContent(
                     onRelationshipSelected = { onEvent(AddFamilyMemberEvent.RelationshipSelected(it)) }
                 )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
-                ) {
-                    CustomTextField(
-                        text = state.firstName,
-                        onTextChange = { onEvent(AddFamilyMemberEvent.FirstNameChanged(it)) },
-                        title = stringResource(R.string.personal_info_first_name_title),
-                        hint = stringResource(R.string.personal_info_first_name_hint),
-                        borderColor = Theme.colors.cardBackground,
-                        containerColor = Theme.colors.cardBackground,
-                        enabled = !state.isSubmitting && !state.isLoadingData,
-                        isError = state.firstNameError != null,
-                        errorMessage = state.firstNameError.toLocalizedErrorMessage(),
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    CustomTextField(
-                        text = state.lastName,
-                        onTextChange = { onEvent(AddFamilyMemberEvent.LastNameChanged(it)) },
-                        title = stringResource(R.string.personal_info_last_name_title),
-                        hint = stringResource(R.string.personal_info_last_name_hint),
-                        borderColor = Theme.colors.cardBackground,
-                        containerColor = Theme.colors.cardBackground,
-                        enabled = !state.isSubmitting && !state.isLoadingData,
-                        isError = state.lastNameError != null,
-                        errorMessage = state.lastNameError.toLocalizedErrorMessage(),
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
                 CustomTextField(
-                    text = state.phoneNumber,
-                    onTextChange = { onEvent(AddFamilyMemberEvent.PhoneNumberChanged(it)) },
-                    title = "Phone Number (Optional)",
-                    hint = "e.g. 01012345678",
+                    text = state.firstName,
+                    onTextChange = { onEvent(AddFamilyMemberEvent.FirstNameChanged(it)) },
+                    title = stringResource(R.string.personal_info_first_name_title),
+                    hint = stringResource(R.string.personal_info_first_name_hint),
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
                     enabled = !state.isSubmitting && !state.isLoadingData,
-                    isError = state.phoneNumberError != null,
-                    errorMessage = when (state.phoneNumberError) {
-                        PhoneNumberValidationError.InvalidLength -> "Invalid phone number length"
-                        PhoneNumberValidationError.InvalidFormat -> "Invalid Egyptian phone number"
-                        PhoneNumberValidationError.Required -> null
-                        null -> null
-                    },
+                    isError = state.firstNameError != null,
+                    errorMessage = state.firstNameError.toLocalizedErrorMessage(),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                CustomTextField(
+                    text = state.lastName,
+                    onTextChange = { onEvent(AddFamilyMemberEvent.LastNameChanged(it)) },
+                    title = stringResource(R.string.personal_info_last_name_title),
+                    hint = stringResource(R.string.personal_info_last_name_hint),
+                    borderColor = Theme.colors.cardBackground,
+                    containerColor = Theme.colors.cardBackground,
+                    enabled = !state.isSubmitting && !state.isLoadingData,
+                    isError = state.lastNameError != null,
+                    errorMessage = state.lastNameError.toLocalizedErrorMessage(),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )

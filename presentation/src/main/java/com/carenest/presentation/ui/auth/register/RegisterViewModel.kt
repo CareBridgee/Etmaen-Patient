@@ -32,21 +32,33 @@ class RegisterViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val user = observeCurrentUser().first()
-            if (user == null) {
-                updateState {
-                    copy(isInitializing = false, errorMessage = "User information is unavailable")
-                }
-            } else {
-                updateState {
-                    copy(
-                        firstName = user.firstName.orEmpty(),
-                        lastName = user.lastName.orEmpty(),
-                        dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
-                        gender = user.gender?.uppercase().orEmpty(),
-                        profileImageUrl = user.profileImageUrl,
-                        isInitializing = false
-                    )
+            userRepository.refreshCurrentUser()
+        }
+        viewModelScope.launch {
+            observeCurrentUser().collect { user ->
+                if (user != null) {
+                    updateState {
+                        copy(
+                            firstName = user.firstName.orEmpty(),
+                            lastName = user.lastName.orEmpty(),
+                            dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
+                            gender = user.gender?.uppercase().orEmpty(),
+                            profileImageUrl = user.profileImageUrl,
+                            isInitializing = false,
+                            errorMessage = null
+                        )
+                    }
+                } else {
+                    updateState {
+                        copy(
+                            firstName = "",
+                            lastName = "",
+                            dateOfBirth = "",
+                            gender = "",
+                            profileImageUrl = null,
+                            isInitializing = false
+                        )
+                    }
                 }
             }
         }
