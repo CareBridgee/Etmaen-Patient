@@ -12,7 +12,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -43,7 +43,7 @@ abstract class SocketModule {
         @Singleton
         @SocketHttpClient
         fun provideSocketHttpClient(): HttpClient {
-            return HttpClient(Android) {
+            return HttpClient(OkHttp) {
                 install(WebSockets) {
                     pingInterval = 10.seconds
                 }
