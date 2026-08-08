@@ -18,6 +18,8 @@ import dagger.hilt.components.SingletonComponent
 
 import com.carenest.data.source.remote.service.FamilyMembersApiService
 import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
+import com.carenest.data.source.remote.service.NurseTrackingService
+import com.carenest.data.source.remote.service.NurseTrackingServiceImp
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,5 +41,8 @@ abstract class ApiServiceModule {
 
     @Binds
     abstract fun provideFamilyMembersApiService(impl: FamilyMembersApiServiceImpl): FamilyMembersApiService
+
+    @Binds
+    abstract fun provideNurseTrackingService(impl: NurseTrackingServiceImp): NurseTrackingService
 }
 

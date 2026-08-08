@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
@@ -87,7 +89,8 @@ private fun QrCodeScreenContent(
             style = Theme.typography.title.copy(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                fontSize = 22.sp
+                fontSize = 22.sp,
+                color = Theme.colors.primaryFont
             ),
             modifier = Modifier.fillMaxWidth()
         )
@@ -115,6 +118,32 @@ private fun QrCodeScreenContent(
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator(color = Theme.colors.primary)
+            } else if (state.error != null) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    BasicText(
+                        text = state.error,
+                        style = Theme.typography.body.small.copy(
+                            color = Theme.colors.error,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(Theme.spacing.medium))
+                    androidx.compose.material3.TextButton(
+                        onClick = { onEvent(QrCodeIntent.RetryClicked(state.requestId)) }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.home_error_retry),
+                            style = Theme.typography.body.small.copy(
+                                color = Theme.colors.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+                }
             } else if (state.qrData.isNotEmpty()) {
                 val bitmap = remember(state.qrData) {
                     generateQrCode(state.qrData, 512)

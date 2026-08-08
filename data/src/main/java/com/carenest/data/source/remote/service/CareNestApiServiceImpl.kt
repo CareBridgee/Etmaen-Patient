@@ -2,10 +2,11 @@ package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.ServiceDto
-import com.carenest.data.source.remote.dto.user.UserResponseDto
+import com.carenest.data.source.remote.dto.history.ReviewRequestDto
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
+import com.carenest.data.source.remote.dto.history.VisitSummaryResponseDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
@@ -13,7 +14,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
-import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -47,6 +47,25 @@ class CareNestApiServiceImpl @Inject constructor(
             url {
                 path("api/v1/service-requests/confirmed")
             }
+        }
+    }
+
+    override suspend fun getServiceRequestDetails(requestId: String): Result<VisitSummaryResponseDto> {
+        return httpClient.executeRequest<VisitSummaryResponseDto>(json) {
+            method = HttpMethod.Get
+            url {
+                path("api/v1/service-requests/$requestId")
+            }
+        }
+    }
+
+    override suspend fun submitReview(review: ReviewRequestDto): Result<Unit> {
+        return httpClient.executeRequest<Unit>(json) {
+            method = HttpMethod.Post
+            url {
+                path("api/v1/reviews")
+            }
+            setBody(review)
         }
     }
 
