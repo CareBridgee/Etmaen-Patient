@@ -13,6 +13,8 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.domain.repository.UserRepository
+import com.carenest.domain.model.profile.Gender
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +24,8 @@ class AddFamilyMemberViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val createFamilyMemberUseCase: CreateFamilyMemberUseCase,
     private val updateFamilyMemberUseCase: UpdateFamilyMemberUseCase,
-    private val getFamilyMemberByIdUseCase: GetFamilyMemberByIdUseCase
+    private val getFamilyMemberByIdUseCase: GetFamilyMemberByIdUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel(),
     StateHolder<AddFamilyMemberState> by DefaultStateHolder(AddFamilyMemberState()),
     EffectPublisher<AddFamilyMemberEffect> by DefaultEffectPublisher() {
@@ -56,7 +59,8 @@ class AddFamilyMemberViewModel @Inject constructor(
                             phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(member.phoneNumber.orEmpty()),
                             relationship = relEnum,
                             dateOfBirth = member.dateOfBirth.orEmpty(),
-                            gender = member.gender?.uppercase() ?: "MALE",
+                            gender = Gender.fromApi(member.gender).apiValue,
+                            profileImageUrl = member.profileImageUrl,
                             bloodType = member.bloodType.orEmpty(),
                             height = member.height?.toString().orEmpty(),
                             weight = member.weight?.toString().orEmpty(),
@@ -105,6 +109,15 @@ class AddFamilyMemberViewModel @Inject constructor(
             is AddFamilyMemberEvent.GenderSelected -> {
                 updateState { copy(gender = event.gender, genderError = null) }
             }
+            is AddFamilyMemberEvent.AvatarSelected -> updateState {
+                copy(
+                    avatarUri = event.uri,
+                    selectedAvatarFileName = event.fileName,
+                    selectedAvatarContentType = event.contentType,
+                    selectedAvatarBytes = event.bytes
+                )
+            }
+            AddFamilyMemberEvent.EditAvatarClicked -> sendEffect(AddFamilyMemberEffect.SelectAvatar)
             is AddFamilyMemberEvent.BloodTypeChanged -> {
                 updateState { copy(bloodType = event.value) }
             }
@@ -181,6 +194,21 @@ class AddFamilyMemberViewModel @Inject constructor(
             updateState { copy(isSubmitting = true) }
             val relStr = currentState.relationship?.backendValue ?: "Other"
 
+            val finalAvatarUrl = if (currentState.selectedAvatarBytes != null && currentState.selectedAvatarBytes.isNotEmpty()) {
+                val uploadResult = userRepository.uploadProfileImage(
+                    fileName = currentState.selectedAvatarFileName ?: "profile.jpg",
+                    contentType = currentState.selectedAvatarContentType ?: "image/jpeg",
+                    bytes = currentState.selectedAvatarBytes
+                )
+                uploadResult.getOrElse {
+                    updateState { copy(isSubmitting = false) }
+                    sendEffect(AddFamilyMemberEffect.ShowError("Unable to upload profile photo"))
+                    return@launch
+                }
+            } else {
+                currentState.profileImageUrl
+            }
+
             val input = FamilyMemberInput(
                 relationship = relStr,
                 firstName = currentState.firstName.trim(),
@@ -194,7 +222,8 @@ class AddFamilyMemberViewModel @Inject constructor(
                 mobilityStatus = currentState.mobilityStatus.ifBlank { null },
                 mobilityNotes = currentState.mobilityNotes.ifBlank { null },
                 previousSurgeries = currentState.previousSurgeries.ifBlank { null },
-                previousHospitalizations = currentState.previousHospitalizations.ifBlank { null }
+                previousHospitalizations = currentState.previousHospitalizations.ifBlank { null },
+                profileImageUrl = finalAvatarUrl
             )
 
             val currentId = currentState.memberId

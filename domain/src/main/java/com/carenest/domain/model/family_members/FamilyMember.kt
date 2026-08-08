@@ -15,6 +15,7 @@ data class FamilyMember(
     val mobilityNotes: String? = null,
     val previousSurgeries: String? = null,
     val previousHospitalizations: String? = null,
+    val profileImageUrl: String? = null,
     val isPrimary: Boolean = false,
     val isDeleted: Boolean = false,
     val createdAt: String? = null,
@@ -42,5 +43,6 @@ data class FamilyMemberInput(
     val mobilityStatus: String? = null,
     val mobilityNotes: String? = null,
     val previousSurgeries: String? = null,
-    val previousHospitalizations: String? = null
+    val previousHospitalizations: String? = null,
+    val profileImageUrl: String? = null
 )

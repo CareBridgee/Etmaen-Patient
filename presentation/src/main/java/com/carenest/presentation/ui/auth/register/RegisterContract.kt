@@ -9,6 +9,11 @@ data class RegisterState(
     val lastName: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",
+    val avatarUri: String? = null,
+    val profileImageUrl: String? = null,
+    val selectedAvatarBytes: ByteArray? = null,
+    val selectedAvatarFileName: String? = null,
+    val selectedAvatarContentType: String? = null,
     val isInitializing: Boolean = true,
     val isSubmitting: Boolean = false,
     val errorMessage: String? = null,
@@ -21,6 +26,13 @@ sealed interface RegisterIntent {
     data class LastNameChanged(val lastName: String) : RegisterIntent
     data class DateOfBirthChanged(val dateOfBirth: String) : RegisterIntent
     data class GenderChanged(val gender: String) : RegisterIntent
+    data class AvatarSelected(
+        val uri: String,
+        val fileName: String,
+        val contentType: String,
+        val bytes: ByteArray
+    ) : RegisterIntent
+    data object EditAvatarClicked : RegisterIntent
     data object BackClicked : RegisterIntent
     data object ContinueClicked : RegisterIntent
 }
@@ -30,6 +42,7 @@ sealed interface RegisterEffect {
     data class NavigateToWelcome(val profileId: String? = null) : RegisterEffect
     data object NavigateToHome : RegisterEffect
     data object NavigateAfterEdit : RegisterEffect
+    data object SelectAvatar : RegisterEffect
 }
 
 enum class PersonalInformationMode {

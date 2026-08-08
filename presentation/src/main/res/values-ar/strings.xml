@@ -496,4 +496,5 @@
   <string name="profile_health_operation_failed_retry">تعذر تحديث الملف الصحي — اضغط لإعادة المحاولة.</string>
   <string name="family_member_deleted">تم حذف فرد العائلة بنجاح.</string>
   <string name="family_member_delete_failed">تعذر حذف فرد العائلة.</string>
+  <string name="family_member_info_section">بيانات فرد العائلة</string>
 </resources>

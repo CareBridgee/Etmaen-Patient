@@ -47,6 +47,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.SegmentedControl
 import com.carenest.designsystem.components.dialog.SPDatePickerDialog
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.rememberCoroutineScope
+import com.carenest.presentation.ui.components.ProfileAvatarHeader
+import com.carenest.presentation.util.readAvatar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
@@ -78,6 +86,24 @@ fun AddFamilyMemberScreenRoute(
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
+    val avatarPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri ?: return@rememberLauncherForActivityResult
+        coroutineScope.launch {
+            runCatching { withContext(Dispatchers.IO) { context.readAvatar(uri) } }.onSuccess { image ->
+                viewModel.onEvent(
+                    AddFamilyMemberEvent.AvatarSelected(
+                        uri = uri.toString(),
+                        fileName = image.fileName,
+                        contentType = image.contentType,
+                        bytes = image.bytes
+                    )
+                )
+            }
+        }
+    }
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             AddFamilyMemberEffect.NavigateBack -> onNavigateBack()
@@ -93,6 +119,7 @@ fun AddFamilyMemberScreenRoute(
                 onMemberSaved()
                 Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
             }
+            AddFamilyMemberEffect.SelectAvatar -> avatarPicker.launch("image/*")
         }
     }
 
@@ -153,13 +180,23 @@ fun AddFamilyMemberContent(
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)
             ) {
                 BasicText(
-                    text = "Family Member Info",
+                    text = stringResource(R.string.family_member_info_section),
                     style = Theme.typography.title.copy(
                         color = Theme.colors.primaryFont,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ProfileAvatarHeader(
+                        avatarUrl = state.avatarUri ?: state.profileImageUrl,
+                        onEditAvatarClick = { onEvent(AddFamilyMemberEvent.EditAvatarClicked) }
+                    )
+                }
 
                 RelationshipDropdown(
                     relationship = state.relationship,

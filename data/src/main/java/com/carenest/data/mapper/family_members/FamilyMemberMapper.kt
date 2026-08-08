@@ -20,6 +20,7 @@ internal fun ProfileResponseDto.toDomain(): FamilyMember = FamilyMember(
     mobilityNotes = mobilityNotes,
     previousSurgeries = previousSurgeries,
     previousHospitalizations = previousHospitalizations,
+    profileImageUrl = profileImageUrl,
     isPrimary = isPrimary ?: false,
     isDeleted = isDeleted ?: false,
     createdAt = createdAt,
@@ -39,5 +40,6 @@ internal fun FamilyMemberInput.toDto(): ProfileRequestDto = ProfileRequestDto(
     mobilityStatus = mobilityStatus,
     mobilityNotes = mobilityNotes,
     previousSurgeries = previousSurgeries,
-    previousHospitalizations = previousHospitalizations
+    previousHospitalizations = previousHospitalizations,
+    profileImageUrl = profileImageUrl
 )

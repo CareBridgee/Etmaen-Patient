@@ -57,6 +57,7 @@ import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.presentation.ui.components.ProfileAvatarHeader
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.navigation.ScreenTopBar
@@ -346,50 +347,10 @@ fun ProfileAvatarSection(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(contentAlignment = Alignment.BottomEnd) {
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                if (userAvatarUrl != null) {
-                    AsyncImage(
-                        model = userAvatarUrl,
-                        contentDescription = stringResource(R.string.profile_avatar_content_description),
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = RD.drawable.ic_profile),
-                        contentDescription = null,
-                        tint = Theme.colors.primary,
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primary)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onEditAvatarClick
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = null,
-                    tint = Theme.colors.onPrimary,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
+        ProfileAvatarHeader(
+            avatarUrl = userAvatarUrl,
+            onEditAvatarClick = onEditAvatarClick
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

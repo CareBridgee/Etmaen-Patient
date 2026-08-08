@@ -510,4 +510,5 @@
   <string name="profile_health_operation_failed_retry">Unable to update the health profile — tap to retry.</string>
   <string name="family_member_deleted">Family member deleted successfully.</string>
   <string name="family_member_delete_failed">Unable to delete the family member.</string>
+  <string name="family_member_info_section">Family Member Info</string>
 </resources>

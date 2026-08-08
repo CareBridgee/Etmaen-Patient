@@ -17,13 +17,15 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import com.carenest.domain.repository.UserRepository
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val updateCurrentUser: UpdateCurrentUserUseCase,
-    private val getDestination: GetAuthenticatedDestinationUseCase
+    private val getDestination: GetAuthenticatedDestinationUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel(),
     StateHolder<RegisterState> by DefaultStateHolder(RegisterState()),
     EffectPublisher<RegisterEffect> by DefaultEffectPublisher() {
@@ -42,6 +44,7 @@ class RegisterViewModel @Inject constructor(
                         lastName = user.lastName.orEmpty(),
                         dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
                         gender = user.gender?.uppercase().orEmpty(),
+                        profileImageUrl = user.profileImageUrl,
                         isInitializing = false
                     )
                 }
@@ -64,6 +67,15 @@ class RegisterViewModel @Inject constructor(
             is RegisterIntent.GenderChanged -> edit(ProfileField.Gender) {
                 copy(gender = event.gender)
             }
+            is RegisterIntent.AvatarSelected -> updateState {
+                copy(
+                    avatarUri = event.uri,
+                    selectedAvatarFileName = event.fileName,
+                    selectedAvatarContentType = event.contentType,
+                    selectedAvatarBytes = event.bytes
+                )
+            }
+            RegisterIntent.EditAvatarClicked -> sendEffect(RegisterEffect.SelectAvatar)
             RegisterIntent.BackClicked -> sendEffect(RegisterEffect.NavigateBack)
             RegisterIntent.ContinueClicked -> submitPersonalInfo()
         }
@@ -74,11 +86,26 @@ class RegisterViewModel @Inject constructor(
         val snapshot = currentState
         updateState { copy(isSubmitting = true, errorMessage = null) }
         viewModelScope.launch {
+            val finalAvatarUrl = if (snapshot.selectedAvatarBytes != null && snapshot.selectedAvatarBytes.isNotEmpty()) {
+                val uploadResult = userRepository.uploadProfileImage(
+                    fileName = snapshot.selectedAvatarFileName ?: "profile.jpg",
+                    contentType = snapshot.selectedAvatarContentType ?: "image/jpeg",
+                    bytes = snapshot.selectedAvatarBytes
+                )
+                uploadResult.getOrElse {
+                    updateState { copy(isSubmitting = false, errorMessage = it.message ?: "Unable to upload profile photo") }
+                    return@launch
+                }
+            } else {
+                snapshot.profileImageUrl
+            }
+
             updateCurrentUser(
                 firstName = snapshot.firstName,
                 lastName = snapshot.lastName,
                 dateOfBirth = snapshot.dateOfBirth,
-                gender = snapshot.gender
+                gender = snapshot.gender,
+                profileImageUrl = finalAvatarUrl
             ).fold(
                 onSuccess = { user ->
                     updateState {

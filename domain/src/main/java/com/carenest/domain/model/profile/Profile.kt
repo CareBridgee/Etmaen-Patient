@@ -15,6 +15,7 @@ data class Profile(
     val mobilityNotes: String?,
     val previousSurgeries: String?,
     val previousHospitalizations: String?,
+    val profileImageUrl: String? = null,
     val isPrimary: Boolean = false,
     val isDeleted: Boolean = false
 )

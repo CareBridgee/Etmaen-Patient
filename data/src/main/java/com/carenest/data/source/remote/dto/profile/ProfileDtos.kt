@@ -16,7 +16,8 @@ data class ProfileRequestDto(
     val mobilityStatus: String? = null,
     val mobilityNotes: String? = null,
     val previousSurgeries: String? = null,
-    val previousHospitalizations: String? = null
+    val previousHospitalizations: String? = null,
+    val profileImageUrl: String? = null
 )
 
 @Serializable
@@ -36,6 +37,7 @@ data class ProfileResponseDto(
     val mobilityNotes: String? = null,
     val previousSurgeries: String? = null,
     val previousHospitalizations: String? = null,
+    val profileImageUrl: String? = null,
     val isPrimary: Boolean? = null,
     val isDeleted: Boolean? = null,
     val createdAt: String? = null,
