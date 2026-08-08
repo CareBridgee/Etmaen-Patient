@@ -510,4 +510,16 @@
   <string name="profile_health_operation_failed_retry">Unable to update the health profile — tap to retry.</string>
   <string name="family_member_deleted">Family member deleted successfully.</string>
   <string name="family_member_delete_failed">Unable to delete the family member.</string>
+  <string name="family_member_info_section">Family Member Info</string>
+  <string name="family_member_phone_optional">Phone Number (Optional)</string>
+  <string name="family_member_relationship_label">Relationship</string>
+  <string name="phone_validation_required">Phone number is required</string>
+  <string name="phone_validation_invalid_length">Phone number must be 11 digits</string>
+  <string name="phone_validation_invalid_format">Must start with 010, 011, 012, or 015</string>
+  <string name="error_fill_required_fields">Please fill out all required fields correctly</string>
+  <string name="error_height_number">Height must be a number</string>
+  <string name="error_weight_number">Weight must be a number</string>
+  <string name="error_first_name_required">First name is required</string>
+  <string name="error_last_name_required">Last name is required</string>
+  <string name="error_dob_required">Date of birth is required</string>
 </resources>
