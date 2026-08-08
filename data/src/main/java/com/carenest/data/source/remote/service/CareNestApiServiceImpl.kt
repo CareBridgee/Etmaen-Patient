@@ -3,6 +3,7 @@ package com.carenest.data.source.remote.service
 import com.carenest.data.source.remote.dto.ServiceDto
 import com.carenest.data.source.remote.dto.history.ReviewRequestDto
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
+import com.carenest.data.source.remote.dto.history.VisitSummaryResponseDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
@@ -39,6 +40,15 @@ class CareNestApiServiceImpl @Inject constructor(
             method = HttpMethod.Get
             url {
                 path("api/v1/service-requests/confirmed")
+            }
+        }
+    }
+
+    override suspend fun getServiceRequestDetails(requestId: String): Result<VisitSummaryResponseDto> {
+        return httpClient.executeRequest<VisitSummaryResponseDto>(json) {
+            method = HttpMethod.Get
+            url {
+                path("api/v1/service-requests/$requestId")
             }
         }
     }
