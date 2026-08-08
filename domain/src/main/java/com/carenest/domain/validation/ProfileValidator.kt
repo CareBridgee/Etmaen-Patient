@@ -14,6 +14,7 @@ import com.carenest.domain.model.profile.ProfileValidationError
 import com.carenest.domain.model.profile.ProfileValidationException
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -198,10 +199,30 @@ object ProfileValidator {
         }
     }
 
+    private fun parseAnyDate(value: String): Date? {
+        val trimmed = value.trim()
+        if (trimmed.isBlank()) return null
+        val patterns = listOf(
+            "MM/dd/yyyy",
+            "yyyy-MM-dd",
+            "dd/MM/yyyy",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
+        for (pattern in patterns) {
+            val parser = SimpleDateFormat(pattern, Locale.US).apply {
+                isLenient = false
+                timeZone = UTC
+            }
+            val parsed = runCatching { parser.parse(trimmed) }.getOrNull()
+            if (parsed != null) return parsed
+        }
+        return null
+    }
+
     private fun validateDateOfBirth(value: String): ProfileValidationError? {
         if (value.isBlank()) return ProfileValidationError.Required
-        val date = runCatching { displayDateFormatter().parse(value.trim()) }.getOrNull()
-            ?: return ProfileValidationError.InvalidDate
+        val date = parseAnyDate(value) ?: return ProfileValidationError.InvalidDate
         val today = Calendar.getInstance(UTC).apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -227,7 +248,7 @@ object ProfileValidator {
     }
 
     private fun String.toBackendDate(): String {
-        val parsed = requireNotNull(displayDateFormatter().parse(trim()))
+        val parsed = parseAnyDate(this) ?: return trim()
         return backendDateFormatter().format(parsed)
     }
 
