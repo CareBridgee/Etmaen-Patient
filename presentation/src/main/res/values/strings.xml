@@ -458,6 +458,8 @@
   <string name="visit_rating_star_content_description">%1$d star</string>
   <string name="visit_rating_submit_button">Submit</string>
   <string name="visit_rating_skip_button">Skip</string>
+  <string name="visit_rating_submit_anonymous">Submit anonymously</string>
+  <string name="visit_rating_comment_hint">Share your experience...</string>
 
 
   <!-- Emergency Assistance -->
