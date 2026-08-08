@@ -26,7 +26,11 @@ sealed interface AppRoute : NavKey {
      data object Register : AppRoute
 
      @Serializable
-     data object ProfileCompletion : AppRoute
+     data class ProfileCompletion(
+         val profileId: String? = null,
+         val isEditMode: Boolean = false,
+         val source: com.carenest.presentation.ui.profile_completion.ProfileCompletionSource = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.REGISTRATION
+     ) : AppRoute
 
      @Serializable
      data object Home : AppRoute
