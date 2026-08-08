@@ -1,9 +1,11 @@
 package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.remote.dto.ServiceDto
+import com.carenest.data.source.remote.dto.history.ReviewRequestDto
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
+import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import kotlinx.serialization.json.Json
@@ -38,6 +40,16 @@ class CareNestApiServiceImpl @Inject constructor(
             url {
                 path("api/v1/service-requests/confirmed")
             }
+        }
+    }
+
+    override suspend fun submitReview(review: ReviewRequestDto): Result<Unit> {
+        return httpClient.executeRequest<Unit>(json) {
+            method = HttpMethod.Post
+            url {
+                path("api/v1/reviews")
+            }
+            setBody(review)
         }
     }
 }
