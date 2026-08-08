@@ -1,7 +1,8 @@
 package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.remote.dto.tracking.CancelRequest
-import com.carenest.data.source.remote.dto.tracking.NurseOfferDto
+import com.carenest.data.source.remote.dto.tracking.NurseDetailsDto
+import com.carenest.data.source.remote.dto.tracking.ServiceRequestTrackingDto
 import com.carenest.data.source.remote.dto.tracking.VisitCodeResponseDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
@@ -38,11 +39,20 @@ class NurseTrackingServiceImp @Inject constructor(
         }
     }
 
-    override suspend fun fetchNurseOffer(offerId: String): Result<NurseOfferDto> {
-        return httpClient.executeRequest<NurseOfferDto>(json) {
+    override suspend fun fetchServiceRequest(requestId: String): Result<ServiceRequestTrackingDto> {
+        return httpClient.executeRequest<ServiceRequestTrackingDto>(json) {
             method = HttpMethod.Get
             url {
-                path("/api/v1/nurse-offers/$offerId")
+                path("/api/v1/service-requests/$requestId")
+            }
+        }
+    }
+
+    override suspend fun fetchNurseDetails(nurseId: String): Result<NurseDetailsDto> {
+        return httpClient.executeRequest<NurseDetailsDto>(json) {
+            method = HttpMethod.Get
+            url {
+                path("/api/v1/nurses/$nurseId")
             }
         }
     }
