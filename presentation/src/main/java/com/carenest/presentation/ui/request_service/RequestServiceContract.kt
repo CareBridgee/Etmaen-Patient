@@ -11,6 +11,9 @@ data class RequestServiceUiState(
     val selectedService: HealthcareService? = null,
     val description: String = "",
     val location: LocationDetails? = null,
+    val preferredDate: String = "",          // "yyyy-MM-dd"
+    val preferredHour: Int = 9,
+    val preferredMinute: Int = 0,
     val paymentMethods: List<PaymentMethod> = emptyList(),
     val selectedPaymentMethod: PaymentMethod? = null,
     val isSubmitting: Boolean = false,
@@ -34,6 +37,8 @@ sealed class RequestServiceIntent {
     data object OnHelpClicked : RequestServiceIntent()
     data object OnFillWithAiClicked : RequestServiceIntent()
     data class OnLocationDetailsReceived(val locationDetails: LocationDetails) : RequestServiceIntent()
+    data class OnPreferredDateChanged(val date: String) : RequestServiceIntent()
+    data class OnPreferredTimeChanged(val hour: Int, val minute: Int) : RequestServiceIntent()
 }
 
 sealed class RequestServiceEffect {
@@ -44,5 +49,7 @@ sealed class RequestServiceEffect {
     data class NavigateToServiceSelection(val currentServiceId: String?) : RequestServiceEffect()
     data object NavigateToAddressPicker : RequestServiceEffect()
     data object NavigateToMap : RequestServiceEffect()
-    data object RequestSubmittedSuccessfully : RequestServiceEffect()
+    data class RequestSubmittedSuccessfully(
+        val serviceRequestId: String,
+    ) : RequestServiceEffect()
 }

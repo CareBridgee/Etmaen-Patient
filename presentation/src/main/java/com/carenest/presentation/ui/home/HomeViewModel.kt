@@ -13,7 +13,6 @@ import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -78,6 +77,7 @@ class HomeViewModel @Inject constructor(
                     return@launch
                 }
 
+                val user = userResult.getOrNull()
                 val services = servicesResult.getOrDefault(emptyList())
                 val booking = bookingResult.getOrNull() ?: emptyList()
 
@@ -90,6 +90,7 @@ class HomeViewModel @Inject constructor(
 
                 updateState {
                     copy(
+                        user = user,
                         allServices = services,
                         filteredServices = filtered,
                         upcomingBooking = booking,

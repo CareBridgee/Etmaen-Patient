@@ -29,7 +29,7 @@ fun RequestServiceScreen(
     onNavigateToAddPatient: () -> Unit,
     onNavigateToServiceSelection: () -> Unit,
     onNavigateToAddressPicker: () -> Unit,
-    onSubmitRequestClick: () -> Unit,
+    onSubmitRequestClick: (serviceRequestId: String) -> Unit,
     selectServiceId : String? = null,
     mapResultLocation: LocationDetails? = null,
     onMapResultConsumed: () -> Unit = {},
@@ -81,9 +81,9 @@ fun RequestServiceScreen(
             is RequestServiceEffect.NavigateToServiceSelection -> onNavigateToServiceSelection()
             RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker()
             RequestServiceEffect.NavigateToMap -> onNavigateToMap()
-            RequestServiceEffect.RequestSubmittedSuccessfully -> {
+            is RequestServiceEffect.RequestSubmittedSuccessfully -> {
                 toastState.show(requestSuccessMessage)
-                onSubmitRequestClick()
+                onSubmitRequestClick(effect.serviceRequestId)
             }
         }
     }
@@ -100,7 +100,9 @@ fun RequestServiceScreen(
                 onFillWithAiClick = { viewModel.onIntent(RequestServiceIntent.OnFillWithAiClicked) },
                 onMapClick = { viewModel.onIntent(RequestServiceIntent.OnMapClicked) },
                 onMicClick = { speechToTextHelper.startListening() },
-                onSubmitClick = { viewModel.onIntent(RequestServiceIntent.OnSubmitClicked) }
+                onSubmitClick = { viewModel.onIntent(RequestServiceIntent.OnSubmitClicked) },
+                onDateChanged = { viewModel.onIntent(RequestServiceIntent.OnPreferredDateChanged(it)) },
+                onTimeChanged = { hour, minute -> viewModel.onIntent(RequestServiceIntent.OnPreferredTimeChanged(hour, minute)) }
             )
             ToastHost(state = toastState)
         }

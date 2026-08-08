@@ -1,21 +1,30 @@
 package com.carenest.data.source.remote.service
 
+import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.ServiceDto
 import com.carenest.data.source.remote.dto.history.ReviewRequestDto
+import com.carenest.data.source.remote.dto.user.UserResponseDto
+import com.carenest.data.source.remote.dto.CreateServiceRequestDto
+import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 import com.carenest.data.source.remote.dto.history.VisitSummaryResponseDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
 import io.ktor.http.path
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
 class CareNestApiServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
-    private val json: Json
+    private val json: Json,
+    private val datastore: CarenestDatastore
 ): CareNestApiService {
     override suspend fun getServices(): Result<List<ServiceDto>> {
         return httpClient.executeRequest<List<ServiceDto>>(json) {
@@ -60,6 +69,16 @@ class CareNestApiServiceImpl @Inject constructor(
                 path("api/v1/reviews")
             }
             setBody(review)
+        }
+    }
+}
+
+    override suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto> {
+        return httpClient.executeRequest<ServiceRequestResponseDto>(json) {
+            method = HttpMethod.Post
+            url { path("api/v1/service-requests") }
+            contentType(ContentType.Application.Json)
+            setBody(body)
         }
     }
 }

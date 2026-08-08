@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,35 +29,42 @@ import com.carenest.designsystem.components.payout.PayoutMethodCard
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.PaymentMethod
+import com.carenest.domain.socket.model.NurseOfferResponse
 import com.carenest.presentation.R
+import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.search_for_nurse.composables.ActiveNursesChip
 import com.carenest.presentation.ui.search_for_nurse.composables.NurseOfferCard
 import com.carenest.presentation.ui.search_for_nurse.composables.SearchingAnimation
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NurseSearchScreen(
+    reservationId: String,
+    serviceRequestId: String,
     onBack: () -> Unit,
     onMatched: (nurseId: String) -> Unit,
     viewModel: NurseSearchViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is NurseSearchEffect.NavigateToEnRoute -> onMatched(effect.nurseId)
-                NurseSearchEffect.NavigateBack -> onBack()
-            }
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is NurseSearchEffect.NavigateToEnRoute -> onMatched(effect.nurseId)
+            NurseSearchEffect.NavigateBack -> onBack()
+            is NurseSearchEffect.ShowError -> Unit // TODO: wire to snackbar
         }
+    }
+
+    LaunchedEffect(reservationId) {
+        viewModel.onIntent(NurseSearchIntent.StartSearching(reservationId, serviceRequestId))
     }
 
     NurseSearchContent(
         state = state,
         onBack = { viewModel.onIntent(NurseSearchIntent.CancelSearch) },
         onAccept = { viewModel.onIntent(NurseSearchIntent.AcceptOffer(it)) },
-        onDecline = { viewModel.onIntent(NurseSearchIntent.DeclineOffer(it)) })
+        onDecline = { viewModel.onIntent(NurseSearchIntent.DeclineOffer(it)) }
+    )
 
     if (state.showPaymentSheet) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -92,7 +98,6 @@ fun NurseSearchScreen(
                 )
                 Spacer(Modifier.height(16.dp))
                 PayoutInfoBanner(text = stringResource(com.carenest.designsystem.R.string.payment_info_banner))
-
                 Spacer(Modifier.height(24.dp))
                 PrimaryButton(
                     caption = stringResource(com.carenest.designsystem.R.string.payment_confirm_btn),
@@ -104,18 +109,18 @@ fun NurseSearchScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NurseSearchContent(
     state: NurseSearchState,
     onBack: () -> Unit,
-    onAccept: (id: String) -> Unit,
-    onDecline: (id: String) -> Unit
+    onAccept: (offerId: String) -> Unit,
+    onDecline: (offerId: String) -> Unit
 ) {
     val colors = Theme.colors
 
     Column(
-        modifier = Modifier.statusBarsPadding()
+        modifier = Modifier
+            .statusBarsPadding()
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -123,6 +128,7 @@ private fun NurseSearchContent(
 
         SearchingAnimation()
         Spacer(Modifier.height(16.dp))
+
         Text(
             stringResource(R.string.searching_for_available),
             style = Theme.typography.title,
@@ -142,59 +148,14 @@ private fun NurseSearchContent(
         Spacer(Modifier.height(16.dp))
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(state.nearbyNurses, key = { it.id }) { nurse ->
+            items(state.offers, key = { it.id }) { offer ->
                 NurseOfferCard(
-                    nurse = nurse,
-                    onAccept = { onAccept(nurse.id) },
-                    onDecline = { onDecline(nurse.id) }
+                    offer = offer,
+                    onAccept = { onAccept(offer.id) },
+                    onDecline = { onDecline(offer.id) }
                 )
+                Spacer(Modifier.height(12.dp))
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun Preview() {
-    SpTheme {
-        NurseSearchContent(
-            state = NurseSearchState(nearbyNurses = listOf(
-                NearbyNurse(
-                    id = "1",
-                    name = "TODO()",
-                    title = "TODO()",
-                    price = 1.0,
-                    rating = 1.0,
-                    reviewCount = 1,
-                    area = "TODO()",
-                    distanceKm = 1.0,
-                    avatarUrl = "TODO()"
-                ),
-                NearbyNurse(
-                    id = "2",
-                    name = "TODO()",
-                    title = "TODO()",
-                    price = 1.0,
-                    rating = 1.0,
-                    reviewCount = 1,
-                    area = "TODO()",
-                    distanceKm = 1.0,
-                    avatarUrl = "TODO()"
-                ),
-                NearbyNurse(
-                    id = "3",
-                    name = "TODO()",
-                    title = "TODO()",
-                    price = 1.0,
-                    rating = 1.0,
-                    reviewCount = 1,
-                    area = "TODO()",
-                    distanceKm = 1.0,
-                    avatarUrl = "TODO()"
-                )
-            )),
-            onBack = { },
-            onAccept = { },
-            onDecline = { })
     }
 }

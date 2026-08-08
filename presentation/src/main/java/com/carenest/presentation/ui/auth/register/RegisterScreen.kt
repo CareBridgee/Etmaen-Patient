@@ -54,7 +54,7 @@ import java.util.TimeZone
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToWelcome: () -> Unit,
+    onNavigateToWelcome: (String?) -> Unit,
     onNavigateHome: () -> Unit,
     mode: PersonalInformationMode = PersonalInformationMode.Registration,
     onEditComplete: () -> Unit = onNavigateBack,
@@ -73,7 +73,7 @@ fun RegisterScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             RegisterEffect.NavigateBack -> onNavigateBack()
-            RegisterEffect.NavigateToWelcome -> onNavigateToWelcome()
+            is RegisterEffect.NavigateToWelcome -> onNavigateToWelcome(effect.profileId)
             RegisterEffect.NavigateToHome -> onNavigateHome()
             RegisterEffect.NavigateAfterEdit -> onEditComplete()
         }

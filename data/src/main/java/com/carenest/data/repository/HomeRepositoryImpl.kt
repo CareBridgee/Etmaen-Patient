@@ -6,16 +6,18 @@ import com.carenest.data.mapper.toDomain
 import com.carenest.data.mapper.toServiceDetails
 import com.carenest.data.source.local.database.dao.ServiceHistoryDao
 import com.carenest.data.source.remote.datasource.CareNestRemoteDatasource
+import com.carenest.data.source.remote.dto.CreateServiceRequestDto
+import com.carenest.domain.model.CreateServiceRequestParams
 import com.carenest.domain.model.ServiceDetailsModel
+import com.carenest.domain.model.ServiceRequestResult
 import com.carenest.domain.model.history.ServiceHistory
-import com.carenest.domain.model.home.Booking
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.User
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.UserRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.first
 
 @Singleton
 class HomeRepositoryImpl @Inject constructor(
@@ -51,6 +53,30 @@ class HomeRepositoryImpl @Inject constructor(
             Result.success(entity.toDomain())
         } else {
             Result.failure(Exception("Service history details not found in database"))
+        }
+    }
+    override suspend fun submitServiceRequest(params: CreateServiceRequestParams): Result<ServiceRequestResult> {
+        val dto = CreateServiceRequestDto(
+            profileId = params.profileId,
+            serviceTypeId = params.serviceTypeId,
+            latitude = params.latitude,
+            longitude = params.longitude,
+            preferredDate = params.preferredDate,
+            preferredTime = String.format(
+                java.util.Locale.US,
+                "%02d:%02d:%02d",
+                params.preferredTime.hour,
+                params.preferredTime.minute,
+                params.preferredTime.second
+            ),
+            serviceDescription = params.serviceDescription,
+        )
+        return careNestRemoteDatasource.submitServiceRequest(dto).map { response ->
+            ServiceRequestResult(
+                serviceRequestId = response.serviceRequestId,
+                status = response.status,
+                nearbyNursesCount = response.nearbyNurses.size,
+            )
         }
     }
 }

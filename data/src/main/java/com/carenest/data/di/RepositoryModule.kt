@@ -50,9 +50,28 @@ import com.carenest.domain.repository.FamilyMembersRepository
 import com.carenest.data.source.remote.datasource.FamilyMembersDataSource
 import com.carenest.data.source.remote.datasource.FamilyMembersDataSourceImpl
 
+import com.carenest.data.repository.ChatSocketRepositoryImpl
+import com.carenest.data.repository.NotificationSocketRepositoryImpl
+import com.carenest.data.repository.ReservationSocketRepositoryImpl
+import com.carenest.domain.repository.ChatSocketRepository
+import com.carenest.domain.repository.NotificationSocketRepository
+import com.carenest.domain.repository.ReservationSocketRepository
+
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindReservationSocketRepository(impl: ReservationSocketRepositoryImpl): ReservationSocketRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindChatSocketRepository(impl: ChatSocketRepositoryImpl): ChatSocketRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationSocketRepository(impl: NotificationSocketRepositoryImpl): NotificationSocketRepository
 
     //region repository
     @Binds

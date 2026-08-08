@@ -4,6 +4,9 @@ import com.carenest.data.source.remote.dto.ServiceDto
 import com.carenest.data.source.remote.dto.history.ReviewRequestDto
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 import com.carenest.data.source.remote.dto.history.VisitSummaryResponseDto
+import com.carenest.data.source.remote.dto.user.UserResponseDto
+import com.carenest.data.source.remote.dto.CreateServiceRequestDto
+import com.carenest.data.source.remote.dto.ServiceRequestResponseDto
 
 interface CareNestApiService {
      suspend fun getServices(): Result<List<ServiceDto>>
@@ -11,4 +14,5 @@ interface CareNestApiService {
      suspend fun getServiceHistory(): Result<List<ServiceHistoryDto>>
      suspend fun getServiceRequestDetails(requestId: String): Result<VisitSummaryResponseDto>
      suspend fun submitReview(review: ReviewRequestDto): Result<Unit>
+     suspend fun submitServiceRequest(body: CreateServiceRequestDto): Result<ServiceRequestResponseDto>
 }

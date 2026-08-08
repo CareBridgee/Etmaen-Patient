@@ -72,6 +72,8 @@ dependencies {
 
     // Network
     implementation(libs.bundles.ktor)
+    implementation(libs.okhttp3)
+    implementation(libs.okhttp3.logging)
 
     // Coroutines
     implementation(libs.bundles.coroutines)
