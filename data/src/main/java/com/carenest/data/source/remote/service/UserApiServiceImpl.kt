@@ -16,6 +16,8 @@ import io.ktor.http.path
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+import com.carenest.data.source.remote.dto.user.FileUploadRequestDto
+
 class UserApiServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
     private val json: Json
@@ -33,23 +35,9 @@ class UserApiServiceImpl @Inject constructor(
     ): Result<String> = httpClient.executeRequest<Map<String, String>>(json) {
         method = HttpMethod.Post
         url { path("api/v1/upload") }
-        setBody(
-            MultiPartFormDataContent(
-                formData {
-                    append(
-                        key = "file",
-                        value = bytes,
-                        headers = Headers.build {
-                            append(HttpHeaders.ContentType, contentType)
-                            append(
-                                HttpHeaders.ContentDisposition,
-                                "filename=\"${fileName.replace("\"", "")}\""
-                            )
-                        }
-                    )
-                }
-            )
-        )
+        contentType(ContentType.Application.Json)
+        val base64String = android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
+        setBody(FileUploadRequestDto(file = base64String))
     }.mapCatching { response ->
         response["url"]
             ?: response["fileUrl"]
