@@ -39,5 +39,8 @@ abstract class ApiServiceModule {
 
     @Binds
     abstract fun provideFamilyMembersApiService(impl: FamilyMembersApiServiceImpl): FamilyMembersApiService
+
+    @Binds
+    abstract fun provideCloudinaryApiService(impl: com.carenest.data.source.remote.service.CloudinaryApiServiceImpl): com.carenest.data.source.remote.service.CloudinaryApiService
 }
 

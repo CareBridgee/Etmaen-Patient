@@ -1,6 +1,8 @@
 package com.carenest.presentation.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import java.io.ByteArrayOutputStream
@@ -11,31 +13,39 @@ data class SelectedAvatar(
     val bytes: ByteArray
 )
 
-private const val MAX_AVATAR_BYTES = 5 * 1024 * 1024
-
 fun Context.readAvatar(uri: Uri): SelectedAvatar {
     val resolver = contentResolver
-    val fileName = resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
+    val rawFileName = resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
         ?.use { cursor ->
             if (cursor.moveToFirst()) cursor.getString(0) else null
         }
         ?.takeIf(String::isNotBlank)
         ?: "profile.jpg"
-    val contentType = resolver.getType(uri)?.takeIf { it.startsWith("image/") }
-        ?: "image/jpeg"
+
     val bytes = resolver.openInputStream(uri)?.use { input ->
-        val output = ByteArrayOutputStream()
-        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        var total = 0
-        while (true) {
-            val count = input.read(buffer)
-            if (count < 0) break
-            total += count
-            require(total <= MAX_AVATAR_BYTES) { "Selected image is too large" }
-            output.write(buffer, 0, count)
+        val originalBitmap = BitmapFactory.decodeStream(input)
+            ?: error("Unable to decode selected image")
+
+        val maxDimension = maxOf(originalBitmap.width, originalBitmap.height)
+        val scaledBitmap = if (maxDimension > 1024) {
+            val scale = 1024f / maxDimension
+            val newWidth = (originalBitmap.width * scale).toInt()
+            val newHeight = (originalBitmap.height * scale).toInt()
+            Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true)
+        } else {
+            originalBitmap
         }
-        output.toByteArray()
+
+        val outputStream = ByteArrayOutputStream()
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
+        if (scaledBitmap != originalBitmap) {
+            scaledBitmap.recycle()
+        }
+        originalBitmap.recycle()
+        outputStream.toByteArray()
     } ?: error("Unable to read selected image")
+
     require(bytes.isNotEmpty()) { "Selected image is empty" }
-    return SelectedAvatar(fileName, contentType, bytes)
+    val cleanName = rawFileName.substringBeforeLast('.') + ".jpg"
+    return SelectedAvatar(cleanName, "image/jpeg", bytes)
 }

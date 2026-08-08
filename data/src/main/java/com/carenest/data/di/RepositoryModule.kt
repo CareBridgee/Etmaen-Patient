@@ -119,6 +119,10 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindAiChatRepository(impl: AiChatRepositoryImpl): AiChatRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindImageUploader(impl: com.carenest.data.repository.CloudinaryImageUploaderImpl): com.carenest.domain.repository.ImageUploader
+
     //endregion
 
     //region datasource
