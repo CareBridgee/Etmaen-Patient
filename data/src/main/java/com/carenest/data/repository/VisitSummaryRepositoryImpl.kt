@@ -12,6 +12,6 @@ class VisitSummaryRepositoryImpl @Inject constructor(
     override suspend fun getVisitSummary(requestId: String): Result<VisitSummary> =
         runCatching { dataSource.fetchVisitSummary(requestId) }
 
-    override suspend fun submitRating(requestId: String, rating: Int, comment: String?): Result<Unit> =
-        runCatching { dataSource.submitRating(requestId, rating, comment) }
+    override suspend fun submitRating(requestId: String, rating: Int, comment: String?, isAnonymous: Boolean): Result<Unit> =
+        runCatching { dataSource.submitRating(requestId, rating, comment, isAnonymous) }
 }
