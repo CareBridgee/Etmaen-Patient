@@ -123,7 +123,7 @@ fun VisitRatingDialogContent(
         CustomTextField(
             text = reviewText,
             onTextChange = onReviewTextChanged,
-            hint = "Share your experience...",
+            hint = stringResource(R.string.visit_rating_comment_hint),
             fieldHeight = 100.dp,
             maxLines = 4,
             fieldVerticalAlignment = Alignment.Top,
@@ -146,7 +146,7 @@ fun VisitRatingDialogContent(
                 )
             )
             Text(
-                text = "Submit anonymously",
+                text = stringResource(R.string.visit_rating_submit_anonymous),
                 style = Theme.typography.body.small,
                 color = Theme.colors.secondaryFont
             )

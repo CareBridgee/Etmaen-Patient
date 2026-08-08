@@ -345,6 +345,8 @@
   <string name="visit_rating_star_content_description">%1$d نجمة</string>
   <string name="visit_rating_submit_button">إرسال</string>
   <string name="visit_rating_skip_button">تخطي</string>
+  <string name="visit_rating_submit_anonymous">إرسال بهوية مجهولة</string>
+  <string name="visit_rating_comment_hint">شاركنا تجربتك...</string>
   <string name="chat_back_content_description">رجوع</string>
   <string name="chat_call_content_description">الاتصال بالممرض</string>
   <string name="chat_send_content_description">إرسال الرسالة</string>
