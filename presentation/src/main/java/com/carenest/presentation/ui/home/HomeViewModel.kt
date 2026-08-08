@@ -70,7 +70,6 @@ class HomeViewModel @Inject constructor(
                 val userResult = userDeferred.await()
                 val servicesResult = servicesDeferred.await()
                 val bookingResult = bookingDeferred.await()
-
                 if (userResult.isFailure && servicesResult.isFailure && bookingResult.isFailure) {
                     val errorMsg = userResult.exceptionOrNull()?.message ?: "Failed to load home data"
                     updateState { copy(isLoading = false, isError = true, errorMessage = errorMsg) }

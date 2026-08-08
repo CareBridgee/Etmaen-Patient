@@ -126,6 +126,7 @@ class ConnectionManager @Inject constructor(
                         logger.log("WebSocket Opened, wait for STOMP CONNECTED")
                     }
                     is StompClientEvent.Message -> {
+                        heartbeatManager.notifyActivity()
                         val frame = event.frame
                         when (frame.command) {
                             StompFrame.CONNECTED -> {

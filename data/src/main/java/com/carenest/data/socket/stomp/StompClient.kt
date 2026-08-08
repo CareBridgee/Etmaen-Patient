@@ -9,7 +9,7 @@ import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
-import io.ktor.websocket.send
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -88,6 +88,7 @@ class StompClient @Inject constructor(
                 }
                 _events.tryEmit(StompClientEvent.Closed)
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 _events.tryEmit(StompClientEvent.Failed(e))
             } finally {
                 session = null
@@ -102,6 +103,7 @@ class StompClient @Inject constructor(
             currentSession.send(Frame.Text(text))
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             false
         }
     }
@@ -112,6 +114,7 @@ class StompClient @Inject constructor(
             currentSession.send(Frame.Text(text))
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             false
         }
     }
