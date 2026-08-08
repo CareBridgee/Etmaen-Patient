@@ -154,11 +154,7 @@ fun AddFamilyMemberContent(
         stringResource(R.string.family_members_screen_title)
     }
 
-    val buttonCaption = if (state.isEditMode) {
-        stringResource(R.string.save_changes_button)
-    } else {
-        stringResource(R.string.add_family_member_button)
-    }
+    val buttonCaption = stringResource(R.string.personal_info_continue_btn)
 
     ScreenTopBar(
         title = screenTitle,
@@ -216,33 +212,37 @@ fun AddFamilyMemberContent(
                     onRelationshipSelected = { onEvent(AddFamilyMemberEvent.RelationshipSelected(it)) }
                 )
 
-                CustomTextField(
-                    text = state.firstName,
-                    onTextChange = { onEvent(AddFamilyMemberEvent.FirstNameChanged(it)) },
-                    title = stringResource(R.string.personal_info_first_name_title),
-                    hint = stringResource(R.string.personal_info_first_name_hint),
-                    borderColor = Theme.colors.cardBackground,
-                    containerColor = Theme.colors.cardBackground,
-                    enabled = !state.isSubmitting && !state.isLoadingData,
-                    isError = state.firstNameError != null,
-                    errorMessage = state.firstNameError.toLocalizedErrorMessage(),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                CustomTextField(
-                    text = state.lastName,
-                    onTextChange = { onEvent(AddFamilyMemberEvent.LastNameChanged(it)) },
-                    title = stringResource(R.string.personal_info_last_name_title),
-                    hint = stringResource(R.string.personal_info_last_name_hint),
-                    borderColor = Theme.colors.cardBackground,
-                    containerColor = Theme.colors.cardBackground,
-                    enabled = !state.isSubmitting && !state.isLoadingData,
-                    isError = state.lastNameError != null,
-                    errorMessage = state.lastNameError.toLocalizedErrorMessage(),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)
+                ) {
+                    CustomTextField(
+                        text = state.firstName,
+                        onTextChange = { onEvent(AddFamilyMemberEvent.FirstNameChanged(it)) },
+                        title = stringResource(R.string.personal_info_first_name_title),
+                        hint = stringResource(R.string.personal_info_first_name_hint),
+                        borderColor = Theme.colors.cardBackground,
+                        containerColor = Theme.colors.cardBackground,
+                        enabled = !state.isSubmitting && !state.isLoadingData,
+                        isError = state.firstNameError != null,
+                        errorMessage = state.firstNameError.toLocalizedErrorMessage(),
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                    CustomTextField(
+                        text = state.lastName,
+                        onTextChange = { onEvent(AddFamilyMemberEvent.LastNameChanged(it)) },
+                        title = stringResource(R.string.personal_info_last_name_title),
+                        hint = stringResource(R.string.personal_info_last_name_title), // simplified hint
+                        borderColor = Theme.colors.cardBackground,
+                        containerColor = Theme.colors.cardBackground,
+                        enabled = !state.isSubmitting && !state.isLoadingData,
+                        isError = state.lastNameError != null,
+                        errorMessage = state.lastNameError.toLocalizedErrorMessage(),
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
                 CustomTextField(
                     text = state.dateOfBirth,
