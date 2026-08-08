@@ -143,11 +143,48 @@ val DynamicAuthPlugin = createClientPlugin("DynamicAuthPlugin", ::DynamicAuthPlu
     }
 
     onResponse { response ->
-        if (response.status.value == 401 || response.status.value == 403) {
+        if (response.status.value == 401) {
             val requestUrl = response.call.request.url
             val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
             if (path !in PUBLIC_AUTH_PATHS) {
-                Log.e("NetworkModule", "Auth error ($path - Status ${response.status.value}). Clearing user session.")
+                val tokens = datastore.authTokens.first()
+                val refreshToken = tokens?.refreshToken?.takeIf(String::isNotBlank)
+
+                if (refreshToken != null) {
+                    val refreshSuccess = runCatching {
+                        val refreshResponse = response.call.client.post("api/v1/auth/refresh") {
+                            contentType(ContentType.Application.Json)
+                            setBody(RefreshRequest(refreshToken))
+                        }
+                        if (refreshResponse.status.isSuccess()) {
+                            val tokenPair = refreshResponse.body<TokenPairResponse>()
+                            val newAccess = tokenPair.accessToken
+                            val newRefresh = tokenPair.refreshToken ?: refreshToken
+                            if (!newAccess.isNullOrBlank()) {
+                                datastore.saveAuthTokens(newAccess, newRefresh)
+                                true
+                            } else false
+                        } else false
+                    }.getOrDefault(false)
+
+                    if (!refreshSuccess) {
+                        Log.e("NetworkModule", "Automatic token refresh failed. Clearing user session.")
+                        datastore.clearAuthTokens()
+                        datastore.clearUserId()
+                        datastore.setLoggedIn(false)
+                    }
+                } else {
+                    Log.e("NetworkModule", "No refresh token available. Clearing user session.")
+                    datastore.clearAuthTokens()
+                    datastore.clearUserId()
+                    datastore.setLoggedIn(false)
+                }
+            }
+        } else if (response.status.value == 403) {
+            val requestUrl = response.call.request.url
+            val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
+            if (path !in PUBLIC_AUTH_PATHS) {
+                Log.e("NetworkModule", "403 Forbidden. Clearing user session.")
                 datastore.clearAuthTokens()
                 datastore.clearUserId()
                 datastore.setLoggedIn(false)

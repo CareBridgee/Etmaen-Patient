@@ -110,7 +110,7 @@ fun HomeScreenContent(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 item {
-                    val greeting = state.user?.id?.let { name ->
+                    val greeting = state.user?.name?.let { name ->
                         stringResource(R.string.home_greeting_name, name)
                     } ?: stringResource(R.string.home_greeting_generic)
                     HomeGreetingBar(
