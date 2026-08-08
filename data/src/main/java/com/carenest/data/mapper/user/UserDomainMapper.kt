@@ -22,8 +22,8 @@ internal fun User.toEntity(): UserEntity = UserEntity(
 )
 
 internal fun UserUpdate.toDto(): UpdateUserRequestDto = UpdateUserRequestDto(
-    firstName = firstName.takeIf(String::isNotBlank),
-    lastName = lastName.takeIf(String::isNotBlank),
+    firstName = firstName.trim(),
+    lastName = lastName.trim(),
     email = email?.takeIf(String::isNotBlank),
     dateOfBirth = dateOfBirth?.takeIf(String::isNotBlank),
     gender = gender?.uppercase()?.takeIf(String::isNotBlank),

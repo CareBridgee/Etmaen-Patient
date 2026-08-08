@@ -7,11 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -31,7 +27,14 @@ class UserApiServiceImpl @Inject constructor(
     ): Result<UserResponseDto> = httpClient.executeRequest(json) {
         method = HttpMethod.Put
         url { path("api/v1/users/me") }
-        contentType(ContentType.Application.Json)
-        setBody(request)
+        setBody(MultiPartFormDataContent(formData {
+            append("firstName", request.firstName)
+            append("lastName", request.lastName)
+            request.email?.let { append("email", it) }
+            request.dateOfBirth?.let { append("dateOfBirth", it) }
+            request.gender?.let { append("gender", it) }
+            request.profileImageUrl?.let { append("profileImageUrl", it) }
+        }))
     }
 }
+

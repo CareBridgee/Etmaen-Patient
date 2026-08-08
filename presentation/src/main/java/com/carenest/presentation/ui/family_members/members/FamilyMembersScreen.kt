@@ -61,6 +61,8 @@ import com.carenest.presentation.navigation.HideTopBar
 
 import android.widget.Toast
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.ui.platform.LocalContext
 import com.carenest.designsystem.components.dialog.CareNestDialog
 
@@ -356,12 +358,22 @@ fun FamilyMemberCard(
                         .background(Theme.colors.primary.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        painter = painterResource(id = RD.drawable.ic_profile),
-                        contentDescription = null,
-                        tint = Theme.colors.primary,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    val avatarUrl = member.profileImageUrl?.takeIf { it.isNotBlank() }
+                    if (avatarUrl != null) {
+                        AsyncImage(
+                            model = avatarUrl,
+                            contentDescription = member.name,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = RD.drawable.ic_profile),
+                            contentDescription = null,
+                            tint = Theme.colors.primary,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -472,8 +484,8 @@ fun FamilyMemberCard(
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp),
-                        shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
                     ) {
                         Text(
@@ -494,8 +506,8 @@ fun FamilyMemberCard(
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp),
-                        shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary.copy(alpha = 0.08f))
                     ) {
                         Text(

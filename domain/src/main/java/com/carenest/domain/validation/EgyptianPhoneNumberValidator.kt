@@ -18,7 +18,16 @@ object EgyptianPhoneNumberValidator {
         else -> null
     }
 
-    fun sanitizeInput(input: String): String = input
-        .filter { it in '0'..'9' }
-        .take(LENGTH)
+    fun validateOptional(phoneNumber: String): PhoneNumberValidationError? {
+        if (phoneNumber.isBlank()) return null
+        return validate(phoneNumber)
+    }
+
+    fun sanitizeInput(input: String): String {
+        var digits = input.filter { it in '0'..'9' }
+        if (digits.startsWith("20") && digits.length > 11) {
+            digits = digits.drop(2)
+        }
+        return digits.take(LENGTH)
+    }
 }

@@ -37,6 +37,7 @@ class FamilyMembersViewModel @Inject constructor(
                                 id = member.id,
                                 name = member.fullName,
                                 relationship = relationshipLabel,
+                                profileImageUrl = member.profileImageUrl,
                                 lastCheckup = "",
                                 upcomingService = ""
                             )

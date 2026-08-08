@@ -79,6 +79,7 @@ fun AddFamilyMemberScreenRoute(
     viewModel: AddFamilyMemberViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val androidContext = LocalContext.current
     val saveFailedMessage = stringResource(R.string.family_member_save_failed)
     val loadFailedMessage = stringResource(R.string.family_member_load_failed)
     val savedMessage = stringResource(R.string.family_member_saved)
@@ -94,7 +95,7 @@ fun AddFamilyMemberScreenRoute(
     val avatarPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri ?: return@rememberLauncherForActivityResult
         coroutineScope.launch {
-            runCatching { withContext(Dispatchers.IO) { context.readAvatar(uri) } }.onSuccess { image ->
+            runCatching { withContext(Dispatchers.IO) { androidContext.readAvatar(uri) } }.onSuccess { image ->
                 viewModel.onEvent(
                     AddFamilyMemberEvent.AvatarSelected(
                         uri = uri.toString(),
@@ -123,11 +124,11 @@ fun AddFamilyMemberScreenRoute(
                     "Please fill out all required fields correctly" -> fillRequiredFieldsMessage
                     else -> effect.message
                 }
-                onShowMessage(message)
+                Toast.makeText(androidContext, message, Toast.LENGTH_SHORT).show()
             }
             AddFamilyMemberEffect.ShowSuccess -> {
                 onMemberSaved()
-                onShowMessage(savedMessage)
+                Toast.makeText(androidContext, savedMessage, Toast.LENGTH_SHORT).show()
             }
             AddFamilyMemberEffect.SelectAvatar -> avatarPicker.launch("image/*")
         }
@@ -247,6 +248,25 @@ fun AddFamilyMemberContent(
                         modifier = Modifier.weight(1f)
                     )
                 }
+
+                CustomTextField(
+                    text = state.phoneNumber,
+                    onTextChange = { onEvent(AddFamilyMemberEvent.PhoneNumberChanged(it)) },
+                    title = "Phone Number (Optional)",
+                    hint = "e.g. 01012345678",
+                    borderColor = Theme.colors.cardBackground,
+                    containerColor = Theme.colors.cardBackground,
+                    enabled = !state.isSubmitting && !state.isLoadingData,
+                    isError = state.phoneNumberError != null,
+                    errorMessage = when (state.phoneNumberError) {
+                        PhoneNumberValidationError.InvalidLength -> "Invalid phone number length"
+                        PhoneNumberValidationError.InvalidFormat -> "Invalid Egyptian phone number"
+                        PhoneNumberValidationError.Required -> null
+                        null -> null
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 CustomTextField(
                     text = state.dateOfBirth,

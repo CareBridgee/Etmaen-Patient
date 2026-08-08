@@ -123,7 +123,7 @@ fun ProfileScreen(
             is ProfileEffect.NavigateToLogout -> onLogout()
             ProfileEffect.SelectAvatar -> avatarPicker.launch("image/*")
             ProfileEffect.ShowAvatarUpdated -> onShowMessage(avatarUpdated)
-            ProfileEffect.ShowAvatarUpdateFailed -> onShowMessage(avatarUpdateFailed)
+            is ProfileEffect.ShowAvatarUpdateFailed -> onShowMessage(effect.message ?: avatarUpdateFailed)
             ProfileEffect.ShowProfileRefreshError -> onShowMessage(profileRefreshFailed)
             is ProfileEffect.ShowLogoutError -> onShowMessage(logoutFailed)
             is ProfileEffect.NavigateToAddresses -> Unit

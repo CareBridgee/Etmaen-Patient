@@ -92,8 +92,10 @@ class RegisterViewModel @Inject constructor(
                     contentType = snapshot.selectedAvatarContentType ?: "image/jpeg",
                     bytes = snapshot.selectedAvatarBytes
                 )
-                uploadResult.getOrElse {
-                    updateState { copy(isSubmitting = false, errorMessage = it.message ?: "Unable to upload profile photo") }
+                uploadResult.getOrElse { uploadError ->
+                    android.util.Log.e("RegisterViewModel", "Avatar upload to Cloudinary failed", uploadError)
+                    val uploadMsg = "Photo upload failed: ${uploadError.message ?: uploadError.toString()}"
+                    updateState { copy(isSubmitting = false, errorMessage = uploadMsg) }
                     return@launch
                 }
             } else {
@@ -129,6 +131,7 @@ class RegisterViewModel @Inject constructor(
                                 )
                             },
                             onFailure = { error ->
+                                android.util.Log.e("RegisterViewModel", "Get destination failed", error)
                                 updateState {
                                     copy(
                                         isSubmitting = false,
@@ -141,6 +144,7 @@ class RegisterViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
+                    android.util.Log.e("RegisterViewModel", "Update user profile failed", error)
                     val validation = error as? ProfileValidationException
                     updateState {
                         if (validation != null) {
@@ -150,9 +154,16 @@ class RegisterViewModel @Inject constructor(
                                 errorMessage = null
                             )
                         } else {
+                            val detailedMessage = buildString {
+                                append(error.message ?: error.toString())
+                                if (error is com.carenest.domain.model.user.UserException) {
+                                    error.statusCode?.let { code -> append(" (Status: $code)") }
+                                    error.backendCode?.let { code -> append(" [Code: $code]") }
+                                }
+                            }
                             copy(
                                 isSubmitting = false,
-                                errorMessage = error.message ?: "Unable to save personal information"
+                                errorMessage = detailedMessage
                             )
                         }
                     }

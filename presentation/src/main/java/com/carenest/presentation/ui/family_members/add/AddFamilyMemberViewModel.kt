@@ -168,11 +168,9 @@ class AddFamilyMemberViewModel @Inject constructor(
             updateState { copy(lastNameError = "Last name is required") }
             hasError = true
         }
-        if (currentState.phoneNumber.isNotBlank()) {
-            EgyptianPhoneNumberValidator.validate(currentState.phoneNumber)?.let { error ->
-                updateState { copy(phoneNumberError = error) }
-                hasError = true
-            }
+        EgyptianPhoneNumberValidator.validateOptional(currentState.phoneNumber)?.let { error ->
+            updateState { copy(phoneNumberError = error) }
+            hasError = true
         }
         if (currentState.dateOfBirth.trim().isBlank()) {
             updateState { copy(dateOfBirthError = "Date of birth is required") }
@@ -198,7 +196,7 @@ class AddFamilyMemberViewModel @Inject constructor(
 
         viewModelScope.launch {
             updateState { copy(isSubmitting = true) }
-            val relStr = currentState.relationship?.backendValue ?: "Other"
+            val relStr = currentState.relationship?.name ?: "OTHER"
 
             val finalAvatarUrl = if (currentState.selectedAvatarBytes != null && currentState.selectedAvatarBytes.isNotEmpty()) {
                 val uploadResult = userRepository.uploadProfileImage(
@@ -250,10 +248,12 @@ class AddFamilyMemberViewModel @Inject constructor(
                         sendEffect(AddFamilyMemberEffect.NavigateToCompleteProfile(savedMember.id))
                     }
                 },
-                onFailure = {
+                onFailure = { error ->
+                    android.util.Log.e("AddFamilyMemberViewModel", "Save family member failed", error)
                     updateState { copy(isSubmitting = false) }
-                    updateState { copy(errorMessage = "family_member_save_failed") }
-                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_save_failed"))
+                    val errorMsg = error.message ?: error.toString()
+                    updateState { copy(errorMessage = errorMsg) }
+                    sendEffect(AddFamilyMemberEffect.ShowError(errorMsg))
                 }
             )
         }

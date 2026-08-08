@@ -29,18 +29,19 @@ object ProfileValidator {
         displayDateOfBirth: String,
         gender: String
     ): PersonalInfoUpdate {
+        val upperGender = gender.trim().uppercase()
         val errors = buildMap {
             validateName(firstName)?.let { put(ProfileField.FirstName, it) }
             validateName(lastName)?.let { put(ProfileField.LastName, it) }
             validateDateOfBirth(displayDateOfBirth)?.let { put(ProfileField.DateOfBirth, it) }
-            if (gender !in allowedGenders) put(ProfileField.Gender, ProfileValidationError.Required)
+            if (upperGender !in allowedGenders) put(ProfileField.Gender, ProfileValidationError.Required)
         }
         errors.throwIfNotEmpty()
         return PersonalInfoUpdate(
             firstName = firstName.trim(),
             lastName = lastName.trim(),
             dateOfBirth = displayDateOfBirth.toBackendDate(),
-            gender = gender
+            gender = upperGender
         )
     }
 

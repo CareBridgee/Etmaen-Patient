@@ -132,9 +132,10 @@ class ProfileViewModel @Inject constructor(
                     }
                     sendEffect(ProfileEffect.ShowAvatarUpdated)
                 },
-                onFailure = {
+                onFailure = { error ->
+                    android.util.Log.e("ProfileViewModel", "Avatar update failed", error)
                     updateState { copy(isUpdatingAvatar = false) }
-                    sendEffect(ProfileEffect.ShowAvatarUpdateFailed)
+                    sendEffect(ProfileEffect.ShowAvatarUpdateFailed(error.message ?: error.toString()))
                 }
             )
         }
