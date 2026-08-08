@@ -35,20 +35,18 @@ import com.carenest.presentation.ui.profile_completion.validation.localizedMessa
 fun ProfileCompletionScreen(
     onNavigateBack: () -> Unit,
     onNavigateToHome: () -> Unit,
+    onNavigateToFamilyMembers: () -> Unit = {},
     isEditMode: Boolean = false,
     onEditComplete: () -> Unit = onNavigateBack,
     viewModel: ProfileCompletionViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isEditMode) {
-        if (isEditMode) viewModel.onEvent(ProfileCompletionIntent.ConfigureEditMode)
-    }
-
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             ProfileCompletionEffect.NavigateBack -> onNavigateBack()
             ProfileCompletionEffect.NavigateToHome -> onNavigateToHome()
+            ProfileCompletionEffect.NavigateToFamilyMembers -> onNavigateToFamilyMembers()
             ProfileCompletionEffect.NavigateAfterEdit -> onEditComplete()
         }
     }

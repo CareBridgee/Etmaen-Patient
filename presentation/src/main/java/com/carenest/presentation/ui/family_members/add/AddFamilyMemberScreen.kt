@@ -58,6 +58,8 @@ import kotlinx.coroutines.withContext
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.validation.EgyptianPhoneNumberValidator
+import com.carenest.domain.validation.PhoneNumberValidationError
 import com.carenest.domain.model.family_members.FamilyRelationship
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -72,10 +74,11 @@ fun AddFamilyMemberScreenRoute(
     memberId: String? = null,
     onNavigateBack: () -> Unit,
     onMemberSaved: () -> Unit = {},
+    onNavigateToCompleteProfile: (String) -> Unit = {},
+    onShowMessage: (String) -> Unit = {},
     viewModel: AddFamilyMemberViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
     val saveFailedMessage = stringResource(R.string.family_member_save_failed)
     val loadFailedMessage = stringResource(R.string.family_member_load_failed)
     val savedMessage = stringResource(R.string.family_member_saved)
@@ -104,20 +107,27 @@ fun AddFamilyMemberScreenRoute(
         }
     }
 
+    val fillRequiredFieldsMessage = stringResource(R.string.error_fill_required_fields)
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             AddFamilyMemberEffect.NavigateBack -> onNavigateBack()
+            is AddFamilyMemberEffect.NavigateToCompleteProfile -> {
+                onMemberSaved()
+                onNavigateToCompleteProfile(effect.memberId)
+            }
             is AddFamilyMemberEffect.ShowError -> {
-                val message = if (effect.message == "family_member_load_failed") {
-                    loadFailedMessage
-                } else {
-                    saveFailedMessage
+                val message = when (effect.message) {
+                    "family_member_load_failed" -> loadFailedMessage
+                    "family_member_save_failed" -> saveFailedMessage
+                    "Please fill out all required fields correctly" -> fillRequiredFieldsMessage
+                    else -> effect.message
                 }
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                onShowMessage(message)
             }
             AddFamilyMemberEffect.ShowSuccess -> {
                 onMemberSaved()
-                Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
+                onShowMessage(savedMessage)
             }
             AddFamilyMemberEffect.SelectAvatar -> avatarPicker.launch("image/*")
         }
@@ -201,7 +211,7 @@ fun AddFamilyMemberContent(
                 RelationshipDropdown(
                     relationship = state.relationship,
                     enabled = !state.isSubmitting && !state.isLoadingData,
-                    errorMessage = state.relationshipError,
+                    errorMessage = state.relationshipError.toLocalizedErrorMessage(),
                     onRelationshipSelected = { onEvent(AddFamilyMemberEvent.RelationshipSelected(it)) }
                 )
 
@@ -212,13 +222,13 @@ fun AddFamilyMemberContent(
                     CustomTextField(
                         text = state.firstName,
                         onTextChange = { onEvent(AddFamilyMemberEvent.FirstNameChanged(it)) },
-                        title = "First Name",
-                        hint = "e.g. Sarah",
+                        title = stringResource(R.string.personal_info_first_name_title),
+                        hint = stringResource(R.string.personal_info_first_name_hint),
                         borderColor = Theme.colors.cardBackground,
                         containerColor = Theme.colors.cardBackground,
                         enabled = !state.isSubmitting && !state.isLoadingData,
                         isError = state.firstNameError != null,
-                        errorMessage = state.firstNameError,
+                        errorMessage = state.firstNameError.toLocalizedErrorMessage(),
                         singleLine = true,
                         modifier = Modifier.weight(1f)
                     )
@@ -226,13 +236,13 @@ fun AddFamilyMemberContent(
                     CustomTextField(
                         text = state.lastName,
                         onTextChange = { onEvent(AddFamilyMemberEvent.LastNameChanged(it)) },
-                        title = "Last Name",
-                        hint = "e.g. Jenkins",
+                        title = stringResource(R.string.personal_info_last_name_title),
+                        hint = stringResource(R.string.personal_info_last_name_hint),
                         borderColor = Theme.colors.cardBackground,
                         containerColor = Theme.colors.cardBackground,
                         enabled = !state.isSubmitting && !state.isLoadingData,
                         isError = state.lastNameError != null,
-                        errorMessage = state.lastNameError,
+                        errorMessage = state.lastNameError.toLocalizedErrorMessage(),
                         singleLine = true,
                         modifier = Modifier.weight(1f)
                     )
@@ -241,22 +251,42 @@ fun AddFamilyMemberContent(
                 CustomTextField(
                     text = state.dateOfBirth,
                     onTextChange = { onEvent(AddFamilyMemberEvent.DateOfBirthChanged(it)) },
-                    title = "Date of birth",
-                    hint = "YYYY-MM-DD",
+                    title = stringResource(R.string.personal_info_dob_title),
+                    hint = stringResource(R.string.personal_info_dob_hint),
                     trailingIcon = rememberVectorPainter(Icons.Outlined.CalendarToday),
                     onClickTrailingIcon = { if (!state.isSubmitting && !state.isLoadingData) showDatePicker = true },
                     borderColor = Theme.colors.cardBackground,
                     containerColor = Theme.colors.cardBackground,
                     enabled = !state.isSubmitting && !state.isLoadingData,
                     isError = state.dateOfBirthError != null,
-                    errorMessage = state.dateOfBirthError,
+                    errorMessage = state.dateOfBirthError.toLocalizedErrorMessage(),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                CustomTextField(
+                    text = state.phoneNumber,
+                    onTextChange = { onEvent(AddFamilyMemberEvent.PhoneNumberChanged(it)) },
+                    title = stringResource(R.string.family_member_phone_optional),
+                    hint = stringResource(R.string.family_member_phone_hint),
+                    borderColor = Theme.colors.cardBackground,
+                    containerColor = Theme.colors.cardBackground,
+                    enabled = !state.isSubmitting && !state.isLoadingData,
+                    isError = state.phoneNumberError != null,
+                    errorMessage = state.phoneNumberError?.let {
+                        when (it) {
+                            PhoneNumberValidationError.Required -> stringResource(R.string.phone_validation_required)
+                            PhoneNumberValidationError.InvalidLength -> stringResource(R.string.phone_validation_invalid_length)
+                            PhoneNumberValidationError.InvalidFormat -> stringResource(R.string.phone_validation_invalid_format)
+                        }
+                    },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                     BasicText(
-                        text = "Gender",
+                        text = stringResource(R.string.personal_info_gender_title),
                         style = Theme.typography.body.medium.copy(
                             color = Theme.colors.primaryFont,
                             fontWeight = FontWeight.Medium,
@@ -264,7 +294,10 @@ fun AddFamilyMemberContent(
                         )
                     )
 
-                    val genderOptions = listOf("Male", "Female")
+                    val genderOptions = listOf(
+                        stringResource(R.string.personal_info_gender_male),
+                        stringResource(R.string.personal_info_gender_female)
+                    )
                     val genderValues = listOf("MALE", "FEMALE")
                     val selectedIdx = genderValues.indexOf(state.gender).coerceAtLeast(0)
 
@@ -297,10 +330,12 @@ fun AddFamilyMemberContent(
             )
         }
 
+        val isPhoneValid = state.phoneNumber.isBlank() || EgyptianPhoneNumberValidator.validate(state.phoneNumber) == null
         val isInputValid = state.relationship != null &&
                 state.firstName.trim().isNotBlank() &&
                 state.lastName.trim().isNotBlank() &&
-                state.dateOfBirth.trim().isNotBlank()
+                state.dateOfBirth.trim().isNotBlank() &&
+                isPhoneValid
 
         ProfileScreenNavigation(
             onBack = { onEvent(AddFamilyMemberEvent.BackClicked) },
@@ -326,7 +361,7 @@ private fun RelationshipDropdown(
     Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
         Row {
             BasicText(
-                text = "Relationship ",
+                text = stringResource(R.string.family_member_relationship_label) + " ",
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Medium,
@@ -445,5 +480,19 @@ private fun AddFamilyMemberContentPreview() {
             ),
             onEvent = {}
         )
+    }
+}
+@Composable
+private fun String?.toLocalizedErrorMessage(): String? {
+    if (this == null) return null
+    return when (this) {
+        "Please select a relationship", "error_select_relationship" -> stringResource(R.string.relationship_required_error)
+        "First name is required", "error_first_name_required" -> stringResource(R.string.error_first_name_required)
+        "Last name is required", "error_last_name_required" -> stringResource(R.string.error_last_name_required)
+        "Date of birth is required", "error_dob_required" -> stringResource(R.string.error_dob_required)
+        "Please fill out all required fields correctly", "error_fill_required_fields" -> stringResource(R.string.error_fill_required_fields)
+        "Height must be a number", "error_height_number" -> stringResource(R.string.error_height_number)
+        "Weight must be a number", "error_weight_number" -> stringResource(R.string.error_weight_number)
+        else -> this
     }
 }

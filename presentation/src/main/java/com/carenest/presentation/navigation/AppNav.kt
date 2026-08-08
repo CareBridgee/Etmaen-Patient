@@ -171,7 +171,7 @@ fun AppNav(
                         onNavigateToHome = { replaceWith(AppRoute.Home) },
                         onNavigateToLogin = { replaceWith(AppRoute.Login) },
                         onNavigateToRegister = { replaceWith(AppRoute.Register) },
-                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion) }
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion()) }
                     )
                 }
 
@@ -187,7 +187,7 @@ fun AppNav(
                     OtpScreen(
                         entry = route,
                         onNavigateToRegister = { replaceWith(AppRoute.Register) },
-                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion) },
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion()) },
                         onNavigateToHome = { replaceWith(AppRoute.Home) },
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )
@@ -196,15 +196,25 @@ fun AppNav(
                 entry<AppRoute.Register> {
                     RegisterScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToWelcome = { _ -> replaceWith(AppRoute.ProfileCompletion) },
+                        onNavigateToWelcome = { _ -> replaceWith(AppRoute.ProfileCompletion()) },
                         onNavigateHome = { replaceWith(AppRoute.Home) }
                     )
                 }
 
-                entry<AppRoute.ProfileCompletion> {
+                entry<AppRoute.ProfileCompletion> { route ->
                     ProfileCompletionScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToHome = { replaceWith(AppRoute.Home) }
+                        onNavigateToHome = { replaceWith(AppRoute.Home) },
+                        onNavigateToFamilyMembers = {
+                            familyMembersReloadTrigger += 1
+                            replaceWith(AppRoute.FamilyMembers)
+                        },
+                        isEditMode = route.isEditMode,
+                        onEditComplete = {
+                            familyMembersReloadTrigger += 1
+                            profileReloadTrigger += 1
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                        }
                     )
                 }
 
@@ -401,7 +411,17 @@ fun AppNav(
                             if (backStack.size > 1) backStack.removeLastOrNull()
                         },
                         onNavigateToAddMember = { memberId -> backStack.add(AppRoute.AddFamilyMember(memberId)) },
-                        reloadTrigger = familyMembersReloadTrigger
+                        onNavigateToEditHealthProfile = { memberId ->
+                            backStack.add(
+                                AppRoute.ProfileCompletion(
+                                    profileId = memberId,
+                                    isEditMode = true,
+                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+                                )
+                            )
+                        },
+                        reloadTrigger = familyMembersReloadTrigger,
+                        onShowMessage = onShowSnackbar
                     )
                 }
 
@@ -409,7 +429,17 @@ fun AppNav(
                     AddFamilyMemberScreenRoute(
                         memberId = route.memberId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMemberSaved = { familyMembersReloadTrigger += 1 }
+                        onMemberSaved = { familyMembersReloadTrigger += 1 },
+                        onNavigateToCompleteProfile = { newMemberId ->
+                            backStack.add(
+                                AppRoute.ProfileCompletion(
+                                    profileId = newMemberId,
+                                    isEditMode = false,
+                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+                                )
+                            )
+                        },
+                        onShowMessage = onShowSnackbar
                     )
                 }
 

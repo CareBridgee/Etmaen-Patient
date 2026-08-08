@@ -95,10 +95,11 @@ class AddFamilyMemberViewModel @Inject constructor(
             }
             is AddFamilyMemberEvent.PhoneNumberChanged -> {
                 val phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(event.value)
+                val err = if (phoneNumber.isNotBlank()) EgyptianPhoneNumberValidator.validate(phoneNumber) else null
                 updateState {
                     copy(
                         phoneNumber = phoneNumber,
-                        phoneNumberError = EgyptianPhoneNumberValidator.validate(phoneNumber)
+                        phoneNumberError = err
                     )
                 }
             }
@@ -190,7 +191,10 @@ class AddFamilyMemberViewModel @Inject constructor(
             hasError = true
         }
 
-        if (hasError) return
+        if (hasError) {
+            sendEffect(AddFamilyMemberEffect.ShowError("Please fill out all required fields correctly"))
+            return
+        }
 
         viewModelScope.launch {
             updateState { copy(isSubmitting = true) }
@@ -229,6 +233,7 @@ class AddFamilyMemberViewModel @Inject constructor(
             )
 
             val currentId = currentState.memberId
+            val isEditMode = currentState.isEditMode && !currentId.isNullOrBlank()
             val result = if (currentState.isEditMode && !currentId.isNullOrBlank()) {
                 updateFamilyMemberUseCase(currentId, input)
             } else {
@@ -236,10 +241,14 @@ class AddFamilyMemberViewModel @Inject constructor(
             }
 
             result.fold(
-                onSuccess = {
+                onSuccess = { savedMember ->
                     updateState { copy(isSubmitting = false) }
                     sendEffect(AddFamilyMemberEffect.ShowSuccess)
-                    sendEffect(AddFamilyMemberEffect.NavigateBack)
+                    if (isEditMode) {
+                        sendEffect(AddFamilyMemberEffect.NavigateBack)
+                    } else {
+                        sendEffect(AddFamilyMemberEffect.NavigateToCompleteProfile(savedMember.id))
+                    }
                 },
                 onFailure = {
                     updateState { copy(isSubmitting = false) }

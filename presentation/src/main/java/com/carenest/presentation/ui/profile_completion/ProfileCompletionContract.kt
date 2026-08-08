@@ -10,9 +10,17 @@ import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
 
+import kotlinx.serialization.Serializable
+
 enum class ProfileStep {
     Welcome, BasicHealthInfo, MedicalConditions, Allergies, CurrentMedications,
     MedicalHistory, MobilityStatus, EmergencyContact, FinalStep
+}
+
+@Serializable
+enum class ProfileCompletionSource {
+    REGISTRATION,
+    FAMILY_MEMBER
 }
 
 data class ProfileCatalogOption(
@@ -28,6 +36,7 @@ data class ProfileAllergyOption(
 
 data class ProfileCompletionState(
     val isEditMode: Boolean = false,
+    val source: ProfileCompletionSource = ProfileCompletionSource.REGISTRATION,
     val currentStep: ProfileStep = ProfileStep.Welcome,
     val profile: Profile? = null,
     val profileId: String? = null,
@@ -95,5 +104,6 @@ sealed interface ProfileCompletionIntent {
 sealed interface ProfileCompletionEffect {
     data object NavigateBack : ProfileCompletionEffect
     data object NavigateToHome : ProfileCompletionEffect
+    data object NavigateToFamilyMembers : ProfileCompletionEffect
     data object NavigateAfterEdit : ProfileCompletionEffect
 }

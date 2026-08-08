@@ -65,6 +65,7 @@ sealed interface AddFamilyMemberEvent {
 sealed interface AddFamilyMemberEffect {
     data object NavigateBack : AddFamilyMemberEffect
     data object ShowSuccess : AddFamilyMemberEffect
+    data class NavigateToCompleteProfile(val memberId: String) : AddFamilyMemberEffect
     data class ShowError(val message: String) : AddFamilyMemberEffect
     data object SelectAvatar : AddFamilyMemberEffect
 }
