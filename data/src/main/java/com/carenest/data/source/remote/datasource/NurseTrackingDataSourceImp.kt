@@ -1,35 +1,28 @@
 package com.carenest.data.source.remote.datasource
 
-import com.carenest.domain.model.tracking.NurseTrackingInfo
-import kotlinx.coroutines.delay
+import com.carenest.data.source.remote.dto.tracking.NurseDetailsDto
+import com.carenest.data.source.remote.dto.tracking.ServiceRequestTrackingDto
+import com.carenest.data.source.remote.dto.tracking.VisitCodeResponseDto
+import com.carenest.data.source.remote.service.NurseTrackingService
 import javax.inject.Inject
 
-class NurseTrackingDataSourceImp @Inject constructor(): NurseTrackingDataSource{
+class NurseTrackingDataSourceImp @Inject constructor(
+    private val nurseTrackingService: NurseTrackingService
+) : NurseTrackingDataSource {
 
-    override suspend fun fetchNurseTrackingInfo(requestId: String): NurseTrackingInfo {
-        delay(600) // simulate network latency
-        return NurseTrackingInfo(
-            nurseId = "nurse_001",
-            name = "Mark Harrison",
-            photoUrl = null,
-            rating = 4.9,
-            reviewsCount = 210,
-            estimatedArrivalTime = "10:30 AM",
-            distanceKm = 2.4,
-            specialty = "Geriatric",
-            phoneNumber = "+15551234567",
-            cancellationWindowMinutes = 2,
-            requestId = requestId,
-        )
+    override suspend fun fetchNurseTrackingInfo(requestId: String): ServiceRequestTrackingDto {
+        return nurseTrackingService.fetchServiceRequest(requestId).getOrThrow()
     }
+
     override suspend fun cancelVisit(requestId: String): Boolean {
-        delay(400) // simulate network latency
-        // Mock: always within the free-cancellation window.
-        return true
+        return nurseTrackingService.cancelVisit(requestId)
     }
 
-    override suspend fun fetchVerificationCode(requestId: String): String {
-        delay(1500) // simulate network delay
-        return "carenest://verify-visit?id=$requestId&token=VERIFY_${System.currentTimeMillis() / 1000}"
+    override suspend fun fetchVerificationCode(requestId: String): VisitCodeResponseDto {
+        return nurseTrackingService.fetchVisitCode(requestId).getOrThrow()
+    }
+
+    override suspend fun fetchNurseDetails(nurseId: String): NurseDetailsDto {
+        return nurseTrackingService.fetchNurseDetails(nurseId).getOrThrow()
     }
 }

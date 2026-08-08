@@ -61,13 +61,9 @@ fun VisitCompletedScreen(
         }
     }
 
-//    Scaffold(
-//        containerColor = Theme.colors.backGround,
-//    ) { paddingValues ->
     Box(
         modifier = Modifier
             .fillMaxSize()
-            //.padding(paddingValues)
             .background(Theme.colors.backGround),
         contentAlignment = Alignment.Center,
     ) {
@@ -77,7 +73,9 @@ fun VisitCompletedScreen(
                 summary = state.summary ?: VisitSummary(
                     requestId = "",
                     professionalName = "Professional Name",
+                    professionalImageUrl = null,
                     serviceType = "Service Type",
+                    serviceIconUrl = null,
                     durationMinutes = 60,
                     completedDate = "30 jun",
                     totalAmount = 85.0,
@@ -86,14 +84,17 @@ fun VisitCompletedScreen(
                 onIntent = viewModel::handleIntent,
             )
         }
-        //  }
 
         if (state.showRatingDialog) {
             Dialog(onDismissRequest = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) }) {
                 VisitRatingDialogContent(
                     selectedRating = state.selectedRating,
+                    reviewText = state.reviewText,
+                    isAnonymous = state.isAnonymous,
                     isSubmitting = state.isSubmittingRating,
                     onStarSelected = { viewModel.handleIntent(VisitCompletedIntent.OnStarSelected(it)) },
+                    onReviewTextChanged = { viewModel.handleIntent(VisitCompletedIntent.OnReviewTextChanged(it)) },
+                    onAnonymousChanged = { viewModel.handleIntent(VisitCompletedIntent.OnAnonymousChanged(it)) },
                     onSubmit = { viewModel.handleIntent(VisitCompletedIntent.OnSubmitRatingClicked) },
                     onDismiss = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) },
                 )
@@ -188,10 +189,12 @@ private fun Preview() {
         VisitCompletedContent(
             summary = VisitSummary(
                 requestId = "",
-                professionalName = "Professional Name",
-                serviceType = "Service Type",
+                professionalName = "Sarah Mitchell",
+                professionalImageUrl = null,
+                serviceType = "General Nursing",
+                serviceIconUrl = null,
                 durationMinutes = 60,
-                completedDate = "30 jun",
+                completedDate = "Oct 24",
                 totalAmount = 85.0,
                 isVerified = true,
             ), onIntent = {})

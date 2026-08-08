@@ -25,6 +25,8 @@ class VisitCompletedViewModel @Inject constructor(
         when (intent) {
             is VisitCompletedIntent.LoadVisitSummary -> loadVisitSummary(intent.requestId)
             is VisitCompletedIntent.OnStarSelected -> updateState { copy(selectedRating = intent.rating) }
+            is VisitCompletedIntent.OnReviewTextChanged -> updateState { copy(reviewText = intent.text) }
+            is VisitCompletedIntent.OnAnonymousChanged -> updateState { copy(isAnonymous = intent.isAnonymous) }
             VisitCompletedIntent.OnSubmitRatingClicked -> submitRating()
             VisitCompletedIntent.OnDismissRatingDialogClicked -> updateState {
                 copy(showRatingDialog = false)
@@ -55,12 +57,14 @@ class VisitCompletedViewModel @Inject constructor(
     private fun submitRating() {
         val id = requestId ?: return
         val rating = currentState.selectedRating
+        val comment = currentState.reviewText
+        val isAnonymous = currentState.isAnonymous
         if (rating <= 0 || currentState.isSubmittingRating) return
 
         viewModelScope.launch {
             updateState { copy(isSubmittingRating = true) }
 
-            submitVisitRatingUseCase(id, rating)
+            submitVisitRatingUseCase(id, rating, comment, isAnonymous)
                 .onSuccess {
                     updateState { copy(isSubmittingRating = false, showRatingDialog = false) }
                     sendEffect(VisitCompletedEffect.RatingSubmitted)

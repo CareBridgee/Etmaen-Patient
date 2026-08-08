@@ -6,6 +6,6 @@ import javax.inject.Inject
 class SubmitVisitRatingUseCase @Inject constructor(
     private val repository: VisitSummaryRepository,
 ) {
-    suspend operator fun invoke(requestId: String, rating: Int, comment: String? = null): Result<Unit> =
-        repository.submitRating(requestId, rating, comment)
+    suspend operator fun invoke(requestId: String, rating: Int, comment: String? = null, isAnonymous: Boolean = false): Result<Unit> =
+        repository.submitRating(requestId, rating, comment, isAnonymous)
 }
