@@ -4,37 +4,70 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.family_members.DeleteFamilyMemberUseCase
 import com.carenest.domain.usecase.family_members.GetFamilyMembersUseCase
+import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-import com.carenest.domain.usecase.user.GetCurrentUserUseCase
 
 @HiltViewModel
 class FamilyMembersViewModel @Inject constructor(
     private val getFamilyMembersUseCase: GetFamilyMembersUseCase,
     private val deleteFamilyMemberUseCase: DeleteFamilyMemberUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel(),
     StateHolder<FamilyMembersState> by DefaultStateHolder(FamilyMembersState()),
     EffectPublisher<FamilyMembersEffect> by DefaultEffectPublisher() {
+
+    init {
+        observeUser()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            observeCurrentUserUseCase().collect { user ->
+                val userName = user?.name.orEmpty()
+                if (userName.isBlank()) return@collect
+                updateState {
+                    copy(
+                        members = members.map { member ->
+                            val isSelf = member.id == user?.defaultProfileId ||
+                                member.relationship.equals("Self", ignoreCase = true)
+                            if (isSelf) {
+                                member.copy(
+                                    name = userName,
+                                    profileImageUrl = user?.profileImageUrl ?: member.profileImageUrl,
+                                )
+                            } else {
+                                member
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
 
     fun loadFamilyMembers() {
         if (currentState.isLoading) return
         viewModelScope.launch {
             updateState { copy(isLoading = true, loadFailed = false) }
 
-            val currentUser = getCurrentUserUseCase().getOrNull()
+            val cachedUser = observeCurrentUserUseCase().first()
+            val currentUser = getCurrentUserUseCase().getOrNull() ?: cachedUser
             val currentUserName = currentUser?.name.orEmpty()
             val memberItems = mutableListOf<FamilyMemberItem>()
 
             getFamilyMembersUseCase().fold(onSuccess = { members ->
                 val sortedMembers = members.sortedByDescending { member ->
                     member.isPrimary ||
+                            member.id == currentUser?.defaultProfileId ||
                             member.relationship.isNullOrBlank() ||
                             member.relationship.equals("Self", ignoreCase = true) ||
                             member.relationship.equals("PRIMARY", ignoreCase = true) ||
@@ -43,6 +76,7 @@ class FamilyMembersViewModel @Inject constructor(
                 sortedMembers.forEach { member ->
                     if (!member.isDeleted && memberItems.none { it.id == member.id }) {
                         val isSelf = member.isPrimary ||
+                                member.id == currentUser?.defaultProfileId ||
                                 member.relationship.isNullOrBlank() ||
                                 member.relationship.equals("Self", ignoreCase = true) ||
                                 member.relationship.equals("PRIMARY", ignoreCase = true) ||
@@ -53,7 +87,7 @@ class FamilyMembersViewModel @Inject constructor(
                             .filter { it.isNotBlank() }
                             .joinToString(" ")
                         val displayName = if (isSelf) {
-                            profileName.ifBlank { currentUserName.ifBlank { "User" } }
+                            currentUserName.ifBlank { profileName.ifBlank { "User" } }
                         } else {
                             member.fullName
                         }

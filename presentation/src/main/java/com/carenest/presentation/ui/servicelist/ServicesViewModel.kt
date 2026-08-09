@@ -3,7 +3,7 @@ package com.carenest.presentation.ui.servicelist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.home.GetServicesUseCase
-import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -15,24 +15,27 @@ import javax.inject.Inject
 @HiltViewModel
 class ServicesViewModel @Inject constructor(
     private val getServicesUseCase: GetServicesUseCase,
-    private val getDefaultProfileUseCase: GetDefaultProfileUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) :
     ViewModel(),
     StateHolder<ServicesState> by DefaultStateHolder(ServicesState()),
     EffectPublisher<ServicesEffect> by DefaultEffectPublisher() {
 
     init {
-        loadData()
+        observeUser()
+        loadServices()
     }
 
-    private fun loadData() {
+    private fun observeUser() {
         viewModelScope.launch {
-            // Load profile
-            getDefaultProfileUseCase().onSuccess { profile ->
-                updateState { copy(userName = profile.firstName ?: "") }
+            observeCurrentUserUseCase().collect { user ->
+                updateState { copy(userName = user?.firstName.orEmpty()) }
             }
+        }
+    }
 
-            // Load services
+    private fun loadServices() {
+        viewModelScope.launch {
             val result = getServicesUseCase()
             val services = result.getOrDefault(emptyList())
             updateState {
