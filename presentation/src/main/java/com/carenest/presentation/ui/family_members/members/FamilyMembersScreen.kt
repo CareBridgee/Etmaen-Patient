@@ -337,7 +337,12 @@ fun FamilyMemberCard(
     onEditHealthClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    val isSelf = member.relationship.equals("Self", ignoreCase = true)
+    val isSelf = member.relationship.equals("Self", ignoreCase = true) ||
+            member.relationship.equals("PRIMARY", ignoreCase = true) ||
+            member.relationship.equals("Primary", ignoreCase = true) ||
+            member.relationship.isBlank()
+    val displayRelationship = if (isSelf) stringResource(R.string.relationship_self) else member.relationship
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -396,7 +401,7 @@ fun FamilyMemberCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = member.relationship,
+                            text = displayRelationship,
                             style = Theme.typography.body.small.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 12.sp

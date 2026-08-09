@@ -51,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.theme.SpTheme
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -111,7 +113,10 @@ fun ChoosePatientContent(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             
-            GreetingSection()
+            GreetingSection(
+                userName = state.userName,
+                userAvatarUrl = state.userAvatarUrl
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -173,7 +178,16 @@ fun ChoosePatientContent(
 }
 
 @Composable
-fun GreetingSection() {
+fun GreetingSection(
+    userName: String,
+    userAvatarUrl: String?
+) {
+    val greetingText = if (userName.isBlank()) {
+        stringResource(R.string.services_greeting)
+    } else {
+        stringResource(R.string.home_greeting_name, userName)
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -185,15 +199,25 @@ fun GreetingSection() {
                 .background(Theme.colors.primary.copy(alpha = 0.12f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(id = RD.drawable.ic_profile),
-                contentDescription = null,
-                tint = Theme.colors.primary,
-                modifier = Modifier.size(20.dp)
-            )
+            val avatarUrl = userAvatarUrl?.takeIf { it.isNotBlank() }
+            if (avatarUrl != null) {
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = userName,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = RD.drawable.ic_profile),
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
         Text(
-            text = "Good morning, Elena",
+            text = greetingText,
             style = Theme.typography.body.large.copy(
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp
@@ -318,6 +342,12 @@ fun RelationshipChip(
     relationship: String,
     isSelected: Boolean
 ) {
+    val isSelf = relationship.equals("Self", ignoreCase = true) ||
+            relationship.equals("PRIMARY", ignoreCase = true) ||
+            relationship.equals("Primary", ignoreCase = true) ||
+            relationship.isBlank()
+    val displayRelationship = if (isSelf) stringResource(R.string.relationship_self) else relationship
+
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.primary else Theme.colors.primary.copy(alpha = 0.12f),
         animationSpec = tween(300)
@@ -335,7 +365,7 @@ fun RelationshipChip(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = relationship,
+            text = displayRelationship,
             style = Theme.typography.body.small.copy(
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp

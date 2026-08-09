@@ -143,6 +143,7 @@
   <string name="relationship_sibling">Sibling</string>
   <string name="relationship_adult_child">Adult Child</string>
   <string name="relationship_friend_neighbor">Friend / Neighbor</string>
+  <string name="relationship_self">Self</string>
   <string name="relationship_other">Other</string>
   <string name="onboarding_title">CareNest</string>
   <string name="onboarding_skip">Skip</string>

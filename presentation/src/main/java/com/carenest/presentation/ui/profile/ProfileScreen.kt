@@ -331,8 +331,19 @@ fun ProfileAvatarSection(
 
         Spacer(modifier = Modifier.height(4.dp))
 
+        val roleText = if (
+            userRole.isBlank() ||
+            userRole.equals("Self", ignoreCase = true) ||
+            userRole.equals("PRIMARY", ignoreCase = true) ||
+            userRole.equals("Primary", ignoreCase = true)
+        ) {
+            stringResource(R.string.profile_primary_caregiver)
+        } else {
+            userRole
+        }
+
         Text(
-            text = userRole,
+            text = roleText,
             style = Theme.typography.body.medium.copy(
                 fontSize = 15.sp
             ),

@@ -8,6 +8,8 @@ data class PatientItem(
 )
 
 data class ChoosePatientState(
+    val userName: String = "",
+    val userAvatarUrl: String? = null,
     val patients: List<PatientItem> = emptyList(),
     val isLoading: Boolean = false
 )

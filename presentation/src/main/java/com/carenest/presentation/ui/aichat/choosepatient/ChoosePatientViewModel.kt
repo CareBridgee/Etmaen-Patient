@@ -11,15 +11,32 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
+
 @HiltViewModel
 class ChoosePatientViewModel @Inject constructor(
-    private val getFamilyMembersUseCase: GetFamilyMembersUseCase
+    private val getFamilyMembersUseCase: GetFamilyMembersUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel(),
     StateHolder<ChoosePatientState> by DefaultStateHolder(ChoosePatientState()),
     EffectPublisher<ChoosePatientEffect> by DefaultEffectPublisher() {
 
     init {
+        observeUser()
         loadPatients()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            observeCurrentUserUseCase().collect { user ->
+                updateState {
+                    copy(
+                        userName = user?.name.orEmpty(),
+                        userAvatarUrl = user?.profileImageUrl?.takeIf(String::isNotBlank)
+                    )
+                }
+            }
+        }
     }
 
     fun loadPatients() {
@@ -31,7 +48,11 @@ class ChoosePatientViewModel @Inject constructor(
             getFamilyMembersUseCase().onSuccess { members ->
                 members.forEachIndexed { index, member ->
                     if (!member.isDeleted && patientsList.none { it.id == member.id }) {
-                        val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
+                        val isSelf = member.isPrimary ||
+                                member.relationship.isNullOrBlank() ||
+                                member.relationship.equals("Self", ignoreCase = true) ||
+                                member.relationship.equals("PRIMARY", ignoreCase = true) ||
+                                member.relationship.equals("Primary", ignoreCase = true)
                         val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
                         patientsList.add(
                             PatientItem(

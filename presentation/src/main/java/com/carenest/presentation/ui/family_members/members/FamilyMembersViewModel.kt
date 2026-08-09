@@ -30,7 +30,11 @@ class FamilyMembersViewModel @Inject constructor(
             getFamilyMembersUseCase().fold(onSuccess = { members ->
                 members.forEach { member ->
                     if (!member.isDeleted && memberItems.none { it.id == member.id }) {
-                        val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
+                        val isSelf = member.isPrimary ||
+                                member.relationship.isNullOrBlank() ||
+                                member.relationship.equals("Self", ignoreCase = true) ||
+                                member.relationship.equals("PRIMARY", ignoreCase = true) ||
+                                member.relationship.equals("Primary", ignoreCase = true)
                         val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
                         memberItems.add(
                             FamilyMemberItem(

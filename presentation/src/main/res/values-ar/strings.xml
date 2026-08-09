@@ -137,6 +137,7 @@
   <string name="relationship_sibling">أخ أو أخت</string>
   <string name="relationship_adult_child">ابن أو ابنة بالغة</string>
   <string name="relationship_friend_neighbor">صديق أو جار</string>
+  <string name="relationship_self">نفسي</string>
   <string name="relationship_other">أخرى</string>
   <string name="onboarding_title">كير نيست</string>
   <string name="onboarding_skip">تخطي</string>
