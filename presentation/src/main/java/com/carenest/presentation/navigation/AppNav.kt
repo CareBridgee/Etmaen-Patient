@@ -375,7 +375,7 @@ fun AppNav(
                         reservationId = route.reservationId,
                         serviceRequestId = route.serviceRequestId,
                         onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMatched = { replaceWith(AppRoute.AcceptOffer) }
+                        onMatched = { requestId -> replaceWith(AppRoute.NurseOnTheWay(requestId)) }
                     )
                 }
 

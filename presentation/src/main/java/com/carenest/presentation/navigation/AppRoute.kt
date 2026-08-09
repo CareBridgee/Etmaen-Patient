@@ -74,8 +74,6 @@ sealed interface AppRoute : NavKey {
          val serviceRequestId: String
      ) : AppRoute
      @Serializable
-     data object AcceptOffer : AppRoute
-     @Serializable
      data class Chat(val requestId: String) : AppRoute
 
      @Serializable
