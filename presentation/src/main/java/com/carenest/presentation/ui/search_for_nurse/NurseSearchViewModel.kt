@@ -3,6 +3,7 @@ package com.carenest.presentation.ui.search_for_nurse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.repository.ReservationSocketRepository
+import com.carenest.domain.socket.SocketServiceController
 import com.carenest.domain.socket.model.ReservationEvent
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NurseSearchViewModel @Inject constructor(
     private val reservationSocketRepository: ReservationSocketRepository,
+    private val socketServiceController: SocketServiceController,
 ) : ViewModel(),
     StateHolder<NurseSearchState> by DefaultStateHolder(NurseSearchState()),
     EffectPublisher<NurseSearchEffect> by DefaultEffectPublisher() {
@@ -31,7 +33,9 @@ class NurseSearchViewModel @Inject constructor(
             is NurseSearchIntent.StartSearching -> startSearching(intent.reservationId, intent.serviceRequestId)
             is NurseSearchIntent.AcceptOffer -> acceptOffer(intent.offerId)
             is NurseSearchIntent.DeclineOffer -> declineOffer(intent.offerId)
-            NurseSearchIntent.CancelSearch -> cancelSearch()
+            NurseSearchIntent.CancelSearch -> updateState { copy(showCancelConfirmation = true) }
+            NurseSearchIntent.ConfirmCancelSearch -> confirmCancelSearch()
+            NurseSearchIntent.DismissCancelConfirmation -> updateState { copy(showCancelConfirmation = false) }
             is NurseSearchIntent.PaymentMethodSelected -> updateState {
                 copy(
                     selectedPaymentMethod = intent.paymentMethod,
@@ -51,6 +55,7 @@ class NurseSearchViewModel @Inject constructor(
         if (reservationId == resId) return // already started
         reservationId = resId
         serviceRequestId = srId
+        socketServiceController.startService(srId)
         observeReservationEvents()
         requestInitialOffers()
     }
@@ -60,7 +65,7 @@ class NurseSearchViewModel @Inject constructor(
         observationJob = viewModelScope.launch {
             reservationSocketRepository.observeReservationEvents(reservationId)
                 .catch { e ->
-                    sendEffect(NurseSearchEffect.ShowError(e.message ?: "Connection error"))
+                    sendEffect(ShowError(e.message ?: "Connection error"))
                 }
                 .collect { event -> handleEvent(event) }
         }
@@ -75,10 +80,10 @@ class NurseSearchViewModel @Inject constructor(
     private fun handleEvent(event: ReservationEvent) {
         when (event) {
             is ReservationEvent.OffersList -> {
-                updateState { copy(offers = event.offers, isSearching = event.offers.isEmpty()) }
+                updateState { copy(offers = event.offers, isSearching = event.offers.isEmpty(), activeNursesCount = event.offers.size) }
             }
             is ReservationEvent.OfferCreated -> {
-                updateState { copy(offers = offers + event.offer, isSearching = false) }
+                updateState { copy(offers = offers + event.offer, isSearching = false, activeNursesCount = offers.size + 1) }
             }
             is ReservationEvent.OfferUpdated -> updateState {
                 copy(offers = offers.map { if (it.id == event.offer.id) event.offer else it })
@@ -87,16 +92,20 @@ class NurseSearchViewModel @Inject constructor(
                 copy(offers = offers.map { if (it.id == event.offer.id) event.offer else it })
             }
             is ReservationEvent.OfferAccepted -> {
-                sendEffect(NavigateToEnRoute(event.offer.nurseId))
+                socketServiceController.startService(event.offer.serviceRequestId)
+                sendEffect(NavigateToEnRoute(event.offer.serviceRequestId))
             }
             is ReservationEvent.OfferWithdrawn -> updateState {
-                copy(offers = offers.filter { it.id != event.offerId })
+                val updatedOffers = offers.filter { it.id != event.offerId }
+                copy(offers = updatedOffers, activeNursesCount = updatedOffers.size)
             }
             is ReservationEvent.OfferRejected -> updateState {
-                copy(offers = offers.filter { it.id != event.offerId })
+                val updatedOffers = offers.filter { it.id != event.offerId }
+                copy(offers = updatedOffers, activeNursesCount = updatedOffers.size)
             }
             is ReservationEvent.RequestCancelled -> {
-                sendEffect(NurseSearchEffect.NavigateBack)
+                updateState { copy(showCancelConfirmation = false) } // Ensure dialog is closed if open
+                sendEffect(NavigateBack)
             }
             is ReservationEvent.Unknown -> Unit
             ReservationEvent.Completed -> TODO()
@@ -105,17 +114,28 @@ class NurseSearchViewModel @Inject constructor(
 
     private fun acceptOffer(offerId: String) {
         val offer = state.value.offers.find { it.id == offerId } ?: return
-        updateState { copy(showPaymentSheet = true, selectedOfferForPayment = offer) }
+        viewModelScope.launch {
+            runCatching { reservationSocketRepository.acceptOffer(offer.id) }
+                .onSuccess {
+                    updateState { copy(showPaymentSheet = false, selectedOfferForPayment = null) }
+                    socketServiceController.startService(offer.serviceRequestId)
+                    sendEffect(NavigateToEnRoute(offer.serviceRequestId))
+                }
+                .onFailure {
+                    sendEffect(ShowError(it.message ?: "Failed to accept offer"))
+                }
+        }
     }
 
     private fun declineOffer(offerId: String) {
         viewModelScope.launch {
             runCatching { reservationSocketRepository.rejectOffer(offerId) }
-                .onFailure { sendEffect(NurseSearchEffect.ShowError(it.message ?: "Failed to decline offer")) }
+                .onFailure { sendEffect(ShowError(it.message ?: "Failed to decline offer")) }
         }
     }
 
-    private fun cancelSearch() {
+    private fun confirmCancelSearch() {
+        updateState { copy(showCancelConfirmation = false) }
         viewModelScope.launch {
             runCatching { reservationSocketRepository.cancelRequest(serviceRequestId) }
             sendEffect(NurseSearchEffect.NavigateBack)
@@ -128,10 +148,11 @@ class NurseSearchViewModel @Inject constructor(
             runCatching { reservationSocketRepository.acceptOffer(offer.id) }
                 .onSuccess {
                     updateState { copy(showPaymentSheet = false, selectedOfferForPayment = null) }
-                    sendEffect(NurseSearchEffect.NavigateToEnRoute(offer.nurseId))
+                    socketServiceController.startService(offer.serviceRequestId)
+                    sendEffect(NavigateToEnRoute(offer.serviceRequestId))
                 }
                 .onFailure {
-                    sendEffect(NurseSearchEffect.ShowError(it.message ?: "Failed to accept offer"))
+                    sendEffect(ShowError(it.message ?: "Failed to accept offer"))
                 }
         }
     }

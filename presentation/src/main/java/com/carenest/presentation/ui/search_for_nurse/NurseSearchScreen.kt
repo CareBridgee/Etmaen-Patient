@@ -1,5 +1,6 @@
 package com.carenest.presentation.ui.search_for_nurse
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,32 +10,25 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.carenest.designsystem.components.button.PrimaryButton
-import com.carenest.designsystem.components.payout.PayoutInfoBanner
-import com.carenest.designsystem.components.payout.PayoutMethodCard
-import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.domain.model.PaymentMethod
-import com.carenest.domain.socket.model.NurseOfferResponse
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
+import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.search_for_nurse.composables.ActiveNursesChip
 import com.carenest.presentation.ui.search_for_nurse.composables.NurseOfferCard
 import com.carenest.presentation.ui.search_for_nurse.composables.SearchingAnimation
+import com.carenest.presentation.ui.tracking.components.CancelVisitConfirmationDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,8 +43,9 @@ fun NurseSearchScreen(
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is NurseSearchEffect.NavigateToEnRoute -> onMatched(effect.nurseId)
+            is NurseSearchEffect.NavigateToEnRoute -> onMatched(effect.requestId)
             NurseSearchEffect.NavigateBack -> onBack()
+
             is NurseSearchEffect.ShowError -> Unit // TODO: wire to snackbar
         }
     }
@@ -59,60 +54,33 @@ fun NurseSearchScreen(
         viewModel.onIntent(NurseSearchIntent.StartSearching(reservationId, serviceRequestId))
     }
 
+    BackHandler {
+        viewModel.onIntent(NurseSearchIntent.CancelSearch)
+    }
+
+    ScreenTopBar(
+        title = stringResource(R.string.searching_for_available),
+        onLeadingClick = { viewModel.onIntent(NurseSearchIntent.CancelSearch) })
+
     NurseSearchContent(
         state = state,
-        onBack = { viewModel.onIntent(NurseSearchIntent.CancelSearch) },
         onAccept = { viewModel.onIntent(NurseSearchIntent.AcceptOffer(it)) },
-        onDecline = { viewModel.onIntent(NurseSearchIntent.DeclineOffer(it)) }
-    )
+        onDecline = { viewModel.onIntent(NurseSearchIntent.DeclineOffer(it)) })
 
-    if (state.showPaymentSheet) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ModalBottomSheet(
-            onDismissRequest = { viewModel.onIntent(NurseSearchIntent.DismissPaymentSheet) },
-            sheetState = sheetState,
-            containerColor = Theme.colors.backGround
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .padding(bottom = 32.dp)
-            ) {
-                PayoutMethodCard(
-                    title = stringResource(com.carenest.designsystem.R.string.payment_method_cod),
-                    subtitle = stringResource(com.carenest.designsystem.R.string.payment_method_cod_desc),
-                    painter = painterResource(com.carenest.designsystem.R.drawable.cod),
-                    selected = state.selectedPaymentMethod == PaymentMethod.COD,
-                    onClick = { viewModel.onIntent(NurseSearchIntent.PaymentMethodSelected(PaymentMethod.COD)) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(12.dp))
-                PayoutMethodCard(
-                    title = stringResource(com.carenest.designsystem.R.string.payment_method_paymob),
-                    subtitle = stringResource(com.carenest.designsystem.R.string.payment_method_paymob_desc),
-                    painter = painterResource(com.carenest.designsystem.R.drawable.card),
-                    selected = state.selectedPaymentMethod == PaymentMethod.PAYMOB,
-                    onClick = { viewModel.onIntent(NurseSearchIntent.PaymentMethodSelected(PaymentMethod.PAYMOB)) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(16.dp))
-                PayoutInfoBanner(text = stringResource(com.carenest.designsystem.R.string.payment_info_banner))
-                Spacer(Modifier.height(24.dp))
-                PrimaryButton(
-                    caption = stringResource(com.carenest.designsystem.R.string.payment_confirm_btn),
-                    onClick = { viewModel.onIntent(NurseSearchIntent.ConfirmPayment) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
+    if (state.showCancelConfirmation) {
+        CancelVisitConfirmationDialog(
+            title = stringResource(R.string.searching_cancel_dialog_title),
+            message = stringResource(R.string.searching_cancel_dialog_message),
+            confirmText = stringResource(R.string.searching_cancel_dialog_confirm),
+            dismissText = stringResource(R.string.searching_cancel_dialog_dismiss),
+            onConfirm = { viewModel.onIntent(NurseSearchIntent.ConfirmCancelSearch) },
+            onDismiss = { viewModel.onIntent(NurseSearchIntent.DismissCancelConfirmation) })
     }
 }
 
 @Composable
 private fun NurseSearchContent(
     state: NurseSearchState,
-    onBack: () -> Unit,
     onAccept: (offerId: String) -> Unit,
     onDecline: (offerId: String) -> Unit
 ) {
@@ -152,8 +120,7 @@ private fun NurseSearchContent(
                 NurseOfferCard(
                     offer = offer,
                     onAccept = { onAccept(offer.id) },
-                    onDecline = { onDecline(offer.id) }
-                )
+                    onDecline = { onDecline(offer.id) })
                 Spacer(Modifier.height(12.dp))
             }
         }
