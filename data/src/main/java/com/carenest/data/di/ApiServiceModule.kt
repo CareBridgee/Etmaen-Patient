@@ -6,6 +6,8 @@ import com.carenest.data.source.remote.service.AuthApiService
 import com.carenest.data.source.remote.service.AuthApiServiceImpl
 import com.carenest.data.source.remote.service.CareNestApiService
 import com.carenest.data.source.remote.service.CareNestApiServiceImpl
+import com.carenest.data.source.remote.service.CloudinaryApiService
+import com.carenest.data.source.remote.service.CloudinaryApiServiceImpl
 import com.carenest.data.source.remote.service.ProfileApiService
 import com.carenest.data.source.remote.service.ProfileApiServiceImpl
 import com.carenest.data.source.remote.service.UserApiService
@@ -46,6 +48,6 @@ abstract class ApiServiceModule {
     abstract fun provideNurseTrackingService(impl: NurseTrackingServiceImp): NurseTrackingService
 
     @Binds
-    abstract fun provideCloudinaryApiService(impl: com.carenest.data.source.remote.service.CloudinaryApiServiceImpl): com.carenest.data.source.remote.service.CloudinaryApiService
+    abstract fun provideCloudinaryApiService(impl: CloudinaryApiServiceImpl): CloudinaryApiService
 }
 
