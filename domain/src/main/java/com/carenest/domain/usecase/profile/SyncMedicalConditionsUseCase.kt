@@ -13,30 +13,15 @@ class SyncMedicalConditionsUseCase @Inject constructor(private val repository: P
         val customName = runCatching { ProfileValidator.medicalConditions(otherConditions) }
             .getOrElse { return Result.failure(it) }
 
-        val catalogIds = repository.getMedicalConditionCatalog()
+        val catalogById = repository.getMedicalConditionCatalog()
             .getOrElse { return Result.failure(it) }
-            .mapTo(hashSetOf()) { it.id }
-        val current = repository.getProfileMedicalConditions(profileId)
-            .getOrElse { return Result.failure(it) }
-        val matchingCustomIds = if (customName.isBlank()) emptySet() else current
-            .filter {
-                it.medicalConditionId !in catalogIds &&
-                    it.conditionName.equals(customName, ignoreCase = true)
-            }
-            .mapTo(linkedSetOf()) { it.medicalConditionId }
-        val customIds = when {
-            customName.isBlank() || matchingCustomIds.isNotEmpty() -> matchingCustomIds
-            else -> setOf(
-                repository.addCustomMedicalCondition(profileId, customName)
-                    .getOrElse { return Result.failure(it) }
-                    .medicalConditionId
-            )
-        }
+            .associateBy { it.id }
+        val selectedNames = selectedBackendIds.mapNotNull { catalogById[it]?.name } +
+            listOfNotNull(customName.takeIf(String::isNotBlank))
 
-        return repository.syncProfileMedicalConditions(
+        return repository.syncProfileMedicalConditionsByName(
             profileId = profileId,
-            originalBackendIds = current.mapTo(linkedSetOf()) { it.medicalConditionId },
-            selectedBackendIds = selectedBackendIds + customIds
-        )
+            names = selectedNames
+        ).map { selectedBackendIds }
     }
 }
