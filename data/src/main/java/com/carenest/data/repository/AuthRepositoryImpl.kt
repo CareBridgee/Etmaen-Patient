@@ -11,9 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val authDatasource: AuthDatasource,
     private val datastore: CarenestDatastore,

@@ -14,7 +14,6 @@ import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import com.carenest.domain.repository.UserRepository
-import com.carenest.domain.model.profile.Gender
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -59,7 +58,7 @@ class AddFamilyMemberViewModel @Inject constructor(
                             phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(member.phoneNumber.orEmpty()),
                             relationship = relEnum,
                             dateOfBirth = member.dateOfBirth.orEmpty(),
-                            gender = Gender.fromApi(member.gender).apiValue,
+                            gender = member.gender?.uppercase()?.takeIf { it == "MALE" || it == "FEMALE" } ?: "MALE",
                             profileImageUrl = member.profileImageUrl,
                             bloodType = member.bloodType.orEmpty(),
                             height = member.height?.toString().orEmpty(),

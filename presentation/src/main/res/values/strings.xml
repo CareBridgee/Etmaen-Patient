@@ -37,9 +37,9 @@
   <string name="personal_info_step_title">Personal Details</string>
   <string name="personal_info_title">Personal Info</string>
   <string name="personal_info_first_name_title">First name</string>
-  <string name="personal_info_first_name_hint">Enter your first name</string>
+  <string name="personal_info_first_name_hint">Jane</string>
   <string name="personal_info_last_name_title">Last name</string>
-  <string name="personal_info_last_name_hint">Enter your last name</string>
+  <string name="personal_info_last_name_hint">Joe</string>
   <string name="personal_info_dob_title">Date of birth</string>
   <string name="personal_info_dob_hint">mm/dd/yyyy</string>
   <string name="personal_info_date_confirm">OK</string>

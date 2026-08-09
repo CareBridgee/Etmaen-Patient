@@ -1,6 +1,6 @@
+
 package com.carenest.presentation.ui.family_members.add
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -124,11 +124,11 @@ fun AddFamilyMemberScreenRoute(
                     "Please fill out all required fields correctly" -> fillRequiredFieldsMessage
                     else -> effect.message
                 }
-                Toast.makeText(androidContext, message, Toast.LENGTH_SHORT).show()
+                onShowMessage(message)
             }
             AddFamilyMemberEffect.ShowSuccess -> {
                 onMemberSaved()
-                Toast.makeText(androidContext, savedMessage, Toast.LENGTH_SHORT).show()
+                onShowMessage(savedMessage)
             }
             AddFamilyMemberEffect.SelectAvatar -> avatarPicker.launch("image/*")
         }
