@@ -1,11 +1,7 @@
 package com.carenest.designsystem.components.bottomnav
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -55,6 +51,7 @@ import com.carenest.designsystem.theme.Theme
 data class BottomNavItem(
     val label: String,
     val iconRes: Int,
+    val selectedIconRes: Int = iconRes,
 )
 
 @Composable
@@ -68,17 +65,17 @@ fun SPBottomNavigation(
 
     val isDarkTheme = Theme.colors.backGround.luminance() < 0.5f
     val containerColor = if (isDarkTheme) {
-        Theme.colors.surface
+        Theme.colors.primaryContainer
     } else {
-        Theme.colors.primary
+        Theme.colors.surface
     }
     val indicatorColor = if (isDarkTheme) {
         Theme.colors.onPrimaryVariant
     } else {
-        Theme.colors.primaryVariant
+        Theme.colors.primaryContainer
     }
     val shadowElevation = if (isDarkTheme) 3.dp else 4.dp
-    val navShape = RoundedCornerShape(34.dp)
+    val navShape = RoundedCornerShape(40.dp)
 
     Box(
         modifier = modifier
@@ -92,7 +89,7 @@ fun SPBottomNavigation(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(68.dp)
+                .height(80.dp)
                 .shadow(elevation = shadowElevation, shape = navShape, clip = false)
                 .clip(navShape)
                 .background(containerColor),
@@ -135,7 +132,6 @@ fun SPBottomNavigation(
                     SPBottomNavigationItem(
                         item = item,
                         isSelected = index == boundedSelectedIndex,
-                        isDarkTheme = isDarkTheme,
                         onClick = { onItemSelected(index) },
                         modifier = Modifier.weight(1f),
                     )
@@ -149,20 +145,11 @@ fun SPBottomNavigation(
 private fun SPBottomNavigationItem(
     item: BottomNavItem,
     isSelected: Boolean,
-    isDarkTheme: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedColor = if (isDarkTheme) {
-        Theme.colors.primaryFont
-    } else {
-        Theme.colors.onPrimary
-    }
-    val inactiveColor = if (isDarkTheme) {
-        Theme.colors.secondaryFont.copy(alpha = 0.94f)
-    } else {
-        Theme.colors.onPrimary.copy(alpha = 0.68f)
-    }
+    val selectedColor = Theme.colors.primary
+    val inactiveColor = Theme.colors.secondaryFont
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) selectedColor else inactiveColor,
         animationSpec = tween(durationMillis = 160),
@@ -188,44 +175,36 @@ private fun SPBottomNavigationItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            painter = painterResource(item.iconRes),
-            contentDescription = item.label,
-            tint = contentColor,
-            modifier = Modifier
-                .size(28.dp)
-                .graphicsLayer {
-                    scaleX = iconScale
-                    scaleY = iconScale
-                },
-        )
-        AnimatedVisibility(
-            visible = isSelected,
-            enter = fadeIn(animationSpec = tween(durationMillis = 140)) +
-                slideInVertically(
-                    animationSpec = tween(durationMillis = 160, easing = FastOutSlowInEasing),
-                    initialOffsetY = { fullHeight -> fullHeight / 3 },
+        Crossfade(
+            targetState = isSelected,
+            animationSpec = tween(durationMillis = 140),
+            label = "bottomNavIcon",
+        ) { selected ->
+            Icon(
+                painter = painterResource(
+                    if (selected) item.selectedIconRes else item.iconRes,
                 ),
-            exit = fadeOut(animationSpec = tween(durationMillis = 100)) +
-                slideOutVertically(
-                    animationSpec = tween(durationMillis = 120, easing = FastOutSlowInEasing),
-                    targetOffsetY = { fullHeight -> fullHeight / 3 },
-                ),
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(2.dp))
-                BasicText(
-                    text = item.label,
-                    maxLines = 1,
-                    style = Theme.typography.body.small.copy(
-                        color = contentColor,
-                        fontSize = 11.sp,
-                        lineHeight = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                )
-            }
+                contentDescription = item.label,
+                tint = contentColor,
+                modifier = Modifier
+                    .size(28.dp)
+                    .graphicsLayer {
+                        scaleX = iconScale
+                        scaleY = iconScale
+                    },
+            )
         }
+        Spacer(modifier = Modifier.height(2.dp))
+        BasicText(
+            text = item.label,
+            maxLines = 1,
+            style = Theme.typography.body.small.copy(
+                color = contentColor,
+                fontSize = 11.sp,
+                lineHeight = 14.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+            ),
+        )
     }
 }
 
@@ -242,10 +221,26 @@ private fun BottomNavigationPreview(isDarkTheme: Boolean) {
             SPBottomNavigation(
                 items = remember {
                     listOf(
-                        BottomNavItem("Home", R.drawable.ic_bottom_nav_home),
-                        BottomNavItem("Services", R.drawable.ic_bottom_nav_services),
-                        BottomNavItem("Bookings", R.drawable.ic_bottom_nav_bookings),
-                        BottomNavItem("Profile", R.drawable.ic_bottom_nav_profile),
+                        BottomNavItem(
+                            "Home",
+                            R.drawable.ic_bottom_nav_home,
+                            R.drawable.ic_bottom_nav_home_selected,
+                        ),
+                        BottomNavItem(
+                            "Services",
+                            R.drawable.ic_bottom_nav_services,
+                            R.drawable.ic_bottom_nav_services_selected,
+                        ),
+                        BottomNavItem(
+                            "Bookings",
+                            R.drawable.ic_bottom_nav_bookings,
+                            R.drawable.ic_bottom_nav_bookings_selected,
+                        ),
+                        BottomNavItem(
+                            "Profile",
+                            R.drawable.ic_bottom_nav_profile,
+                            R.drawable.ic_bottom_nav_profile_selected,
+                        ),
                     )
                 },
                 selectedIndex = 1,
