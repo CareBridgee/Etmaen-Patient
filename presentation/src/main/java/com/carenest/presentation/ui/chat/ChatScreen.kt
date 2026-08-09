@@ -23,13 +23,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.core.util.dayKey
 import com.carenest.presentation.core.util.dialPhoneNumber
@@ -38,6 +39,7 @@ import com.carenest.presentation.ui.chat.components.ChatInputBar
 import com.carenest.presentation.ui.chat.components.ChatTopBar
 import com.carenest.presentation.ui.chat.components.DateSeparatorPill
 import com.carenest.presentation.ui.chat.components.MessageBubble
+import com.carenest.presentation.ui.tracking.components.CancelVisitConfirmationDialog
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -96,6 +98,17 @@ fun ChatScreen(
             state = state,
             listState = listState,
             modifier = Modifier.padding(paddingValues),
+        )
+    }
+
+    if (state.showNurseCancelledDialog) {
+        CancelVisitConfirmationDialog(
+            title = stringResource(R.string.nurse_on_the_way_nurse_cancelled_title),
+            message = stringResource(R.string.nurse_on_the_way_nurse_cancelled_message),
+            confirmText = stringResource(R.string.ok),
+            dismissText = "",
+            onConfirm = { viewModel.handleIntent(ChatIntent.OnNurseCancelledDismissed) },
+            onDismiss = { viewModel.handleIntent(ChatIntent.OnNurseCancelledDismissed) }
         )
     }
 }
