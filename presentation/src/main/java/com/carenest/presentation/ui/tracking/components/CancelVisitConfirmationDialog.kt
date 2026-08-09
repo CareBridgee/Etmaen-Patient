@@ -15,20 +15,24 @@ import com.carenest.presentation.R
 fun CancelVisitConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    title: String = stringResource(R.string.nurse_on_the_way_cancel_dialog_title),
+    message: String = stringResource(R.string.nurse_on_the_way_cancel_dialog_message),
+    confirmText: String = stringResource(R.string.nurse_on_the_way_cancel_dialog_confirm),
+    dismissText: String = stringResource(R.string.nurse_on_the_way_cancel_dialog_dismiss),
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Theme.colors.surface,
         title = {
             Text(
-                text = stringResource(R.string.nurse_on_the_way_cancel_dialog_title),
+                text = title,
                 style = Theme.typography.title.copy(fontWeight = FontWeight.Bold),
                 color = Theme.colors.primaryFont,
             )
         },
         text = {
             Text(
-                text = stringResource(R.string.nurse_on_the_way_cancel_dialog_message),
+                text = message,
                 style = Theme.typography.body.medium,
                 color = Theme.colors.secondaryFont,
             )
@@ -36,7 +40,7 @@ fun CancelVisitConfirmationDialog(
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text(
-                    text = stringResource(R.string.nurse_on_the_way_cancel_dialog_confirm),
+                    text = confirmText,
                     style = Theme.typography.body.medium,
                     color = Theme.colors.error,
                 )
@@ -45,7 +49,7 @@ fun CancelVisitConfirmationDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(
-                    text = stringResource(R.string.nurse_on_the_way_cancel_dialog_dismiss),
+                    text = dismissText,
                     style = Theme.typography.body.medium,
                     color = Theme.colors.secondaryFont,
                 )

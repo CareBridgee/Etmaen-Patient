@@ -303,6 +303,10 @@
   <string name="request_status">حالة الطلب</string>
   <string name="searching_for_available">جارٍ البحث عن ممرض متاح…</string>
   <string name="searching_describtion">نحن نقوم حاليًا بالاتصال بمقدمي الرعاية المؤهلين في منطقتك القريبة. يستغرق ذلك عادةً أقل من دقيقتين.\n</string>
+  <string name="searching_cancel_dialog_title">إلغاء هذا الطلب؟</string>
+  <string name="searching_cancel_dialog_message">هل أنت متأكد من رغبتك في التوقف عن البحث عن ممرض؟ سيتم إلغاء طلبك.</string>
+  <string name="searching_cancel_dialog_confirm">نعم، إلغاء</string>
+  <string name="searching_cancel_dialog_dismiss">متابعة البحث</string>
   <string name="nurse_active_nearby">%1$d ممرضون نشطون بالقرب منك</string>
   <string name="nurse_name_format">%1$s،</string>
   <string name="nurse_review_format"> • %1$d %2$s</string>
