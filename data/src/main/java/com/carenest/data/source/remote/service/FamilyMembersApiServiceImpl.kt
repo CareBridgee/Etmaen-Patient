@@ -2,13 +2,12 @@ package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileResponseDto
+import com.carenest.data.source.remote.dto.profile.toMultipartFormData
 import com.carenest.data.utils.executeRequest
 import com.carenest.data.utils.executeUnitRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
-import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -36,16 +35,14 @@ class FamilyMembersApiServiceImpl @Inject constructor(
         httpClient.executeRequest<ProfileResponseDto>(json) {
             method = HttpMethod.Post
             url { path("api/v1/profiles") }
-            contentType(ContentType.Application.Json)
-            setBody(request)
+            setBody(request.toMultipartFormData())
         }
 
     override suspend fun updateFamilyMember(id: String, request: ProfileRequestDto): Result<ProfileResponseDto> =
         httpClient.executeRequest<ProfileResponseDto>(json) {
             method = HttpMethod.Put
             url { path("api/v1/profiles/$id") }
-            contentType(ContentType.Application.Json)
-            setBody(request)
+            setBody(request.toMultipartFormData())
         }
 
     override suspend fun deleteFamilyMember(id: String): Result<Unit> =

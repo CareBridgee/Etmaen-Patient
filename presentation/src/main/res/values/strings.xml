@@ -37,9 +37,9 @@
   <string name="personal_info_step_title">Personal Details</string>
   <string name="personal_info_title">Personal Info</string>
   <string name="personal_info_first_name_title">First name</string>
-  <string name="personal_info_first_name_hint">Enter your first name</string>
+  <string name="personal_info_first_name_hint">Jane</string>
   <string name="personal_info_last_name_title">Last name</string>
-  <string name="personal_info_last_name_hint">Enter your last name</string>
+  <string name="personal_info_last_name_hint">Joe</string>
   <string name="personal_info_dob_title">Date of birth</string>
   <string name="personal_info_dob_hint">mm/dd/yyyy</string>
   <string name="personal_info_date_confirm">OK</string>
@@ -143,6 +143,7 @@
   <string name="relationship_sibling">Sibling</string>
   <string name="relationship_adult_child">Adult Child</string>
   <string name="relationship_friend_neighbor">Friend / Neighbor</string>
+  <string name="relationship_self">Self</string>
   <string name="relationship_other">Other</string>
   <string name="onboarding_title">CareNest</string>
   <string name="onboarding_skip">Skip</string>
@@ -512,4 +513,16 @@
   <string name="profile_health_operation_failed_retry">Unable to update the health profile — tap to retry.</string>
   <string name="family_member_deleted">Family member deleted successfully.</string>
   <string name="family_member_delete_failed">Unable to delete the family member.</string>
+  <string name="family_member_info_section">Family Member Info</string>
+  <string name="family_member_phone_optional">Phone Number (Optional)</string>
+  <string name="family_member_relationship_label">Relationship</string>
+  <string name="phone_validation_required">Phone number is required</string>
+  <string name="phone_validation_invalid_length">Phone number must be 11 digits</string>
+  <string name="phone_validation_invalid_format">Must start with 010, 011, 012, or 015</string>
+  <string name="error_fill_required_fields">Please fill out all required fields correctly</string>
+  <string name="error_height_number">Height must be a number</string>
+  <string name="error_weight_number">Weight must be a number</string>
+  <string name="error_first_name_required">First name is required</string>
+  <string name="error_last_name_required">Last name is required</string>
+  <string name="error_dob_required">Date of birth is required</string>
 </resources>

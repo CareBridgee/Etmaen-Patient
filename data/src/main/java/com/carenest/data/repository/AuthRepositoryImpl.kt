@@ -45,9 +45,7 @@ class AuthRepositoryImpl @Inject constructor(
                         user = user
                     )
                 }.onFailure {
-                    datastore.clearAuthTokens()
-                    userRepository.clearCurrentUser()
-                    datastore.setLoggedIn(false)
+                    clearUserSession()
                 }
             },
             onFailure = { Result.failure(it) }
@@ -60,9 +58,8 @@ class AuthRepositoryImpl @Inject constructor(
 
         authDatasource.refreshToken(refreshToken).fold(
             onSuccess = { response ->
-                if(response.refreshToken?.isBlank() == true || response.accessToken?.isBlank() == true){
-                    datastore.clearAuthTokens()
-                    datastore.setLoggedIn(false)
+                if (response.refreshToken?.isBlank() == true || response.accessToken?.isBlank() == true) {
+                    clearUserSession()
                     return@withContext Result.failure(Exception("User not found"))
                 }
                 datastore.saveAuthTokens(
@@ -72,15 +69,13 @@ class AuthRepositoryImpl @Inject constructor(
                 Result.success(Unit)
             },
             onFailure = { throwable ->
-                // If refresh token is invalid (401 or 403), we should log out the user
                 val isAuthError = (throwable is io.ktor.client.plugins.ResponseException &&
                     (throwable.response.status.value == 401 || throwable.response.status.value == 403)) ||
                     (throwable.message?.contains("401") == true || throwable.message?.contains("403") == true)
 
                 if (isAuthError) {
                     Log.e("AuthRepository", "Manual refresh failed with auth error. Logging out.", throwable)
-                    datastore.clearAuthTokens()
-                    datastore.setLoggedIn(false)
+                    clearUserSession()
                 }
                 Result.failure(throwable)
             }
@@ -88,8 +83,13 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun logout(): Result<Unit> = runCatching {
+        clearUserSession()
+    }
+
+    private suspend fun clearUserSession() {
         datastore.clearAuthTokens()
-        userRepository.clearCurrentUser()
+        datastore.clearUserId()
         datastore.setLoggedIn(false)
+        userRepository.clearCurrentUser()
     }
 }

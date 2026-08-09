@@ -12,6 +12,11 @@ data class AddFamilyMemberState(
     val phoneNumber: String = "",
     val dateOfBirth: String = "",
     val gender: String = "MALE",
+    val avatarUri: String? = null,
+    val profileImageUrl: String? = null,
+    val selectedAvatarBytes: ByteArray? = null,
+    val selectedAvatarFileName: String? = null,
+    val selectedAvatarContentType: String? = null,
     val bloodType: String = "",
     val height: String = "",
     val weight: String = "",
@@ -39,6 +44,13 @@ sealed interface AddFamilyMemberEvent {
     data class PhoneNumberChanged(val value: String) : AddFamilyMemberEvent
     data class DateOfBirthChanged(val value: String) : AddFamilyMemberEvent
     data class GenderSelected(val gender: String) : AddFamilyMemberEvent
+    data class AvatarSelected(
+        val uri: String,
+        val fileName: String,
+        val contentType: String,
+        val bytes: ByteArray
+    ) : AddFamilyMemberEvent
+    data object EditAvatarClicked : AddFamilyMemberEvent
     data class BloodTypeChanged(val value: String) : AddFamilyMemberEvent
     data class HeightChanged(val value: String) : AddFamilyMemberEvent
     data class WeightChanged(val value: String) : AddFamilyMemberEvent
@@ -53,5 +65,7 @@ sealed interface AddFamilyMemberEvent {
 sealed interface AddFamilyMemberEffect {
     data object NavigateBack : AddFamilyMemberEffect
     data object ShowSuccess : AddFamilyMemberEffect
+    data class NavigateToCompleteProfile(val memberId: String) : AddFamilyMemberEffect
     data class ShowError(val message: String) : AddFamilyMemberEffect
+    data object SelectAvatar : AddFamilyMemberEffect
 }

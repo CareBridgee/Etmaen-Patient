@@ -13,6 +13,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +23,8 @@ class AddFamilyMemberViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val createFamilyMemberUseCase: CreateFamilyMemberUseCase,
     private val updateFamilyMemberUseCase: UpdateFamilyMemberUseCase,
-    private val getFamilyMemberByIdUseCase: GetFamilyMemberByIdUseCase
+    private val getFamilyMemberByIdUseCase: GetFamilyMemberByIdUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel(),
     StateHolder<AddFamilyMemberState> by DefaultStateHolder(AddFamilyMemberState()),
     EffectPublisher<AddFamilyMemberEffect> by DefaultEffectPublisher() {
@@ -56,7 +58,8 @@ class AddFamilyMemberViewModel @Inject constructor(
                             phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(member.phoneNumber.orEmpty()),
                             relationship = relEnum,
                             dateOfBirth = member.dateOfBirth.orEmpty(),
-                            gender = member.gender?.uppercase() ?: "MALE",
+                            gender = member.gender?.uppercase()?.takeIf { it == "MALE" || it == "FEMALE" } ?: "MALE",
+                            profileImageUrl = member.profileImageUrl,
                             bloodType = member.bloodType.orEmpty(),
                             height = member.height?.toString().orEmpty(),
                             weight = member.weight?.toString().orEmpty(),
@@ -91,10 +94,11 @@ class AddFamilyMemberViewModel @Inject constructor(
             }
             is AddFamilyMemberEvent.PhoneNumberChanged -> {
                 val phoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(event.value)
+                val err = if (phoneNumber.isNotBlank()) EgyptianPhoneNumberValidator.validate(phoneNumber) else null
                 updateState {
                     copy(
                         phoneNumber = phoneNumber,
-                        phoneNumberError = EgyptianPhoneNumberValidator.validate(phoneNumber)
+                        phoneNumberError = err
                     )
                 }
             }
@@ -105,6 +109,15 @@ class AddFamilyMemberViewModel @Inject constructor(
             is AddFamilyMemberEvent.GenderSelected -> {
                 updateState { copy(gender = event.gender, genderError = null) }
             }
+            is AddFamilyMemberEvent.AvatarSelected -> updateState {
+                copy(
+                    avatarUri = event.uri,
+                    selectedAvatarFileName = event.fileName,
+                    selectedAvatarContentType = event.contentType,
+                    selectedAvatarBytes = event.bytes
+                )
+            }
+            AddFamilyMemberEvent.EditAvatarClicked -> sendEffect(AddFamilyMemberEffect.SelectAvatar)
             is AddFamilyMemberEvent.BloodTypeChanged -> {
                 updateState { copy(bloodType = event.value) }
             }
@@ -154,7 +167,7 @@ class AddFamilyMemberViewModel @Inject constructor(
             updateState { copy(lastNameError = "Last name is required") }
             hasError = true
         }
-        EgyptianPhoneNumberValidator.validate(currentState.phoneNumber)?.let { error ->
+        EgyptianPhoneNumberValidator.validateOptional(currentState.phoneNumber)?.let { error ->
             updateState { copy(phoneNumberError = error) }
             hasError = true
         }
@@ -175,11 +188,29 @@ class AddFamilyMemberViewModel @Inject constructor(
             hasError = true
         }
 
-        if (hasError) return
+        if (hasError) {
+            sendEffect(AddFamilyMemberEffect.ShowError("Please fill out all required fields correctly"))
+            return
+        }
 
         viewModelScope.launch {
             updateState { copy(isSubmitting = true) }
-            val relStr = currentState.relationship?.backendValue ?: "Other"
+            val relStr = currentState.relationship?.name ?: "OTHER"
+
+            val finalAvatarUrl = if (currentState.selectedAvatarBytes != null && currentState.selectedAvatarBytes.isNotEmpty()) {
+                val uploadResult = userRepository.uploadProfileImage(
+                    fileName = currentState.selectedAvatarFileName ?: "profile.jpg",
+                    contentType = currentState.selectedAvatarContentType ?: "image/jpeg",
+                    bytes = currentState.selectedAvatarBytes
+                )
+                uploadResult.getOrElse {
+                    updateState { copy(isSubmitting = false) }
+                    sendEffect(AddFamilyMemberEffect.ShowError("Unable to upload profile photo"))
+                    return@launch
+                }
+            } else {
+                currentState.profileImageUrl
+            }
 
             val input = FamilyMemberInput(
                 relationship = relStr,
@@ -194,10 +225,12 @@ class AddFamilyMemberViewModel @Inject constructor(
                 mobilityStatus = currentState.mobilityStatus.ifBlank { null },
                 mobilityNotes = currentState.mobilityNotes.ifBlank { null },
                 previousSurgeries = currentState.previousSurgeries.ifBlank { null },
-                previousHospitalizations = currentState.previousHospitalizations.ifBlank { null }
+                previousHospitalizations = currentState.previousHospitalizations.ifBlank { null },
+                profileImageUrl = finalAvatarUrl
             )
 
             val currentId = currentState.memberId
+            val isEditMode = currentState.isEditMode && !currentId.isNullOrBlank()
             val result = if (currentState.isEditMode && !currentId.isNullOrBlank()) {
                 updateFamilyMemberUseCase(currentId, input)
             } else {
@@ -205,15 +238,21 @@ class AddFamilyMemberViewModel @Inject constructor(
             }
 
             result.fold(
-                onSuccess = {
+                onSuccess = { savedMember ->
                     updateState { copy(isSubmitting = false) }
                     sendEffect(AddFamilyMemberEffect.ShowSuccess)
-                    sendEffect(AddFamilyMemberEffect.NavigateBack)
+                    if (isEditMode) {
+                        sendEffect(AddFamilyMemberEffect.NavigateBack)
+                    } else {
+                        sendEffect(AddFamilyMemberEffect.NavigateToCompleteProfile(savedMember.id))
+                    }
                 },
-                onFailure = {
+                onFailure = { error ->
+                    android.util.Log.e("AddFamilyMemberViewModel", "Save family member failed", error)
                     updateState { copy(isSubmitting = false) }
-                    updateState { copy(errorMessage = "family_member_save_failed") }
-                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_save_failed"))
+                    val errorMsg = error.message ?: error.toString()
+                    updateState { copy(errorMessage = errorMsg) }
+                    sendEffect(AddFamilyMemberEffect.ShowError(errorMsg))
                 }
             )
         }

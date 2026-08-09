@@ -34,6 +34,26 @@ android {
                 name = "location_iq_token",
                 value = "\"${gradleLocalProperties(rootDir, providers).getProperty("location_iq_token")}\""
             )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_cloud_name",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_cloud_name", "jonkn070")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_upload_preset",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_upload_preset", "home_nursing_images")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_asset_folder",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_asset_folder", "home-nursing/profiles")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_upload_url",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_upload_url", "https://api.cloudinary.com/v1_1/jonkn070/image/upload")}\""
+            )
         }
         getByName("release") {
             buildConfigField(
@@ -50,6 +70,26 @@ android {
                 type = "String",
                 name = "location_iq_token",
                 value = "\"${gradleLocalProperties(rootDir, providers).getProperty("location_iq_token")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_cloud_name",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_cloud_name", "jonkn070")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_upload_preset",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_upload_preset", "home_nursing_images")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_asset_folder",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_asset_folder", "home-nursing/profiles")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "cloudinary_upload_url",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_upload_url", "https://api.cloudinary.com/v1_1/jonkn070/image/upload")}\""
             )
         }
     }

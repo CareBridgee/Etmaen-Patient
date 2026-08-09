@@ -1,6 +1,8 @@
 package com.carenest.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.carenest.presentation.ui.auth.login.OtpDeliveryMethod
+import com.carenest.presentation.ui.profile_completion.ProfileCompletionSource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,14 +21,18 @@ sealed interface AppRoute : NavKey {
      data class Otp(
          val phone: String,
          val otp: String? = null,
-         val method: com.carenest.presentation.ui.auth.login.OtpDeliveryMethod = com.carenest.presentation.ui.auth.login.OtpDeliveryMethod.SMS
+         val method: OtpDeliveryMethod = OtpDeliveryMethod.SMS
      ) : AppRoute
 
      @Serializable
      data object Register : AppRoute
 
      @Serializable
-     data object ProfileCompletion : AppRoute
+     data class ProfileCompletion(
+         val profileId: String? = null,
+         val isEditMode: Boolean = false,
+         val source: ProfileCompletionSource = ProfileCompletionSource.REGISTRATION
+     ) : AppRoute
 
      @Serializable
      data object Home : AppRoute

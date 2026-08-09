@@ -18,17 +18,13 @@ class UpdateProfileAvatarUseCase @Inject constructor(
 
         val currentUser = repository.observeCurrentUser().first()
             ?: repository.refreshCurrentUser().getOrElse { return Result.failure(it) }
-        val firstName = currentUser.firstName?.takeIf(String::isNotBlank)
-            ?: return Result.failure(IllegalStateException("Current user first name is unavailable"))
-        val lastName = currentUser.lastName?.takeIf(String::isNotBlank)
-            ?: return Result.failure(IllegalStateException("Current user last name is unavailable"))
         val imageUrl = repository.uploadProfileImage(fileName, contentType, bytes)
             .getOrElse { return Result.failure(it) }
 
         return repository.updateCurrentUser(
             UserUpdate(
-                firstName = firstName,
-                lastName = lastName,
+                firstName = currentUser.firstName.orEmpty(),
+                lastName = currentUser.lastName.orEmpty(),
                 email = currentUser.email,
                 dateOfBirth = currentUser.dateOfBirth,
                 gender = currentUser.gender,

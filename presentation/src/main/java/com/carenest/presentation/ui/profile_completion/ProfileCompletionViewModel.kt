@@ -10,7 +10,9 @@ import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
 import com.carenest.domain.model.profile.ProfileValidationException
+import androidx.lifecycle.SavedStateHandle
 import com.carenest.domain.usecase.profile.GetDefaultProfileUseCase
+import com.carenest.domain.usecase.profile.GetProfileUseCase
 import com.carenest.domain.usecase.profile.LoadAllergiesUseCase
 import com.carenest.domain.usecase.profile.LoadEmergencyContactsUseCase
 import com.carenest.domain.usecase.profile.LoadMedicalConditionsUseCase
@@ -33,7 +35,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProfileCompletionViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getDefaultProfile: GetDefaultProfileUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
     private val updateBasicHealth: UpdateBasicHealthUseCase,
     private val updateMedicalHistory: UpdateMedicalHistoryUseCase,
     private val loadMedicalConditions: LoadMedicalConditionsUseCase,
@@ -48,6 +52,10 @@ class ProfileCompletionViewModel @Inject constructor(
 ) : ViewModel(),
     StateHolder<ProfileCompletionState> by DefaultStateHolder(ProfileCompletionState()),
     EffectPublisher<ProfileCompletionEffect> by DefaultEffectPublisher() {
+
+    private val navProfileId: String? = savedStateHandle.get<String>("profileId")?.takeIf { it.isNotBlank() && it != "null" }
+    private val navIsEditMode: Boolean = savedStateHandle.get<Boolean>("isEditMode") ?: false
+    private val navSource: ProfileCompletionSource = savedStateHandle.get<ProfileCompletionSource>("source") ?: ProfileCompletionSource.REGISTRATION
 
     private var nextMedicationUiKey = 0L
 
@@ -170,9 +178,23 @@ class ProfileCompletionViewModel @Inject constructor(
 
     private fun initialize() {
         if (currentState.initialized) return
-        updateState { copy(initialized = true, isInitializing = true, errorMessage = null) }
+        updateState {
+            copy(
+                initialized = true,
+                isInitializing = true,
+                errorMessage = null,
+                isEditMode = navIsEditMode,
+                source = navSource,
+                currentStep = if (navIsEditMode) ProfileStep.BasicHealthInfo else ProfileStep.Welcome
+            )
+        }
         viewModelScope.launch {
-            val profile = getDefaultProfile().getOrElse {
+            val profileResult = if (!navProfileId.isNullOrBlank()) {
+                getProfileUseCase(navProfileId)
+            } else {
+                getDefaultProfile()
+            }
+            val profile = profileResult.getOrElse {
                 updateState { copy(isInitializing = false, errorMessage = it.userMessage()) }
                 return@launch
             }
@@ -396,8 +418,11 @@ class ProfileCompletionViewModel @Inject constructor(
     private fun finishHealthOnboarding() {
         if (currentState.isInitializing || currentState.isSubmitting) return
         sendEffect(
-            if (currentState.isEditMode) ProfileCompletionEffect.NavigateAfterEdit
-            else ProfileCompletionEffect.NavigateToHome
+            when {
+                currentState.isEditMode -> ProfileCompletionEffect.NavigateAfterEdit
+                currentState.source == ProfileCompletionSource.FAMILY_MEMBER -> ProfileCompletionEffect.NavigateToFamilyMembers
+                else -> ProfileCompletionEffect.NavigateToHome
+            }
         )
     }
 
