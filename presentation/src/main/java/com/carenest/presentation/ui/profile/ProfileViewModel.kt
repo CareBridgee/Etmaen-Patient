@@ -77,12 +77,8 @@ class ProfileViewModel @Inject constructor(
                 userRole = if (refresh) userRole else "",
                 activeDependentsCount = if (refresh) activeDependentsCount else 0
             )
-        }
         viewModelScope.launch {
-            getCurrentUser().getOrElse {
-                failLoading(refresh)
-                return@launch
-            }
+            val currentUser = getCurrentUser().getOrNull()
             val profile = getDefaultProfile().getOrElse {
                 failLoading(refresh)
                 return@launch
@@ -91,9 +87,14 @@ class ProfileViewModel @Inject constructor(
                 failLoading(refresh)
                 return@launch
             }
+            val profileName = listOfNotNull(profile.firstName, profile.lastName).filter { it.isNotBlank() }.joinToString(" ")
+            val currentUserName = currentUser?.name.orEmpty()
+            val resolvedName = currentUserName.ifBlank { profileName }
+
             updateState {
                 copy(
                     profile = profile,
+                    userName = if (userName.isBlank() || userName.equals("User", ignoreCase = true)) resolvedName else userName,
                     userRole = profile.relationship.orEmpty(),
                     greeting = currentGreeting(),
                     activeDependentsCount = profiles.count { !it.isDeleted && it.id != profile.id },

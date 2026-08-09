@@ -13,10 +13,13 @@ import javax.inject.Inject
 
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 
+import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+
 @HiltViewModel
 class ChoosePatientViewModel @Inject constructor(
     private val getFamilyMembersUseCase: GetFamilyMembersUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel(),
     StateHolder<ChoosePatientState> by DefaultStateHolder(ChoosePatientState()),
     EffectPublisher<ChoosePatientEffect> by DefaultEffectPublisher() {
@@ -43,6 +46,8 @@ class ChoosePatientViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
+            val currentUser = getCurrentUserUseCase().getOrNull()
+            val currentUserName = currentState.userName.ifBlank { currentUser?.name.orEmpty() }
             val patientsList = mutableListOf<PatientItem>()
 
             getFamilyMembersUseCase().onSuccess { members ->
@@ -61,10 +66,20 @@ class ChoosePatientViewModel @Inject constructor(
                                 member.relationship.equals("PRIMARY", ignoreCase = true) ||
                                 member.relationship.equals("Primary", ignoreCase = true)
                         val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
+
+                        val profileName = listOfNotNull(member.firstName, member.lastName)
+                            .filter { it.isNotBlank() }
+                            .joinToString(" ")
+                        val displayName = if (isSelf) {
+                            profileName.ifBlank { currentUserName.ifBlank { "User" } }
+                        } else {
+                            member.fullName
+                        }
+
                         patientsList.add(
                             PatientItem(
                                 id = member.id,
-                                name = member.fullName,
+                                name = displayName,
                                 relationship = relationshipLabel,
                                 isSelected = index == 0
                             )
