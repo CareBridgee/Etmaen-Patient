@@ -332,6 +332,8 @@
   <string name="nurse_on_the_way_cancel_dialog_message">هل أنت متأكد من رغبتك في إلغاء الزيارة؟ إذا انتهت فترة الإلغاء المجاني، فسيتم تطبيق رسوم إلغاء.</string>
   <string name="nurse_on_the_way_cancel_dialog_confirm">نعم، إلغاء الزيارة</string>
   <string name="nurse_on_the_way_cancel_dialog_dismiss">الاحتفاظ بالزيارة</string>
+  <string name="nurse_on_the_way_nurse_cancelled_title">تم إلغاء الطلب</string>
+  <string name="nurse_on_the_way_nurse_cancelled_message">قام الممرض بإلغاء الطلب. يرجى المحاولة مرة أخرى إذا كنت بحاجة للخدمة.</string>
   <string name="visit_completed_menu_content_description">القائمة</string>
   <string name="visit_completed_title">اكتملت الزيارة</string>
   <string name="visit_completed_subtitle">قام الأخصائي الطبي بإنهاء تقرير الجلسة. شكراً لاختيارك CareMatch.</string>

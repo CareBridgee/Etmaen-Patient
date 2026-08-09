@@ -47,12 +47,14 @@ fun CancelVisitConfirmationDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = dismissText,
-                    style = Theme.typography.body.medium,
-                    color = Theme.colors.secondaryFont,
-                )
+            if (dismissText.isNotEmpty()) {
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = dismissText,
+                        style = Theme.typography.body.medium,
+                        color = Theme.colors.secondaryFont,
+                    )
+                }
             }
         },
     )
