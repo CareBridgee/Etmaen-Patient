@@ -15,4 +15,5 @@ sealed interface QrCodeIntent {
 
 sealed interface QrCodeEffect {
     data object NavigateBack : QrCodeEffect
+    data class NavigateToVisitCompleted(val requestId: String) : QrCodeEffect
 }
