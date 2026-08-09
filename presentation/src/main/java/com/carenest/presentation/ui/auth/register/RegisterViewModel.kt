@@ -17,33 +17,48 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import com.carenest.domain.repository.UserRepository
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val updateCurrentUser: UpdateCurrentUserUseCase,
-    private val getDestination: GetAuthenticatedDestinationUseCase
+    private val getDestination: GetAuthenticatedDestinationUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel(),
     StateHolder<RegisterState> by DefaultStateHolder(RegisterState()),
     EffectPublisher<RegisterEffect> by DefaultEffectPublisher() {
 
     init {
         viewModelScope.launch {
-            val user = observeCurrentUser().first()
-            if (user == null) {
-                updateState {
-                    copy(isInitializing = false, errorMessage = "User information is unavailable")
-                }
-            } else {
-                updateState {
-                    copy(
-                        firstName = user.firstName.orEmpty(),
-                        lastName = user.lastName.orEmpty(),
-                        dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
-                        gender = user.gender?.uppercase().orEmpty(),
-                        isInitializing = false
-                    )
+            userRepository.refreshCurrentUser()
+        }
+        viewModelScope.launch {
+            observeCurrentUser().collect { user ->
+                if (user != null) {
+                    updateState {
+                        copy(
+                            firstName = user.firstName.orEmpty(),
+                            lastName = user.lastName.orEmpty(),
+                            dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
+                            gender = user.gender?.uppercase().orEmpty(),
+                            profileImageUrl = user.profileImageUrl,
+                            isInitializing = false,
+                            errorMessage = null
+                        )
+                    }
+                } else {
+                    updateState {
+                        copy(
+                            firstName = "",
+                            lastName = "",
+                            dateOfBirth = "",
+                            gender = "",
+                            profileImageUrl = null,
+                            isInitializing = false
+                        )
+                    }
                 }
             }
         }
@@ -64,6 +79,15 @@ class RegisterViewModel @Inject constructor(
             is RegisterIntent.GenderChanged -> edit(ProfileField.Gender) {
                 copy(gender = event.gender)
             }
+            is RegisterIntent.AvatarSelected -> updateState {
+                copy(
+                    avatarUri = event.uri,
+                    selectedAvatarFileName = event.fileName,
+                    selectedAvatarContentType = event.contentType,
+                    selectedAvatarBytes = event.bytes
+                )
+            }
+            RegisterIntent.EditAvatarClicked -> sendEffect(RegisterEffect.SelectAvatar)
             RegisterIntent.BackClicked -> sendEffect(RegisterEffect.NavigateBack)
             RegisterIntent.ContinueClicked -> submitPersonalInfo()
         }
@@ -74,11 +98,28 @@ class RegisterViewModel @Inject constructor(
         val snapshot = currentState
         updateState { copy(isSubmitting = true, errorMessage = null) }
         viewModelScope.launch {
+            val finalAvatarUrl = if (snapshot.selectedAvatarBytes != null && snapshot.selectedAvatarBytes.isNotEmpty()) {
+                val uploadResult = userRepository.uploadProfileImage(
+                    fileName = snapshot.selectedAvatarFileName ?: "profile.jpg",
+                    contentType = snapshot.selectedAvatarContentType ?: "image/jpeg",
+                    bytes = snapshot.selectedAvatarBytes
+                )
+                uploadResult.getOrElse { uploadError ->
+                    android.util.Log.e("RegisterViewModel", "Avatar upload to Cloudinary failed", uploadError)
+                    val uploadMsg = "Photo upload failed: ${uploadError.message ?: uploadError.toString()}"
+                    updateState { copy(isSubmitting = false, errorMessage = uploadMsg) }
+                    return@launch
+                }
+            } else {
+                snapshot.profileImageUrl
+            }
+
             updateCurrentUser(
                 firstName = snapshot.firstName,
                 lastName = snapshot.lastName,
                 dateOfBirth = snapshot.dateOfBirth,
-                gender = snapshot.gender
+                gender = snapshot.gender,
+                profileImageUrl = finalAvatarUrl
             ).fold(
                 onSuccess = { user ->
                     updateState {
@@ -102,6 +143,7 @@ class RegisterViewModel @Inject constructor(
                                 )
                             },
                             onFailure = { error ->
+                                android.util.Log.e("RegisterViewModel", "Get destination failed", error)
                                 updateState {
                                     copy(
                                         isSubmitting = false,
@@ -114,6 +156,7 @@ class RegisterViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
+                    android.util.Log.e("RegisterViewModel", "Update user profile failed", error)
                     val validation = error as? ProfileValidationException
                     updateState {
                         if (validation != null) {
@@ -123,9 +166,16 @@ class RegisterViewModel @Inject constructor(
                                 errorMessage = null
                             )
                         } else {
+                            val detailedMessage = buildString {
+                                append(error.message ?: error.toString())
+                                if (error is com.carenest.domain.model.user.UserException) {
+                                    error.statusCode?.let { code -> append(" (Status: $code)") }
+                                    error.backendCode?.let { code -> append(" [Code: $code]") }
+                                }
+                            }
                             copy(
                                 isSubmitting = false,
-                                errorMessage = error.message ?: "Unable to save personal information"
+                                errorMessage = detailedMessage
                             )
                         }
                     }

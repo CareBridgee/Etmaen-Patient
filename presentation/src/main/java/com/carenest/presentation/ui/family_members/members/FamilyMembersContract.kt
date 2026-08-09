@@ -4,6 +4,7 @@ data class FamilyMemberItem(
     val id: String,
     val name: String,
     val relationship: String,
+    val profileImageUrl: String? = null,
     val lastCheckup: String = "",
     val upcomingService: String = ""
 )

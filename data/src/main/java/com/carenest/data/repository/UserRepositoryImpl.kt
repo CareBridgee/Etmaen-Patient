@@ -14,9 +14,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+import com.carenest.domain.repository.ImageUploader
+
 class UserRepositoryImpl @Inject constructor(
     private val remote: UserRemoteDataSource,
-    private val local: UserLocalDataSource
+    private val local: UserLocalDataSource,
+    private val imageUploader: ImageUploader
 ) : UserRepository {
     override fun observeCurrentUser(): Flow<User?> =
         local.observeCurrentUser().map { it?.toDomain() }
@@ -28,7 +31,7 @@ class UserRepositoryImpl @Inject constructor(
         fileName: String,
         contentType: String,
         bytes: ByteArray
-    ): Result<String> = remote.uploadProfileImage(fileName, contentType, bytes).userFailure()
+    ): Result<String> = imageUploader.uploadImage(fileName, contentType, bytes).userFailure()
 
     override suspend fun updateCurrentUser(update: UserUpdate): Result<User> =
         sync(remote.updateCurrentUser(update.toDto()))
