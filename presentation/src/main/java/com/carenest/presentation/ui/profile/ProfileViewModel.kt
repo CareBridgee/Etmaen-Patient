@@ -80,7 +80,10 @@ class ProfileViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            val currentUser = getCurrentUser().getOrNull()
+            val currentUser = getCurrentUser().getOrElse {
+                failLoading(refresh)
+                return@launch
+            }
             val profile = getDefaultProfile().getOrElse {
                 failLoading(refresh)
                 return@launch
@@ -90,7 +93,7 @@ class ProfileViewModel @Inject constructor(
                 return@launch
             }
             val profileName = listOfNotNull(profile.firstName, profile.lastName).filter { it.isNotBlank() }.joinToString(" ")
-            val currentUserName = currentUser?.name.orEmpty()
+            val currentUserName = currentUser.name.orEmpty()
             val resolvedName = currentUserName.ifBlank { profileName }
 
             updateState {
