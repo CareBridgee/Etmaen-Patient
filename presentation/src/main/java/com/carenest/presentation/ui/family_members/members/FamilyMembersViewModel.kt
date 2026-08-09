@@ -28,7 +28,14 @@ class FamilyMembersViewModel @Inject constructor(
             val memberItems = mutableListOf<FamilyMemberItem>()
 
             getFamilyMembersUseCase().fold(onSuccess = { members ->
-                members.forEach { member ->
+                val sortedMembers = members.sortedByDescending { member ->
+                    member.isPrimary ||
+                            member.relationship.isNullOrBlank() ||
+                            member.relationship.equals("Self", ignoreCase = true) ||
+                            member.relationship.equals("PRIMARY", ignoreCase = true) ||
+                            member.relationship.equals("Primary", ignoreCase = true)
+                }
+                sortedMembers.forEach { member ->
                     if (!member.isDeleted && memberItems.none { it.id == member.id }) {
                         val isSelf = member.isPrimary ||
                                 member.relationship.isNullOrBlank() ||

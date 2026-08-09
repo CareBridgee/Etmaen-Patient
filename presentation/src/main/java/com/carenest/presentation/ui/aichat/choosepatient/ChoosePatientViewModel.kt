@@ -46,7 +46,14 @@ class ChoosePatientViewModel @Inject constructor(
             val patientsList = mutableListOf<PatientItem>()
 
             getFamilyMembersUseCase().onSuccess { members ->
-                members.forEachIndexed { index, member ->
+                val sortedMembers = members.sortedByDescending { member ->
+                    member.isPrimary ||
+                            member.relationship.isNullOrBlank() ||
+                            member.relationship.equals("Self", ignoreCase = true) ||
+                            member.relationship.equals("PRIMARY", ignoreCase = true) ||
+                            member.relationship.equals("Primary", ignoreCase = true)
+                }
+                sortedMembers.forEachIndexed { index, member ->
                     if (!member.isDeleted && patientsList.none { it.id == member.id }) {
                         val isSelf = member.isPrimary ||
                                 member.relationship.isNullOrBlank() ||
