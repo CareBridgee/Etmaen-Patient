@@ -31,24 +31,34 @@ class RequestServiceViewModel @Inject constructor(
         when (intent) {
             is RequestServiceIntent.OnStart -> {
                 viewModelScope.launch {
-                    // Fetch default profile if no patient is selected
-                    if (currentState.selectedPatient == null) {
-                        profileRepository.getDefaultProfile().onSuccess { profile ->
-                            val defaultPatient = com.carenest.domain.model.Patient(
+                    // Fetch all available profiles (family members + self)
+                    profileRepository.getProfiles().onSuccess { profiles ->
+                        val mappedPatients = profiles.map { profile ->
+                            com.carenest.domain.model.Patient(
                                 id = profile.id,
                                 phoneNumber = "",
                                 firstName = profile.firstName,
                                 lastName = profile.lastName,
                                 dateOfBirth = profile.dateOfBirth,
                                 gender = profile.gender,
-                                profileImageUrl = null,
-                                isDeleted = false,
+                                profileImageUrl = profile.profileImageUrl,
+                                isDeleted = profile.isDeleted,
                                 createdAt = "",
                                 updatedAt = "",
                                 lastLoginAt = null,
                                 defaultProfileId = profile.id
                             )
-                            updateState { copy(selectedPatient = defaultPatient) }
+                        }
+                        updateState { copy(patients = mappedPatients) }
+
+                        // If no patient is selected yet, select the primary/default one
+                        if (currentState.selectedPatient == null) {
+                            profiles.find { it.isPrimary }?.let { primaryProfile ->
+                                val primaryPatient = mappedPatients.find { it.id == primaryProfile.id }
+                                updateState { copy(selectedPatient = primaryPatient) }
+                            } ?: mappedPatients.firstOrNull()?.let { firstPatient ->
+                                updateState { copy(selectedPatient = firstPatient) }
+                            }
                         }
                     }
 
