@@ -2,32 +2,24 @@ package com.carenest.data.mapper.history
 
 import com.carenest.data.source.local.database.entity.ServiceHistoryEntity
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
-import com.carenest.data.source.remote.dto.history.PreferredTimeDto
+import com.carenest.data.utils.parseTimeString
 import com.carenest.domain.model.history.ServiceHistory
 import com.carenest.domain.model.history.PreferredTime
 
 fun ServiceHistoryDto.toDomain(): ServiceHistory {
+    val (h, m) = parseTimeString(preferredTime)
     return ServiceHistory(
         serviceRequestId = serviceRequestId.orEmpty(),
         serviceTypeId = serviceTypeId.orEmpty(),
         serviceName = serviceName.orEmpty(),
         serviceDescription = serviceDescription.orEmpty(),
         preferredDate = preferredDate.orEmpty(),
-        preferredTime = preferredTime?.toDomain() ?: PreferredTime(0, 0),
+        preferredTime = PreferredTime(hour = h, minute = m),
         status = status.orEmpty(),
         nurseId = nurseId,
         nurseName = nurseName,
         createdAt = createdAt.orEmpty(),
         updatedAt = updatedAt.orEmpty()
-    )
-}
-
-fun PreferredTimeDto.toDomain(): PreferredTime {
-    return PreferredTime(
-        hour = hour ?: 0,
-        minute = minute ?: 0,
-        second = second ?: 0,
-        nano = nano ?: 0
     )
 }
 
