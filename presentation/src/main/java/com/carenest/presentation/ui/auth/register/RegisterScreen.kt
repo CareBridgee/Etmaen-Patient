@@ -46,6 +46,16 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.presentation.ui.profile_completion.validation.localizedMessage
 import com.carenest.presentation.navigation.ScreenTopBar
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import com.carenest.presentation.ui.components.ProfileAvatarHeader
+import com.carenest.presentation.util.readAvatar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -53,14 +63,32 @@ import java.util.TimeZone
 
 @Composable
 fun RegisterScreen(
-    onNavigateBack: () -> Unit,
-    onNavigateToWelcome: (String?) -> Unit,
-    onNavigateHome: () -> Unit,
     mode: PersonalInformationMode = PersonalInformationMode.Registration,
+    onNavigateBack: () -> Unit,
+    onNavigateToWelcome: (profileId: String?) -> Unit,
+    onNavigateHome: () -> Unit,
     onEditComplete: () -> Unit = onNavigateBack,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val avatarPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri ?: return@rememberLauncherForActivityResult
+        coroutineScope.launch {
+            runCatching { withContext(Dispatchers.IO) { context.readAvatar(uri) } }.onSuccess { image ->
+                viewModel.onEvent(
+                    RegisterIntent.AvatarSelected(
+                        uri = uri.toString(),
+                        fileName = image.fileName,
+                        contentType = image.contentType,
+                        bytes = image.bytes
+                    )
+                )
+            }
+        }
+    }
 
     LaunchedEffect(mode) {
         viewModel.onEvent(RegisterIntent.ConfigureMode(mode))
@@ -76,6 +104,7 @@ fun RegisterScreen(
             is RegisterEffect.NavigateToWelcome -> onNavigateToWelcome(effect.profileId)
             RegisterEffect.NavigateToHome -> onNavigateHome()
             RegisterEffect.NavigateAfterEdit -> onEditComplete()
+            RegisterEffect.SelectAvatar -> avatarPicker.launch("image/*")
         }
     }
 
@@ -143,6 +172,18 @@ internal fun RegisterScreenContent(
                     fontWeight = FontWeight.SemiBold
                 )
             )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ProfileAvatarHeader(
+                    avatarUrl = state.avatarUri ?: state.profileImageUrl,
+                    onEditAvatarClick = { onEvent(RegisterIntent.EditAvatarClicked) }
+                )
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 

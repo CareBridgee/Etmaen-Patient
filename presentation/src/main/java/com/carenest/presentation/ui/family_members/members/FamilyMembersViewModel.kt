@@ -12,10 +12,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+
 @HiltViewModel
 class FamilyMembersViewModel @Inject constructor(
     private val getFamilyMembersUseCase: GetFamilyMembersUseCase,
-    private val deleteFamilyMemberUseCase: DeleteFamilyMemberUseCase
+    private val deleteFamilyMemberUseCase: DeleteFamilyMemberUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel(),
     StateHolder<FamilyMembersState> by DefaultStateHolder(FamilyMembersState()),
     EffectPublisher<FamilyMembersEffect> by DefaultEffectPublisher() {
@@ -25,18 +28,42 @@ class FamilyMembersViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isLoading = true, loadFailed = false) }
 
+            val currentUser = getCurrentUserUseCase().getOrNull()
+            val currentUserName = currentUser?.name.orEmpty()
             val memberItems = mutableListOf<FamilyMemberItem>()
 
             getFamilyMembersUseCase().fold(onSuccess = { members ->
-                members.forEach { member ->
+                val sortedMembers = members.sortedByDescending { member ->
+                    member.isPrimary ||
+                            member.relationship.isNullOrBlank() ||
+                            member.relationship.equals("Self", ignoreCase = true) ||
+                            member.relationship.equals("PRIMARY", ignoreCase = true) ||
+                            member.relationship.equals("Primary", ignoreCase = true)
+                }
+                sortedMembers.forEach { member ->
                     if (!member.isDeleted && memberItems.none { it.id == member.id }) {
-                        val isSelf = member.isPrimary || member.relationship.equals("Self", ignoreCase = true)
+                        val isSelf = member.isPrimary ||
+                                member.relationship.isNullOrBlank() ||
+                                member.relationship.equals("Self", ignoreCase = true) ||
+                                member.relationship.equals("PRIMARY", ignoreCase = true) ||
+                                member.relationship.equals("Primary", ignoreCase = true)
                         val relationshipLabel = if (isSelf) "Self" else (member.relationship ?: "Member")
+
+                        val profileName = listOfNotNull(member.firstName, member.lastName)
+                            .filter { it.isNotBlank() }
+                            .joinToString(" ")
+                        val displayName = if (isSelf) {
+                            profileName.ifBlank { currentUserName.ifBlank { "User" } }
+                        } else {
+                            member.fullName
+                        }
+
                         memberItems.add(
                             FamilyMemberItem(
                                 id = member.id,
-                                name = member.fullName,
+                                name = displayName,
                                 relationship = relationshipLabel,
+                                profileImageUrl = member.profileImageUrl ?: if (isSelf) currentUser?.profileImageUrl else null,
                                 lastCheckup = "",
                                 upcomingService = ""
                             )

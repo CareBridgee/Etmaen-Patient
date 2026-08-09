@@ -57,6 +57,8 @@ import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.presentation.ui.components.ProfileAvatarHeader
+import com.carenest.presentation.util.readAvatar
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.navigation.ScreenTopBar
@@ -121,7 +123,7 @@ fun ProfileScreen(
             is ProfileEffect.NavigateToLogout -> onLogout()
             ProfileEffect.SelectAvatar -> avatarPicker.launch("image/*")
             ProfileEffect.ShowAvatarUpdated -> onShowMessage(avatarUpdated)
-            ProfileEffect.ShowAvatarUpdateFailed -> onShowMessage(avatarUpdateFailed)
+            is ProfileEffect.ShowAvatarUpdateFailed -> onShowMessage(effect.message ?: avatarUpdateFailed)
             ProfileEffect.ShowProfileRefreshError -> onShowMessage(profileRefreshFailed)
             is ProfileEffect.ShowLogoutError -> onShowMessage(logoutFailed)
             is ProfileEffect.NavigateToAddresses -> Unit
@@ -139,41 +141,6 @@ fun ProfileScreen(
 private fun Context.getAppVersionName(): String = runCatching {
     packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
 }.getOrDefault("")
-
-private data class SelectedAvatar(
-    val fileName: String,
-    val contentType: String,
-    val bytes: ByteArray
-)
-
-private fun Context.readAvatar(uri: Uri): SelectedAvatar {
-    val resolver = contentResolver
-    val fileName = resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
-        ?.use { cursor ->
-            if (cursor.moveToFirst()) cursor.getString(0) else null
-        }
-        ?.takeIf(String::isNotBlank)
-        ?: "profile.jpg"
-    val contentType = resolver.getType(uri)?.takeIf { it.startsWith("image/") }
-        ?: "image/jpeg"
-    val bytes = resolver.openInputStream(uri)?.use { input ->
-        val output = ByteArrayOutputStream()
-        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        var total = 0
-        while (true) {
-            val count = input.read(buffer)
-            if (count < 0) break
-            total += count
-            require(total <= MAX_AVATAR_BYTES) { "Selected image is too large" }
-            output.write(buffer, 0, count)
-        }
-        output.toByteArray()
-    } ?: error("Unable to read selected image")
-    require(bytes.isNotEmpty()) { "Selected image is empty" }
-    return SelectedAvatar(fileName, contentType, bytes)
-}
-
-private const val MAX_AVATAR_BYTES = 10 * 1024 * 1024
 
 @Composable
 fun ProfileContent(
@@ -346,50 +313,10 @@ fun ProfileAvatarSection(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(contentAlignment = Alignment.BottomEnd) {
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                if (userAvatarUrl != null) {
-                    AsyncImage(
-                        model = userAvatarUrl,
-                        contentDescription = stringResource(R.string.profile_avatar_content_description),
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = RD.drawable.ic_profile),
-                        contentDescription = null,
-                        tint = Theme.colors.primary,
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primary)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onEditAvatarClick
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = null,
-                    tint = Theme.colors.onPrimary,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
+        ProfileAvatarHeader(
+            avatarUrl = userAvatarUrl,
+            onEditAvatarClick = onEditAvatarClick
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -404,8 +331,19 @@ fun ProfileAvatarSection(
 
         Spacer(modifier = Modifier.height(4.dp))
 
+        val roleText = if (
+            userRole.isBlank() ||
+            userRole.equals("Self", ignoreCase = true) ||
+            userRole.equals("PRIMARY", ignoreCase = true) ||
+            userRole.equals("Primary", ignoreCase = true)
+        ) {
+            stringResource(R.string.profile_primary_caregiver)
+        } else {
+            userRole
+        }
+
         Text(
-            text = userRole,
+            text = roleText,
             style = Theme.typography.body.medium.copy(
                 fontSize = 15.sp
             ),

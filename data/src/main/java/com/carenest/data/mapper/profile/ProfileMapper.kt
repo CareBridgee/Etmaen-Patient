@@ -18,6 +18,7 @@ internal fun ProfileResponseDto.toDomain(): Profile = Profile(
     mobilityNotes = mobilityNotes,
     previousSurgeries = previousSurgeries,
     previousHospitalizations = previousHospitalizations,
+    profileImageUrl = profileImageUrl,
     isPrimary = isPrimary ?: false,
     isDeleted = isDeleted ?: false
 )

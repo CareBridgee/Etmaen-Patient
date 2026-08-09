@@ -1,5 +1,6 @@
 package com.carenest.presentation.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.auth.LogoutUseCase
@@ -25,7 +26,7 @@ class ProfileViewModel @Inject constructor(
     private val getDefaultProfile: GetDefaultProfileUseCase,
     private val getProfiles: GetProfilesUseCase,
     private val updateProfileAvatar: UpdateProfileAvatarUseCase,
-    private val logout: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel(),
     StateHolder<ProfileState> by DefaultStateHolder(ProfileState()),
     EffectPublisher<ProfileEffect> by DefaultEffectPublisher() {
@@ -43,7 +44,7 @@ class ProfileViewModel @Inject constructor(
             ProfileEvent.OnAddressesClicked -> sendEffect(ProfileEffect.NavigateToAddresses)
             ProfileEvent.OnPaymentClicked -> sendEffect(ProfileEffect.NavigateToPayment)
             ProfileEvent.OnSettingsClicked -> sendEffect(ProfileEffect.NavigateToSettings)
-            ProfileEvent.OnLogoutClicked -> logout()
+            ProfileEvent.OnLogoutClicked -> performLogout()
             ProfileEvent.OnEditAvatarClicked -> {
                 if (!currentState.isUpdatingAvatar) sendEffect(ProfileEffect.SelectAvatar)
             }
@@ -79,7 +80,7 @@ class ProfileViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            getCurrentUser().getOrElse {
+            val currentUser = getCurrentUser().getOrElse {
                 failLoading(refresh)
                 return@launch
             }
@@ -91,9 +92,14 @@ class ProfileViewModel @Inject constructor(
                 failLoading(refresh)
                 return@launch
             }
+            val profileName = listOfNotNull(profile.firstName, profile.lastName).filter { it.isNotBlank() }.joinToString(" ")
+            val currentUserName = currentUser.name.orEmpty()
+            val resolvedName = currentUserName.ifBlank { profileName }
+
             updateState {
                 copy(
                     profile = profile,
+                    userName = if (userName.isBlank() || userName.equals("User", ignoreCase = true)) resolvedName else userName,
                     userRole = profile.relationship.orEmpty(),
                     greeting = currentGreeting(),
                     activeDependentsCount = profiles.count { !it.isDeleted && it.id != profile.id },
@@ -105,11 +111,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun logout() {
+    private fun performLogout() {
         if (currentState.isLoggingOut) return
         updateState { copy(isLoggingOut = true, errorMessage = null) }
         viewModelScope.launch {
-            logout.invoke().fold(
+            logoutUseCase.invoke().fold(
                 onSuccess = { sendEffect(ProfileEffect.NavigateToLogout) },
                 onFailure = {
                     updateState { copy(isLoggingOut = false) }
@@ -132,9 +138,10 @@ class ProfileViewModel @Inject constructor(
                     }
                     sendEffect(ProfileEffect.ShowAvatarUpdated)
                 },
-                onFailure = {
+                onFailure = { error ->
+                    Log.e("ProfileViewModel", "Avatar update failed", error)
                     updateState { copy(isUpdatingAvatar = false) }
-                    sendEffect(ProfileEffect.ShowAvatarUpdateFailed)
+                    sendEffect(ProfileEffect.ShowAvatarUpdateFailed(error.message ?: error.toString()))
                 }
             )
         }
@@ -157,7 +164,7 @@ class ProfileViewModel @Inject constructor(
         else -> ProfileGreeting.Evening
     }
 
-    private companion object {
-        const val PROFILE_LOAD_ERROR = "profile_load_failed"
+    companion object {
+        private const val PROFILE_LOAD_ERROR = "profile_load_failed"
     }
 }

@@ -47,7 +47,7 @@ sealed interface ProfileEffect {
     data object NavigateToLogout : ProfileEffect
     data object SelectAvatar : ProfileEffect
     data object ShowAvatarUpdated : ProfileEffect
-    data object ShowAvatarUpdateFailed : ProfileEffect
+    data class ShowAvatarUpdateFailed(val message: String? = null) : ProfileEffect
     data object ShowProfileRefreshError : ProfileEffect
     data object ShowLogoutError : ProfileEffect
 }

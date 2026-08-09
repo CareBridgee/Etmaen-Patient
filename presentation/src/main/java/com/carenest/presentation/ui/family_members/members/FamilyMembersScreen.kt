@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +61,8 @@ import com.carenest.presentation.navigation.HideTopBar
 
 import android.widget.Toast
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.ui.platform.LocalContext
 import com.carenest.designsystem.components.dialog.CareNestDialog
 
@@ -65,11 +70,12 @@ import com.carenest.designsystem.components.dialog.CareNestDialog
 fun FamilyMembersScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToAddMember: (String?) -> Unit = {},
+    onNavigateToEditHealthProfile: (String) -> Unit = {},
     reloadTrigger: Int = 0,
+    onShowMessage: (String) -> Unit = {},
     viewModel: FamilyMembersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
     val deletedMessage = stringResource(R.string.family_member_deleted)
     val deleteFailedMessage = stringResource(R.string.family_member_delete_failed)
     val notificationsUnavailable = stringResource(R.string.profile_notifications_unavailable)
@@ -83,14 +89,14 @@ fun FamilyMembersScreen(
             is FamilyMembersEffect.NavigateBack -> onNavigateBack()
             is FamilyMembersEffect.NavigateToAddFamilyMember -> onNavigateToAddMember(null)
             is FamilyMembersEffect.NavigateToEditPersonalInfo -> onNavigateToAddMember(effect.memberId)
-            is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToAddMember(effect.memberId)
+            is FamilyMembersEffect.NavigateToEditHealthProfile -> onNavigateToEditHealthProfile(effect.memberId)
             is FamilyMembersEffect.ShowMessage -> {
                 val message = when (effect.message) {
                     FamilyMembersMessage.Deleted -> deletedMessage
                     FamilyMembersMessage.DeleteFailed -> deleteFailedMessage
                     FamilyMembersMessage.NotificationsUnavailable -> notificationsUnavailable
                 }
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                onShowMessage(message)
             }
         }
     }
@@ -331,7 +337,12 @@ fun FamilyMemberCard(
     onEditHealthClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    val isSelf = member.relationship.equals("Self", ignoreCase = true)
+    val isSelf = member.relationship.equals("Self", ignoreCase = true) ||
+            member.relationship.equals("PRIMARY", ignoreCase = true) ||
+            member.relationship.equals("Primary", ignoreCase = true) ||
+            member.relationship.isBlank()
+    val displayRelationship = if (isSelf) stringResource(R.string.relationship_self) else member.relationship
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -352,12 +363,22 @@ fun FamilyMemberCard(
                         .background(Theme.colors.primary.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        painter = painterResource(id = RD.drawable.ic_profile),
-                        contentDescription = null,
-                        tint = Theme.colors.primary,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    val avatarUrl = member.profileImageUrl?.takeIf { it.isNotBlank() }
+                    if (avatarUrl != null) {
+                        AsyncImage(
+                            model = avatarUrl,
+                            contentDescription = member.name,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = RD.drawable.ic_profile),
+                            contentDescription = null,
+                            tint = Theme.colors.primary,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -380,7 +401,7 @@ fun FamilyMemberCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = member.relationship,
+                            text = displayRelationship,
                             style = Theme.typography.body.small.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 12.sp
@@ -468,15 +489,19 @@ fun FamilyMemberCard(
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
                     ) {
                         Text(
                             text = stringResource(R.string.family_members_edit_personal),
                             style = Theme.typography.body.small.copy(
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 13.sp
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp
                             ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
                             color = Theme.colors.surface
                         )
                     }
@@ -486,15 +511,19 @@ fun FamilyMemberCard(
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary.copy(alpha = 0.08f))
                     ) {
                         Text(
                             text = stringResource(R.string.family_members_edit_health),
                             style = Theme.typography.body.small.copy(
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 13.sp
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp
                             ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
                             color = Theme.colors.primaryFont
                         )
                     }

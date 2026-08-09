@@ -116,48 +116,78 @@ object NetworkModule {
 }
 
 internal fun HttpClientConfig<*>.installBearerAuthentication(datastore: CarenestDatastore) {
-    install(Auth) {
-        bearer {
-            loadTokens {
-                datastore.authTokens.first()?.let { tokens ->
-                    BearerTokens(tokens.accessToken, tokens.refreshToken)
-                }
+    install(DynamicAuthPlugin) {
+        this.datastore = datastore
+    }
+}
+
+class DynamicAuthPluginConfig {
+    var datastore: CarenestDatastore? = null
+}
+
+val DynamicAuthPlugin = createClientPlugin("DynamicAuthPlugin", ::DynamicAuthPluginConfig) {
+    val datastore = pluginConfig.datastore ?: return@createClientPlugin
+
+    onRequest { request, _ ->
+        val requestUrl = request.url.build()
+        val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
+        val isBackendHost = requestUrl.host.isBlank() || requestUrl.host.equals(BACKEND_HOST, ignoreCase = true)
+        val isProtected = isBackendHost && path.startsWith("/api/v1") && path !in PUBLIC_AUTH_PATHS
+
+        if (isProtected) {
+            val tokens = datastore.authTokens.first()
+            tokens?.accessToken?.takeIf(String::isNotBlank)?.let { token ->
+                request.headers[io.ktor.http.HttpHeaders.Authorization] = "Bearer $token"
             }
-            refreshTokens {
-                val refreshToken = oldTokens?.refreshToken?.takeIf(String::isNotBlank)
-                    ?: datastore.authTokens.first()?.refreshToken
-                    ?: return@refreshTokens null
+        }
+    }
 
-                val response = client.post("api/v1/auth/refresh") {
-                    markAsRefreshTokenRequest()
-                    contentType(ContentType.Application.Json)
-                    setBody(RefreshRequest(refreshToken))
-                }
-                
+    onResponse { response ->
+        if (response.status.value == 401) {
+            val requestUrl = response.call.request.url
+            val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
+            if (path !in PUBLIC_AUTH_PATHS) {
+                val tokens = datastore.authTokens.first()
+                val refreshToken = tokens?.refreshToken?.takeIf(String::isNotBlank)
 
-                if (response.status.value == 401 || response.status.value == 403) {
-                    Log.e("NetworkModule", "Refresh token expired or invalid (Status ${response.status.value}). Logging out.")
+                if (refreshToken != null) {
+                    val refreshSuccess = runCatching {
+                        val refreshResponse = response.call.client.post("api/v1/auth/refresh") {
+                            contentType(ContentType.Application.Json)
+                            setBody(RefreshRequest(refreshToken))
+                        }
+                        if (refreshResponse.status.isSuccess()) {
+                            val tokenPair = refreshResponse.body<TokenPairResponse>()
+                            val newAccess = tokenPair.accessToken
+                            val newRefresh = tokenPair.refreshToken ?: refreshToken
+                            if (!newAccess.isNullOrBlank()) {
+                                datastore.saveAuthTokens(newAccess, newRefresh)
+                                true
+                            } else false
+                        } else false
+                    }.getOrDefault(false)
+
+                    if (!refreshSuccess) {
+                        Log.e("NetworkModule", "Automatic token refresh failed. Clearing user session.")
+                        datastore.clearAuthTokens()
+                        datastore.clearUserId()
+                        datastore.setLoggedIn(false)
+                    }
+                } else {
+                    Log.e("NetworkModule", "No refresh token available. Clearing user session.")
                     datastore.clearAuthTokens()
+                    datastore.clearUserId()
                     datastore.setLoggedIn(false)
-                    return@refreshTokens null
                 }
-
-                if (!response.status.isSuccess()) return@refreshTokens null
-
-                val refreshed = response.body<TokenPairResponse>()
-                val accessToken = refreshed.accessToken?.takeIf(String::isNotBlank)
-                    ?: return@refreshTokens null
-                val newRefreshToken = refreshed.refreshToken?.takeIf(String::isNotBlank)
-                    ?: return@refreshTokens null
-
-                datastore.saveAuthTokens(accessToken, newRefreshToken)
-                BearerTokens(accessToken, newRefreshToken)
             }
-            sendWithoutRequest { request ->
-                val requestUrl = request.url.build()
-                val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
-                val isBackendHost = requestUrl.host.isBlank() || requestUrl.host.equals(BACKEND_HOST, ignoreCase = true)
-                isBackendHost && path.startsWith("/api/v1") && path !in PUBLIC_AUTH_PATHS
+        } else if (response.status.value == 403) {
+            val requestUrl = response.call.request.url
+            val path = requestUrl.encodedPath.let { if (it.startsWith("/")) it else "/$it" }
+            if (path !in PUBLIC_AUTH_PATHS) {
+                Log.e("NetworkModule", "403 Forbidden. Clearing user session.")
+                datastore.clearAuthTokens()
+                datastore.clearUserId()
+                datastore.setLoggedIn(false)
             }
         }
     }

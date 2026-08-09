@@ -13,6 +13,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import com.carenest.domain.model.user.UserUpdate
 
+import com.carenest.domain.repository.ImageUploader
+
 class UserRepositoryImplTest {
     @Test
     fun `refresh synchronizes remote user into local source of truth`() = runTest {
@@ -24,9 +26,11 @@ class UserRepositoryImplTest {
                 defaultProfileId = "profile-id"
             )
         )
+        val imageUploader = FakeImageUploader()
         val repository = UserRepositoryImpl(
             remote = remote,
-            local = local
+            local = local,
+            imageUploader = imageUploader
         )
 
         val refreshed = repository.refreshCurrentUser().getOrThrow()
@@ -48,7 +52,8 @@ class UserRepositoryImplTest {
                 lastName = "Adel"
             )
         )
-        val repository = UserRepositoryImpl(remote, local)
+        val imageUploader = FakeImageUploader()
+        val repository = UserRepositoryImpl(remote, local, imageUploader)
 
         repository.updateCurrentUser(
             UserUpdate(firstName = "Aalaa", lastName = "Adel")
@@ -58,6 +63,33 @@ class UserRepositoryImplTest {
         assertEquals("Adel", repository.observeCurrentUser().first()?.lastName)
         assertEquals(1, local.upsertCount)
     }
+
+    @Test
+    fun `uploadProfileImage delegates to ImageUploader`() = runTest {
+        val local = FakeLocalDataSource()
+        val remote = FakeRemoteDataSource(
+            UserResponseDto(
+                id = "user-id",
+                phoneNumber = "+201000000000"
+            )
+        )
+        val imageUploader = FakeImageUploader("https://res.cloudinary.com/jonkn070/image/upload/v123/test.jpg")
+        val repository = UserRepositoryImpl(remote, local, imageUploader)
+
+        val result = repository.uploadProfileImage("test.jpg", "image/jpeg", byteArrayOf(1, 2, 3)).getOrThrow()
+
+        assertEquals("https://res.cloudinary.com/jonkn070/image/upload/v123/test.jpg", result)
+    }
+}
+
+private class FakeImageUploader(
+    private val returnUrl: String = "https://res.cloudinary.com/jonkn070/image/upload/v123/avatar.jpg"
+) : ImageUploader {
+    override suspend fun uploadImage(
+        fileName: String,
+        contentType: String,
+        bytes: ByteArray
+    ): Result<String> = Result.success(returnUrl)
 }
 
 private class FakeRemoteDataSource(
@@ -66,12 +98,6 @@ private class FakeRemoteDataSource(
     var lastUpdate: UpdateUserRequestDto? = null
 
     override suspend fun getCurrentUser() = Result.success(response)
-
-    override suspend fun uploadProfileImage(
-        fileName: String,
-        contentType: String,
-        bytes: ByteArray
-    ) = Result.success("https://example.com/profile.jpg")
 
     override suspend fun updateCurrentUser(request: UpdateUserRequestDto): Result<UserResponseDto> {
         lastUpdate = request

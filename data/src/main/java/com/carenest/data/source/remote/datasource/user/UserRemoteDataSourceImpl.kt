@@ -9,12 +9,6 @@ class UserRemoteDataSourceImpl @Inject constructor(
 ) : UserRemoteDataSource {
     override suspend fun getCurrentUser() = api.getCurrentUser()
 
-    override suspend fun uploadProfileImage(
-        fileName: String,
-        contentType: String,
-        bytes: ByteArray
-    ) = api.uploadProfileImage(fileName, contentType, bytes)
-
     override suspend fun updateCurrentUser(request: UpdateUserRequestDto) =
         api.updateCurrentUser(request)
 }
