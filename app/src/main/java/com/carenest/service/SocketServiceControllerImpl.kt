@@ -11,8 +11,10 @@ class SocketServiceControllerImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : SocketServiceController {
 
-    override fun startService() {
-        val intent = Intent(context, SocketForegroundService::class.java)
+    override fun startService(requestId: String?) {
+        val intent = Intent(context, SocketForegroundService::class.java).apply {
+            putExtra("requestId", requestId)
+        }
         ContextCompat.startForegroundService(context, intent)
     }
 
