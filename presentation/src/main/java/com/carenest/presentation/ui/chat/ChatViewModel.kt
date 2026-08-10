@@ -15,6 +15,7 @@ import com.carenest.domain.socket.SocketServiceController
 import com.carenest.domain.socket.model.ChatMessageResponse
 import com.carenest.domain.socket.model.ReservationEvent
 import com.carenest.domain.usecase.chat.GetChatSessionUseCase
+import com.carenest.domain.usecase.chat.SendMessageUseCase
 import com.carenest.domain.usecase.tracking.GetNurseTrackingInfoUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
@@ -29,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatSessionUseCase: GetChatSessionUseCase,
+    private val sendMessageUseCase: SendMessageUseCase,
     private val getNurseTrackingInfoUseCase: GetNurseTrackingInfoUseCase,
     private val chatSocketRepository: ChatSocketRepository,
     private val reservationSocketRepository: ReservationSocketRepository,
@@ -160,7 +162,7 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isSending = true, inputText = "") }
 
-            runCatching { chatSocketRepository.sendMessage(id, text) }
+            sendMessageUseCase(id, text)
                 .onSuccess {
                     updateState { copy(isSending = false) }
                 }
