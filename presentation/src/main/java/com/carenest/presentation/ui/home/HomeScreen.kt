@@ -26,6 +26,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.presentation.ui.home.components.HomeAICard
 import com.carenest.presentation.ui.home.components.HomeHistoryEmpty
 import com.carenest.presentation.ui.home.components.HomeHistoryHeader
@@ -110,9 +111,7 @@ fun HomeScreenContent(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 item {
-                    val greeting = state.user?.name?.let { name ->
-                        stringResource(R.string.home_greeting_name, name)
-                    } ?: stringResource(R.string.home_greeting_generic)
+                    val greeting = rememberTimeBasedGreeting(state.user?.name)
                     HomeGreetingBar(
                         greetingText = greeting,
                         avatarUrl = state.user?.avatarUrl,

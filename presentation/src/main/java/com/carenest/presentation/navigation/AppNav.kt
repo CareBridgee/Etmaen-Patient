@@ -576,10 +576,26 @@ fun AppNav(
                     if (shouldShowBottomBar) {
                         SPBottomNavigation(
                             items = listOf(
-                                BottomNavItem(stringResource(R.string.nav_home), RD.drawable.ic_bottom_nav_home),
-                                BottomNavItem(stringResource(R.string.nav_services), RD.drawable.ic_bottom_nav_services),
-                                BottomNavItem(stringResource(R.string.nav_booking), RD.drawable.ic_bottom_nav_bookings),
-                                BottomNavItem(stringResource(R.string.nav_profile), RD.drawable.ic_bottom_nav_profile)
+                                BottomNavItem(
+                                    stringResource(R.string.nav_home),
+                                    RD.drawable.ic_bottom_nav_home,
+                                    RD.drawable.ic_bottom_nav_home_selected,
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_services),
+                                    RD.drawable.ic_bottom_nav_services,
+                                    RD.drawable.ic_bottom_nav_services_selected,
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_booking),
+                                    RD.drawable.ic_bottom_nav_bookings,
+                                    RD.drawable.ic_bottom_nav_bookings_selected,
+                                ),
+                                BottomNavItem(
+                                    stringResource(R.string.nav_profile),
+                                    RD.drawable.ic_bottom_nav_profile,
+                                    RD.drawable.ic_bottom_nav_profile_selected,
+                                )
                             ),
                             selectedIndex = selectedIndex,
                             onItemSelected = ::onBottomNavItemSelected,

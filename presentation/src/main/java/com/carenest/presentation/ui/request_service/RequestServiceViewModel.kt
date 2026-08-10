@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RequestServiceViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ): ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
@@ -27,38 +29,55 @@ class RequestServiceViewModel @Inject constructor(
     ),
     EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
 
+    init {
+        viewModelScope.launch {
+            observeCurrentUserUseCase().collect { user ->
+                val selected = currentState.selectedPatient ?: return@collect
+                val selectedProfileId = selected.defaultProfileId ?: selected.id
+                if (selectedProfileId != user?.defaultProfileId) return@collect
+                updateState {
+                    copy(
+                        selectedPatient = selected.copy(
+                            phoneNumber = user.phoneNumber,
+                            firstName = user.firstName,
+                            lastName = user.lastName,
+                            dateOfBirth = user.dateOfBirth,
+                            gender = user.gender,
+                            profileImageUrl = user.profileImageUrl,
+                            isDeleted = user.isDeleted,
+                            createdAt = user.createdAt.orEmpty(),
+                            updatedAt = user.updatedAt.orEmpty(),
+                            lastLoginAt = user.lastLoginAt,
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     fun onIntent(intent: RequestServiceIntent) {
         when (intent) {
             is RequestServiceIntent.OnStart -> {
                 viewModelScope.launch {
-                    // Fetch all available profiles (family members + self)
-                    profileRepository.getProfiles().onSuccess { profiles ->
-                        val mappedPatients = profiles.map { profile ->
-                            com.carenest.domain.model.Patient(
+                    // Fetch default profile if no patient is selected
+                    if (currentState.selectedPatient == null) {
+                        val currentUser = homeRepository.getUser().getOrNull()
+                        profileRepository.getDefaultProfile().onSuccess { profile ->
+                            val defaultPatient = com.carenest.domain.model.Patient(
                                 id = profile.id,
-                                phoneNumber = "",
-                                firstName = profile.firstName,
-                                lastName = profile.lastName,
-                                dateOfBirth = profile.dateOfBirth,
-                                gender = profile.gender,
-                                profileImageUrl = profile.profileImageUrl,
-                                isDeleted = profile.isDeleted,
-                                createdAt = "",
-                                updatedAt = "",
-                                lastLoginAt = null,
+                                phoneNumber = currentUser?.phoneNumber.orEmpty(),
+                                firstName = currentUser?.firstName ?: profile.firstName,
+                                lastName = currentUser?.lastName ?: profile.lastName,
+                                dateOfBirth = currentUser?.dateOfBirth ?: profile.dateOfBirth,
+                                gender = currentUser?.gender ?: profile.gender,
+                                profileImageUrl = currentUser?.profileImageUrl ?: profile.profileImageUrl,
+                                isDeleted = currentUser?.isDeleted ?: false,
+                                createdAt = currentUser?.createdAt.orEmpty(),
+                                updatedAt = currentUser?.updatedAt.orEmpty(),
+                                lastLoginAt = currentUser?.lastLoginAt,
                                 defaultProfileId = profile.id
                             )
-                        }
-                        updateState { copy(patients = mappedPatients) }
-
-                        // If no patient is selected yet, select the primary/default one
-                        if (currentState.selectedPatient == null) {
-                            profiles.find { it.isPrimary }?.let { primaryProfile ->
-                                val primaryPatient = mappedPatients.find { it.id == primaryProfile.id }
-                                updateState { copy(selectedPatient = primaryPatient) }
-                            } ?: mappedPatients.firstOrNull()?.let { firstPatient ->
-                                updateState { copy(selectedPatient = firstPatient) }
-                            }
+                            updateState { copy(selectedPatient = defaultPatient) }
                         }
                     }
 

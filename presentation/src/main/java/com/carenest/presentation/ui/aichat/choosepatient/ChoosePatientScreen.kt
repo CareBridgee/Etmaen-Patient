@@ -57,6 +57,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.designsystem.R as RD
 
 @Composable
@@ -182,11 +183,7 @@ fun GreetingSection(
     userName: String,
     userAvatarUrl: String?
 ) {
-    val greetingText = if (userName.isBlank()) {
-        stringResource(R.string.services_greeting)
-    } else {
-        stringResource(R.string.home_greeting_name, userName)
-    }
+    val greetingText = rememberTimeBasedGreeting(userName)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

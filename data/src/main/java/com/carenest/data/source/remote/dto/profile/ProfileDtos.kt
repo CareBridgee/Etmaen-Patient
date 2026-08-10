@@ -29,8 +29,8 @@ internal fun ProfileRequestDto.toMultipartFormData(): io.ktor.client.request.for
             dateOfBirth?.takeIf(String::isNotBlank)?.let { append("dateOfBirth", it.toBackendDateFormat()) }
             gender?.uppercase()?.takeIf(String::isNotBlank)?.let { append("gender", it) }
             bloodType?.takeIf(String::isNotBlank)?.let { append("bloodType", it) }
-            append("height", (height?.takeIf { it > 0 } ?: 0.0).toString())
-            append("weight", (weight?.takeIf { it > 0 } ?: 0.0).toString())
+            height?.takeIf { it > 0 }?.let { append("height", it.toString()) }
+            weight?.takeIf { it > 0 }?.let { append("weight", it.toString()) }
             mobilityStatus?.takeIf(String::isNotBlank)?.let { append("mobilityStatus", it) }
             mobilityNotes?.takeIf(String::isNotBlank)?.let { append("mobilityNotes", it) }
             previousSurgeries?.takeIf(String::isNotBlank)?.let { append("previousSurgeries", it) }

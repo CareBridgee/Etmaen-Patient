@@ -39,15 +39,16 @@ class ProfileRepositoryImpl @Inject constructor(
         names: List<String>
     ): Result<List<String>> {
         val current = getProfileMedications(profileId).getOrElse { return Result.failure(it) }
-        val requested = names.map(String::trim).filter(String::isNotBlank).distinctBy(String::lowercase)
-        val requestedKeys = requested.mapTo(mutableSetOf()) { it.lowercase() }
-        current.filter { it.name.lowercase() !in requestedKeys }.forEach { medication ->
+        val requested = names.map(String::trim).filter(String::isNotBlank)
+            .distinctBy(String::normalizedName)
+        val requestedKeys = requested.mapTo(mutableSetOf(), String::normalizedName)
+        current.filter { it.name.normalizedName() !in requestedKeys }.forEach { medication ->
             val relationId = medication.medicationId ?: medication.id
             api.removeProfileMedication(profileId, relationId).profileFailure()
                 .getOrElse { return Result.failure(it) }
         }
-        val currentKeys = current.mapTo(mutableSetOf()) { it.name.lowercase() }
-        requested.filter { it.lowercase() !in currentKeys }.forEach { name ->
+        val currentKeys = current.mapTo(mutableSetOf()) { it.name.normalizedName() }
+        requested.filter { it.normalizedName() !in currentKeys }.forEach { name ->
             api.addProfileMedication(profileId, ProfileMedicationRequestDto(name = name))
                 .profileFailure().getOrElse { return Result.failure(it) }
         }
@@ -153,12 +154,34 @@ class ProfileRepositoryImpl @Inject constructor(
         originalBackendIds,
         selectedBackendIds,
         add = { id ->
-            api.addMedicalCondition(profileId, ProfileMedicalConditionRequestDto(id))
+            api.addMedicalCondition(
+                profileId,
+                ProfileMedicalConditionRequestDto(medicalConditionId = id)
+            )
                 .mapCatching { it.toDomain() }
                 .profileFailure()
         },
         remove = { id -> api.removeMedicalCondition(profileId, id).profileFailure() }
     )
+
+    override suspend fun syncProfileMedicalConditionsByName(
+        profileId: String,
+        names: List<String>
+    ): Result<Unit> {
+        val current = getProfileMedicalConditions(profileId)
+            .getOrElse { return Result.failure(it) }
+        return syncNamedRelations(
+            current = current.map { it.medicalConditionId to it.conditionName },
+            requestedNames = names,
+            add = { name ->
+                api.addMedicalCondition(
+                    profileId,
+                    ProfileMedicalConditionRequestDto(name = name)
+                ).profileFailure()
+            },
+            remove = { id -> api.removeMedicalCondition(profileId, id).profileFailure() }
+        )
+    }
 
     override suspend fun addCustomMedicalCondition(
         profileId: String,
@@ -186,19 +209,34 @@ class ProfileRepositoryImpl @Inject constructor(
         originalBackendIds,
         selectedBackendIds,
         add = { id ->
-            api.addAllergy(profileId, ProfileAllergyRequestDto(id))
+            api.addAllergy(profileId, ProfileAllergyRequestDto(allergyId = id))
                 .mapCatching { it.toDomain() }
                 .profileFailure()
         },
         remove = { id -> api.removeAllergy(profileId, id).profileFailure() }
     )
 
+    override suspend fun syncProfileAllergiesByName(
+        profileId: String,
+        names: List<String>
+    ): Result<Unit> {
+        val current = getProfileAllergies(profileId).getOrElse { return Result.failure(it) }
+        return syncNamedRelations(
+            current = current.map { it.allergyId to it.allergyName },
+            requestedNames = names,
+            add = { name ->
+                api.addAllergy(profileId, ProfileAllergyRequestDto(name = name)).profileFailure()
+            },
+            remove = { id -> api.removeAllergy(profileId, id).profileFailure() }
+        )
+    }
+
     override suspend fun addCustomAllergy(
         profileId: String,
         name: String
     ): Result<ProfileAllergy> = api.addAllergy(
         profileId,
-        ProfileAllergyRequestDto(name = name, type = "OTHER")
+        ProfileAllergyRequestDto(name = name)
     ).mapCatching { it.toDomain() }.profileFailure()
 
     override suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>> =
@@ -248,6 +286,28 @@ class ProfileRepositoryImpl @Inject constructor(
         }
         return Result.success(selectedBackendIds)
     }
+
+    private suspend fun syncNamedRelations(
+        current: List<Pair<String, String>>,
+        requestedNames: List<String>,
+        add: suspend (String) -> Result<*>,
+        remove: suspend (String) -> Result<Unit>
+    ): Result<Unit> {
+        val requested = requestedNames.map(String::trim).filter(String::isNotBlank)
+            .distinctBy(String::normalizedName)
+        val currentKeys = current.mapTo(hashSetOf()) { (_, name) -> name.normalizedName() }
+        for (name in requested.filter { it.normalizedName() !in currentKeys }) {
+            val error = add(name).exceptionOrNull()
+            if (error != null && !error.hasHttpStatus(409)) return Result.failure(error)
+        }
+
+        val requestedKeys = requested.mapTo(hashSetOf(), String::normalizedName)
+        for ((id, name) in current.filter { (_, name) -> name.normalizedName() !in requestedKeys }) {
+            val error = remove(id).exceptionOrNull()
+            if (error != null && !error.hasHttpStatus(404)) return Result.failure(error)
+        }
+        return Result.success(Unit)
+    }
 }
 
 internal fun Throwable.toDomainFailure(): Throwable = when (this) {
@@ -261,3 +321,5 @@ internal fun <T> Result<T>.profileFailure(): Result<T> =
 
 private fun Throwable.hasHttpStatus(statusCode: Int): Boolean =
     (this as? ProfileException)?.statusCode == statusCode
+
+private fun String.normalizedName(): String = trim().lowercase()
