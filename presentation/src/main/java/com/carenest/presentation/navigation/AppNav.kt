@@ -185,7 +185,11 @@ fun AppNav(
                         onNavigateToHome = { replaceWith(AppRoute.Home) },
                         onNavigateToLogin = { replaceWith(AppRoute.Login) },
                         onNavigateToRegister = { replaceWith(AppRoute.Register) },
-                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion()) }
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion()) },
+                        onNavigateToTracking = { requestId -> replaceWith(AppRoute.NurseOnTheWay(requestId)) },
+                        onNavigateToSearch = { requestId -> 
+                            replaceWith(AppRoute.SearchForNurse(reservationId = requestId, serviceRequestId = requestId)) 
+                        }
                     )
                 }
 
