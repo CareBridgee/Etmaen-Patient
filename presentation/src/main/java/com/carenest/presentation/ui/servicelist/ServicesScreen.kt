@@ -48,6 +48,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
+import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.designsystem.R as RD
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
@@ -157,6 +158,8 @@ internal fun ServicesScreenContent(
 
 @Composable
 private fun GreetingHeader(userName: String) {
+    val greeting = rememberTimeBasedGreeting(userName)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space12),
@@ -178,7 +181,7 @@ private fun GreetingHeader(userName: String) {
         }
         Column {
             BasicText(
-                text = "${stringResource(R.string.services_greeting)}, $userName",
+                text = greeting,
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primary,
                     fontWeight = FontWeight.Medium,

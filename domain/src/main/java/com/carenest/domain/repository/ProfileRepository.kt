@@ -37,6 +37,10 @@ interface ProfileRepository {
         originalBackendIds: Set<String>,
         selectedBackendIds: Set<String>
     ): Result<Set<String>>
+    suspend fun syncProfileMedicalConditionsByName(
+        profileId: String,
+        names: List<String>
+    ): Result<Unit>
     suspend fun addCustomMedicalCondition(
         profileId: String,
         name: String
@@ -49,6 +53,10 @@ interface ProfileRepository {
         originalBackendIds: Set<String>,
         selectedBackendIds: Set<String>
     ): Result<Set<String>>
+    suspend fun syncProfileAllergiesByName(
+        profileId: String,
+        names: List<String>
+    ): Result<Unit>
     suspend fun addCustomAllergy(profileId: String, name: String): Result<ProfileAllergy>
 
     suspend fun getEmergencyContacts(profileId: String): Result<List<EmergencyContact>>

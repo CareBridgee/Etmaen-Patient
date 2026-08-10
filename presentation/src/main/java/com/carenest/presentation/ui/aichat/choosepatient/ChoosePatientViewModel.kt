@@ -3,17 +3,16 @@ package com.carenest.presentation.ui.aichat.choosepatient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.family_members.GetFamilyMembersUseCase
+import com.carenest.domain.usecase.user.GetCurrentUserUseCase
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
-
-import com.carenest.domain.usecase.user.GetCurrentUserUseCase
 
 @HiltViewModel
 class ChoosePatientViewModel @Inject constructor(
@@ -35,7 +34,16 @@ class ChoosePatientViewModel @Inject constructor(
                 updateState {
                     copy(
                         userName = user?.name.orEmpty(),
-                        userAvatarUrl = user?.profileImageUrl?.takeIf(String::isNotBlank)
+                        userAvatarUrl = user?.profileImageUrl?.takeIf(String::isNotBlank),
+                        patients = patients.map { patient ->
+                            val isSelf = patient.id == user?.defaultProfileId ||
+                                patient.relationship.equals("Self", ignoreCase = true)
+                            if (isSelf && !user?.name.isNullOrBlank()) {
+                                patient.copy(name = user.name.orEmpty())
+                            } else {
+                                patient
+                            }
+                        },
                     )
                 }
             }
@@ -46,13 +54,15 @@ class ChoosePatientViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
-            val currentUser = getCurrentUserUseCase().getOrNull()
-            val currentUserName = currentState.userName.ifBlank { currentUser?.name.orEmpty() }
+            val cachedUser = observeCurrentUserUseCase().first()
+            val currentUser = getCurrentUserUseCase().getOrNull() ?: cachedUser
+            val currentUserName = currentUser?.name.orEmpty().ifBlank { currentState.userName }
             val patientsList = mutableListOf<PatientItem>()
 
             getFamilyMembersUseCase().onSuccess { members ->
                 val sortedMembers = members.sortedByDescending { member ->
                     member.isPrimary ||
+                            member.id == currentUser?.defaultProfileId ||
                             member.relationship.isNullOrBlank() ||
                             member.relationship.equals("Self", ignoreCase = true) ||
                             member.relationship.equals("PRIMARY", ignoreCase = true) ||
@@ -61,6 +71,7 @@ class ChoosePatientViewModel @Inject constructor(
                 sortedMembers.forEachIndexed { index, member ->
                     if (!member.isDeleted && patientsList.none { it.id == member.id }) {
                         val isSelf = member.isPrimary ||
+                                member.id == currentUser?.defaultProfileId ||
                                 member.relationship.isNullOrBlank() ||
                                 member.relationship.equals("Self", ignoreCase = true) ||
                                 member.relationship.equals("PRIMARY", ignoreCase = true) ||
@@ -71,7 +82,7 @@ class ChoosePatientViewModel @Inject constructor(
                             .filter { it.isNotBlank() }
                             .joinToString(" ")
                         val displayName = if (isSelf) {
-                            profileName.ifBlank { currentUserName.ifBlank { "User" } }
+                            currentUserName.ifBlank { profileName.ifBlank { "User" } }
                         } else {
                             member.fullName
                         }
