@@ -10,6 +10,7 @@ data class NurseSearchState(
     val showPaymentSheet: Boolean = false,
     val selectedOfferForPayment: NurseOfferResponse? = null,
     val selectedPaymentMethod: PaymentMethod = PaymentMethod.COD,
+    val showCancelConfirmation: Boolean = false,
     val paymentMethods: List<PaymentMethod> = listOf(
         PaymentMethod.COD,
         PaymentMethod.PAYMOB
@@ -21,13 +22,15 @@ sealed interface NurseSearchIntent {
     data class AcceptOffer(val offerId: String) : NurseSearchIntent
     data class DeclineOffer(val offerId: String) : NurseSearchIntent
     data object CancelSearch : NurseSearchIntent
+    data object ConfirmCancelSearch : NurseSearchIntent
+    data object DismissCancelConfirmation : NurseSearchIntent
     data class PaymentMethodSelected(val paymentMethod: PaymentMethod) : NurseSearchIntent
     data object ConfirmPayment : NurseSearchIntent
     data object DismissPaymentSheet : NurseSearchIntent
 }
 
 sealed interface NurseSearchEffect {
-    data class NavigateToEnRoute(val nurseId: String) : NurseSearchEffect
+    data class NavigateToEnRoute(val requestId: String) : NurseSearchEffect
     data object NavigateBack : NurseSearchEffect
     data class ShowError(val message: String) : NurseSearchEffect
 }

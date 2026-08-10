@@ -10,6 +10,7 @@ data class ChatState(
     val messages: List<ChatMessage> = emptyList(),
     val inputText: String = "",
     val isSending: Boolean = false,
+    val showNurseCancelledDialog: Boolean = false,
     val errorMessage: String? = null,
 )
 
@@ -19,6 +20,7 @@ sealed interface ChatIntent {
     data object OnSendMessageClicked : ChatIntent
     data object OnCallClicked : ChatIntent
     data object OnBackClicked : ChatIntent
+    data object OnNurseCancelledDismissed : ChatIntent
     data object OnErrorDismissed : ChatIntent
 }
 

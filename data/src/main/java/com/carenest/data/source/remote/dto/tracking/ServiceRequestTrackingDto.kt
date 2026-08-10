@@ -10,7 +10,7 @@ data class ServiceRequestTrackingDto(
     @SerialName("nurse") val nurse: NurseDto? = null,
     @SerialName("serviceDescription") val serviceDescription: String? = null,
     @SerialName("preferredDate") val preferredDate: String,
-    @SerialName("preferredTime") val preferredTime: ProposedTimeDto,
+    @SerialName("preferredTime") val preferredTime: String,
     @SerialName("status") val status: String,
     @SerialName("distanceKm") val distanceKm: Double? = null,
     @SerialName("createdAt") val createdAt: String,

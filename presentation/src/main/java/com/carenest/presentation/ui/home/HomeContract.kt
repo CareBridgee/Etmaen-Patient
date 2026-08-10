@@ -12,6 +12,7 @@ sealed interface HomeIntent {
     data class ServiceClicked(val service: HealthcareService) : HomeIntent
     data object ManageAllHistoryClicked : HomeIntent
     data class HistoryItemClicked(val serviceHistory: ServiceHistory) : HomeIntent
+    data object ActiveRequestClicked : HomeIntent
     data object RetryClicked : HomeIntent
 }
 
@@ -21,6 +22,7 @@ data class HomeState(
     val filteredServices: List<HealthcareService> = emptyList(),
     val searchQuery: String = "",
     val upcomingBooking: List<ServiceHistory> = emptyList(),
+    val activeRequest: ServiceHistory? = null,
     val isLoading: Boolean = true,
     val isError: Boolean = false,
     val errorMessage: String? = null
@@ -44,6 +46,7 @@ sealed class HomeEffect {
     object NavigateToAIChat : HomeEffect()
     data class NavigateToServiceDetails(val serviceId: String) : HomeEffect()
     data class NavigateToServiceHistoryDetails(val requestId: String) : HomeEffect()
+    data class NavigateToActiveRequest(val requestId: String, val status: String) : HomeEffect()
     data class ShowToast(
         val message: String, 
         val type: com.carenest.designsystem.components.toast.ToastType = com.carenest.designsystem.components.toast.ToastType.Info

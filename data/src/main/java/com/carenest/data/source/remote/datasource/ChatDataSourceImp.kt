@@ -3,70 +3,78 @@ package com.carenest.data.source.remote.datasource
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.carenest.data.socket.models.SendMessageRequestDto
+import com.carenest.data.source.local.datasource.UserLocalDataSource
+import com.carenest.data.source.remote.service.NurseTrackingService
 import com.carenest.domain.model.chat.ChatMessage
 import com.carenest.domain.model.chat.ChatMessageType
 import com.carenest.domain.model.chat.ChatParticipant
 import com.carenest.domain.model.chat.ChatSession
 import com.carenest.domain.model.chat.MessageSender
 import com.carenest.domain.model.chat.MessageStatus
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
-class ChatDataSourceImp @Inject constructor() : ChatDataSource {
-
-    private fun todayAt(hour: Int, minute: Int): Long =
-        java.time.LocalDate.now()
-            .atTime(hour, minute)
-            .atZone(java.time.ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
+class ChatDataSourceImp @Inject constructor(
+    private val apiService: NurseTrackingService,
+    private val userLocalDataSource: UserLocalDataSource,
+) : ChatDataSource {
 
     override suspend fun fetchChatSession(requestId: String): ChatSession {
-        delay(500)
+        val currentUserId = userLocalDataSource.observeCurrentUser().firstOrNull()?.id.orEmpty()
+        val messagesDto = apiService.getChatMessages(requestId).getOrThrow()
+
+        val trackingInfo = apiService.fetchServiceRequest(requestId).getOrNull()
+        val nurseId = trackingInfo?.nurse?.id
+        val nurseDetails = nurseId?.let { apiService.fetchNurseDetails(it).getOrNull() }
+
+        val messages = messagesDto.map { dto ->
+            val isMine = dto.senderUserId == currentUserId
+            ChatMessage(
+                id = dto.id ?: "",
+                type = if (isMine) ChatMessageType.OUTGOING else ChatMessageType.INCOMING,
+                text = dto.content ?: "",
+                senderType = if (isMine) MessageSender.PATIENT else MessageSender.NURSE,
+                sentAtEpochMillis = try {
+                    java.time.Instant.parse(dto.createdAt).toEpochMilli()
+                } catch (_: Exception) {
+                    System.currentTimeMillis()
+                },
+                status = if (isMine) MessageStatus.SENT else MessageStatus.DELIVERED
+            )
+        }
+
+        val participant = ChatParticipant(
+            nurseId = nurseId.orEmpty(),
+            name = trackingInfo?.nurse?.let { "${it.firstName} ${it.lastName}" }.orEmpty(),
+            photoUrl = nurseDetails?.profileImageUrl ?: trackingInfo?.nurse?.profileImageUrl,
+            isOnline = false, // Online status not directly available in these DTOs
+            phoneNumber = nurseDetails?.phoneNumber.orEmpty(),
+        )
+
         return ChatSession(
-            participant = ChatParticipant(
-                nurseId = "nurse_001",
-                name = "Sarah Mitchell",
-                photoUrl = null,
-                isOnline = true,
-                phoneNumber = "+15551234567",
-            ),
-            messages = listOf(
-                ChatMessage(
-                    id = "sys_1",
-                    type = ChatMessageType.SYSTEM_TIP,
-                    text = "Sarah is your assigned caregiver for today. You can share vitals or images securely through this encrypted chat.",
-                    senderType = MessageSender.NURSE,
-                    sentAtEpochMillis = todayAt(10, 41),
-                ),
-                ChatMessage(
-                    id = "msg_1",
-                    type = ChatMessageType.INCOMING,
-                    text = "Hello Elena! I'm on my way to your location. I should be there in about 10 minutes.",
-                    senderType = MessageSender.NURSE,
-                    sentAtEpochMillis = todayAt(10, 42),
-                ),
-                ChatMessage(
-                    id = "msg_2",
-                    type = ChatMessageType.OUTGOING,
-                    text = "Thank you, Sarah. I have the medical reports ready for you.",
-                    senderType = MessageSender.PATIENT,
-                    sentAtEpochMillis = todayAt(10, 43),
-                    status = MessageStatus.SEEN,
-                ),
-            ),
+            participant = participant,
+            messages = messages,
         )
     }
 
     override suspend fun sendMessage(requestId: String, text: String): ChatMessage {
-        delay(300)
+        val response = apiService.sendChatMessage(
+            requestId,
+            SendMessageRequestDto(content = text)
+        ).getOrThrow()
+
         return ChatMessage(
-            id = "msg_${System.currentTimeMillis()}",
+            id = response.id ?: "msg_${System.currentTimeMillis()}",
             type = ChatMessageType.OUTGOING,
-            text = text,
+            text = response.content ?: text,
             senderType = MessageSender.PATIENT,
-            sentAtEpochMillis = System.currentTimeMillis(),
+            sentAtEpochMillis = try {
+                java.time.Instant.parse(response.createdAt).toEpochMilli()
+            } catch (_: Exception) {
+                System.currentTimeMillis()
+            },
             status = MessageStatus.SENT,
         )
     }

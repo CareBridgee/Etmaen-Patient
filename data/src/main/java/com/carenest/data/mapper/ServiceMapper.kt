@@ -9,7 +9,7 @@ internal fun ServiceDto.toDomain() : HealthcareService = HealthcareService(
     name = name,
     estimatedDurationMinutes = estimatedDurationMinutes.toLong(),
     basePrice = basePrice,
-    description = description,
+    description = description.orEmpty(),
     iconResName = imageUrl,
 )
 
@@ -17,13 +17,13 @@ internal fun ServiceDto.toDomain() : HealthcareService = HealthcareService(
 internal fun ServiceDto.toServiceDetails() : ServiceDetailsModel = ServiceDetailsModel(
     id = id,
     name = name,
-    description = description,
+    description = description.orEmpty(),
     imageUrl = imageUrl?:"",
     category = category,
     minimumDurationMinutes = minimumDurationMinutes,
     estimatedDurationMinutes = estimatedDurationMinutes,
     basePrice = basePrice,
     includedItems = includedItems,
-    preparationNote = preparationNote,
+    preparationNote = preparationNote.orEmpty(),
     createdAt = createdAt,
 )

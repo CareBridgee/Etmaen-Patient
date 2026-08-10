@@ -10,7 +10,7 @@ data class ServiceHistoryDto(
     @SerialName("serviceName") val serviceName: String? = null,
     @SerialName("serviceDescription") val serviceDescription: String? = null,
     @SerialName("preferredDate") val preferredDate: String? = null,
-    @SerialName("preferredTime") val preferredTime: PreferredTimeDto? = null,
+    @SerialName("preferredTime") val preferredTime: String? = null,
     @SerialName("status") val status: String? = null,
     @SerialName("nurseId") val nurseId: String? = null,
     @SerialName("nurseName") val nurseName: String? = null,

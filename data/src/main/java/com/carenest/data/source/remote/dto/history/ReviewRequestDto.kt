@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReviewRequestDto(
-    @SerialName("bookingId") val bookingId: String,
+    @SerialName("serviceRequestId") val serviceRequestId: String,
     @SerialName("rating") val rating: Int,
-    @SerialName("reviewText") val reviewText: String,
+    @SerialName("reviewText") val reviewText: String? = null,
     @SerialName("isAnonymous") val isAnonymous: Boolean
 )

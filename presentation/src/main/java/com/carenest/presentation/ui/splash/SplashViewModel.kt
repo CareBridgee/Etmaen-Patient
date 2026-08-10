@@ -19,7 +19,8 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val getOnboardingStatusUseCase: GetOnboardingStatusUseCase,
     private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
-    private val refreshSession: RefreshAuthenticatedSessionUseCase
+    private val refreshSession: RefreshAuthenticatedSessionUseCase,
+    private val getCurrentNurseTrackingInfoUseCase: com.carenest.domain.usecase.tracking.GetCurrentNurseTrackingInfoUseCase
 ) :
     ViewModel(),
     StateHolder<SplashState> by DefaultStateHolder(SplashState()),
@@ -43,13 +44,30 @@ class SplashViewModel @Inject constructor(
                 !onboardingDone -> sendEffect(SplashEffect.NavigateToOnBoarding)
                 isLoggedIn -> refreshSession().fold(
                     onSuccess = { destination ->
-                        sendEffect(
-                            when (destination) {
-                                AuthenticatedDestination.Registration -> SplashEffect.NavigateToRegister
-                                AuthenticatedDestination.CompleteProfile -> SplashEffect.NavigateToCompleteProfile
-                                AuthenticatedDestination.Home -> SplashEffect.NavigateToHome
-                            }
-                        )
+                        if (destination == AuthenticatedDestination.Home) {
+                            getCurrentNurseTrackingInfoUseCase()
+                                .onSuccess { info ->
+                                    val isSearching = info.status.equals("SEARCHING", ignoreCase = true) || 
+                                                     info.status.equals("PENDING", ignoreCase = true)
+                                    
+                                    if (isSearching) {
+                                        sendEffect(SplashEffect.NavigateToSearch(info.requestId))
+                                    } else {
+                                        sendEffect(SplashEffect.NavigateToTracking(info.requestId))
+                                    }
+                                }
+                                .onFailure {
+                                    sendEffect(SplashEffect.NavigateToHome)
+                                }
+                        } else {
+                            sendEffect(
+                                when (destination) {
+                                    AuthenticatedDestination.Registration -> SplashEffect.NavigateToRegister
+                                    AuthenticatedDestination.CompleteProfile -> SplashEffect.NavigateToCompleteProfile
+                                    AuthenticatedDestination.Home -> SplashEffect.NavigateToHome
+                                }
+                            )
+                        }
                     },
                     onFailure = { sendEffect(SplashEffect.NavigateToLogin) }
                 )

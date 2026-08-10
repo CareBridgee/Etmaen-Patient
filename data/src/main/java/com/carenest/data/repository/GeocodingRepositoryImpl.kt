@@ -1,5 +1,6 @@
 package com.carenest.data.repository
 
+import android.util.Log
 import com.carenest.data.di.IoDispatcher
 import com.carenest.data.source.remote.service.GeocodingApiService
 import com.carenest.domain.model.LocationDetails

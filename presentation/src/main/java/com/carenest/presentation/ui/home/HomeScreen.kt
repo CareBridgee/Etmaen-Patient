@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -42,17 +43,24 @@ fun HomeScreen(
     onNavigateToServices: () -> Unit,
     onNavigateToServiceDetails: (String) -> Unit,
     onNavigateToServiceHistoryDetails: (String) -> Unit,
+    onNavigateToActiveRequest: (String, String) -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToAIChat: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val toastState = rememberToastState()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadHomeData()
+    }
+
     ScreenTopBar(
         title = stringResource(R.string.onboarding_title),
         showLeadingIcon = false,
-        profileImage = painterResource(id = RD.drawable.ic_profile)
+        profileImage = painterResource(id = com.carenest.designsystem.R.drawable.ic_profile),
+        onProfileClick = onNavigateToProfile
     )
 
     ObserveEffect(viewModel.effect) { effect ->
@@ -60,6 +68,7 @@ fun HomeScreen(
             HomeEffect.NavigateToServices -> onNavigateToServices()
             is HomeEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.serviceId)
             is HomeEffect.NavigateToServiceHistoryDetails -> onNavigateToServiceHistoryDetails(effect.requestId)
+            is HomeEffect.NavigateToActiveRequest -> onNavigateToActiveRequest(effect.requestId, effect.status)
             HomeEffect.NavigateToHistory -> onNavigateToHistory()
             HomeEffect.NavigateToAIChat -> onNavigateToAIChat()
             is HomeEffect.ShowToast -> {

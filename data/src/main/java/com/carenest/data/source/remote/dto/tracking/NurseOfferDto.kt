@@ -10,7 +10,7 @@ data class NurseOfferDto(
     @SerialName("nurse") val nurse: NurseDto,
     @SerialName("proposedPrice") val proposedPrice: Double,
     @SerialName("proposedDate") val proposedDate: String,
-    @SerialName("proposedTime") val proposedTime: ProposedTimeDto,
+    @SerialName("proposedTime") val proposedTime: String,
     @SerialName("message") val message: String? = null,
     @SerialName("status") val status: String,
     @SerialName("distanceKm") val distanceKm: Double,
@@ -28,12 +28,4 @@ data class NurseDto(
     @SerialName("profileImageUrl") val profileImageUrl: String? = null,
     @SerialName("ratingAvg") val ratingAvg: Double,
     @SerialName("totalReviews") val totalReviews: Int
-)
-
-@Serializable
-data class ProposedTimeDto(
-    @SerialName("hour") val hour: Int,
-    @SerialName("minute") val minute: Int,
-    @SerialName("second") val second: Int,
-    @SerialName("nano") val nano: Int
 )

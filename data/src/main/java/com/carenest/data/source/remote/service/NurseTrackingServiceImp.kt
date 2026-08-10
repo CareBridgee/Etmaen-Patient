@@ -1,15 +1,17 @@
 package com.carenest.data.source.remote.service
 
-import com.carenest.data.source.remote.dto.tracking.CancelRequest
+import com.carenest.data.socket.models.ChatMessageResponseDto
+import com.carenest.data.socket.models.SendMessageRequestDto
 import com.carenest.data.source.remote.dto.tracking.NurseDetailsDto
 import com.carenest.data.source.remote.dto.tracking.ServiceRequestTrackingDto
 import com.carenest.data.source.remote.dto.tracking.VisitCodeResponseDto
 import com.carenest.data.utils.executeRequest
+import com.carenest.data.utils.executeUnitRequest
 import io.ktor.client.HttpClient
-import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
-import io.ktor.http.isSuccess
+import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -19,15 +21,11 @@ class NurseTrackingServiceImp @Inject constructor(
 ) : NurseTrackingService {
 
     override suspend fun cancelVisit(requestId: String): Boolean {
-        val response = httpClient.post("/api/v1/service-requests/$requestId/cancel") {
-            setBody(
-                CancelRequest(
-                    reason = "USER_CANCELLED",
-                    note = "Cancelled by user from tracking screen"
-                )
-            )
+        val result = httpClient.executeUnitRequest(json) {
+            method = HttpMethod.Patch
+            url.path("/api/v1/service-requests/$requestId/cancel")
         }
-        return response.status.isSuccess()
+        return result.isSuccess
     }
 
     override suspend fun fetchVisitCode(requestId: String): Result<VisitCodeResponseDto> {
@@ -48,12 +46,42 @@ class NurseTrackingServiceImp @Inject constructor(
         }
     }
 
+    override suspend fun fetchCurrentServiceRequest(): Result<ServiceRequestTrackingDto> {
+        return httpClient.executeRequest<ServiceRequestTrackingDto>(json) {
+            method = HttpMethod.Get
+            url {
+                path("/api/v1/service-requests/current")
+            }
+        }
+    }
+
     override suspend fun fetchNurseDetails(nurseId: String): Result<NurseDetailsDto> {
         return httpClient.executeRequest<NurseDetailsDto>(json) {
             method = HttpMethod.Get
             url {
                 path("/api/v1/nurses/$nurseId")
             }
+        }
+    }
+
+
+    override suspend fun getChatMessages(reservationId: String): Result<List<ChatMessageResponseDto>> {
+        return httpClient.executeRequest<List<ChatMessageResponseDto>>(json) {
+            method = HttpMethod.Get
+            url {
+                path("api/v1/reservations/$reservationId/messages")
+            }
+        }
+    }
+
+    override suspend fun sendChatMessage(reservationId: String, body: SendMessageRequestDto): Result<ChatMessageResponseDto> {
+        return httpClient.executeRequest<ChatMessageResponseDto>(json) {
+            method = HttpMethod.Post
+            url {
+                path("api/v1/reservations/$reservationId/messages")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(body)
         }
     }
 }
