@@ -70,10 +70,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OtpMethodSelector(
-                selectedMethod = state.selectedOtpMethod,
-                onMethodSelect = { onEvent(LoginIntent.OtpMethodChanged(it)) }
-            )
+            OtpDeliveryInfoCards()
 
             Spacer(modifier = Modifier.weight(1f))
             Spacer(modifier = Modifier.height(24.dp))

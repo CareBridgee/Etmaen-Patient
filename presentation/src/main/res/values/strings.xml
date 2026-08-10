@@ -8,6 +8,9 @@
   <string name="auth_title">CareConnect</string>
   <string name="auth_subtitle">Reassuring care for you and your loved ones</string>
   <string name="auth_continue_google">Continue with Google</string>
+  <string name="auth_google_unavailable_title">Google sign-in is coming soon</string>
+  <string name="auth_google_unavailable_message">Google sign-in isn\'t available yet. Please continue with your phone number.</string>
+  <string name="auth_google_unavailable_action">Got it</string>
   <string name="auth_continue_apple">Continue with Apple</string>
   <string name="auth_continue_phone">Continue with Phone</string>
   <string name="auth_terms_agreement">joining our app means you agree with our Terms of use and privacy policy</string>
@@ -177,6 +180,8 @@
   <string name="phone_input_secure_care_desc">Your number is used only for verification and secure coordination of services.</string>
   <string name="phone_input_via_whatsapp">via WhatsApp</string>
   <string name="phone_input_via_sms">via SMS</string>
+  <string name="phone_input_feature_instant_sms">Instant SMS</string>
+  <string name="phone_input_feature_verified_private">Verified Private</string>
   <string name="services_greeting">Good morning</string>
   <string name="services_greeting_subtitle">Find the care you need today</string>
   <string name="services_search_hint">Search services (e.g. Injection)</string>

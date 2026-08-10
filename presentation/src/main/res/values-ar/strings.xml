@@ -7,6 +7,9 @@
   <string name="auth_title">كير كونيكت</string>
   <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
   <string name="auth_continue_google">المتابعة باستخدام Google</string>
+  <string name="auth_google_unavailable_title">تسجيل الدخول عبر Google قريبًا</string>
+  <string name="auth_google_unavailable_message">تسجيل الدخول عبر Google غير متاح حاليًا. يمكنك المتابعة باستخدام رقم هاتفك.</string>
+  <string name="auth_google_unavailable_action">حسنًا</string>
   <string name="auth_continue_apple">المتابعة باستخدام Apple</string>
   <string name="auth_continue_phone">المتابعة باستخدام رقم الهاتف</string>
   <string name="auth_terms_agreement">الانضمام إلى تطبيقنا يعني موافقتك على شروط الاستخدام وسياسة الخصوصية</string>
@@ -171,6 +174,8 @@
   <string name="phone_input_secure_care_desc">يستخدم رقمك فقط للتحقق والتنسيق الآمن للخدمات.</string>
   <string name="phone_input_via_whatsapp">عبر واتساب</string>
   <string name="phone_input_via_sms">عبر رسالة نصية</string>
+  <string name="phone_input_feature_instant_sms">رسائل SMS فورية</string>
+  <string name="phone_input_feature_verified_private">خصوصية موثوقة</string>
   <string name="services_greeting">صباح الخير</string>
   <string name="services_greeting_subtitle">ابحثي عن الرعاية التي تحتاجينها اليوم</string>
   <string name="services_search_hint">ابحثي عن خدمة (مثال: حقن)</string>
