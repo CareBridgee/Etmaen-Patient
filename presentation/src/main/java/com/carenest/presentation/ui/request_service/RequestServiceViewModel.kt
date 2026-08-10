@@ -1,8 +1,8 @@
 package com.carenest.presentation.ui.request_service
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.PreferredTime
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
@@ -19,12 +19,15 @@ class RequestServiceViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
-): ViewModel(),
+) : ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
-            preferredDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date()),
-            preferredHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
-            preferredMinute = java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE),
+            preferredDate = java.text.SimpleDateFormat(
+                "yyyy-MM-dd",
+                java.util.Locale.US
+            ).format(java.util.Date()), preferredHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
+            preferredMinute = java.util.Calendar.getInstance()
+                .get(java.util.Calendar.MINUTE),
         )
     ),
     EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
@@ -32,23 +35,55 @@ class RequestServiceViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             observeCurrentUserUseCase().collect { user ->
-                val selected = currentState.selectedPatient ?: return@collect
-                val selectedProfileId = selected.defaultProfileId ?: selected.id
-                if (selectedProfileId != user?.defaultProfileId) return@collect
+                user ?: return@collect
+
+                val defaultProfileId = user.defaultProfileId ?: return@collect
+
                 updateState {
                     copy(
-                        selectedPatient = selected.copy(
-                            phoneNumber = user.phoneNumber,
-                            firstName = user.firstName,
-                            lastName = user.lastName,
-                            dateOfBirth = user.dateOfBirth,
-                            gender = user.gender,
-                            profileImageUrl = user.profileImageUrl,
-                            isDeleted = user.isDeleted,
-                            createdAt = user.createdAt.orEmpty(),
-                            updatedAt = user.updatedAt.orEmpty(),
-                            lastLoginAt = user.lastLoginAt,
-                        )
+                        patients = patients.map { patient ->
+                            val patientProfileId =
+                                patient.defaultProfileId ?: patient.id
+
+                            if (patientProfileId == defaultProfileId) {
+                                patient.copy(
+                                    phoneNumber = user.phoneNumber,
+                                    firstName = user.firstName,
+                                    lastName = user.lastName,
+                                    dateOfBirth = user.dateOfBirth,
+                                    gender = user.gender,
+                                    profileImageUrl = user.profileImageUrl,
+                                    isDeleted = user.isDeleted,
+                                    createdAt = user.createdAt.orEmpty(),
+                                    updatedAt = user.updatedAt.orEmpty(),
+                                    lastLoginAt = user.lastLoginAt,
+                                )
+                            } else {
+                                patient
+                            }
+                        },
+
+                        selectedPatient = selectedPatient?.let { selected ->
+                            val selectedProfileId =
+                                selected.defaultProfileId ?: selected.id
+
+                            if (selectedProfileId == defaultProfileId) {
+                                selected.copy(
+                                    phoneNumber = user.phoneNumber,
+                                    firstName = user.firstName,
+                                    lastName = user.lastName,
+                                    dateOfBirth = user.dateOfBirth,
+                                    gender = user.gender,
+                                    profileImageUrl = user.profileImageUrl,
+                                    isDeleted = user.isDeleted,
+                                    createdAt = user.createdAt.orEmpty(),
+                                    updatedAt = user.updatedAt.orEmpty(),
+                                    lastLoginAt = user.lastLoginAt,
+                                )
+                            } else {
+                                selected
+                            }
+                        }
                     )
                 }
             }
@@ -59,72 +94,107 @@ class RequestServiceViewModel @Inject constructor(
         when (intent) {
             is RequestServiceIntent.OnStart -> {
                 viewModelScope.launch {
-                    // Fetch default profile if no patient is selected
-                    if (currentState.selectedPatient == null) {
-                        val currentUser = homeRepository.getUser().getOrNull()
-                        profileRepository.getDefaultProfile().onSuccess { profile ->
-                            val defaultPatient = com.carenest.domain.model.Patient(
-                                id = profile.id,
-                                phoneNumber = currentUser?.phoneNumber.orEmpty(),
-                                firstName = currentUser?.firstName ?: profile.firstName,
-                                lastName = currentUser?.lastName ?: profile.lastName,
-                                dateOfBirth = currentUser?.dateOfBirth ?: profile.dateOfBirth,
-                                gender = currentUser?.gender ?: profile.gender,
-                                profileImageUrl = currentUser?.profileImageUrl ?: profile.profileImageUrl,
-                                isDeleted = currentUser?.isDeleted ?: false,
-                                createdAt = currentUser?.createdAt.orEmpty(),
-                                updatedAt = currentUser?.updatedAt.orEmpty(),
-                                lastLoginAt = currentUser?.lastLoginAt,
-                                defaultProfileId = profile.id
-                            )
-                            updateState { copy(selectedPatient = defaultPatient) }
+                    val currentUser = homeRepository.getUser().getOrNull()
+                    // Fetch all available profiles (family members + self)
+                    profileRepository.getProfiles().onSuccess { profiles ->
+
+                        val mappedPatients = profiles.map { profile ->
+                            val isSelf = profile.isPrimary || profile.id == currentUser?.defaultProfileId
+
+                            if (isSelf && currentUser != null) {
+                                // Self profile:
+                                // use current user account data
+                                com.carenest.domain.model.Patient(
+                                    id = profile.id,
+                                    phoneNumber = currentUser.phoneNumber,
+                                    firstName = currentUser.firstName,
+                                    lastName = currentUser.lastName,
+                                    dateOfBirth = currentUser.dateOfBirth
+                                        ?: profile.dateOfBirth,
+                                    gender = currentUser.gender
+                                        ?: profile.gender,
+                                    profileImageUrl = currentUser.profileImageUrl
+                                        ?: profile.profileImageUrl,
+                                    isDeleted = currentUser.isDeleted,
+                                    createdAt = currentUser.createdAt.orEmpty(),
+                                    updatedAt = currentUser.updatedAt.orEmpty(),
+                                    lastLoginAt = currentUser.lastLoginAt,
+                                    defaultProfileId = profile.id
+                                )
+
+                            } else {
+
+                                com.carenest.domain.model.Patient(
+                                    id = profile.id,
+                                    phoneNumber = "",
+                                    firstName = profile.firstName,
+                                    lastName = profile.lastName,
+                                    dateOfBirth = profile.dateOfBirth,
+                                    gender = profile.gender,
+                                    profileImageUrl = profile.profileImageUrl,
+                                    isDeleted = profile.isDeleted,
+                                    createdAt = "",
+                                    updatedAt = "",
+                                    lastLoginAt = null,
+                                    defaultProfileId = profile.id
+                                )
+                            }
+                        }
+
+                        updateState { copy(patients = mappedPatients) }
+
+                        // If no patient is selected yet, select primary/default profile first
+                        if (currentState.selectedPatient == null) {
+
+                            val primaryProfile = profiles.find { it.isPrimary || it.id == currentUser?.defaultProfileId }
+                            val primaryPatient = primaryProfile?.let { profile -> mappedPatients.find { it.id == profile.id }
+                            }
+                            updateState { copy(selectedPatient = primaryPatient ?: mappedPatients.firstOrNull()) }
                         }
                     }
 
                     intent.serviceId?.let { id ->
-                        homeRepository.getServiceDetails(id).onSuccess { serviceDetails ->
-                            val healthcareService = com.carenest.domain.model.home.HealthcareService(
-                                id = serviceDetails.id,
-                                name = serviceDetails.name,
-                                estimatedDurationMinutes = serviceDetails.estimatedDurationMinutes.toLong(),
-                                basePrice = serviceDetails.basePrice,
-                                description = serviceDetails.description,
-                                iconResName = null
-                            )
-                            updateState { copy(selectedService = healthcareService) }
-                        }
+                        homeRepository.getServiceDetails(id)
+                            .onSuccess { serviceDetails ->
+
+                                val healthcareService =
+                                    com.carenest.domain.model.home.HealthcareService(
+                                        id = serviceDetails.id,
+                                        name = serviceDetails.name,
+                                        estimatedDurationMinutes =
+                                            serviceDetails
+                                                .estimatedDurationMinutes
+                                                .toLong(),
+                                        basePrice = serviceDetails.basePrice,
+                                        description = serviceDetails.description,
+                                        iconResName = null
+                                    )
+
+                                updateState {
+                                    copy(
+                                        selectedService = healthcareService
+                                    )
+                                }
+                            }
                     }
                 }
             }
 
             is RequestServiceIntent.OnDescriptionChanged -> {
-                updateState { copy(description = intent.description, isListening = false) }
+                updateState {
+                    copy(
+                        description = intent.description,
+                        isListening = false
+                    )
+                }
             }
 
-            is RequestServiceIntent.OnPatientSelected -> {
-                updateState { copy(selectedPatient = intent.patient) }
-            }
-
-            is RequestServiceIntent.OnPaymentMethodSelected -> {
-                updateState { copy(selectedPaymentMethod = intent.paymentMethod) }
-            }
-
-            RequestServiceIntent.OnAddPatientClicked -> {
-                sendEffect(RequestServiceEffect.NavigateToAddPatient)
-            }
-
-            RequestServiceIntent.OnChangeServiceClicked -> {
-                sendEffect(RequestServiceEffect.NavigateToServiceSelection(currentState.selectedService?.id))
-            }
-
-            RequestServiceIntent.OnEditAddressClicked -> {
-                sendEffect(RequestServiceEffect.NavigateToAddressPicker)
-            }
-
-            RequestServiceIntent.OnEditProfileClicked -> {
-                sendEffect(RequestServiceEffect.NavigateToEditProfile)
-            }
-
+            is RequestServiceIntent.OnPatientSelected -> { updateState { copy(selectedPatient = intent.patient) } }
+            is RequestServiceIntent.OnPaymentMethodSelected -> { updateState { copy(selectedPaymentMethod = intent.paymentMethod) } }
+            RequestServiceIntent.OnAddPatientClicked -> { sendEffect(RequestServiceEffect.NavigateToAddPatient) }
+            RequestServiceIntent.OnChangeServiceClicked -> { sendEffect(RequestServiceEffect.NavigateToServiceSelection(currentState.selectedService?.id)) }
+            RequestServiceIntent.OnEditAddressClicked -> { sendEffect(RequestServiceEffect.NavigateToAddressPicker) }
+            RequestServiceIntent.OnEditProfileClicked -> { sendEffect(RequestServiceEffect.NavigateToEditProfile) }
             RequestServiceIntent.OnFillWithAiClicked -> {
                 // Implement AI fill logic if needed
             }
@@ -133,24 +203,18 @@ class RequestServiceViewModel @Inject constructor(
                 // Implement help logic if needed
             }
 
-            RequestServiceIntent.OnSubmitClicked -> submitServiceRequest()
-
-            RequestServiceIntent.OnBackClicked -> {
-                sendEffect(RequestServiceEffect.NavigateBack)
-            }
-
-            RequestServiceIntent.OnMapClicked -> {
-                sendEffect(RequestServiceEffect.NavigateToMap)
-            }
-
-            is RequestServiceIntent.OnLocationDetailsReceived -> {
-                updateState { copy(location = intent.locationDetails) }
-            }
-            is RequestServiceIntent.OnPreferredDateChanged -> {
-                updateState { copy(preferredDate = intent.date) }
-            }
+            RequestServiceIntent.OnSubmitClicked -> { submitServiceRequest() }
+            RequestServiceIntent.OnBackClicked -> { sendEffect(RequestServiceEffect.NavigateBack) }
+            RequestServiceIntent.OnMapClicked -> { sendEffect(RequestServiceEffect.NavigateToMap) }
+            is RequestServiceIntent.OnLocationDetailsReceived -> { updateState { copy(location = intent.locationDetails) } }
+            is RequestServiceIntent.OnPreferredDateChanged -> { updateState { copy(preferredDate = intent.date) } }
             is RequestServiceIntent.OnPreferredTimeChanged -> {
-                updateState { copy(preferredHour = intent.hour, preferredMinute = intent.minute) }
+                updateState {
+                    copy(
+                        preferredHour = intent.hour,
+                        preferredMinute = intent.minute
+                    )
+                }
             }
         }
     }
@@ -160,13 +224,19 @@ class RequestServiceViewModel @Inject constructor(
         val serviceId = currentState.selectedService?.id
         val selectedPatient = currentState.selectedPatient
         val profileId = selectedPatient?.defaultProfileId ?: selectedPatient?.id
+
         val location = currentState.location
 
-        Log.d("RequestServiceVM", "Submitting request: serviceId=$serviceId, profileId=$profileId")
-        Log.d("RequestServiceVM", "Location: lat=${location?.latitude}, lng=${location?.longitude}, address=${location?.address}")
-
-        if (serviceId == null || location == null || profileId == null) {
-            sendEffect(RequestServiceEffect.ShowError("Please fill all required fields and select a patient"))
+        if (
+            serviceId == null ||
+            location == null ||
+            profileId == null
+        ) {
+            sendEffect(
+                RequestServiceEffect.ShowError(
+                    "Please fill all required fields and select a patient"
+                )
+            )
             return
         }
 
@@ -184,13 +254,17 @@ class RequestServiceViewModel @Inject constructor(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     preferredDate = currentState.preferredDate,
-                    preferredTime = com.carenest.domain.model.PreferredTime(
-                        hour = currentState.preferredHour,
-                        minute = currentState.preferredMinute,
-                        second = 0,
-                        nano = 0
-                    ),
-                    serviceDescription = currentState.description.ifBlank { "No description provided" },
+                    preferredTime =
+                        PreferredTime(
+                            hour = currentState.preferredHour,
+                            minute = currentState.preferredMinute,
+                            second = 0,
+                            nano = 0
+                        ),
+                    serviceDescription =
+                        currentState.description.ifBlank {
+                            "No description provided"
+                        },
                 )
             ).onSuccess { result ->
                 updateState { copy(isSubmitting = false) }

@@ -5,6 +5,7 @@ import com.carenest.domain.model.tracking.NurseTrackingInfo
 interface NurseTrackingRepository {
 
     suspend fun getNurseTrackingInfo(requestId: String): Result<NurseTrackingInfo>
+    suspend fun getCurrentNurseTrackingInfo(): Result<NurseTrackingInfo>
     suspend fun cancelVisit(requestId: String): Result<Boolean>
     suspend fun getVisitVerificationCode(requestId: String): Result<String>
 }

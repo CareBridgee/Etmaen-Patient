@@ -14,7 +14,6 @@ import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
 import com.carenest.domain.model.LocationDetails
 import com.carenest.presentation.core.mvi.ObserveEffect
-import com.carenest.presentation.model.HealthcareServiceUiModel
 import com.carenest.presentation.ui.request_service.components.CareRequestScreenContent
 import com.carenest.presentation.util.rememberSpeechToTextHelper
 import com.carenest.designsystem.R as DesignR
@@ -33,6 +32,7 @@ fun RequestServiceScreen(
     selectServiceId : String? = null,
     mapResultLocation: LocationDetails? = null,
     onMapResultConsumed: () -> Unit = {},
+    reloadTrigger: Int = 0,
     viewModel: RequestServiceViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -45,7 +45,7 @@ fun RequestServiceScreen(
         onLeadingClick = onNavigateBack
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit, selectServiceId, reloadTrigger) {
         viewModel.onIntent(RequestServiceIntent.OnStart(selectServiceId))
     }
 

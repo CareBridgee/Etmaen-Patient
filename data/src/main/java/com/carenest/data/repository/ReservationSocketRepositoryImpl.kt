@@ -2,7 +2,6 @@ package com.carenest.data.repository
 
 import com.carenest.domain.repository.ReservationSocketRepository
 import com.carenest.data.socket.SocketManagerImpl
-import com.carenest.domain.socket.model.CancelRequest
 import com.carenest.domain.socket.model.OfferActionRequest
 import com.carenest.domain.socket.model.OfferCounterRequest
 import com.carenest.domain.socket.model.OfferCreateRequest
@@ -57,7 +56,8 @@ class ReservationSocketRepositoryImpl @Inject constructor(
     }
 
     override suspend fun cancelRequest(serviceRequestId: String) {
-        val payload = messageSerializer.encodeToString(CancelRequest(serviceRequestId).toDto())
+        // According to API: SEND /app/reservation/cancel with { "serviceRequestId": "uuid" }
+        val payload = messageSerializer.encodeToString(mapOf("serviceRequestId" to serviceRequestId))
         socketManager.send("/app/reservation/cancel", payload)
     }
 

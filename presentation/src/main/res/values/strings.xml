@@ -406,6 +406,10 @@
   <string name="request_status">Request Status</string>
   <string name="searching_for_available">Searching for an available nurse…</string>
   <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.\n</string>
+  <string name="searching_cancel_dialog_title">Cancel this request?</string>
+  <string name="searching_cancel_dialog_message">Are you sure you want to stop searching for a nurse? Your request will be cancelled.</string>
+  <string name="searching_cancel_dialog_confirm">Yes, Cancel</string>
+  <string name="searching_cancel_dialog_dismiss">Continue Searching</string>
   <string name="nurse_active_nearby">%1$d nurses active nearby</string>
   <string name="nurse_name_format">%1$s,</string>
   <string name="nurse_review_format"> • %1$d %2$s</string>
@@ -435,10 +439,13 @@
   <string name="nurse_on_the_way_specialty_label">Specialty</string>
   <string name="nurse_on_the_way_show_qr_code_button">Show QR Code</string>
   <string name="nurse_on_the_way_cancel_button">Cancel</string>
-  <string name="nurse_on_the_way_cancel_dialog_title">Cancel this visit?</string>
-  <string name="nurse_on_the_way_cancel_dialog_message">Are you sure you want to cancel? If the free cancellation window has passed, a fee will apply.</string>
+  <string name="nurse_on_the_way_cancel_dialog_title">Are you sure you want to cancel?</string>
+  <string name="nurse_on_the_way_cancel_dialog_message">If the free cancellation window has passed, a fee will apply.</string>
   <string name="nurse_on_the_way_cancel_dialog_confirm">Yes, Cancel</string>
-  <string name="nurse_on_the_way_cancel_dialog_dismiss">Keep Visit</string>
+  <string name="nurse_on_the_way_cancel_dialog_dismiss">No, Keep Visit</string>
+  <string name="nurse_on_the_way_nurse_cancelled_title">Visit Cancelled</string>
+  <string name="nurse_on_the_way_nurse_cancelled_message">The nurse has cancelled the visit. Please try booking again if you still need care.</string>
+  <string name="ok">OK</string>
   <string name="wallet_title">Wallet</string>
   <string name="wallet_balance_value">EGP %1$s</string>
   <string name="wallet_balance_auto_refill">WALLET BALANCE:Auto refill is %1$s</string>

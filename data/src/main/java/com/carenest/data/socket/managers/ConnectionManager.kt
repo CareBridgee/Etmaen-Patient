@@ -25,6 +25,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import com.carenest.data.socket.models.SocketErrorPayloadDto
+import com.carenest.data.socket.serialization.MessageSerializer
+
 @Singleton
 class ConnectionManager @Inject constructor(
     private val stompClient: StompClient,
@@ -33,6 +36,7 @@ class ConnectionManager @Inject constructor(
     private val reconnectManager: ReconnectManager,
     private val heartbeatManager: HeartbeatManager,
     private val topicRegistry: TopicRegistry,
+    private val messageSerializer: MessageSerializer,
     private val logger: SocketLogger
 ) {
     private val _connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
@@ -122,6 +126,7 @@ class ConnectionManager @Inject constructor(
                         logger.log("WebSocket Opened, wait for STOMP CONNECTED")
                     }
                     is StompClientEvent.Message -> {
+                        heartbeatManager.notifyActivity()
                         val frame = event.frame
                         when (frame.command) {
                             StompFrame.CONNECTED -> {
@@ -129,6 +134,7 @@ class ConnectionManager @Inject constructor(
                                 _connectionState.value = ConnectionState.Connected
                                 reconnectManager.cancel()
                                 heartbeatManager.start(connectionScope!!)
+                                listenToUserQueueErrors()
                             }
                             StompFrame.ERROR -> {
                                 logger.error("STOMP Error: ${frame.headers["message"]}")
@@ -157,6 +163,18 @@ class ConnectionManager @Inject constructor(
                             handleDrop(0)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun listenToUserQueueErrors() {
+        connectionScope?.launch {
+            topicRegistry.subscribe("/user/queue/errors").collect { jsonString ->
+                val errorPayload = messageSerializer.decodeFromString<SocketErrorPayloadDto>(jsonString)
+                if (errorPayload != null) {
+                    logger.error("Socket operation error received: ${errorPayload.code} - ${errorPayload.message}")
+                    _socketErrors.tryEmit(errorPayload.toDomain())
                 }
             }
         }

@@ -46,6 +46,7 @@ import com.google.zxing.MultiFormatWriter
 fun QrCodeScreen(
     requestId: String,
     onNavigateBack: () -> Unit,
+    onVisitCompleted: (requestId: String) -> Unit,
     viewModel: QrCodeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -57,6 +58,7 @@ fun QrCodeScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             QrCodeEffect.NavigateBack -> onNavigateBack()
+            is QrCodeEffect.NavigateToVisitCompleted -> onVisitCompleted(effect.requestId)
         }
     }
 

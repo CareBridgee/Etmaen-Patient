@@ -1,8 +1,8 @@
 package com.carenest.presentation.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.usecase.home.GetServicesUseCase
 import com.carenest.domain.usecase.home.GetUserRequestHistoryUseCase
 import com.carenest.domain.usecase.user.GetCurrentUserUseCase
@@ -21,14 +21,11 @@ class HomeViewModel @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
     private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val getServicesUseCase: GetServicesUseCase,
-    private val getServiceHistoryUseCase: GetUserRequestHistoryUseCase
+    private val getServiceHistoryUseCase: GetUserRequestHistoryUseCase,
+    private val getCurrentNurseTrackingInfoUseCase: com.carenest.domain.usecase.tracking.GetCurrentNurseTrackingInfoUseCase
 ) : ViewModel(),
     StateHolder<HomeState> by DefaultStateHolder(HomeState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
-
-    companion object {
-        private const val TAG = "HomeViewModel"
-    }
 
     init {
         observeUser()
@@ -42,9 +39,18 @@ class HomeViewModel @Inject constructor(
             HomeIntent.StartAIChatClicked -> sendEffect(HomeEffect.NavigateToAIChat)
             HomeIntent.ViewAllServicesClicked -> sendEffect(HomeEffect.NavigateToServices)
             is HomeIntent.ServiceClicked -> {
-                sendEffect(HomeEffect.NavigateToServiceDetails(event.service.id))
+                if (event.service.id == "ACTIVE_REQUEST") {
+                    onEvent(HomeIntent.ActiveRequestClicked)
+                } else {
+                    sendEffect(HomeEffect.NavigateToServiceDetails(event.service.id))
+                }
             }
             HomeIntent.ManageAllHistoryClicked -> sendEffect(HomeEffect.NavigateToHistory)
+            HomeIntent.ActiveRequestClicked -> {
+                currentState.activeRequest?.let {
+                    sendEffect(HomeEffect.NavigateToActiveRequest(it.serviceRequestId, it.status))
+                }
+            }
             is HomeIntent.HistoryItemClicked -> sendEffect(HomeEffect.NavigateToServiceHistoryDetails(event.serviceHistory.serviceRequestId))
             HomeIntent.RetryClicked -> loadHomeData()
         }
@@ -66,11 +72,13 @@ class HomeViewModel @Inject constructor(
                 val userDeferred = async { getCurrentUser() }
                 val servicesDeferred = async { getServicesUseCase() }
                 val bookingDeferred = async { getServiceHistoryUseCase() }
+                val activeRequestDeferred = async { getCurrentNurseTrackingInfoUseCase() }
 
                 val userResult = userDeferred.await()
                 val servicesResult = servicesDeferred.await()
                 val bookingResult = bookingDeferred.await()
-
+                val activeRequestResult = activeRequestDeferred.await()
+                
                 if (userResult.isFailure && servicesResult.isFailure && bookingResult.isFailure) {
                     val errorMsg = userResult.exceptionOrNull()?.message ?: "Failed to load home data"
                     updateState { copy(isLoading = false, isError = true, errorMessage = errorMsg) }
@@ -81,25 +89,40 @@ class HomeViewModel @Inject constructor(
                 val services = servicesResult.getOrDefault(emptyList())
                 val booking = bookingResult.getOrNull() ?: emptyList()
 
-                val trimmedQuery = currentState.searchQuery.trim()
-                val filtered = if (trimmedQuery.isBlank()) {
-                    services.take(5)
+                val activeTrackingInfo = activeRequestResult.getOrNull()
+                val activeRequest = if (activeTrackingInfo != null) {
+                    com.carenest.domain.model.history.ServiceHistory(
+                        serviceRequestId = activeTrackingInfo.requestId,
+                        serviceTypeId = "", // Map properly if needed
+                        serviceName = activeTrackingInfo.specialty,
+                        serviceDescription = "",
+                        preferredDate = activeTrackingInfo.estimatedArrivalTime,
+                        preferredTime = com.carenest.domain.model.history.PreferredTime(0, 0),
+                        status = "ACCEPTED", // If we got tracking info, it's accepted or further
+                        nurseId = activeTrackingInfo.nurseId,
+                        nurseName = activeTrackingInfo.name,
+                        createdAt = "",
+                        updatedAt = ""
+                    )
                 } else {
-                    services.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
+                    booking.find {
+                        it.status.equals("ACCEPTED", ignoreCase = true) ||
+                                it.status.equals("SEARCHING", ignoreCase = true)
+                    }
                 }
 
                 updateState {
                     copy(
-                        user = user,
+                        user = user ?: currentState.user,
                         allServices = services,
-                        filteredServices = filtered,
-                        upcomingBooking = booking,
+                        filteredServices = applyActiveRequestFilter(services, activeRequest, currentState.searchQuery),
+                        upcomingBooking = booking.take(1),
+                        activeRequest = activeRequest,
                         isLoading = false,
                         isError = false
                     )
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading home data", e)
                 updateState {
                     copy(
                         isLoading = false,
@@ -112,19 +135,40 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun handleSearchQueryChanged(query: String) {
-        val trimmedQuery = query.trim()
-        val services = currentState.allServices
-        val filtered = if (trimmedQuery.isBlank()) {
-            services.take(5)
-        } else {
-            services.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
-        }
-
+        val filtered = applyActiveRequestFilter(currentState.allServices, currentState.activeRequest, query)
         updateState {
             copy(
                 searchQuery = query,
                 filteredServices = filtered
             )
+        }
+    }
+
+    private fun applyActiveRequestFilter(
+        services: List<HealthcareService>,
+        activeRequest: com.carenest.domain.model.history.ServiceHistory?,
+        query: String
+    ): List<HealthcareService> {
+        val trimmedQuery = query.trim()
+        val baseFiltered = if (trimmedQuery.isBlank()) {
+            services.take(5)
+        } else {
+            services.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
+        }
+
+        return if (activeRequest != null) {
+            val trackService = HealthcareService(
+                id = "ACTIVE_REQUEST",
+                name = "Ongoing: ${activeRequest.serviceName}",
+                estimatedDurationMinutes = 0,
+                basePrice = 0.0,
+                description = "Track your current service request",
+                iconResName = "ic_tracking"
+            )
+            // Remove the service that is currently active and add the tracking one at the top
+            listOf(trackService) + baseFiltered.filter { it.id != activeRequest.serviceTypeId }
+        } else {
+            baseFiltered
         }
     }
 }

@@ -15,9 +15,9 @@ class VisitSummaryDataSourceImp @Inject constructor(
 
     override suspend fun submitRating(requestId: String, rating: Int, comment: String?, isAnonymous: Boolean) {
         val review = ReviewRequestDto(
-            bookingId = requestId,
+            serviceRequestId = requestId,
             rating = rating,
-            reviewText = comment.orEmpty(),
+            reviewText = comment?.takeIf { it.isNotBlank() },
             isAnonymous = isAnonymous
         )
         apiService.submitReview(review).getOrThrow()

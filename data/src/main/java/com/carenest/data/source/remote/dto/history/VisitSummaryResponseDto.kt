@@ -12,7 +12,7 @@ data class VisitSummaryResponseDto(
     @SerialName("nurse") val nurse: NurseDto? = null,
     @SerialName("serviceDescription") val serviceDescription: String? = null,
     @SerialName("preferredDate") val preferredDate: String,
-    @SerialName("preferredTime") val preferredTime: PreferredTimeDto,
+    @SerialName("preferredTime") val preferredTime: String,
     @SerialName("durationMinutes") val durationMinutes: Int? = null,
     @SerialName("status") val status: String,
     @SerialName("latitude") val latitude: Double,

@@ -2,10 +2,19 @@ package com.carenest.data.mapper.tracking
 
 import com.carenest.data.source.remote.dto.tracking.NurseDetailsDto
 import com.carenest.data.source.remote.dto.tracking.ServiceRequestTrackingDto
+import com.carenest.data.utils.parseTimeString
 import com.carenest.domain.model.tracking.NurseTrackingInfo
+import java.util.Locale
 
 fun ServiceRequestTrackingDto.toDomain(nurseDetails: NurseDetailsDto?): NurseTrackingInfo {
-    val arrivalTime = "${preferredTime.hour}:${preferredTime.minute.toString().padStart(2, '0')}"
+    val (hour, minute) = parseTimeString(preferredTime)
+    val amPm = if (hour >= 12) "PM" else "AM"
+    val displayHour = when {
+        hour == 0 -> 12
+        hour > 12 -> hour - 12
+        else -> hour
+    }
+    val arrivalTime = String.format(Locale.US, "%02d:%02d %s", displayHour, minute, amPm)
     
     return NurseTrackingInfo(
         nurseId = nurse?.id.orEmpty(),
@@ -18,6 +27,7 @@ fun ServiceRequestTrackingDto.toDomain(nurseDetails: NurseDetailsDto?): NurseTra
         specialty = serviceType.name,
         phoneNumber = nurseDetails?.phoneNumber.orEmpty(),
         cancellationWindowMinutes = 2, // Mock or provided by backend
-        requestId = serviceRequestId
+        requestId = serviceRequestId,
+        status = status
     )
 }

@@ -53,6 +53,7 @@ fun NurseOnTheWayScreen(
     onNavigateBack: () -> Unit,
     onNavigateToQrCode: () -> Unit,
     onOpenChat: (nurseId: String) -> Unit,
+    onVisitCompleted: (requestId: String) -> Unit,
     showSnackbar: (String) -> Unit,
     viewModel: NurseOnTheWayViewModel = hiltViewModel(),
 ) {
@@ -69,6 +70,7 @@ fun NurseOnTheWayScreen(
             is NurseOnTheWayEffect.OpenChat -> onOpenChat(effect.nurseId)
             NurseOnTheWayEffect.NavigateToQrCode -> onNavigateToQrCode()
             NurseOnTheWayEffect.NavigateBackAfterCancel -> onNavigateBack()
+            is NurseOnTheWayEffect.NavigateToVisitCompleted -> onVisitCompleted(effect.requestId)
             is NurseOnTheWayEffect.ShowCancellationFeeWarning -> showSnackbar(effect.message)
             is NurseOnTheWayEffect.ShowError -> showSnackbar(effect.message)
 
@@ -111,6 +113,17 @@ fun NurseOnTheWayLanding(
         CancelVisitConfirmationDialog(
             onConfirm = { onIntent(NurseOnTheWayIntent.OnConfirmCancelVisitClicked) },
             onDismiss = { onIntent(NurseOnTheWayIntent.OnDismissCancelDialogClicked) },
+        )
+    }
+
+    if (state.showNurseCancelledDialog) {
+        CancelVisitConfirmationDialog(
+            title = stringResource(R.string.nurse_on_the_way_nurse_cancelled_title),
+            message = stringResource(R.string.nurse_on_the_way_nurse_cancelled_message),
+            confirmText = stringResource(R.string.ok),
+            dismissText = "",
+            onConfirm = { onIntent(NurseOnTheWayIntent.OnNurseCancelledDismissed) },
+            onDismiss = { onIntent(NurseOnTheWayIntent.OnNurseCancelledDismissed) }
         )
     }
 }

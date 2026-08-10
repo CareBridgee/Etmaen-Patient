@@ -51,9 +51,27 @@ data class ReservationEventDto(
 }
 
 @Serializable
+data class NurseInfoDto(
+    val id: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val ratingAvg: Double? = null,
+    val totalReviews: Int? = null
+) {
+    fun toDomain() = com.carenest.domain.socket.model.NurseInfo(
+        id = id ?: "",
+        firstName = firstName ?: "",
+        lastName = lastName ?: "",
+        ratingAvg = ratingAvg ?: 0.0,
+        totalReviews = totalReviews ?: 0
+    )
+}
+
+@Serializable
 data class NurseOfferResponseDto(
     val id: String? = null,
     val serviceRequestId: String? = null,
+    val nurse: NurseInfoDto? = null,
     val nurseId: String? = null,
     val proposedPrice: Double? = null,
     val proposedDate: String? = null,
@@ -64,16 +82,17 @@ data class NurseOfferResponseDto(
     val updatedAt: String? = null
 ) {
     fun toDomain() = NurseOfferResponse(
-        id ?: "",
-        serviceRequestId ?: "",
-        nurseId ?: "",
-        proposedPrice ?: 0.0,
-        proposedDate ?: "",
-        proposedTime ?: "",
-        message,
-        status ?: "PENDING",
-        createdAt ?: "",
-        updatedAt ?: ""
+        id = id ?: "",
+        serviceRequestId = serviceRequestId ?: "",
+        nurse = nurse?.toDomain(),
+        proposedPrice = proposedPrice ?: 0.0,
+        proposedDate = proposedDate ?: "",
+        proposedTime = proposedTime ?: "",
+        message = message,
+        status = status ?: "PENDING",
+        createdAt = createdAt ?: "",
+        updatedAt = updatedAt ?: "",
+        nurseId = nurse?.id ?: nurseId ?: ""
     )
 }
 

@@ -8,6 +8,8 @@ interface NurseTrackingDataSource {
 
     suspend fun fetchNurseTrackingInfo(requestId: String): ServiceRequestTrackingDto
 
+    suspend fun fetchCurrentServiceRequest(): ServiceRequestTrackingDto
+
     suspend fun cancelVisit(requestId: String): Boolean
 
     suspend fun fetchVerificationCode(requestId: String): VisitCodeResponseDto

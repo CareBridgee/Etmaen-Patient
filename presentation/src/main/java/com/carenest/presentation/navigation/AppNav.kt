@@ -2,7 +2,6 @@ package com.carenest.presentation.navigation
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -86,6 +85,7 @@ import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
 import com.carenest.presentation.ui.family_members.add.AddFamilyMemberScreenRoute
 import com.carenest.presentation.ui.family_members.members.FamilyMembersScreen
+import com.carenest.presentation.ui.profile_completion.ProfileCompletionSource
 import com.carenest.presentation.ui.settings.SettingsScreen
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
@@ -93,6 +93,8 @@ import com.carenest.designsystem.R as RD
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNav(
+    deepLinkRequestId: String? = null,
+    onDeepLinkHandled: () -> Unit = {},
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val mainState by mainViewModel.state.collectAsStateWithLifecycle()
@@ -134,16 +136,28 @@ fun AppNav(
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
         }
 
-        val initialRoute: NavKey = AppRoute.Splash
+        val initialRoute: NavKey = if (deepLinkRequestId != null) AppRoute.Home else AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
         // Retained destinations need an explicit trigger to reload after successful add/edit flows.
         var familyMembersReloadTrigger by remember { mutableStateOf(0) }
         var profileReloadTrigger by remember { mutableStateOf(0) }
+        var requestServiceReloadTrigger by remember { mutableStateOf(0) }
 
         val backStack = rememberNavBackStack(
             savedStateConfiguration, initialRoute
         )
+
+        LaunchedEffect(deepLinkRequestId) {
+            if (deepLinkRequestId != null) {
+                Snapshot.withMutableSnapshot {
+                    backStack.clear()
+                    backStack.add(AppRoute.Home)
+                    backStack.add(AppRoute.NurseOnTheWay(deepLinkRequestId))
+                }
+                onDeepLinkHandled()
+            }
+        }
 
         LaunchedEffect(mainState.isLoggedIn) {
             if (!mainState.isLoggedIn && backStack.lastOrNull() != AppRoute.Login && backStack.lastOrNull() != AppRoute.Splash && backStack.lastOrNull() != AppRoute.OnBoarding) {
@@ -171,7 +185,11 @@ fun AppNav(
                         onNavigateToHome = { replaceWith(AppRoute.Home) },
                         onNavigateToLogin = { replaceWith(AppRoute.Login) },
                         onNavigateToRegister = { replaceWith(AppRoute.Register) },
-                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion()) }
+                        onNavigateToCompleteProfile = { replaceWith(AppRoute.ProfileCompletion()) },
+                        onNavigateToTracking = { requestId -> replaceWith(AppRoute.NurseOnTheWay(requestId)) },
+                        onNavigateToSearch = { requestId -> 
+                            replaceWith(AppRoute.SearchForNurse(reservationId = requestId, serviceRequestId = requestId)) 
+                        }
                     )
                 }
 
@@ -224,7 +242,15 @@ fun AppNav(
                         onNavigateToHistory = { replaceWith(AppRoute.History) },
                         onNavigateToAIChat = { backStack.add(AppRoute.ChoosePatient) },
                         onNavigateToServiceDetails = { serviceId -> backStack.add(AppRoute.ServiceDetails(serviceId)) },
-                        onNavigateToServiceHistoryDetails = { requestId -> backStack.add(AppRoute.ServiceHistoryDetails(requestId)) }
+                        onNavigateToServiceHistoryDetails = { requestId -> backStack.add(AppRoute.ServiceHistoryDetails(requestId)) },
+                        onNavigateToActiveRequest = { requestId, status ->
+                            if (status.equals("SEARCHING", ignoreCase = true) || status.equals("PENDING", ignoreCase = true)) {
+                                backStack.add(AppRoute.SearchForNurse(requestId, requestId))
+                            } else {
+                                backStack.add(AppRoute.NurseOnTheWay(requestId))
+                            }
+                        },
+                        onNavigateToProfile = { backStack.add(AppRoute.Profile) }
                     )
                 }
 
@@ -337,15 +363,69 @@ fun AppNav(
                         onMobileWalletClick = {}
                     )
                 }
+//
+//                entry<AppRoute.RequestService> { route ->
+//                    RequestServiceScreen(
+//                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+//                        onNavigateToMap = { backStack.add(AppRoute.Map) },
+//                        onNavigateToEditProfile = {
+//                            backStack.add(AppRoute.ProfileCompletion(isEditMode = true))
+//                        },
+//                        onNavigateToAddPatient = {
+//                            backStack.add(AppRoute.AddFamilyMember())
+//                        },
+//                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
+//                        onNavigateToAddressPicker = { /* TODO */ },
+//                        onSubmitRequestClick = { serviceRequestId ->
+//                            backStack.add(
+//                                AppRoute.SearchForNurse(
+//                                    reservationId = serviceRequestId,
+//                                    serviceRequestId = serviceRequestId
+//                                )
+//                            )
+//                        },
+//                        selectServiceId = route.serviceId,
+//                        mapResultLocation = mapResultLocation,
+//                        onMapResultConsumed = { mapResultLocation = null },
+//                        reloadTrigger = requestServiceReloadTrigger
+//                    )
+//                }
 
                 entry<AppRoute.RequestService> { route ->
                     RequestServiceScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToMap = { backStack.add(AppRoute.Map) },
-                        onNavigateToEditProfile = { /* TODO */ },
-                        onNavigateToAddPatient = { /* TODO */ },
-                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
-                        onNavigateToAddressPicker = { /* TODO */ },
+                        onNavigateBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                        },
+
+                        onNavigateToMap = {
+                            backStack.add(AppRoute.Map)
+                        },
+
+                        onNavigateToEditProfile = {
+                            backStack.add(
+                                AppRoute.ProfileCompletion(
+                                    isEditMode = true
+                                )
+                            )
+                        },
+
+                        // Add a family member from Request Service
+                        onNavigateToAddPatient = {
+                            backStack.add(
+                                AppRoute.AddFamilyMember()
+                            )
+                        },
+
+                        onNavigateToServiceSelection = {
+                            backStack.add(AppRoute.Services)
+                        },
+
+                        onNavigateToAddressPicker = {
+                            // TODO
+                        },
+
                         onSubmitRequestClick = { serviceRequestId ->
                             backStack.add(
                                 AppRoute.SearchForNurse(
@@ -354,9 +434,16 @@ fun AppNav(
                                 )
                             )
                         },
+
                         selectServiceId = route.serviceId,
+
                         mapResultLocation = mapResultLocation,
-                        onMapResultConsumed = { mapResultLocation = null }
+
+                        onMapResultConsumed = {
+                            mapResultLocation = null
+                        },
+
+                        reloadTrigger = requestServiceReloadTrigger
                     )
                 }
 
@@ -375,24 +462,32 @@ fun AppNav(
                         reservationId = route.reservationId,
                         serviceRequestId = route.serviceRequestId,
                         onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMatched = { replaceWith(AppRoute.AcceptOffer) }
+                        onMatched = { requestId -> replaceWith(AppRoute.NurseOnTheWay(requestId)) }
                     )
                 }
 
                 entry<AppRoute.NurseOnTheWay> { route ->
                     NurseOnTheWayScreen(
                         requestId = route.requestId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onNavigateBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            } else {
+                                replaceWith(AppRoute.Home)
+                            }
+                        },
                         onNavigateToQrCode = { backStack.add(AppRoute.QrCode(route.requestId)) },
-                        onOpenChat = { nurseId -> /* TODO */ },
-                        showSnackbar = onShowSnackbar
+                        onOpenChat = { _ -> backStack.add(AppRoute.Chat(route.requestId)) },
+                        showSnackbar = onShowSnackbar,
+                        onVisitCompleted = { requestId -> replaceWith(AppRoute.VisitCompleted(requestId)) }
                     )
                 }
 
                 entry<AppRoute.QrCode> { route ->
                     QrCodeScreen(
                         requestId = route.requestId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onVisitCompleted = { requestId -> replaceWith(AppRoute.VisitCompleted(requestId)) }
                     )
                 }
 
@@ -425,20 +520,56 @@ fun AppNav(
                     )
                 }
 
+//                entry<AppRoute.AddFamilyMember> { route ->
+//                    AddFamilyMemberScreenRoute(
+//                        memberId = route.memberId,
+//                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+//                        onMemberSaved = {
+//                            familyMembersReloadTrigger += 1
+//                            requestServiceReloadTrigger += 1
+//                        },
+//                        onNavigateToCompleteProfile = { newMemberId ->
+//                            backStack.add(
+//                                AppRoute.ProfileCompletion(
+//                                    profileId = newMemberId,
+//                                    isEditMode = false,
+//                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+//                                )
+//                            )
+//                        },
+//                        onShowMessage = onShowSnackbar
+//                    )
+//                }
+
                 entry<AppRoute.AddFamilyMember> { route ->
                     AddFamilyMemberScreenRoute(
                         memberId = route.memberId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onMemberSaved = { familyMembersReloadTrigger += 1 },
+
+                        onNavigateBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                        },
+
+                        onMemberSaved = {
+                            familyMembersReloadTrigger += 1
+                            requestServiceReloadTrigger += 1
+
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                        },
+
                         onNavigateToCompleteProfile = { newMemberId ->
                             backStack.add(
                                 AppRoute.ProfileCompletion(
                                     profileId = newMemberId,
                                     isEditMode = false,
-                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+                                    source = ProfileCompletionSource.FAMILY_MEMBER
                                 )
                             )
                         },
+
                         onShowMessage = onShowSnackbar
                     )
                 }
@@ -497,8 +628,8 @@ fun AppNav(
             val shouldHandleBackToHome = currentRoute != null && currentRoute != AppRoute.Home && currentRoute !in listOf(
                 AppRoute.Splash,
                 AppRoute.OnBoarding,
-                AppRoute.Login
-            )
+                AppRoute.Login,
+            ) && currentRoute !is AppRoute.SearchForNurse
 
             BackHandler(enabled = shouldHandleBackToHome) {
                 if (backStack.size > 1) {
