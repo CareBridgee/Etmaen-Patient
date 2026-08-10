@@ -1,8 +1,11 @@
 package com.carenest.presentation.ui.request_service
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.CreateServiceRequestParams
+import com.carenest.domain.model.Patient
+import com.carenest.domain.model.PreferredTime
+import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
@@ -12,32 +15,48 @@ import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestServiceViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
-): ViewModel(),
-    StateHolder<RequestServiceUiState> by DefaultStateHolder(
-        RequestServiceUiState(
-            preferredDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date()),
-            preferredHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
-            preferredMinute = java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE),
-        )
-    ),
-    EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+) : ViewModel(), StateHolder<RequestServiceUiState> by DefaultStateHolder(
+    RequestServiceUiState(
+        preferredDate = SimpleDateFormat(
+            "yyyy-MM-dd", Locale.US
+        ).format(Date()),
+        preferredHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+        preferredMinute = Calendar.getInstance().get(Calendar.MINUTE),
+    )
+), EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
 
     init {
+        observeCurrentUser()
+    }
+
+    private fun observeCurrentUser() {
         viewModelScope.launch {
             observeCurrentUserUseCase().collect { user ->
-                val selected = currentState.selectedPatient ?: return@collect
-                val selectedProfileId = selected.defaultProfileId ?: selected.id
-                if (selectedProfileId != user?.defaultProfileId) return@collect
+
+                val selectedPatient = currentState.selectedPatient ?: return@collect
+
+                val selectedProfileId = selectedPatient.defaultProfileId ?: selectedPatient.id
+
+                // Only update the patient if it represents
+                // the currently logged-in user's default profile.
+                if (selectedProfileId != user?.defaultProfileId) {
+                    return@collect
+                }
+
                 updateState {
                     copy(
-                        selectedPatient = selected.copy(
+                        selectedPatient = selectedPatient.copy(
                             phoneNumber = user.phoneNumber,
                             firstName = user.firstName,
                             lastName = user.lastName,
@@ -59,40 +78,62 @@ class RequestServiceViewModel @Inject constructor(
         when (intent) {
             is RequestServiceIntent.OnStart -> {
                 viewModelScope.launch {
-                    // Fetch default profile if no patient is selected
-                    if (currentState.selectedPatient == null) {
-                        val currentUser = homeRepository.getUser().getOrNull()
-                        profileRepository.getDefaultProfile().onSuccess { profile ->
-                            val defaultPatient = com.carenest.domain.model.Patient(
-                                id = profile.id,
-                                phoneNumber = currentUser?.phoneNumber.orEmpty(),
-                                firstName = currentUser?.firstName ?: profile.firstName,
-                                lastName = currentUser?.lastName ?: profile.lastName,
-                                dateOfBirth = currentUser?.dateOfBirth ?: profile.dateOfBirth,
-                                gender = currentUser?.gender ?: profile.gender,
-                                profileImageUrl = currentUser?.profileImageUrl ?: profile.profileImageUrl,
-                                isDeleted = currentUser?.isDeleted ?: false,
-                                createdAt = currentUser?.createdAt.orEmpty(),
-                                updatedAt = currentUser?.updatedAt.orEmpty(),
-                                lastLoginAt = currentUser?.lastLoginAt,
-                                defaultProfileId = profile.id
-                            )
-                            updateState { copy(selectedPatient = defaultPatient) }
-                        }
-                    }
 
-                    intent.serviceId?.let { id ->
-                        homeRepository.getServiceDetails(id).onSuccess { serviceDetails ->
-                            val healthcareService = com.carenest.domain.model.home.HealthcareService(
-                                id = serviceDetails.id,
-                                name = serviceDetails.name,
-                                estimatedDurationMinutes = serviceDetails.estimatedDurationMinutes.toLong(),
-                                basePrice = serviceDetails.basePrice,
-                                description = serviceDetails.description,
-                                iconResName = null
-                            )
-                            updateState { copy(selectedService = healthcareService) }
+                    profileRepository.getProfiles().onSuccess { profiles ->
+
+                            val mappedPatients = profiles.map { profile ->
+                                Patient(
+                                    id = profile.id,
+                                    phoneNumber = "",
+                                    firstName = profile.firstName,
+                                    lastName = profile.lastName,
+                                    dateOfBirth = profile.dateOfBirth,
+                                    gender = profile.gender,
+                                    profileImageUrl = profile.profileImageUrl,
+                                    isDeleted = profile.isDeleted,
+                                    createdAt = "",
+                                    updatedAt = "",
+                                    lastLoginAt = null,
+                                    defaultProfileId = profile.id,
+                                )
+                            }
+
+                            updateState { copy(patients = mappedPatients) }
+
+                            if (currentState.selectedPatient == null) {
+
+                                val selectedPatient =
+                                    profiles.find { it.isPrimary }?.let { primaryProfile ->
+                                            mappedPatients.find {
+                                                it.id == primaryProfile.id
+                                            }
+                                        } ?: mappedPatients.firstOrNull()
+
+                                selectedPatient?.let { patient ->
+                                    updateState {
+                                        copy(
+                                            selectedPatient = patient
+                                        )
+                                    }
+                                }
+                            }
                         }
+
+                    intent.serviceId?.let { serviceId ->
+
+                        homeRepository.getServiceDetails(serviceId).onSuccess { serviceDetails ->
+
+                                val healthcareService = HealthcareService(
+                                    id = serviceDetails.id,
+                                    name = serviceDetails.name,
+                                    estimatedDurationMinutes = serviceDetails.estimatedDurationMinutes.toLong(),
+                                    basePrice = serviceDetails.basePrice,
+                                    description = serviceDetails.description,
+                                    iconResName = null,
+                                )
+
+                                updateState { copy(selectedService = healthcareService) }
+                            }
                     }
                 }
             }
@@ -144,8 +185,13 @@ class RequestServiceViewModel @Inject constructor(
             }
 
             is RequestServiceIntent.OnLocationDetailsReceived -> {
-                updateState { copy(location = intent.locationDetails) }
+                updateState {
+                    copy(
+                        location = intent.locationDetails
+                    )
+                }
             }
+
             is RequestServiceIntent.OnPreferredDateChanged -> {
                 updateState { copy(preferredDate = intent.date) }
             }
@@ -161,9 +207,6 @@ class RequestServiceViewModel @Inject constructor(
         val selectedPatient = currentState.selectedPatient
         val profileId = selectedPatient?.defaultProfileId ?: selectedPatient?.id
         val location = currentState.location
-
-        Log.d("RequestServiceVM", "Submitting request: serviceId=$serviceId, profileId=$profileId")
-        Log.d("RequestServiceVM", "Location: lat=${location?.latitude}, lng=${location?.longitude}, address=${location?.address}")
 
         if (serviceId == null || location == null || profileId == null) {
             sendEffect(RequestServiceEffect.ShowError("Please fill all required fields and select a patient"))
