@@ -60,6 +60,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
                 isDropdownExpanded = state.isCountryDropdownExpanded,
                 onCountryClick = { onEvent(LoginIntent.ToggleCountryDropdown) },
                 onCountrySelect = { onEvent(LoginIntent.CountryCodeChanged(it)) },
+                validationError = state.phoneValidationError,
                 errorMessage = state.errorMessage
             )
 
@@ -79,7 +80,7 @@ fun PhoneInputScreen(state: LoginState, onEvent: (LoginIntent) -> Unit) {
 
             ContinueButton(
                 isLoading = state.isLoading,
-                isEnabled = state.phoneNumber.isNotBlank() && state.errorMessage == null,
+                isEnabled = state.isPhoneValid && state.errorMessage == null,
                 onClick = { onEvent(LoginIntent.RequestOtpClicked) }
             )
 

@@ -36,6 +36,11 @@ fun PhoneInputField(
     onCountrySelect: (Country) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val formattedPhone = selectedCountry.phoneConfig.format(phone)
+    val placeholder = selectedCountry.phoneConfig.format(
+        "0".repeat(selectedCountry.phoneConfig.nationalDigitLength)
+    )
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -92,7 +97,7 @@ fun PhoneInputField(
         ) {
             if (phone.isEmpty()) {
                 BasicText(
-                    text = "000 000 0000",
+                    text = placeholder,
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.hint
                     )
@@ -100,12 +105,8 @@ fun PhoneInputField(
             }
             
             BasicTextField(
-                value = phone,
-                onValueChange = { 
-                    if (it.length <= 11 && it.all { char -> char.isDigit() || char.isWhitespace() || char == '-' }) {
-                        onPhoneChange(it)
-                    }
-                },
+                value = formattedPhone,
+                onValueChange = onPhoneChange,
                 textStyle = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont
                 ),

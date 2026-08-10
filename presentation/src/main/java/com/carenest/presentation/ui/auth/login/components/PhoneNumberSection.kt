@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.domain.validation.PhoneNumberValidationError
 
 import com.carenest.presentation.ui.auth.login.Country
 
@@ -23,6 +24,7 @@ fun PhoneNumberSection(
     isDropdownExpanded: Boolean,
     onCountryClick: () -> Unit,
     onCountrySelect: (Country) -> Unit,
+    validationError: PhoneNumberValidationError?,
     errorMessage: String?
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -53,10 +55,20 @@ fun PhoneNumberSection(
             )
         )
 
-        if (errorMessage != null) {
+        val localizedValidationError = when (validationError) {
+            PhoneNumberValidationError.Required -> stringResource(R.string.validation_phone_required)
+            PhoneNumberValidationError.InvalidLength -> stringResource(
+                R.string.login_validation_phone_length,
+                selectedCountry.phoneConfig.nationalDigitLength
+            )
+            PhoneNumberValidationError.InvalidFormat -> stringResource(R.string.login_validation_invalid_phone)
+            null -> null
+        }
+        val displayedError = localizedValidationError ?: errorMessage
+        if (displayedError != null) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = errorMessage,
+                text = displayedError,
                 style = Theme.typography.body.medium.copy(color = Theme.colors.error)
             )
         }

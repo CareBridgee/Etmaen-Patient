@@ -19,7 +19,8 @@
   <string name="otp_title">Verify Phone</string>
   <string name="otp_subtitle">We\'ve sent a 6-digit code to your phone number %1$s</string>
   <string name="otp_verify_btn">VERIFY</string>
-  <string name="otp_resend_timer">Resend code in 00:30</string>
+    <string name="otp_resend_timer">Resend code in %1$s</string>
+    <string name="otp_resend_code">Resend code</string>
   <string name="welcome_topbar_title">CareConnect</string>
   <string name="welcome_title">Welcome to CareConnect</string>
   <string name="welcome_subtitle">Your account is ready! To provide the best possible support, we suggest completing your health profile.</string>
@@ -370,7 +371,9 @@
   <string name="validation_emergency_name_length">Enter a contact name between 2 and 100 characters</string>
   <string name="validation_phone_required">Phone number is required.</string>
   <string name="validation_phone_length">Phone number must be 11 digits.</string>
-  <string name="validation_invalid_phone">Enter a valid Egyptian mobile number.</string>
+    <string name="validation_invalid_phone">Enter a valid Egyptian mobile number.</string>
+    <string name="login_validation_phone_length">Phone number must be %1$d digits.</string>
+    <string name="login_validation_invalid_phone">Enter a valid mobile number for the selected country.</string>
   <string name="request_status">Request Status</string>
   <string name="searching_for_available">Searching for an available nurse…</string>
   <string name="searching_describtion">We are currently connecting you with qualified caregivers in your immediate area. This usually takes less than 2 minutes.\n</string>

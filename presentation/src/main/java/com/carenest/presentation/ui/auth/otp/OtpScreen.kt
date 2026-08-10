@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.auth.otp
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -196,9 +196,21 @@ internal fun OtpScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             BasicText(
-                text = stringResource(R.string.otp_resend_timer),
+                text = if (state.remainingSeconds > 0) {
+                    val minutes = state.remainingSeconds / 60
+                    val seconds = state.remainingSeconds % 60
+                    stringResource(
+                        R.string.otp_resend_timer,
+                        "%02d:%02d".format(minutes, seconds)
+                    )
+                } else {
+                    stringResource(R.string.otp_resend_code)
+                },
+                modifier = Modifier.clickable(enabled = state.canResend) {
+                    onEvent(OtpIntent.ResendClicked)
+                },
                 style = Theme.typography.body.large.copy(
-                    color = Theme.colors.primary,
+                    color = if (state.canResend) Theme.colors.primary else Theme.colors.secondaryFont,
                     textAlign = TextAlign.Center
                 )
             )

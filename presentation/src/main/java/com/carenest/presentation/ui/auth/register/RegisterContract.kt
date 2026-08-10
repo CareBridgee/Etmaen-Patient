@@ -8,7 +8,7 @@ data class RegisterState(
     val firstName: String = "",
     val lastName: String = "",
     val dateOfBirth: String = "",
-    val gender: String = "",
+    val gender: String = "MALE",
     val avatarUri: String? = null,
     val profileImageUrl: String? = null,
     val selectedAvatarBytes: ByteArray? = null,

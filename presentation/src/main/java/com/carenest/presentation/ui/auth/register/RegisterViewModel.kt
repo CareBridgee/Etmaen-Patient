@@ -30,6 +30,8 @@ class RegisterViewModel @Inject constructor(
     StateHolder<RegisterState> by DefaultStateHolder(RegisterState()),
     EffectPublisher<RegisterEffect> by DefaultEffectPublisher() {
 
+    private var backendGender: String? = null
+
     init {
         viewModelScope.launch {
             userRepository.refreshCurrentUser()
@@ -37,24 +39,26 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             observeCurrentUser().collect { user ->
                 if (user != null) {
+                    backendGender = user.gender?.uppercase()?.takeIf(String::isNotBlank)
                     updateState {
                         copy(
                             firstName = user.firstName.orEmpty(),
                             lastName = user.lastName.orEmpty(),
                             dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
-                            gender = user.gender?.uppercase().orEmpty(),
+                            gender = backendGender ?: defaultGenderFor(mode),
                             profileImageUrl = user.profileImageUrl,
                             isInitializing = false,
                             errorMessage = null
                         )
                     }
                 } else {
+                    backendGender = null
                     updateState {
                         copy(
                             firstName = "",
                             lastName = "",
                             dateOfBirth = "",
-                            gender = "",
+                            gender = defaultGenderFor(mode),
                             profileImageUrl = null,
                             isInitializing = false
                         )
@@ -66,7 +70,12 @@ class RegisterViewModel @Inject constructor(
 
     fun onEvent(event: RegisterIntent) {
         when (event) {
-            is RegisterIntent.ConfigureMode -> updateState { copy(mode = event.mode) }
+            is RegisterIntent.ConfigureMode -> updateState {
+                copy(
+                    mode = event.mode,
+                    gender = backendGender ?: defaultGenderFor(event.mode)
+                )
+            }
             is RegisterIntent.FirstNameChanged -> edit(ProfileField.FirstName) {
                 copy(firstName = event.firstName.take(50))
             }
@@ -194,6 +203,9 @@ class RegisterViewModel @Inject constructor(
         )
     }
 }
+
+private fun defaultGenderFor(mode: PersonalInformationMode): String =
+    if (mode == PersonalInformationMode.Registration) "MALE" else ""
 
 private fun String.toDisplayDate(): String {
     if (isBlank()) return ""
