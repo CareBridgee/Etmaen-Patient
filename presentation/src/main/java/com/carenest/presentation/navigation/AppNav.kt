@@ -85,6 +85,7 @@ import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
 import com.carenest.presentation.ui.family_members.add.AddFamilyMemberScreenRoute
 import com.carenest.presentation.ui.family_members.members.FamilyMembersScreen
+import com.carenest.presentation.ui.profile_completion.ProfileCompletionSource
 import com.carenest.presentation.ui.settings.SettingsScreen
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
@@ -358,19 +359,69 @@ fun AppNav(
                         onMobileWalletClick = {}
                     )
                 }
+//
+//                entry<AppRoute.RequestService> { route ->
+//                    RequestServiceScreen(
+//                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+//                        onNavigateToMap = { backStack.add(AppRoute.Map) },
+//                        onNavigateToEditProfile = {
+//                            backStack.add(AppRoute.ProfileCompletion(isEditMode = true))
+//                        },
+//                        onNavigateToAddPatient = {
+//                            backStack.add(AppRoute.AddFamilyMember())
+//                        },
+//                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
+//                        onNavigateToAddressPicker = { /* TODO */ },
+//                        onSubmitRequestClick = { serviceRequestId ->
+//                            backStack.add(
+//                                AppRoute.SearchForNurse(
+//                                    reservationId = serviceRequestId,
+//                                    serviceRequestId = serviceRequestId
+//                                )
+//                            )
+//                        },
+//                        selectServiceId = route.serviceId,
+//                        mapResultLocation = mapResultLocation,
+//                        onMapResultConsumed = { mapResultLocation = null },
+//                        reloadTrigger = requestServiceReloadTrigger
+//                    )
+//                }
 
                 entry<AppRoute.RequestService> { route ->
                     RequestServiceScreen(
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onNavigateToMap = { backStack.add(AppRoute.Map) },
+                        onNavigateBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                        },
+
+                        onNavigateToMap = {
+                            backStack.add(AppRoute.Map)
+                        },
+
                         onNavigateToEditProfile = {
-                            backStack.add(AppRoute.ProfileCompletion(isEditMode = true))
+                            backStack.add(
+                                AppRoute.ProfileCompletion(
+                                    isEditMode = true
+                                )
+                            )
                         },
+
+                        // Add a family member from Request Service
                         onNavigateToAddPatient = {
-                            backStack.add(AppRoute.AddFamilyMember())
+                            backStack.add(
+                                AppRoute.AddFamilyMember()
+                            )
                         },
-                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
-                        onNavigateToAddressPicker = { /* TODO */ },
+
+                        onNavigateToServiceSelection = {
+                            backStack.add(AppRoute.Services)
+                        },
+
+                        onNavigateToAddressPicker = {
+                            // TODO
+                        },
+
                         onSubmitRequestClick = { serviceRequestId ->
                             backStack.add(
                                 AppRoute.SearchForNurse(
@@ -379,9 +430,15 @@ fun AppNav(
                                 )
                             )
                         },
+
                         selectServiceId = route.serviceId,
+
                         mapResultLocation = mapResultLocation,
-                        onMapResultConsumed = { mapResultLocation = null },
+
+                        onMapResultConsumed = {
+                            mapResultLocation = null
+                        },
+
                         reloadTrigger = requestServiceReloadTrigger
                     )
                 }
@@ -459,23 +516,56 @@ fun AppNav(
                     )
                 }
 
+//                entry<AppRoute.AddFamilyMember> { route ->
+//                    AddFamilyMemberScreenRoute(
+//                        memberId = route.memberId,
+//                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+//                        onMemberSaved = {
+//                            familyMembersReloadTrigger += 1
+//                            requestServiceReloadTrigger += 1
+//                        },
+//                        onNavigateToCompleteProfile = { newMemberId ->
+//                            backStack.add(
+//                                AppRoute.ProfileCompletion(
+//                                    profileId = newMemberId,
+//                                    isEditMode = false,
+//                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+//                                )
+//                            )
+//                        },
+//                        onShowMessage = onShowSnackbar
+//                    )
+//                }
+
                 entry<AppRoute.AddFamilyMember> { route ->
                     AddFamilyMemberScreenRoute(
                         memberId = route.memberId,
-                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+
+                        onNavigateBack = {
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                        },
+
                         onMemberSaved = {
                             familyMembersReloadTrigger += 1
                             requestServiceReloadTrigger += 1
+
+                            if (backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
                         },
+
                         onNavigateToCompleteProfile = { newMemberId ->
                             backStack.add(
                                 AppRoute.ProfileCompletion(
                                     profileId = newMemberId,
                                     isEditMode = false,
-                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+                                    source = ProfileCompletionSource.FAMILY_MEMBER
                                 )
                             )
                         },
+
                         onShowMessage = onShowSnackbar
                     )
                 }
