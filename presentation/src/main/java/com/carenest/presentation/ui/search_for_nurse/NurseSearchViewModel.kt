@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.carenest.domain.repository.ReservationSocketRepository
 import com.carenest.domain.socket.SocketServiceController
 import com.carenest.domain.socket.model.ReservationEvent
+import com.carenest.domain.usecase.tracking.CancelVisitUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NurseSearchViewModel @Inject constructor(
     private val reservationSocketRepository: ReservationSocketRepository,
+    private val cancelVisitUseCase: CancelVisitUseCase,
     private val socketServiceController: SocketServiceController,
 ) : ViewModel(),
     StateHolder<NurseSearchState> by DefaultStateHolder(NurseSearchState()),
@@ -105,6 +107,7 @@ class NurseSearchViewModel @Inject constructor(
             }
             is ReservationEvent.RequestCancelled -> {
                 updateState { copy(showCancelConfirmation = false) } // Ensure dialog is closed if open
+                viewModelScope.launch { runCatching { cancelVisitUseCase(serviceRequestId) } }
                 sendEffect(NavigateBack)
             }
             is ReservationEvent.Unknown -> Unit
@@ -137,8 +140,9 @@ class NurseSearchViewModel @Inject constructor(
     private fun confirmCancelSearch() {
         updateState { copy(showCancelConfirmation = false) }
         viewModelScope.launch {
+            runCatching { cancelVisitUseCase(serviceRequestId) }
             runCatching { reservationSocketRepository.cancelRequest(serviceRequestId) }
-            sendEffect(NurseSearchEffect.NavigateBack)
+            sendEffect(NavigateBack)
         }
     }
 
