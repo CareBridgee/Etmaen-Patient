@@ -10,7 +10,7 @@ data class ServiceDto(
     @SerialName("name")
     val name: String,
     @SerialName("description")
-    val description: String,
+    val description: String?,
     @SerialName("imageUrl")
     val imageUrl: String?,
     @SerialName("category")
@@ -24,7 +24,7 @@ data class ServiceDto(
     @SerialName("includedItems")
     val includedItems: List<String>,
     @SerialName("preparationNote")
-    val preparationNote: String,
+    val preparationNote: String?,
     @SerialName("createdAt")
     val createdAt: String,
 )
