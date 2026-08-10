@@ -32,8 +32,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SegmentedControl
@@ -202,7 +204,10 @@ internal fun RegisterScreenContent(
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
                     isError = state.validationErrors[ProfileField.FirstName] != null,
-                    errorMessage = state.validationErrors[ProfileField.FirstName].localizedMessage(),
+                    errorMessage = state.validationErrors[ProfileField.FirstName]
+                        .localizedMessage(ProfileField.FirstName),
+                    reserveErrorSpace = true,
+                    errorSpaceHeight = 36.dp,
                     modifier = Modifier.weight(1f)
                 )
                 CustomTextField(
@@ -215,7 +220,10 @@ internal fun RegisterScreenContent(
                     fieldHeight = 48.dp,
                     containerColor = Theme.colors.disable,
                     isError = state.validationErrors[ProfileField.LastName] != null,
-                    errorMessage = state.validationErrors[ProfileField.LastName].localizedMessage(),
+                    errorMessage = state.validationErrors[ProfileField.LastName]
+                        .localizedMessage(ProfileField.LastName),
+                    reserveErrorSpace = true,
+                    errorSpaceHeight = 36.dp,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -231,11 +239,15 @@ internal fun RegisterScreenContent(
                 hint = stringResource(R.string.personal_info_dob_hint),
                 trailingIcon = rememberVectorPainter(Icons.Outlined.CalendarMonth),
                 onClickTrailingIcon = { showDatePicker = true },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                inputFormatter = ::formatDateInput,
                 singleLine = true,
                 fieldHeight = 48.dp,
                 containerColor = Theme.colors.disable,
                 isError = state.validationErrors[ProfileField.DateOfBirth] != null,
-                errorMessage = state.validationErrors[ProfileField.DateOfBirth].localizedMessage(),
+                errorMessage = state.validationErrors[ProfileField.DateOfBirth]
+                    .localizedMessage(ProfileField.DateOfBirth),
+                reserveErrorSpace = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -262,12 +274,15 @@ internal fun RegisterScreenContent(
                     onEvent(RegisterIntent.GenderChanged(genderValues[it]))
                 }
             )
-            state.validationErrors[ProfileField.Gender].localizedMessage()?.let { validationMessage ->
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(text = validationMessage, color = Theme.colors.error)
+            Box(modifier = Modifier.height(26.dp)) {
+                state.validationErrors[ProfileField.Gender]
+                    .localizedMessage(ProfileField.Gender)
+                    ?.let { validationMessage ->
+                        Text(text = validationMessage, color = Theme.colors.error)
+                    }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             PrimaryButton(
                 caption = stringResource(

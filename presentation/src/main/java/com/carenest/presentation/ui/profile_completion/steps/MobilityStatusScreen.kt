@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -148,11 +149,13 @@ fun MobilityStatusScreen(
                         onClick = { onStatusSelected(option.status) }
                     )
                 }
-                statusError?.let {
-                    BasicText(
-                        text = it,
-                        style = Theme.typography.body.small.copy(color = Theme.colors.error)
-                    )
+                Box(modifier = Modifier.height(20.dp)) {
+                    statusError?.let {
+                        BasicText(
+                            text = it,
+                            style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                        )
+                    }
                 }
             }
 
@@ -187,6 +190,7 @@ fun MobilityStatusScreen(
                     containerColor = Theme.colors.cardBackground,
                     isError = notesError != null,
                     errorMessage = notesError,
+                    reserveErrorSpace = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

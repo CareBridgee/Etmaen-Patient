@@ -4,6 +4,7 @@ package com.carenest.designsystem.components.textfield
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -35,7 +39,10 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -80,12 +87,32 @@ fun CustomTextField(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     interactionSource: MutableInteractionSource? = null,
     cursorBrush: Brush = SolidColor(Theme.colors.primary),
+    focusRequester: FocusRequester? = null,
+    reserveErrorSpace: Boolean = false,
+    errorSpaceHeight: Dp = 20.dp,
+    errorMaxLines: Int = 2,
+    inputFormatter: ((previousValue: String, newValue: String) -> String)? = null,
 ) {
     var isFocused: Boolean by remember { mutableStateOf(false) }
+    var formattedFieldValue by remember {
+        mutableStateOf(TextFieldValue(text, selection = TextRange(text.length)))
+    }
+    val internalFocusRequester = remember { FocusRequester() }
+    val resolvedFocusRequester = focusRequester ?: internalFocusRequester
+    val fieldInteractionSource = remember { MutableInteractionSource() }
     val currentBorderColor = when {
         isError -> errorBorderColor
         isFocused -> onFocusBorderColor
         else -> borderColor
+    }
+
+    LaunchedEffect(text) {
+        if (inputFormatter != null && formattedFieldValue.text != text) {
+            formattedFieldValue = TextFieldValue(
+                text = text,
+                selection = TextRange(text.length)
+            )
+        }
     }
 
     Column(
@@ -126,6 +153,12 @@ fun CustomTextField(
                     shape = shape,
                     color = currentBorderColor
                 )
+                .clickable(
+                    enabled = enabled && !readOnly,
+                    interactionSource = fieldInteractionSource,
+                    indication = null,
+                    onClick = resolvedFocusRequester::requestFocus,
+                )
                 .padding(horizontal = 16.dp),
             verticalAlignment = fieldVerticalAlignment,
         ) {
@@ -155,31 +188,72 @@ fun CustomTextField(
                         )
                     }
                 }
-                BasicTextField(
-                    value = text,
-                    onValueChange = onTextChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onFocusChanged { focusState ->
-                            isFocused = focusState.isFocused
-                        },
-                    textStyle = Theme.typography.body.medium.copy(
-                        color = if (!enabled) Theme.colors.onDisable else textColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal
-                    ),
-                    enabled = enabled,
-                    readOnly = readOnly,
-                    keyboardOptions = keyboardOptions,
-                    keyboardActions = keyboardActions,
-                    singleLine = singleLine,
-                    maxLines = maxLines,
-                    minLines = minLines,
-                    visualTransformation = visualTransformation,
-                    onTextLayout = onTextLayout,
-                    interactionSource = interactionSource,
-                    cursorBrush = cursorBrush,
+                val inputModifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(resolvedFocusRequester)
+                    .onFocusChanged { focusState ->
+                        isFocused = focusState.isFocused
+                    }
+                val inputTextStyle = Theme.typography.body.medium.copy(
+                    color = if (!enabled) Theme.colors.onDisable else textColor,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal
                 )
+                if (inputFormatter == null) {
+                    BasicTextField(
+                        value = text,
+                        onValueChange = onTextChange,
+                        modifier = inputModifier,
+                        textStyle = inputTextStyle,
+                        enabled = enabled,
+                        readOnly = readOnly,
+                        keyboardOptions = keyboardOptions,
+                        keyboardActions = keyboardActions,
+                        singleLine = singleLine,
+                        maxLines = maxLines,
+                        minLines = minLines,
+                        visualTransformation = visualTransformation,
+                        onTextLayout = onTextLayout,
+                        interactionSource = interactionSource,
+                        cursorBrush = cursorBrush,
+                    )
+                } else {
+                    BasicTextField(
+                        value = formattedFieldValue,
+                        onValueChange = { incomingValue ->
+                            if (incomingValue.text == formattedFieldValue.text) {
+                                formattedFieldValue = incomingValue
+                            } else {
+                                val formattedText = inputFormatter(
+                                    formattedFieldValue.text,
+                                    incomingValue.text
+                                )
+                                formattedFieldValue = if (formattedText == incomingValue.text) {
+                                    incomingValue
+                                } else {
+                                    TextFieldValue(
+                                        text = formattedText,
+                                        selection = TextRange(formattedText.length)
+                                    )
+                                }
+                                onTextChange(formattedText)
+                            }
+                        },
+                        modifier = inputModifier,
+                        textStyle = inputTextStyle,
+                        enabled = enabled,
+                        readOnly = readOnly,
+                        keyboardOptions = keyboardOptions,
+                        keyboardActions = keyboardActions,
+                        singleLine = singleLine,
+                        maxLines = maxLines,
+                        minLines = minLines,
+                        visualTransformation = visualTransformation,
+                        onTextLayout = onTextLayout,
+                        interactionSource = interactionSource,
+                        cursorBrush = cursorBrush,
+                    )
+                }
             }
             trailingIcon?.let {
                 Image(
@@ -193,12 +267,15 @@ fun CustomTextField(
                 )
             }
         }
-        if (isError) {
+        if (isError || reserveErrorSpace) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(errorSpaceHeight),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.Top,
             ) {
-                errorIcon?.let {
+                if (isError) errorIcon?.let {
                     Image(
                         painter = it,
                         colorFilter = ColorFilter.tint(color = Theme.colors.error),
@@ -208,10 +285,13 @@ fun CustomTextField(
                             .size(Theme.size.iconSmall)
                     )
                 }
-                errorMessage?.let {
+                if (isError) errorMessage?.let {
                     BasicText(
                         text = it,
-                        style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                        modifier = Modifier.weight(1f),
+                        style = Theme.typography.body.small.copy(color = Theme.colors.error),
+                        maxLines = errorMaxLines,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }

@@ -99,22 +99,28 @@ object ProfileValidator {
 
         val fieldErrors = mutableMapOf<ProfileField, ProfileValidationError>()
         val entryErrors = mutableMapOf<Long, MedicationValidationErrors>()
-        if (entries.isEmpty()) {
+        val normalizedEntries = entries.map { entry -> entry.copy(name = entry.name.trim()) }
+        val completedEntries = normalizedEntries.filter { it.name.isNotEmpty() }
+
+        if (normalizedEntries.isEmpty()) {
             fieldErrors[ProfileField.MedicationsSelection] = ProfileValidationError.MedicationSelectionRequired
+        } else if (completedEntries.isEmpty()) {
+            val firstEntry = normalizedEntries.first()
+            entryErrors[firstEntry.uiKey] = MedicationValidationErrors(
+                name = ProfileValidationError.MedicationNameRequired
+            )
         }
-        entries.forEach { entry ->
-            val trimmed = entry.name.trim()
-            val error = when {
-                trimmed.isEmpty() -> ProfileValidationError.MedicationNameRequired
-                trimmed.length > 100 -> ProfileValidationError.TextTooLong100
-                else -> null
+        completedEntries.forEach { entry ->
+            if (entry.name.length > 100) {
+                entryErrors[entry.uiKey] = MedicationValidationErrors(
+                    name = ProfileValidationError.TextTooLong100
+                )
             }
-            if (error != null) entryErrors[entry.uiKey] = MedicationValidationErrors(name = error)
         }
         if (fieldErrors.isNotEmpty() || entryErrors.isNotEmpty()) {
             throw ProfileValidationException(fieldErrors, entryErrors)
         }
-        return entries.map { it.copy(name = it.name.trim()) }
+        return completedEntries
     }
 
     fun medicalHistory(
@@ -147,7 +153,8 @@ object ProfileValidator {
     fun emergencyContact(
         name: String,
         relationship: EmergencyRelationship?,
-        phoneNumber: String
+        phoneNumber: String,
+        phoneCountry: SupportedPhoneCountry = SupportedPhoneCountry.EGYPT
     ): EmergencyContactInput {
         val trimmedName = name.trim()
         val trimmedPhone = phoneNumber.trim()
@@ -166,7 +173,7 @@ object ProfileValidator {
             if (relationship == null) {
                 put(ProfileField.EmergencyRelationship, ProfileValidationError.Required)
             }
-            when (EgyptianPhoneNumberValidator.validate(trimmedPhone)) {
+            when (PhoneValidator.validate(trimmedPhone, phoneCountry)) {
                 PhoneNumberValidationError.Required -> put(
                     ProfileField.EmergencyPhoneNumber,
                     ProfileValidationError.PhoneRequired
@@ -186,7 +193,7 @@ object ProfileValidator {
         return EmergencyContactInput(
             contactName = trimmedName,
             relationship = requireNotNull(relationship).backendValue,
-            phoneNumber = trimmedPhone
+            phoneNumber = PhoneValidator.toInternationalNumber(trimmedPhone, phoneCountry)
         )
     }
 

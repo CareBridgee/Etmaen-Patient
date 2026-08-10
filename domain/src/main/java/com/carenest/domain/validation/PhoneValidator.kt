@@ -78,11 +78,16 @@ object PhoneValidator {
         country: SupportedPhoneCountry
     ): String = country.toInternationalNumber(nationalDigits)
 
+    fun detectCountry(input: String): SupportedPhoneCountry? {
+        val digits = input.filter(Char::isDigit)
+        return SupportedPhoneCountry.entries.firstOrNull { supportedCountry ->
+            digits.startsWith(supportedCountry.dialCode.filter(Char::isDigit))
+        } ?: SupportedPhoneCountry.EGYPT.takeIf { digits.startsWith('0') }
+    }
+
     fun formatInternationalNumber(input: String): String {
         val digits = input.filter(Char::isDigit)
-        val country = SupportedPhoneCountry.entries.firstOrNull { supportedCountry ->
-            digits.startsWith(supportedCountry.dialCode.filter(Char::isDigit))
-        } ?: return input
+        val country = detectCountry(input) ?: return input
         val nationalDigits = country.sanitize(input)
 
         return "${country.dialCode} ${country.format(nationalDigits)}"
@@ -90,9 +95,7 @@ object PhoneValidator {
 
     fun normalizeInternationalNumber(input: String): String? {
         val digits = input.filter(Char::isDigit)
-        val country = SupportedPhoneCountry.entries.firstOrNull { supportedCountry ->
-            digits.startsWith(supportedCountry.dialCode.filter(Char::isDigit))
-        } ?: return null
+        val country = detectCountry(input) ?: return null
         val nationalDigits = country.sanitize(input)
         return country.toInternationalNumber(nationalDigits)
             .takeIf { country.validate(nationalDigits) == null }

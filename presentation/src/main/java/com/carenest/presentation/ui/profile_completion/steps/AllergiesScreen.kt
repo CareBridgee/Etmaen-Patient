@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -104,11 +106,13 @@ fun AllergiesScreen(
                 checked = hasNoKnownAllergies,
                 onCheckedChange = onNoKnownAllergiesToggle
             )
-            selectionError?.let {
-                BasicText(
-                    text = it,
-                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
-                )
+            Box(modifier = Modifier.height(20.dp)) {
+                selectionError?.let {
+                    BasicText(
+                        text = it,
+                        style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                    )
+                }
             }
 
             Column(
@@ -149,6 +153,7 @@ fun AllergiesScreen(
                     fieldVerticalAlignment = Alignment.Top,
                     isError = otherAllergiesError != null,
                     errorMessage = otherAllergiesError,
+                    reserveErrorSpace = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

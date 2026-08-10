@@ -5,6 +5,7 @@ import com.carenest.domain.model.profile.EmergencyRelationship
 import com.carenest.domain.model.profile.ProfileException
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.domain.validation.ProfileValidator
+import com.carenest.domain.validation.SupportedPhoneCountry
 import javax.inject.Inject
 
 class SaveEmergencyContactUseCase @Inject constructor(private val repository: ProfileRepository) {
@@ -13,10 +14,16 @@ class SaveEmergencyContactUseCase @Inject constructor(private val repository: Pr
         emergencyContactId: String?,
         contactName: String,
         relationship: EmergencyRelationship?,
-        phoneNumber: String
+        phoneNumber: String,
+        phoneCountry: SupportedPhoneCountry = SupportedPhoneCountry.EGYPT
     ): Result<EmergencyContact> {
         val input = runCatching {
-            ProfileValidator.emergencyContact(contactName, relationship, phoneNumber)
+            ProfileValidator.emergencyContact(
+                name = contactName,
+                relationship = relationship,
+                phoneNumber = phoneNumber,
+                phoneCountry = phoneCountry
+            )
         }.getOrElse { return Result.failure(it) }
 
         val contacts = repository.getEmergencyContacts(profileId)

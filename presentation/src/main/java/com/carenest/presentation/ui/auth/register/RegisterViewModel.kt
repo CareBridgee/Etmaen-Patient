@@ -85,7 +85,7 @@ class RegisterViewModel @Inject constructor(
                 copy(lastName = event.lastName.take(50))
             }
             is RegisterIntent.DateOfBirthChanged -> edit(ProfileField.DateOfBirth) {
-                copy(dateOfBirth = event.dateOfBirth.take(10))
+                copy(dateOfBirth = formatDateInput(dateOfBirth, event.dateOfBirth))
             }
             is RegisterIntent.GenderChanged -> edit(ProfileField.Gender) {
                 copy(gender = event.gender)

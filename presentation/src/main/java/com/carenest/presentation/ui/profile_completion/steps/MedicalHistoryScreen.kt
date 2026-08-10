@@ -201,6 +201,7 @@ private fun HistoryInputCard(
             containerColor = Theme.colors.cardBackground,
             isError = errorMessage != null,
             errorMessage = errorMessage,
+            reserveErrorSpace = true,
             modifier = Modifier.fillMaxWidth()
         )
     }

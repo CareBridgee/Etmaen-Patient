@@ -143,6 +143,7 @@ fun MedicalConditionsScreen(
                     fieldVerticalAlignment = Alignment.Top,
                     isError = otherConditionsError != null,
                     errorMessage = otherConditionsError,
+                    reserveErrorSpace = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
