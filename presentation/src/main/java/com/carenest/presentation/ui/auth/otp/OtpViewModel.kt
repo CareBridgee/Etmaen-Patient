@@ -12,6 +12,8 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.ui.auth.AuthUiError
+import com.carenest.presentation.ui.auth.toAuthUiError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -58,7 +60,7 @@ class OtpViewModel @Inject constructor(
         if (!currentState.canResend) return
         val phoneNumber = PhoneValidator.normalizeInternationalNumber(currentState.phoneNumber)
         if (phoneNumber == null) {
-            updateState { copy(errorMessage = "Invalid phone number") }
+            updateState { copy(errorMessage = AuthUiError.InvalidPhone) }
             return
         }
 
@@ -81,7 +83,7 @@ class OtpViewModel @Inject constructor(
                         copy(
                             isResending = false,
                             remainingSeconds = 0,
-                            errorMessage = error.message ?: "Unable to resend verification code"
+                            errorMessage = error.toAuthUiError(AuthUiError.ResendCodeFailed)
                         )
                     }
                 }
@@ -91,7 +93,7 @@ class OtpViewModel @Inject constructor(
 
     private fun verifyOtp() {
         if (currentState.otpCode.length != 6) {
-            updateState { copy(errorMessage = "Invalid OTP code") }
+            updateState { copy(errorMessage = AuthUiError.OtpIncomplete) }
             return
         }
 
@@ -121,7 +123,7 @@ class OtpViewModel @Inject constructor(
                             updateState {
                                 copy(
                                     isLoading = false,
-                                    errorMessage = error.message ?: "Unable to load your profile"
+                                    errorMessage = error.toAuthUiError(AuthUiError.ProfileLoadFailed)
                                 )
                             }
                         }
@@ -129,7 +131,10 @@ class OtpViewModel @Inject constructor(
                 },
                 onFailure = { error ->
                     updateState {
-                        copy(isLoading = false, errorMessage = error.message ?: "Verification failed")
+                        copy(
+                            isLoading = false,
+                            errorMessage = error.toAuthUiError(AuthUiError.VerificationFailed)
+                        )
                     }
                 }
             )

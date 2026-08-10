@@ -19,6 +19,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import com.carenest.domain.repository.UserRepository
 import kotlinx.coroutines.launch
+import com.carenest.presentation.ui.auth.AuthUiError
+import com.carenest.presentation.ui.auth.toAuthUiError
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -115,8 +117,12 @@ class RegisterViewModel @Inject constructor(
                 )
                 uploadResult.getOrElse { uploadError ->
                     android.util.Log.e("RegisterViewModel", "Avatar upload to Cloudinary failed", uploadError)
-                    val uploadMsg = "Photo upload failed: ${uploadError.message ?: uploadError.toString()}"
-                    updateState { copy(isSubmitting = false, errorMessage = uploadMsg) }
+                    updateState {
+                        copy(
+                            isSubmitting = false,
+                            errorMessage = uploadError.toAuthUiError(AuthUiError.PhotoUploadFailed)
+                        )
+                    }
                     return@launch
                 }
             } else {
@@ -156,8 +162,7 @@ class RegisterViewModel @Inject constructor(
                                 updateState {
                                     copy(
                                         isSubmitting = false,
-                                        errorMessage = error.message
-                                            ?: "Unable to load your profile"
+                                        errorMessage = error.toAuthUiError(AuthUiError.ProfileLoadFailed)
                                     )
                                 }
                             }
@@ -175,16 +180,9 @@ class RegisterViewModel @Inject constructor(
                                 errorMessage = null
                             )
                         } else {
-                            val detailedMessage = buildString {
-                                append(error.message ?: error.toString())
-                                if (error is com.carenest.domain.model.user.UserException) {
-                                    error.statusCode?.let { code -> append(" (Status: $code)") }
-                                    error.backendCode?.let { code -> append(" [Code: $code]") }
-                                }
-                            }
                             copy(
                                 isSubmitting = false,
-                                errorMessage = detailedMessage
+                                errorMessage = error.toAuthUiError(AuthUiError.ProfileSaveFailed)
                             )
                         }
                     }

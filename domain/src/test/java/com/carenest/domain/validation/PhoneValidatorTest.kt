@@ -75,4 +75,16 @@ class PhoneValidatorTest {
         assertEquals("+966501234567", PhoneValidator.normalizeInternationalNumber("+966 50 123 4567"))
         assertEquals("+971501234567", PhoneValidator.normalizeInternationalNumber("+971 50 123 4567"))
     }
+
+    @Test
+    fun internationalNumbersAreFormattedForDisplay() {
+        assertEquals("+20 102 764 2749", PhoneValidator.formatInternationalNumber("+201027642749"))
+        assertEquals("+966 50 123 4567", PhoneValidator.formatInternationalNumber("+966501234567"))
+        assertEquals("+971 50 123 4567", PhoneValidator.formatInternationalNumber("+971501234567"))
+    }
+
+    @Test
+    fun unsupportedInternationalNumberIsLeftUnchanged() {
+        assertEquals("+1 555 000 0000", PhoneValidator.formatInternationalNumber("+1 555 000 0000"))
+    }
 }

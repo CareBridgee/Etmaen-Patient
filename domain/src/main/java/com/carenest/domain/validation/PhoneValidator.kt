@@ -78,6 +78,16 @@ object PhoneValidator {
         country: SupportedPhoneCountry
     ): String = country.toInternationalNumber(nationalDigits)
 
+    fun formatInternationalNumber(input: String): String {
+        val digits = input.filter(Char::isDigit)
+        val country = SupportedPhoneCountry.entries.firstOrNull { supportedCountry ->
+            digits.startsWith(supportedCountry.dialCode.filter(Char::isDigit))
+        } ?: return input
+        val nationalDigits = country.sanitize(input)
+
+        return "${country.dialCode} ${country.format(nationalDigits)}"
+    }
+
     fun normalizeInternationalNumber(input: String): String? {
         val digits = input.filter(Char::isDigit)
         val country = SupportedPhoneCountry.entries.firstOrNull { supportedCountry ->

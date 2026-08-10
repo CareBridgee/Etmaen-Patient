@@ -2,6 +2,7 @@ package com.carenest.presentation.ui.auth.login
 
 import com.carenest.domain.validation.PhoneNumberValidationError
 import com.carenest.domain.validation.SupportedPhoneCountry
+import com.carenest.presentation.ui.auth.AuthUiError
 
 sealed interface LoginIntent {
     data class PhoneNumberChanged(val phone: String) : LoginIntent
@@ -45,7 +46,7 @@ data class LoginState(
     val selectedOtpMethod: OtpDeliveryMethod = OtpDeliveryMethod.SMS,
     val isLoading: Boolean = false,
     val phoneValidationError: PhoneNumberValidationError? = null,
-    val errorMessage: String? = null
+    val errorMessage: AuthUiError? = null
 ) {
     val isPhoneValid: Boolean
         get() = phoneNumber.isNotBlank() &&

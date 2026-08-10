@@ -10,6 +10,8 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.ui.auth.AuthUiError
+import com.carenest.presentation.ui.auth.toAuthUiError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -130,7 +132,7 @@ class LoginViewModel @Inject constructor(
                     Log.e(TAG, "requestOtp failed: ${error.message}", error)
                     updateState {
                         copy(
-                            errorMessage = error.message ?: "Something went wrong. Please try again."
+                            errorMessage = error.toAuthUiError(AuthUiError.SendCodeFailed)
                         )
                     }
                 }

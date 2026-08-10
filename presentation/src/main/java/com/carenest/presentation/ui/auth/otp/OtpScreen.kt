@@ -34,11 +34,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.validation.PhoneValidator
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.AppRoute
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.auth.login.components.OtpTextField
+import com.carenest.presentation.ui.auth.localizedMessage
 
 @Composable
 fun OtpScreen(
@@ -133,7 +135,7 @@ internal fun OtpScreenContent(
             BasicText(
                 text = stringResource(
                     R.string.otp_subtitle,
-                    state.phoneNumber
+                    PhoneValidator.formatInternationalNumber(state.phoneNumber)
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = Theme.typography.body.large.copy(
@@ -167,12 +169,12 @@ internal fun OtpScreenContent(
                         }
                     )
 
-                    if (state.errorMessage != null) {
+                    state.errorMessage.localizedMessage()?.let { errorMessage ->
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         BasicText(
-                            text = state.errorMessage,
+                            text = errorMessage,
                             style = Theme.typography.body.medium.copy(
                                 color = Theme.colors.error,
                                 textAlign = TextAlign.Center

@@ -1,5 +1,7 @@
 package com.carenest.presentation.ui.auth.otp
 
+import com.carenest.presentation.ui.auth.AuthUiError
+
 sealed interface OtpIntent {
     data class OtpCodeChanged(val otp: String) : OtpIntent
     data class PhoneNumberChanged(val phone: String) : OtpIntent
@@ -14,7 +16,7 @@ data class OtpState(
     val isLoading: Boolean = false,
     val remainingSeconds: Int = 30,
     val isResending: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: AuthUiError? = null
 ) {
     val canResend: Boolean get() = remainingSeconds == 0 && !isResending
 }
