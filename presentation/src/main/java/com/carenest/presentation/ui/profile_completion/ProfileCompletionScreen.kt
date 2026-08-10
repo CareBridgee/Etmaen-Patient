@@ -98,9 +98,12 @@ private fun ProfileStepContent(
             height = state.height,
             weight = state.weight,
             bloodType = state.bloodType,
-            heightError = state.validationErrors[ProfileField.Height].localizedMessage(),
-            weightError = state.validationErrors[ProfileField.Weight].localizedMessage(),
-            bloodTypeError = state.validationErrors[ProfileField.BloodType].localizedMessage(),
+            heightError = state.validationErrors[ProfileField.Height]
+                .localizedMessage(ProfileField.Height),
+            weightError = state.validationErrors[ProfileField.Weight]
+                .localizedMessage(ProfileField.Weight),
+            bloodTypeError = state.validationErrors[ProfileField.BloodType]
+                .localizedMessage(ProfileField.BloodType),
             onHeightChange = { onEvent(ProfileCompletionIntent.HeightChanged(it)) },
             onWeightChange = { onEvent(ProfileCompletionIntent.WeightChanged(it)) },
             onBloodTypeChange = { onEvent(ProfileCompletionIntent.BloodTypeChanged(it)) },
@@ -200,15 +203,19 @@ private fun ProfileStepContent(
             contactName = state.emergencyContactName,
             relationship = state.emergencyRelationship,
             phoneNumber = state.emergencyPhoneNumber,
+            phoneCountry = state.emergencyPhoneCountry,
             dataLoaded = state.emergencyContactsLoaded,
             editingUnavailable = state.emergencyContacts.size > 1 &&
                 state.emergencyContactId == null,
             contactNameError = state.validationErrors[ProfileField.EmergencyContactName]
-                .localizedMessage(),
+                .localizedMessage(ProfileField.EmergencyContactName),
             relationshipError = state.validationErrors[ProfileField.EmergencyRelationship]
-                .localizedMessage(),
+                .localizedMessage(ProfileField.EmergencyRelationship),
             phoneNumberError = state.validationErrors[ProfileField.EmergencyPhoneNumber]
-                .localizedMessage(),
+                .localizedMessage(
+                    field = ProfileField.EmergencyPhoneNumber,
+                    phoneCountry = state.emergencyPhoneCountry
+                ),
             onContactNameChange = {
                 onEvent(ProfileCompletionIntent.EmergencyContactNameChanged(it))
             },
@@ -217,6 +224,9 @@ private fun ProfileStepContent(
             },
             onPhoneNumberChange = {
                 onEvent(ProfileCompletionIntent.EmergencyPhoneNumberChanged(it))
+            },
+            onPhoneCountryChange = {
+                onEvent(ProfileCompletionIntent.EmergencyPhoneCountryChanged(it))
             },
             onBack = { onEvent(ProfileCompletionIntent.BackClicked) },
             onContinue = { onEvent(ProfileCompletionIntent.ContinueClicked) },

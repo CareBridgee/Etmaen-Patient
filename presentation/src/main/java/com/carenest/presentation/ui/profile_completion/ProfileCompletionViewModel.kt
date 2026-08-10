@@ -24,7 +24,7 @@ import com.carenest.domain.usecase.profile.SyncMedicationsUseCase
 import com.carenest.domain.usecase.profile.UpdateBasicHealthUseCase
 import com.carenest.domain.usecase.profile.UpdateMedicalHistoryUseCase
 import com.carenest.domain.usecase.profile.UpdateMobilityUseCase
-import com.carenest.domain.validation.EgyptianPhoneNumberValidator
+import com.carenest.domain.validation.PhoneValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -164,8 +164,19 @@ class ProfileCompletionViewModel @Inject constructor(
             is ProfileCompletionIntent.EmergencyPhoneNumberChanged ->
                 edit(ProfileField.EmergencyPhoneNumber) {
                     copy(
-                        emergencyPhoneNumber = EgyptianPhoneNumberValidator.sanitizeInput(
-                            event.phoneNumber
+                        emergencyPhoneNumber = PhoneValidator.sanitize(
+                            event.phoneNumber,
+                            emergencyPhoneCountry
+                        )
+                    )
+                }
+            is ProfileCompletionIntent.EmergencyPhoneCountryChanged ->
+                edit(ProfileField.EmergencyPhoneNumber) {
+                    copy(
+                        emergencyPhoneCountry = event.country,
+                        emergencyPhoneNumber = PhoneValidator.sanitize(
+                            emergencyPhoneNumber,
+                            event.country
                         )
                     )
                 }
@@ -391,16 +402,23 @@ class ProfileCompletionViewModel @Inject constructor(
                 emergencyContactId = snapshot.emergencyContactId,
                 contactName = snapshot.emergencyContactName,
                 relationship = snapshot.emergencyRelationship,
-                phoneNumber = snapshot.emergencyPhoneNumber
+                phoneNumber = snapshot.emergencyPhoneNumber,
+                phoneCountry = snapshot.emergencyPhoneCountry
             ).fold(
                 onSuccess = { saved ->
+                    val savedPhoneCountry = PhoneValidator.detectCountry(saved.phoneNumber)
+                        ?: snapshot.emergencyPhoneCountry
                     updateState {
                         copy(
                             isSubmitting = false,
                             emergencyContactId = saved.id,
                             emergencyContactName = saved.contactName,
                             emergencyRelationship = EmergencyRelationship.fromBackend(saved.relationship),
-                            emergencyPhoneNumber = saved.phoneNumber,
+                            emergencyPhoneCountry = savedPhoneCountry,
+                            emergencyPhoneNumber = PhoneValidator.sanitize(
+                                saved.phoneNumber,
+                                savedPhoneCountry
+                            ),
                             emergencyContacts = emergencyContacts.filterNot { it.id == saved.id } + saved,
                             validationErrors = validationErrors - EMERGENCY_FIELDS
                         )
@@ -646,13 +664,19 @@ class ProfileCompletionViewModel @Inject constructor(
         contacts: List<EmergencyContact>
     ): ProfileCompletionState {
         val editable = contacts.firstOrNull()
+        val phoneCountry = editable?.phoneNumber
+            ?.let(PhoneValidator::detectCountry)
+            ?: emergencyPhoneCountry
         return copy(
             emergencyContacts = contacts,
             emergencyContactsLoaded = true,
             emergencyContactId = editable?.id,
             emergencyContactName = editable?.contactName.orEmpty(),
             emergencyRelationship = EmergencyRelationship.fromBackend(editable?.relationship),
-            emergencyPhoneNumber = editable?.phoneNumber.orEmpty()
+            emergencyPhoneCountry = phoneCountry,
+            emergencyPhoneNumber = editable?.phoneNumber
+                ?.let { PhoneValidator.sanitize(it, phoneCountry) }
+                .orEmpty()
         )
     }
 

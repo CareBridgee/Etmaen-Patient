@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -20,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.MedicalInformation
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -202,7 +205,7 @@ private fun MeasurementCard(
                 fontWeight = FontWeight.Medium
             )
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.Top) {
             CustomTextField(
                 text = value,
                 onTextChange = { onValueChange(it.filter(Char::isDigit).take(3)) },
@@ -212,11 +215,14 @@ private fun MeasurementCard(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = errorMessage != null,
                 errorMessage = errorMessage,
+                reserveErrorSpace = true,
+                errorSpaceHeight = 36.dp,
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.size(Theme.spacing.small))
             BasicText(
                 text = unit,
+                modifier = Modifier.padding(top = 16.dp),
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont)
             )
         }
@@ -281,10 +287,57 @@ private fun BloodTypeCard(
                     tint = Theme.colors.hint
                 )
             }
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(
+                    color = Theme.colors.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                    .widthIn(min = 180.dp, max = 240.dp)
+                    .heightIn(max = 260.dp)
+            ) {
                 bloodTypes.forEach { bloodType ->
                     DropdownMenuItem(
-                        text = { BasicText(bloodType) },
+                        text = {
+                            BasicText(
+                                text = bloodType,
+                                style = Theme.typography.body.medium.copy(
+                                    color = if (bloodType == selectedBloodType) {
+                                        Theme.colors.primary
+                                    } else {
+                                        Theme.colors.primaryFont
+                                    },
+                                    fontWeight = if (bloodType == selectedBloodType) {
+                                        FontWeight.SemiBold
+                                    } else {
+                                        FontWeight.Normal
+                                    },
+                                    fontSize = 15.sp
+                                )
+                            )
+                        },
+                        trailingIcon = if (bloodType == selectedBloodType) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Outlined.Check,
+                                    contentDescription = null,
+                                    tint = Theme.colors.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                        modifier = Modifier
+                            .height(48.dp)
+                            .background(
+                                if (bloodType == selectedBloodType) {
+                                    Theme.colors.primaryContainer
+                                } else {
+                                    Theme.colors.surface
+                                }
+                            ),
                         onClick = {
                             onBloodTypeSelected(bloodType)
                             expanded = false
@@ -293,17 +346,20 @@ private fun BloodTypeCard(
                 }
             }
         }
-        errorMessage?.let {
-            BasicText(
-                text = it,
-                style = Theme.typography.body.small.copy(color = Theme.colors.error)
-            )
+        Box(modifier = Modifier.height(20.dp)) {
+            errorMessage?.let {
+                BasicText(
+                    text = it,
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                )
+            }
         }
         BasicText(
             text = stringResource(R.string.basic_health_blood_type_note),
             style = Theme.typography.body.small.copy(
-                color = Theme.colors.onDisable,
-                fontSize = 10.sp
+                color = Theme.colors.hint,
+                fontSize = 12.sp,
+                lineHeight = 18.sp
             )
         )
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
@@ -22,13 +25,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,6 +67,17 @@ fun CurrentMedicationsScreen(
     onContinue: () -> Unit,
     isSubmitting: Boolean = false
 ) {
+    val newestMedicationFocusRequester = remember { FocusRequester() }
+    var previousMedicationCount by remember { mutableStateOf(medications.size) }
+
+    LaunchedEffect(medications.size, hasNoCurrentMedications) {
+        val blankMedicationWasAdded = !hasNoCurrentMedications &&
+            medications.size > previousMedicationCount &&
+            medications.lastOrNull()?.name.isNullOrBlank()
+        if (blankMedicationWasAdded) newestMedicationFocusRequester.requestFocus()
+        previousMedicationCount = medications.size
+    }
+
     ScreenTopBar(
         title = stringResource(R.string.welcome_topbar_title),
         showLeadingIcon = true,
@@ -104,11 +125,13 @@ fun CurrentMedicationsScreen(
                 checked = hasNoCurrentMedications,
                 onCheckedChange = onNoCurrentMedicationsToggle
             )
-            selectionError?.let {
-                BasicText(
-                    text = it,
-                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
-                )
+            Box(modifier = Modifier.height(20.dp)) {
+                selectionError?.let {
+                    BasicText(
+                        text = it,
+                        style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                    )
+                }
             }
 
             Column(
@@ -121,7 +144,13 @@ fun CurrentMedicationsScreen(
                         validationErrors = medicationErrors[medication.uiKey],
                         enabled = !hasNoCurrentMedications,
                         onNameChange = { onMedicationNameChange(index, it) },
-                        onRemove = { onRemoveMedication(index) }
+                        onRemove = { onRemoveMedication(index) },
+                        onSubmit = if (index == medications.lastIndex) onAddMedication else ({ }),
+                        focusRequester = if (index == medications.lastIndex) {
+                            newestMedicationFocusRequester
+                        } else {
+                            null
+                        }
                     )
                 }
 
@@ -192,7 +221,9 @@ private fun MedicationEntry(
     validationErrors: MedicationValidationErrors? = null,
     enabled: Boolean,
     onNameChange: (String) -> Unit,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    onSubmit: () -> Unit,
+    focusRequester: FocusRequester?
 ) {
     Row(
         modifier = Modifier
@@ -202,7 +233,7 @@ private fun MedicationEntry(
             .background(Theme.colors.surface)
             .padding(Theme.spacing.extraSmall),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         CustomTextField(
             text = medication.name,
@@ -213,7 +244,13 @@ private fun MedicationEntry(
             containerColor = Theme.colors.cardBackground,
             isError = validationErrors?.name != null,
             errorMessage = validationErrors?.name.localizedMessage(),
-            singleLine = false,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { if (medication.name.isNotBlank()) onSubmit() }
+            ),
+            singleLine = true,
+            focusRequester = focusRequester,
+            reserveErrorSpace = true,
             modifier = Modifier.weight(1f)
         )
         Icon(
@@ -221,6 +258,7 @@ private fun MedicationEntry(
             contentDescription = stringResource(R.string.current_medications_delete),
             tint = Theme.colors.error,
             modifier = Modifier
+                .padding(top = 6.dp)
                 .size(44.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .clickable(enabled = enabled, onClick = onRemove)

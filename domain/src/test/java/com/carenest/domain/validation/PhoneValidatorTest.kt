@@ -87,4 +87,21 @@ class PhoneValidatorTest {
     fun unsupportedInternationalNumberIsLeftUnchanged() {
         assertEquals("+1 555 000 0000", PhoneValidator.formatInternationalNumber("+1 555 000 0000"))
     }
+
+    @Test
+    fun supportedCountryIsDetectedFromInternationalOrLegacyEgyptianNumber() {
+        assertEquals(
+            SupportedPhoneCountry.EGYPT,
+            PhoneValidator.detectCountry("01027642749")
+        )
+        assertEquals(
+            SupportedPhoneCountry.SAUDI_ARABIA,
+            PhoneValidator.detectCountry("+966 50 123 4567")
+        )
+        assertEquals(
+            SupportedPhoneCountry.UAE,
+            PhoneValidator.detectCountry("+971 50 123 4567")
+        )
+        assertNull(PhoneValidator.detectCountry("+1 555 000 0000"))
+    }
 }

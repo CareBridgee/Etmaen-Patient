@@ -10,15 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material3.DropdownMenu
@@ -36,14 +37,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.profile.EmergencyRelationship
+import com.carenest.domain.validation.SupportedPhoneCountry
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.ScreenTopBar
+import com.carenest.presentation.ui.auth.login.components.PhoneInputField
+import com.carenest.presentation.ui.auth.login.countries
 import com.carenest.presentation.ui.profile_completion.components.ProfileProgressIndicator
 import com.carenest.presentation.ui.profile_completion.components.ProfileScreenNavigation
 
@@ -52,6 +55,7 @@ fun EmergencyContactScreen(
     contactName: String,
     relationship: EmergencyRelationship?,
     phoneNumber: String,
+    phoneCountry: SupportedPhoneCountry = SupportedPhoneCountry.EGYPT,
     dataLoaded: Boolean = true,
     editingUnavailable: Boolean = false,
     contactNameError: String? = null,
@@ -60,10 +64,15 @@ fun EmergencyContactScreen(
     onContactNameChange: (String) -> Unit,
     onRelationshipSelected: (EmergencyRelationship) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
+    onPhoneCountryChange: (SupportedPhoneCountry) -> Unit,
     onBack: () -> Unit,
     onContinue: () -> Unit,
     isSubmitting: Boolean = false
 ) {
+    var countryDropdownExpanded by remember { mutableStateOf(false) }
+    val selectedCountry = countries.firstOrNull { it.phoneConfig == phoneCountry }
+        ?: countries.first()
+
     ScreenTopBar(
         title = stringResource(R.string.emergency_contact_title),
         showLeadingIcon = true,
@@ -97,7 +106,7 @@ fun EmergencyContactScreen(
                     .clip(RoundedCornerShape(24.dp))
                     .background(Theme.colors.surface)
                     .padding(Theme.spacing.large),
-                verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)
             ) {
                 BasicText(
                     text = stringResource(R.string.emergency_contact_title),
@@ -134,24 +143,49 @@ fun EmergencyContactScreen(
                     isError = contactNameError != null,
                     errorMessage = contactNameError,
                     singleLine = true,
+                    reserveErrorSpace = true,
+                    errorSpaceHeight = 18.dp,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                CustomTextField(
-                    text = phoneNumber,
-                    onTextChange = onPhoneNumberChange,
-                    title = stringResource(R.string.emergency_contact_phone),
-                    hint = stringResource(R.string.emergency_contact_phone_hint),
-                    leadingIcon = rememberVectorPainter(Icons.Outlined.Call),
-                    borderColor = Theme.colors.cardBackground,
-                    containerColor = Theme.colors.cardBackground,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    enabled = !isSubmitting && dataLoaded && !editingUnavailable,
-                    isError = phoneNumberError != null,
-                    errorMessage = phoneNumberError,
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                    BasicText(
+                        text = stringResource(R.string.emergency_contact_phone),
+                        style = Theme.typography.body.medium.copy(
+                            color = Theme.colors.primaryFont,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.sp
+                        )
+                    )
+                    PhoneInputField(
+                        phone = phoneNumber,
+                        onPhoneChange = onPhoneNumberChange,
+                        selectedCountry = selectedCountry,
+                        isDropdownExpanded = countryDropdownExpanded,
+                        onCountryClick = {
+                            countryDropdownExpanded = !countryDropdownExpanded
+                        },
+                        onCountrySelect = { country ->
+                            countryDropdownExpanded = false
+                            onPhoneCountryChange(country.phoneConfig)
+                        },
+                        fieldHeight = 56.dp,
+                        isError = phoneNumberError != null,
+                        enabled = !isSubmitting && dataLoaded && !editingUnavailable,
+                        containerColor = Theme.colors.cardBackground,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Box(modifier = Modifier.height(18.dp)) {
+                        phoneNumberError?.let { errorMessage ->
+                            BasicText(
+                                text = errorMessage,
+                                style = Theme.typography.body.small.copy(
+                                    color = Theme.colors.error
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -235,7 +269,12 @@ private fun RelationshipDropdown(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(Theme.colors.surface)
+                modifier = Modifier.background(
+                    color = Theme.colors.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                    .widthIn(min = 240.dp, max = 320.dp)
+                    .heightIn(max = 280.dp)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
@@ -243,10 +282,40 @@ private fun RelationshipDropdown(
                             BasicText(
                                 text = option.localizedLabel(),
                                 style = Theme.typography.body.medium.copy(
-                                    color = Theme.colors.primaryFont
+                                    color = if (option == relationship) {
+                                        Theme.colors.primary
+                                    } else {
+                                        Theme.colors.primaryFont
+                                    },
+                                    fontWeight = if (option == relationship) {
+                                        FontWeight.SemiBold
+                                    } else {
+                                        FontWeight.Normal
+                                    }
                                 )
                             )
                         },
+                        trailingIcon = if (option == relationship) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Outlined.Check,
+                                    contentDescription = null,
+                                    tint = Theme.colors.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                        modifier = Modifier
+                            .height(48.dp)
+                            .background(
+                                if (option == relationship) {
+                                    Theme.colors.primaryContainer
+                                } else {
+                                    Theme.colors.surface
+                                }
+                            ),
                         onClick = {
                             onRelationshipSelected(option)
                             expanded = false
@@ -255,11 +324,13 @@ private fun RelationshipDropdown(
                 }
             }
         }
-        errorMessage?.let {
-            BasicText(
-                text = it,
-                style = Theme.typography.body.small.copy(color = Theme.colors.error)
-            )
+        Box(modifier = Modifier.height(18.dp)) {
+            errorMessage?.let {
+                BasicText(
+                    text = it,
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error)
+                )
+            }
         }
     }
 }

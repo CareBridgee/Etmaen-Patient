@@ -9,6 +9,7 @@ import com.carenest.domain.model.profile.MobilityStatus
 import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
+import com.carenest.domain.validation.SupportedPhoneCountry
 
 import kotlinx.serialization.Serializable
 
@@ -69,7 +70,8 @@ data class ProfileCompletionState(
     val emergencyContactId: String? = null,
     val emergencyContactName: String = "",
     val emergencyRelationship: EmergencyRelationship? = null,
-    val emergencyPhoneNumber: String = ""
+    val emergencyPhoneNumber: String = "",
+    val emergencyPhoneCountry: SupportedPhoneCountry = SupportedPhoneCountry.EGYPT
 )
 
 sealed interface ProfileCompletionIntent {
@@ -95,6 +97,9 @@ sealed interface ProfileCompletionIntent {
         val relationship: EmergencyRelationship
     ) : ProfileCompletionIntent
     data class EmergencyPhoneNumberChanged(val phoneNumber: String) : ProfileCompletionIntent
+    data class EmergencyPhoneCountryChanged(
+        val country: SupportedPhoneCountry
+    ) : ProfileCompletionIntent
     data object BackClicked : ProfileCompletionIntent
     data object ContinueClicked : ProfileCompletionIntent
     data object SkipClicked : ProfileCompletionIntent
