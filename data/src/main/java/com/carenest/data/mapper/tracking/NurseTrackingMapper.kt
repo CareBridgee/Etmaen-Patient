@@ -27,6 +27,7 @@ fun ServiceRequestTrackingDto.toDomain(nurseDetails: NurseDetailsDto?): NurseTra
         specialty = serviceType.name,
         phoneNumber = nurseDetails?.phoneNumber.orEmpty(),
         cancellationWindowMinutes = 2, // Mock or provided by backend
-        requestId = serviceRequestId
+        requestId = serviceRequestId,
+        status = status
     )
 }

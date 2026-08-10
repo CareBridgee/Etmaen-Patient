@@ -14,6 +14,10 @@ class NurseTrackingDataSourceImp @Inject constructor(
         return nurseTrackingService.fetchServiceRequest(requestId).getOrThrow()
     }
 
+    override suspend fun fetchCurrentServiceRequest(): ServiceRequestTrackingDto {
+        return nurseTrackingService.fetchCurrentServiceRequest().getOrThrow()
+    }
+
     override suspend fun cancelVisit(requestId: String): Boolean {
         return nurseTrackingService.cancelVisit(requestId)
     }

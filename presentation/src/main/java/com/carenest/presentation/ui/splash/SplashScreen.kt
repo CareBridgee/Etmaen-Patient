@@ -38,6 +38,8 @@ fun SplashScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToCompleteProfile: () -> Unit,
+    onNavigateToTracking: (String) -> Unit,
+    onNavigateToSearch: (String) -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,6 +51,8 @@ fun SplashScreen(
             SplashEffect.NavigateToLogin -> onNavigateToLogin()
             SplashEffect.NavigateToRegister -> onNavigateToRegister()
             SplashEffect.NavigateToCompleteProfile -> onNavigateToCompleteProfile()
+            is SplashEffect.NavigateToTracking -> onNavigateToTracking(effect.requestId)
+            is SplashEffect.NavigateToSearch -> onNavigateToSearch(effect.requestId)
         }
     }
 

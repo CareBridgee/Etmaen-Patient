@@ -15,4 +15,6 @@ sealed interface SplashEffect {
     data object NavigateToLogin : SplashEffect
     data object NavigateToRegister : SplashEffect
     data object NavigateToCompleteProfile : SplashEffect
+    data class NavigateToTracking(val requestId: String) : SplashEffect
+    data class NavigateToSearch(val requestId: String) : SplashEffect
 }

@@ -22,6 +22,18 @@ class NurseTrackingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getCurrentNurseTrackingInfo(): Result<NurseTrackingInfo> = runCatching {
+        val request = dataSource.fetchCurrentServiceRequest()
+        val nurseId = request.nurse?.id
+
+        if (nurseId != null) {
+            val nurseDetails = dataSource.fetchNurseDetails(nurseId)
+            request.toDomain(nurseDetails)
+        } else {
+            request.toDomain(null)
+        }
+    }
+
     override suspend fun cancelVisit(requestId: String): Result<Boolean> =
         runCatching { dataSource.cancelVisit(requestId) }
 

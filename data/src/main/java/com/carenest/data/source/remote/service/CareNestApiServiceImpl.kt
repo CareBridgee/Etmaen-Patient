@@ -1,6 +1,5 @@
 package com.carenest.data.source.remote.service
 
-import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.ServiceDto
 import com.carenest.data.source.remote.dto.history.ReviewRequestDto
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class CareNestApiServiceImpl @Inject constructor(
     private val httpClient: HttpClient,
     private val json: Json,
-    private val datastore: CarenestDatastore
 ): CareNestApiService {
     override suspend fun getServices(): Result<List<ServiceDto>> {
         return httpClient.executeRequest<List<ServiceDto>>(json) {

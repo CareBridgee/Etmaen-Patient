@@ -21,7 +21,8 @@ class HomeViewModel @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
     private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val getServicesUseCase: GetServicesUseCase,
-    private val getServiceHistoryUseCase: GetUserRequestHistoryUseCase
+    private val getServiceHistoryUseCase: GetUserRequestHistoryUseCase,
+    private val getCurrentNurseTrackingInfoUseCase: com.carenest.domain.usecase.tracking.GetCurrentNurseTrackingInfoUseCase
 ) : ViewModel(),
     StateHolder<HomeState> by DefaultStateHolder(HomeState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -71,10 +72,12 @@ class HomeViewModel @Inject constructor(
                 val userDeferred = async { getCurrentUser() }
                 val servicesDeferred = async { getServicesUseCase() }
                 val bookingDeferred = async { getServiceHistoryUseCase() }
+                val activeRequestDeferred = async { getCurrentNurseTrackingInfoUseCase() }
 
                 val userResult = userDeferred.await()
                 val servicesResult = servicesDeferred.await()
                 val bookingResult = bookingDeferred.await()
+                val activeRequestResult = activeRequestDeferred.await()
                 
                 if (userResult.isFailure && servicesResult.isFailure && bookingResult.isFailure) {
                     val errorMsg = userResult.exceptionOrNull()?.message ?: "Failed to load home data"
@@ -86,9 +89,26 @@ class HomeViewModel @Inject constructor(
                 val services = servicesResult.getOrDefault(emptyList())
                 val booking = bookingResult.getOrNull() ?: emptyList()
 
-                val activeRequest = booking.find { 
-                    it.status.equals("ACCEPTED", ignoreCase = true) ||
-                    it.status.equals("SEARCHING", ignoreCase = true)
+                val activeTrackingInfo = activeRequestResult.getOrNull()
+                val activeRequest = if (activeTrackingInfo != null) {
+                    com.carenest.domain.model.history.ServiceHistory(
+                        serviceRequestId = activeTrackingInfo.requestId,
+                        serviceTypeId = "", // Map properly if needed
+                        serviceName = activeTrackingInfo.specialty,
+                        serviceDescription = "",
+                        preferredDate = activeTrackingInfo.estimatedArrivalTime,
+                        preferredTime = com.carenest.domain.model.history.PreferredTime(0, 0),
+                        status = "ACCEPTED", // If we got tracking info, it's accepted or further
+                        nurseId = activeTrackingInfo.nurseId,
+                        nurseName = activeTrackingInfo.name,
+                        createdAt = "",
+                        updatedAt = ""
+                    )
+                } else {
+                    booking.find {
+                        it.status.equals("ACCEPTED", ignoreCase = true) ||
+                                it.status.equals("SEARCHING", ignoreCase = true)
+                    }
                 }
 
                 updateState {

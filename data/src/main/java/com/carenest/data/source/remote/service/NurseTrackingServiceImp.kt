@@ -46,6 +46,15 @@ class NurseTrackingServiceImp @Inject constructor(
         }
     }
 
+    override suspend fun fetchCurrentServiceRequest(): Result<ServiceRequestTrackingDto> {
+        return httpClient.executeRequest<ServiceRequestTrackingDto>(json) {
+            method = HttpMethod.Get
+            url {
+                path("/api/v1/service-requests/current")
+            }
+        }
+    }
+
     override suspend fun fetchNurseDetails(nurseId: String): Result<NurseDetailsDto> {
         return httpClient.executeRequest<NurseDetailsDto>(json) {
             method = HttpMethod.Get

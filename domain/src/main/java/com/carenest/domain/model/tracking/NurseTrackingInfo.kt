@@ -13,4 +13,5 @@ data class NurseTrackingInfo(
     val phoneNumber: String,
     val cancellationWindowMinutes: Int,
     val requestId: String,
+    val status: String,
 )
