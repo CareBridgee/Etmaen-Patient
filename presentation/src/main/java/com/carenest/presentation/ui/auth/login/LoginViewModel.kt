@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.usecase.auth.LoginWithPhoneUseCase
 import com.carenest.domain.usecase.auth.RequestDevOtpUseCase
+import com.carenest.domain.validation.PhoneValidator
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.ui.auth.AuthUiError
+import com.carenest.presentation.ui.auth.toAuthUiError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +31,16 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginIntent) {
         when (event) {
             is LoginIntent.PhoneNumberChanged -> {
-                updateState { copy(phoneNumber = event.phone, errorMessage = null) }
+                val phone = PhoneValidator.sanitize(event.phone, currentState.selectedCountry.phoneConfig)
+                updateState {
+                    copy(
+                        phoneNumber = phone,
+                        phoneValidationError = phone.takeIf(String::isNotBlank)?.let {
+                            PhoneValidator.validate(it, selectedCountry.phoneConfig)
+                        },
+                        errorMessage = null
+                    )
+                }
             }
 
             is LoginIntent.OtpMethodChanged -> {
@@ -36,7 +48,18 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginIntent.CountryCodeChanged -> {
-                updateState { copy(selectedCountry = event.country, isCountryDropdownExpanded = false) }
+                val phone = PhoneValidator.sanitize(currentState.phoneNumber, event.country.phoneConfig)
+                updateState {
+                    copy(
+                        phoneNumber = phone,
+                        selectedCountry = event.country,
+                        isCountryDropdownExpanded = false,
+                        phoneValidationError = phone.takeIf(String::isNotBlank)?.let {
+                            PhoneValidator.validate(it, event.country.phoneConfig)
+                        },
+                        errorMessage = null
+                    )
+                }
             }
 
             LoginIntent.ToggleCountryDropdown -> {
@@ -57,7 +80,9 @@ class LoginViewModel @Inject constructor(
             LoginStep.PHONE_INPUT -> updateState {
                 copy(
                     currentStep = LoginStep.LANDING,
-                    phoneNumber = ""
+                    phoneNumber = "",
+                    phoneValidationError = null,
+                    errorMessage = null
                 )
             }
 
@@ -68,16 +93,22 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun requestOtp() {
-        if (currentState.phoneNumber.isBlank()) {
-            updateState { copy(errorMessage = "Phone number is required") }
+        if (currentState.isLoading) return
+
+        val validationError = PhoneValidator.validate(
+            currentState.phoneNumber,
+            currentState.selectedCountry.phoneConfig
+        )
+        if (validationError != null) {
+            updateState { copy(phoneValidationError = validationError, errorMessage = null) }
             return
         }
 
         viewModelScope.launch {
-
-            val rawPhoneNumber = "${currentState.selectedCountry.code}${currentState.phoneNumber}"
-            val digitsOnly = rawPhoneNumber.replace(Regex("[^0-9]"), "")
-            val fullPhoneNumber = "+$digitsOnly"
+            val fullPhoneNumber = PhoneValidator.toInternationalNumber(
+                currentState.phoneNumber,
+                currentState.selectedCountry.phoneConfig
+            )
             Log.d(TAG, "requestOtp: $fullPhoneNumber")
 
             updateState { copy(isLoading = true, errorMessage = null) }
@@ -101,7 +132,7 @@ class LoginViewModel @Inject constructor(
                     Log.e(TAG, "requestOtp failed: ${error.message}", error)
                     updateState {
                         copy(
-                            errorMessage = error.message ?: "Something went wrong. Please try again."
+                            errorMessage = error.toAuthUiError(AuthUiError.SendCodeFailed)
                         )
                     }
                 }

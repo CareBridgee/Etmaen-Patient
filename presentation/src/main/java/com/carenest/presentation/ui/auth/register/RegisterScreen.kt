@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import com.carenest.presentation.ui.components.ProfileAvatarHeader
 import com.carenest.presentation.util.readAvatar
+import com.carenest.presentation.ui.auth.localizedMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -281,9 +282,9 @@ internal fun RegisterScreenContent(
                 isDisabled = state.isSubmitting,
                 isLoading = state.isSubmitting
             )
-            state.errorMessage?.let {
+            state.errorMessage.localizedMessage()?.let { errorMessage ->
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = it, color = Theme.colors.error)
+                Text(text = errorMessage, color = Theme.colors.error)
             }
         }
 

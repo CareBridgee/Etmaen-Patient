@@ -12,6 +12,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.domain.validation.PhoneNumberValidationError
+import com.carenest.domain.validation.SupportedPhoneCountry
+import com.carenest.presentation.ui.auth.AuthUiError
+import com.carenest.presentation.ui.auth.localizedMessage
 
 import com.carenest.presentation.ui.auth.login.Country
 
@@ -23,7 +27,8 @@ fun PhoneNumberSection(
     isDropdownExpanded: Boolean,
     onCountryClick: () -> Unit,
     onCountrySelect: (Country) -> Unit,
-    errorMessage: String?
+    validationError: PhoneNumberValidationError?,
+    errorMessage: AuthUiError?
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -53,10 +58,27 @@ fun PhoneNumberSection(
             )
         )
 
-        if (errorMessage != null) {
+        val localizedValidationError = when (validationError) {
+            PhoneNumberValidationError.Required -> stringResource(R.string.validation_phone_required)
+            PhoneNumberValidationError.InvalidLength -> stringResource(
+                R.string.login_validation_phone_length,
+                selectedCountry.phoneConfig.nationalDigitLength,
+                selectedCountry.code
+            )
+            PhoneNumberValidationError.InvalidFormat -> stringResource(
+                when (selectedCountry.phoneConfig) {
+                    SupportedPhoneCountry.EGYPT -> R.string.login_validation_egypt_phone_prefix
+                    SupportedPhoneCountry.SAUDI_ARABIA -> R.string.login_validation_saudi_phone_prefix
+                    SupportedPhoneCountry.UAE -> R.string.login_validation_uae_phone_prefix
+                }
+            )
+            null -> null
+        }
+        val displayedError = localizedValidationError ?: errorMessage.localizedMessage()
+        if (displayedError != null) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = errorMessage,
+                text = displayedError,
                 style = Theme.typography.body.medium.copy(color = Theme.colors.error)
             )
         }

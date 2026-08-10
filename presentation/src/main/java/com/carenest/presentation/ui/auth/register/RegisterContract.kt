@@ -2,13 +2,14 @@ package com.carenest.presentation.ui.auth.register
 
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
+import com.carenest.presentation.ui.auth.AuthUiError
 
 data class RegisterState(
     val mode: PersonalInformationMode = PersonalInformationMode.Registration,
     val firstName: String = "",
     val lastName: String = "",
     val dateOfBirth: String = "",
-    val gender: String = "",
+    val gender: String = "MALE",
     val avatarUri: String? = null,
     val profileImageUrl: String? = null,
     val selectedAvatarBytes: ByteArray? = null,
@@ -16,7 +17,7 @@ data class RegisterState(
     val selectedAvatarContentType: String? = null,
     val isInitializing: Boolean = true,
     val isSubmitting: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: AuthUiError? = null,
     val validationErrors: Map<ProfileField, ProfileValidationError> = emptyMap()
 )
 

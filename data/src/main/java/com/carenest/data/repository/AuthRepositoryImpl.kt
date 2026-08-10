@@ -5,8 +5,12 @@ import com.carenest.data.di.IoDispatcher
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
 import com.carenest.domain.model.auth.AuthResult
+import com.carenest.domain.model.auth.AuthException
+import com.carenest.domain.model.auth.AuthFailure
 import com.carenest.domain.repository.AuthRepository
 import com.carenest.domain.repository.UserRepository
+import com.carenest.data.source.remote.ApiException
+import java.io.IOException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -21,9 +25,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun loginWithPhone(phoneNumber: String): Result<Unit> =
         authDatasource.loginWithPhone(phoneNumber)
+            .mapAuthFailure(AuthOperation.REQUEST_OTP)
 
     override suspend fun requestDevOtp(phoneNumber: String): Result<String?> {
-        return authDatasource.requestDevOtp(phoneNumber).map { it.otp }
+        return authDatasource.requestDevOtp(phoneNumber)
+            .mapAuthFailure(AuthOperation.REQUEST_OTP)
+            .map { it.otp }
     }
 
     override suspend fun verifyOtp(phoneNumber: String, otp: String): Result<AuthResult> {
@@ -48,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
                     clearUserSession()
                 }
             },
-            onFailure = { Result.failure(it) }
+            onFailure = { Result.failure(it.toAuthException(AuthOperation.VERIFY_OTP)) }
         )
     }
 
@@ -92,4 +99,57 @@ class AuthRepositoryImpl @Inject constructor(
         datastore.setLoggedIn(false)
         userRepository.clearCurrentUser()
     }
+}
+
+private enum class AuthOperation {
+    REQUEST_OTP,
+    VERIFY_OTP
+}
+
+private fun <T> Result<T>.mapAuthFailure(operation: AuthOperation): Result<T> =
+    fold(
+        onSuccess = Result.Companion::success,
+        onFailure = { Result.failure(it.toAuthException(operation)) }
+    )
+
+private fun Throwable.toAuthException(operation: AuthOperation): AuthException {
+    if (this is AuthException) return this
+
+    val apiError = this as? ApiException
+    val statusCode = apiError?.statusCode
+    val backendCode = apiError?.backendCode
+    val searchableMessage = listOfNotNull(backendCode, message)
+        .joinToString(" ")
+        .lowercase()
+
+    val failure = when {
+        this is IOException ||
+            searchableMessage.contains("timeout") ||
+            searchableMessage.contains("unable to resolve host") ||
+            searchableMessage.contains("failed to connect") -> AuthFailure.Network
+        searchableMessage.contains("too many") ||
+            searchableMessage.contains("rate limit") -> AuthFailure.TooManyRequests
+        operation == AuthOperation.VERIFY_OTP && searchableMessage.contains("expired") ->
+            AuthFailure.ExpiredOtp
+        operation == AuthOperation.VERIFY_OTP &&
+            (searchableMessage.contains("invalid otp") ||
+                searchableMessage.contains("incorrect code") ||
+                searchableMessage.contains("invalid code")) -> AuthFailure.InvalidOtp
+        statusCode == 408 -> AuthFailure.Network
+        statusCode == 429 -> AuthFailure.TooManyRequests
+        statusCode != null && statusCode >= 500 -> AuthFailure.Server
+        operation == AuthOperation.VERIFY_OTP && statusCode in setOf(400, 401, 403, 404, 409, 422) ->
+            AuthFailure.InvalidOtp
+        operation == AuthOperation.REQUEST_OTP && statusCode in setOf(400, 404, 422) ->
+            AuthFailure.InvalidPhone
+        else -> AuthFailure.Unknown
+    }
+
+    return AuthException(
+        failure = failure,
+        message = message ?: "Authentication request failed",
+        statusCode = statusCode,
+        backendCode = backendCode,
+        cause = this
+    )
 }

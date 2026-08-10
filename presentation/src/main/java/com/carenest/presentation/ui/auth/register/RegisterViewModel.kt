@@ -19,6 +19,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import com.carenest.domain.repository.UserRepository
 import kotlinx.coroutines.launch
+import com.carenest.presentation.ui.auth.AuthUiError
+import com.carenest.presentation.ui.auth.toAuthUiError
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -30,6 +32,8 @@ class RegisterViewModel @Inject constructor(
     StateHolder<RegisterState> by DefaultStateHolder(RegisterState()),
     EffectPublisher<RegisterEffect> by DefaultEffectPublisher() {
 
+    private var backendGender: String? = null
+
     init {
         viewModelScope.launch {
             userRepository.refreshCurrentUser()
@@ -37,24 +41,26 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             observeCurrentUser().collect { user ->
                 if (user != null) {
+                    backendGender = user.gender?.uppercase()?.takeIf(String::isNotBlank)
                     updateState {
                         copy(
                             firstName = user.firstName.orEmpty(),
                             lastName = user.lastName.orEmpty(),
                             dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
-                            gender = user.gender?.uppercase().orEmpty(),
+                            gender = backendGender ?: defaultGenderFor(mode),
                             profileImageUrl = user.profileImageUrl,
                             isInitializing = false,
                             errorMessage = null
                         )
                     }
                 } else {
+                    backendGender = null
                     updateState {
                         copy(
                             firstName = "",
                             lastName = "",
                             dateOfBirth = "",
-                            gender = "",
+                            gender = defaultGenderFor(mode),
                             profileImageUrl = null,
                             isInitializing = false
                         )
@@ -66,7 +72,12 @@ class RegisterViewModel @Inject constructor(
 
     fun onEvent(event: RegisterIntent) {
         when (event) {
-            is RegisterIntent.ConfigureMode -> updateState { copy(mode = event.mode) }
+            is RegisterIntent.ConfigureMode -> updateState {
+                copy(
+                    mode = event.mode,
+                    gender = backendGender ?: defaultGenderFor(event.mode)
+                )
+            }
             is RegisterIntent.FirstNameChanged -> edit(ProfileField.FirstName) {
                 copy(firstName = event.firstName.take(50))
             }
@@ -106,8 +117,12 @@ class RegisterViewModel @Inject constructor(
                 )
                 uploadResult.getOrElse { uploadError ->
                     android.util.Log.e("RegisterViewModel", "Avatar upload to Cloudinary failed", uploadError)
-                    val uploadMsg = "Photo upload failed: ${uploadError.message ?: uploadError.toString()}"
-                    updateState { copy(isSubmitting = false, errorMessage = uploadMsg) }
+                    updateState {
+                        copy(
+                            isSubmitting = false,
+                            errorMessage = uploadError.toAuthUiError(AuthUiError.PhotoUploadFailed)
+                        )
+                    }
                     return@launch
                 }
             } else {
@@ -147,8 +162,7 @@ class RegisterViewModel @Inject constructor(
                                 updateState {
                                     copy(
                                         isSubmitting = false,
-                                        errorMessage = error.message
-                                            ?: "Unable to load your profile"
+                                        errorMessage = error.toAuthUiError(AuthUiError.ProfileLoadFailed)
                                     )
                                 }
                             }
@@ -166,16 +180,9 @@ class RegisterViewModel @Inject constructor(
                                 errorMessage = null
                             )
                         } else {
-                            val detailedMessage = buildString {
-                                append(error.message ?: error.toString())
-                                if (error is com.carenest.domain.model.user.UserException) {
-                                    error.statusCode?.let { code -> append(" (Status: $code)") }
-                                    error.backendCode?.let { code -> append(" [Code: $code]") }
-                                }
-                            }
                             copy(
                                 isSubmitting = false,
-                                errorMessage = detailedMessage
+                                errorMessage = error.toAuthUiError(AuthUiError.ProfileSaveFailed)
                             )
                         }
                     }
@@ -194,6 +201,9 @@ class RegisterViewModel @Inject constructor(
         )
     }
 }
+
+private fun defaultGenderFor(mode: PersonalInformationMode): String =
+    if (mode == PersonalInformationMode.Registration) "MALE" else ""
 
 private fun String.toDisplayDate(): String {
     if (isBlank()) return ""

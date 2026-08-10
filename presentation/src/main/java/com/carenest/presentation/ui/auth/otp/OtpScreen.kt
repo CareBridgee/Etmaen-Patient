@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.auth.otp
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,11 +34,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.domain.validation.PhoneValidator
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.AppRoute
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.auth.login.components.OtpTextField
+import com.carenest.presentation.ui.auth.localizedMessage
 
 @Composable
 fun OtpScreen(
@@ -133,7 +135,7 @@ internal fun OtpScreenContent(
             BasicText(
                 text = stringResource(
                     R.string.otp_subtitle,
-                    state.phoneNumber
+                    PhoneValidator.formatInternationalNumber(state.phoneNumber)
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = Theme.typography.body.large.copy(
@@ -167,12 +169,12 @@ internal fun OtpScreenContent(
                         }
                     )
 
-                    if (state.errorMessage != null) {
+                    state.errorMessage.localizedMessage()?.let { errorMessage ->
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         BasicText(
-                            text = state.errorMessage,
+                            text = errorMessage,
                             style = Theme.typography.body.medium.copy(
                                 color = Theme.colors.error,
                                 textAlign = TextAlign.Center
@@ -196,9 +198,21 @@ internal fun OtpScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             BasicText(
-                text = stringResource(R.string.otp_resend_timer),
+                text = if (state.remainingSeconds > 0) {
+                    val minutes = state.remainingSeconds / 60
+                    val seconds = state.remainingSeconds % 60
+                    stringResource(
+                        R.string.otp_resend_timer,
+                        "%02d:%02d".format(minutes, seconds)
+                    )
+                } else {
+                    stringResource(R.string.otp_resend_code)
+                },
+                modifier = Modifier.clickable(enabled = state.canResend) {
+                    onEvent(OtpIntent.ResendClicked)
+                },
                 style = Theme.typography.body.large.copy(
-                    color = Theme.colors.primary,
+                    color = if (state.canResend) Theme.colors.primary else Theme.colors.secondaryFont,
                     textAlign = TextAlign.Center
                 )
             )

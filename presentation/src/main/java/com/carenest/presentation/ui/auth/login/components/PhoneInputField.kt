@@ -20,7 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.login.Country
@@ -36,6 +40,10 @@ fun PhoneInputField(
     onCountrySelect: (Country) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val placeholder = selectedCountry.phoneConfig.format(
+        "0".repeat(selectedCountry.phoneConfig.nationalDigitLength)
+    )
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -92,7 +100,7 @@ fun PhoneInputField(
         ) {
             if (phone.isEmpty()) {
                 BasicText(
-                    text = "000 000 0000",
+                    text = placeholder,
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.hint
                     )
@@ -101,17 +109,54 @@ fun PhoneInputField(
             
             BasicTextField(
                 value = phone,
-                onValueChange = { 
-                    if (it.length <= 11 && it.all { char -> char.isDigit() || char.isWhitespace() || char == '-' }) {
-                        onPhoneChange(it)
-                    }
-                },
+                onValueChange = onPhoneChange,
                 textStyle = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                visualTransformation = PhoneNumberVisualTransformation(
+                    selectedCountry.phoneConfig.groupSizes
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+private class PhoneNumberVisualTransformation(
+    groupSizes: List<Int>
+) : VisualTransformation {
+    private val groupEndOffsets = groupSizes
+        .runningFold(0, Int::plus)
+        .drop(1)
+        .dropLast(1)
+
+    override fun filter(text: AnnotatedString): TransformedText {
+        val activeSeparators = groupEndOffsets.filter { it < text.length }
+        val formatted = buildString {
+            text.forEachIndexed { index, char ->
+                if (index in activeSeparators) append(' ')
+                append(char)
+            }
+        }
+        val transformedSeparatorOffsets = activeSeparators.mapIndexed { index, rawOffset ->
+            rawOffset + index
+        }
+
+        return TransformedText(
+            text = AnnotatedString(formatted),
+            offsetMapping = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    val safeOffset = offset.coerceIn(0, text.length)
+                    return safeOffset + activeSeparators.count { it <= safeOffset }
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    val safeOffset = offset.coerceIn(0, formatted.length)
+                    return (safeOffset - transformedSeparatorOffsets.count { it < safeOffset })
+                        .coerceIn(0, text.length)
+                }
+            }
+        )
     }
 }
