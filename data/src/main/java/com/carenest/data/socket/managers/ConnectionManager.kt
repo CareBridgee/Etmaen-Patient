@@ -52,8 +52,8 @@ class ConnectionManager @Inject constructor(
     private val socketUrl = BuildConfig.base_url.replace("http", "ws").removeSuffix("/") + "/ws"
 
     fun connect(isReconnect: Boolean = false, attempt: Int = 0) {
-        if (_connectionState.value is ConnectionState.Connecting && !isReconnect) {
-            logger.log("Already connecting, ignoring request")
+        if (!isReconnect && (_connectionState.value is ConnectionState.Connected || _connectionState.value is ConnectionState.Connecting)) {
+            logger.log("Already connected or connecting, ignoring request")
             return
         }
 
