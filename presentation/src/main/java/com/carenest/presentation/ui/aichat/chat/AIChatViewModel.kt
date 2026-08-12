@@ -42,7 +42,10 @@ class AIChatViewModel @Inject constructor(
                 sendEffect(AIChatEffect.NavigateBack)
             }
             is AIChatEvent.OnBookNowClicked -> {
-                sendEffect(AIChatEffect.NavigateToBookings)
+                val serviceId = currentState.messages.lastOrNull {
+                    it.type == ChatMessageType.SERVICE_RECOMMENDATION
+                }?.serviceData?.categoryId ?: ""
+                sendEffect(AIChatEffect.NavigateToRequestService(serviceId))
             }
             is AIChatEvent.OnViewServiceClicked -> {
                 sendEffect(AIChatEffect.NavigateToServiceDetails(event.categoryId))

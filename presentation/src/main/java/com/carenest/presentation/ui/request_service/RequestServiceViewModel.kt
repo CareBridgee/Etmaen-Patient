@@ -18,7 +18,8 @@ import javax.inject.Inject
 class RequestServiceViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val aiChatRepository: com.carenest.domain.repository.AiChatRepository
 ) : ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
@@ -93,6 +94,7 @@ class RequestServiceViewModel @Inject constructor(
     fun onIntent(intent: RequestServiceIntent) {
         when (intent) {
             is RequestServiceIntent.OnStart -> {
+                updateState { copy(isFromAi = intent.isFromAi) }
                 viewModelScope.launch {
                     val currentUser = homeRepository.getUser().getOrNull()
                     // Fetch all available profiles (family members + self)
@@ -196,7 +198,10 @@ class RequestServiceViewModel @Inject constructor(
             RequestServiceIntent.OnEditAddressClicked -> { sendEffect(RequestServiceEffect.NavigateToAddressPicker) }
             RequestServiceIntent.OnEditProfileClicked -> { sendEffect(RequestServiceEffect.NavigateToEditProfile) }
             RequestServiceIntent.OnFillWithAiClicked -> {
-                // Implement AI fill logic if needed
+                if (currentState.isFromAi) {
+                    val aiReport = aiChatRepository.getLastAiReport().orEmpty()
+                    updateState { copy(description = aiReport) }
+                }
             }
 
             RequestServiceIntent.OnHelpClicked -> {

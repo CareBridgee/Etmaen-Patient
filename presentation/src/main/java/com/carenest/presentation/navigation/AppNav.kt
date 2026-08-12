@@ -265,7 +265,9 @@ fun AppNav(
                     ServiceDetailsScreen(
                         serviceId = route.serviceId,
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onRequestService = { serviceId -> backStack.add(AppRoute.RequestService(serviceId)) }
+                        onRequestService = { serviceId ->
+                            backStack.add(AppRoute.RequestService(serviceId = serviceId, isFromAi = route.isFromAi))
+                        }
                     )
                 }
 
@@ -437,6 +439,8 @@ fun AppNav(
 
                         selectServiceId = route.serviceId,
 
+                        isFromAi = route.isFromAi,
+
                         mapResultLocation = mapResultLocation,
 
                         onMapResultConsumed = {
@@ -580,7 +584,10 @@ fun AppNav(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         onNavigateToBookings = { replaceWith(AppRoute.History) },
                         onNavigateToServiceDetails = { categoryStr ->
-                            backStack.add(AppRoute.ServiceDetails(categoryStr))
+                            backStack.add(AppRoute.ServiceDetails(serviceId = categoryStr, isFromAi = true))
+                        },
+                        onNavigateToRequestService = { serviceId ->
+                            backStack.add(AppRoute.RequestService(serviceId = serviceId, isFromAi = true))
                         }
                     )
                 }

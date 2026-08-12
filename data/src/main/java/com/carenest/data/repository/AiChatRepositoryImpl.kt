@@ -11,8 +11,20 @@ class AiChatRepositoryImpl @Inject constructor(
     private val apiService: AiChatApiService
 ) : AiChatRepository {
 
+    private var lastAiReport: String? = null
+
     override suspend fun sendChatMessage(message: String): Result<String> {
-        return apiService.sendChatMessage(AiChatRequestDto(message = message))
+        val result = apiService.sendChatMessage(AiChatRequestDto(message = message))
             .map { it.reply }
+        result.onSuccess { reply ->
+            lastAiReport = reply
+        }
+        return result
+    }
+
+    override fun getLastAiReport(): String? = lastAiReport
+
+    override fun setLastAiReport(report: String?) {
+        lastAiReport = report
     }
 }

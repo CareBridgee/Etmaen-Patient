@@ -66,6 +66,7 @@ fun AIChatScreen(
     onNavigateBack: () -> Unit,
     onNavigateToBookings: () -> Unit,
     onNavigateToServiceDetails: (String) -> Unit,
+    onNavigateToRequestService: (String) -> Unit = {},
     viewModel: AIChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -81,6 +82,7 @@ fun AIChatScreen(
             AIChatEffect.NavigateBack -> onNavigateBack()
             AIChatEffect.NavigateToBookings -> onNavigateToBookings()
             is AIChatEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.categoryId)
+            is AIChatEffect.NavigateToRequestService -> onNavigateToRequestService(effect.serviceId)
             is AIChatEffect.ShowError -> {
                 Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }

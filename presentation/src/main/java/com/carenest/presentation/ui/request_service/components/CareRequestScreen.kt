@@ -72,7 +72,10 @@ fun CareRequestScreenContent(
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AiFillButton(onClick = onFillWithAiClick)
+        AiFillButton(
+            onClick = onFillWithAiClick,
+            enabled = state.isFromAi
+        )
 
         PatientSelectionSection(
             patients = state.patients,
