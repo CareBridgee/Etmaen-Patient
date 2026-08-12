@@ -14,4 +14,5 @@ data class NurseTrackingInfo(
     val cancellationWindowMinutes: Int,
     val requestId: String,
     val status: String,
+    val isOnline: Boolean = false,
 )

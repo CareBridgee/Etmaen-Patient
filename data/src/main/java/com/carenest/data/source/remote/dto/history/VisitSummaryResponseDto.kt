@@ -49,5 +49,6 @@ data class NurseDto(
     @SerialName("phoneNumber") val phoneNumber: String? = null,
     @SerialName("profileImageUrl") val profileImageUrl: String? = null,
     @SerialName("ratingAvg") val ratingAvg: Double,
-    @SerialName("totalReviews") val totalReviews: Int
+    @SerialName("totalReviews") val totalReviews: Int,
+    @SerialName("isOnline") val isOnline: Boolean = false
 )

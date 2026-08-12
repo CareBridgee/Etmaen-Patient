@@ -35,6 +35,7 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.core.util.dayKey
 import com.carenest.presentation.core.util.dialPhoneNumber
 import com.carenest.presentation.core.util.formatDateSeparator
+import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.ui.chat.components.ChatInputBar
 import com.carenest.presentation.ui.chat.components.ChatTopBar
 import com.carenest.presentation.ui.chat.components.DateSeparatorPill
@@ -73,6 +74,8 @@ fun ChatScreen(
         }
     }
 
+    HideTopBar()
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -82,6 +85,7 @@ fun ChatScreen(
             ChatTopBar(
                 nurseName = state.participant?.name.orEmpty(),
                 isOnline = state.participant?.isOnline == true,
+                photoUrl = state.participant?.photoUrl,
                 onBackClick = { viewModel.handleIntent(ChatIntent.OnBackClicked) },
                 onCallClick = { viewModel.handleIntent(ChatIntent.OnCallClicked) },
             )

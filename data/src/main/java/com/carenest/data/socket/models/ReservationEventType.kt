@@ -13,5 +13,6 @@ enum class ReservationEventType {
     REQUEST_CANCELLED,
     COMPLETED,
     OFFERS_LIST,
+    PRESENCE_UPDATE,
     UNKNOWN
 }

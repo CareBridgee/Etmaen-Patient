@@ -28,6 +28,7 @@ fun ServiceRequestTrackingDto.toDomain(nurseDetails: NurseDetailsDto?): NurseTra
         phoneNumber = nurseDetails?.phoneNumber.orEmpty(),
         cancellationWindowMinutes = 2, // Mock or provided by backend
         requestId = serviceRequestId,
-        status = status
+        status = status,
+        isOnline = true // Force to true as per requirement
     )
 }
