@@ -50,6 +50,7 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.designsystem.R as RD
+import com.carenest.presentation.ui.servicelist.components.ServicesShimmerLoading
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
 
@@ -127,7 +128,9 @@ internal fun ServicesScreenContent(
                 )
                 Spacer(Modifier.height(Theme.spacing.space12))
 
-                if (state.filteredServices.isEmpty() && state.searchQuery.isNotBlank()) {
+                if (state.isLoading) {
+                    ServicesShimmerLoading()
+                } else if (state.filteredServices.isEmpty() && state.searchQuery.isNotBlank()) {
                     EmptyState(
                         title = stringResource(R.string.home_services_search_empty_title),
                         description = stringResource(R.string.home_services_search_empty_desc),
@@ -245,72 +248,6 @@ private fun CategoryColumn(
                 height = height,
                 onClick = { onCategoryClick(service) },
             )
-        }
-    }
-}
-
-@Composable
-private fun ChronicCareCard(onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(118.dp)
-            .clip(Theme.shapes.large)
-            .background(Theme.colors.primaryVariant)
-            .clickable(onClick = onClick)
-            .padding(Theme.spacing.large),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(Theme.shapes.large)
-                .background(Theme.colors.onPrimary.copy(alpha = 0.18f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(RD.drawable.ic_heart_beat),
-                contentDescription = null,
-                tint = Theme.colors.onPrimary,
-                modifier = Modifier.size(26.dp),
-            )
-        }
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = Theme.spacing.medium),
-        ) {
-            BasicText(
-                text = stringResource(R.string.services_chronic_care_title),
-                style = Theme.typography.body.large.copy(
-                    color = Theme.colors.onPrimary,
-                    fontWeight = FontWeight.Medium,
-                ),
-            )
-            BasicText(
-                text = stringResource(R.string.services_chronic_care_subtitle),
-                style = Theme.typography.body.medium.copy(color = Theme.colors.onPrimary.copy(alpha = 0.8f)),
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy((-6).dp)) {
-            listOf("S", "D").forEach { initial ->
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.surface)
-                        .border(1.dp, Theme.colors.primaryVariant, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    BasicText(
-                        text = initial,
-                        style = Theme.typography.body.small.copy(
-                            color = Theme.colors.primary,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                    )
-                }
-            }
         }
     }
 }

@@ -36,12 +36,14 @@ class ServicesViewModel @Inject constructor(
 
     private fun loadServices() {
         viewModelScope.launch {
+            updateState { copy(isLoading = true) }
             val result = getServicesUseCase()
             val services = result.getOrDefault(emptyList())
             updateState {
                 copy(
                     services = services,
-                    filteredServices = services
+                    filteredServices = services,
+                    isLoading = false
                 )
             }
         }
