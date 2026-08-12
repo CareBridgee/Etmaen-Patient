@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class GeocodingRepositoryImpl @Inject constructor(
     private val geocodingApiService: GeocodingApiService,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @param:IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : GeocodingRepository {
 
     override suspend fun reverseGeocode(

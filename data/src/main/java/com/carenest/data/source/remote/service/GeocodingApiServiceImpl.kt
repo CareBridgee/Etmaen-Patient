@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GeocodingApiServiceImpl @Inject constructor(
-    @Named("locationiq") private val httpClient: HttpClient
+    @param:Named("locationiq") private val httpClient: HttpClient
 ) : GeocodingApiService {
 
     override suspend fun reverseGeocode(

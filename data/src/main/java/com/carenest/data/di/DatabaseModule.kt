@@ -22,7 +22,7 @@ object DatabaseModule {
             context,
             CareNestDatabase::class.java,
             "carenest.db"
-        ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
 
     @Provides
     fun provideUserDao(database: CareNestDatabase): UserDao = database.userDao()
