@@ -197,6 +197,7 @@ private class FakeProfileRepository(
     override suspend fun createEmergencyContact(profileId: String, input: EmergencyContactInput) = unsupported<EmergencyContact>()
     override suspend fun updateEmergencyContact(emergencyContactId: String, input: EmergencyContactInput) = unsupported<EmergencyContact>()
     override suspend fun deleteEmergencyContact(emergencyContactId: String) = unsupported<Unit>()
+    override suspend fun getProfileReport(profileId: String) = unsupported<String>()
 }
 
 private fun user(id: String, profileId: String, firstName: String?) = User(
