@@ -92,6 +92,7 @@ fun RequestServiceScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             CareRequestScreenContent(
                 state = state,
+                isFromAi = isFromAi,
                 onPatientSelected = { viewModel.onIntent(RequestServiceIntent.OnPatientSelected(it)) },
                 onEditProfileClick = { viewModel.onIntent(RequestServiceIntent.OnEditProfileClicked) },
                 onAddPatientClick = { viewModel.onIntent(RequestServiceIntent.OnAddPatientClicked) },

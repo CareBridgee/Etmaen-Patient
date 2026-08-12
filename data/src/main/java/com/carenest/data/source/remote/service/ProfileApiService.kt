@@ -27,4 +27,6 @@ interface ProfileApiService {
     suspend fun createEmergencyContact(profileId: String, request: EmergencyContactRequestDto): Result<EmergencyContactResponseDto>
     suspend fun updateEmergencyContact(emergencyContactId: String, request: EmergencyContactRequestDto): Result<EmergencyContactResponseDto>
     suspend fun deleteEmergencyContact(emergencyContactId: String): Result<Unit>
+
+    suspend fun getProfileReport(profileId: String): Result<ProfileReportResponseDto>
 }

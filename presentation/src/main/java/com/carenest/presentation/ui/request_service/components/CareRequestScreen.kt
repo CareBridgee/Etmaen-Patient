@@ -28,6 +28,7 @@ import com.carenest.presentation.util.AudioPermissionHandler
 @Composable
 fun CareRequestScreenContent(
     state: RequestServiceUiState,
+    isFromAi: Boolean = false,
     onPatientSelected: (Patient) -> Unit,
     onEditProfileClick: () -> Unit,
     onAddPatientClick: () -> Unit,
@@ -72,10 +73,12 @@ fun CareRequestScreenContent(
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AiFillButton(
-            onClick = onFillWithAiClick,
-            enabled = state.isFromAi
-        )
+        if (isFromAi) {
+            AiFillButton(
+                onClick = onFillWithAiClick,
+                enabled = true
+            )
+        }
 
         PatientSelectionSection(
             patients = state.patients,

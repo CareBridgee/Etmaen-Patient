@@ -12,6 +12,7 @@ import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import com.carenest.domain.usecase.profile.GetProfileReportUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,7 +20,8 @@ class RequestServiceViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
-    private val aiChatRepository: com.carenest.domain.repository.AiChatRepository
+    private val aiChatRepository: com.carenest.domain.repository.AiChatRepository,
+    private val getProfileReportUseCase: GetProfileReportUseCase
 ) : ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
@@ -94,7 +96,6 @@ class RequestServiceViewModel @Inject constructor(
     fun onIntent(intent: RequestServiceIntent) {
         when (intent) {
             is RequestServiceIntent.OnStart -> {
-                updateState { copy(isFromAi = intent.isFromAi) }
                 viewModelScope.launch {
                     val currentUser = homeRepository.getUser().getOrNull()
                     // Fetch all available profiles (family members + self)
@@ -153,6 +154,10 @@ class RequestServiceViewModel @Inject constructor(
                             }
                             updateState { copy(selectedPatient = primaryPatient ?: mappedPatients.firstOrNull()) }
                         }
+
+                        if (intent.isFromAi) {
+                            fetchAndFillAiReport()
+                        }
                     }
 
                     intent.serviceId?.let { id ->
@@ -198,10 +203,7 @@ class RequestServiceViewModel @Inject constructor(
             RequestServiceIntent.OnEditAddressClicked -> { sendEffect(RequestServiceEffect.NavigateToAddressPicker) }
             RequestServiceIntent.OnEditProfileClicked -> { sendEffect(RequestServiceEffect.NavigateToEditProfile) }
             RequestServiceIntent.OnFillWithAiClicked -> {
-                if (currentState.isFromAi) {
-                    val aiReport = aiChatRepository.getLastAiReport().orEmpty()
-                    updateState { copy(description = aiReport) }
-                }
+                fetchAndFillAiReport()
             }
 
             RequestServiceIntent.OnHelpClicked -> {
@@ -282,6 +284,29 @@ class RequestServiceViewModel @Inject constructor(
                 updateState { copy(isSubmitting = false) }
                 sendEffect(RequestServiceEffect.ShowError(error.message ?: "Failed to submit request"))
             }
+        }
+    }
+
+    private fun fetchAndFillAiReport() {
+        val selectedPatient = currentState.selectedPatient
+        val profileId = selectedPatient?.defaultProfileId ?: selectedPatient?.id
+
+        if (!profileId.isNullOrBlank()) {
+            updateState { copy(isLoading = true) }
+            viewModelScope.launch {
+                getProfileReportUseCase(profileId)
+                    .onSuccess { report ->
+                        val textToFill = report.ifBlank { aiChatRepository.getLastAiReport().orEmpty() }
+                        updateState { copy(description = textToFill, isLoading = false) }
+                    }
+                    .onFailure {
+                        val fallbackReport = aiChatRepository.getLastAiReport().orEmpty()
+                        updateState { copy(description = fallbackReport, isLoading = false) }
+                    }
+            }
+        } else {
+            val fallbackReport = aiChatRepository.getLastAiReport().orEmpty()
+            updateState { copy(description = fallbackReport) }
         }
     }
 }

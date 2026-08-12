@@ -365,33 +365,6 @@ fun AppNav(
                         onMobileWalletClick = {}
                     )
                 }
-//
-//                entry<AppRoute.RequestService> { route ->
-//                    RequestServiceScreen(
-//                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-//                        onNavigateToMap = { backStack.add(AppRoute.Map) },
-//                        onNavigateToEditProfile = {
-//                            backStack.add(AppRoute.ProfileCompletion(isEditMode = true))
-//                        },
-//                        onNavigateToAddPatient = {
-//                            backStack.add(AppRoute.AddFamilyMember())
-//                        },
-//                        onNavigateToServiceSelection = { backStack.add(AppRoute.Services) },
-//                        onNavigateToAddressPicker = { /* TODO */ },
-//                        onSubmitRequestClick = { serviceRequestId ->
-//                            backStack.add(
-//                                AppRoute.SearchForNurse(
-//                                    reservationId = serviceRequestId,
-//                                    serviceRequestId = serviceRequestId
-//                                )
-//                            )
-//                        },
-//                        selectServiceId = route.serviceId,
-//                        mapResultLocation = mapResultLocation,
-//                        onMapResultConsumed = { mapResultLocation = null },
-//                        reloadTrigger = requestServiceReloadTrigger
-//                    )
-//                }
 
                 entry<AppRoute.RequestService> { route ->
                     RequestServiceScreen(

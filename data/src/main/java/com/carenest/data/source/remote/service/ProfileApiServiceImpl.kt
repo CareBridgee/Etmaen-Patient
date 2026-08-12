@@ -10,6 +10,7 @@ import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionReques
 import com.carenest.data.source.remote.dto.profile.ProfileMedicalConditionResponseDto
 import com.carenest.data.source.remote.dto.profile.ProfileMedicationRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileMedicationResponseDto
+import com.carenest.data.source.remote.dto.profile.ProfileReportResponseDto
 import com.carenest.data.source.remote.dto.profile.ProfileRequestDto
 import com.carenest.data.source.remote.dto.profile.ProfileResponseDto
 import com.carenest.data.source.remote.dto.profile.toMultipartFormData
@@ -176,5 +177,11 @@ class ProfileApiServiceImpl @Inject constructor(
         httpClient.executeUnitRequest(json) {
             method = HttpMethod.Delete
             url { path("api/v1/emergency-contacts/$emergencyContactId") }
+        }
+
+    override suspend fun getProfileReport(profileId: String) =
+        httpClient.executeRequest<ProfileReportResponseDto>(json) {
+            method = HttpMethod.Get
+            url { path("api/v1/profiles/report/$profileId/report") }
         }
 }

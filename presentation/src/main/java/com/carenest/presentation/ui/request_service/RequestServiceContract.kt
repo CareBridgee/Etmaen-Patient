@@ -19,7 +19,6 @@ data class RequestServiceUiState(
     val isSubmitting: Boolean = false,
     val isLoading: Boolean = false,
     val isListening: Boolean = false,
-    val isFromAi: Boolean = false,
     val error: String? = null,
 )
 
