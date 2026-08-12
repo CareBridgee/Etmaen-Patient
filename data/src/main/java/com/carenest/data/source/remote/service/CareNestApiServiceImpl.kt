@@ -63,6 +63,7 @@ class CareNestApiServiceImpl @Inject constructor(
             url {
                 path("api/v1/reviews")
             }
+            contentType(ContentType.Application.Json)
             setBody(review)
         }
     }

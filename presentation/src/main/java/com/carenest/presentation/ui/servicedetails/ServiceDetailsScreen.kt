@@ -54,7 +54,7 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.domain.model.ServiceDetailsModel
 import com.carenest.presentation.R
-import com.carenest.presentation.ui.home.components.HomeShimmerLoading
+import com.carenest.presentation.ui.servicedetails.components.ServiceDetailsShimmerLoading
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.ui.servicedetails.components.ServiceChecklistItem
@@ -120,14 +120,7 @@ internal fun ServiceDetailsScreenContent(
             BasicText(text = state.errorMessage, style = Theme.typography.body.large)
         }
     } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .padding(Theme.spacing.medium)
-        ) {
-            HomeShimmerLoading()
-        }
+        ServiceDetailsShimmerLoading()
     }
 }
 

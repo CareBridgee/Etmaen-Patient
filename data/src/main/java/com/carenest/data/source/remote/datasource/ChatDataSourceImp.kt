@@ -49,7 +49,7 @@ class ChatDataSourceImp @Inject constructor(
             nurseId = nurseId.orEmpty(),
             name = trackingInfo?.nurse?.let { "${it.firstName} ${it.lastName}" }.orEmpty(),
             photoUrl = nurseDetails?.profileImageUrl ?: trackingInfo?.nurse?.profileImageUrl,
-            isOnline = false, // Online status not directly available in these DTOs
+            isOnline = true, // Force to true as per requirement
             phoneNumber = nurseDetails?.phoneNumber.orEmpty(),
         )
 

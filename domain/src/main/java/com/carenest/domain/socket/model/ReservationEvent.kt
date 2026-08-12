@@ -13,6 +13,7 @@ sealed class ReservationEvent {
         override val reservationId: String = "" // Special case for COMPLETED which has null data
     }
     data class RequestCancelled(override val reservationId: String) : ReservationEvent()
+    data class PresenceUpdate(override val reservationId: String, val isOnline: Boolean) : ReservationEvent()
     data class OffersList(override val reservationId: String, val offers: List<NurseOfferResponse>) : ReservationEvent()
     data class Unknown(override val reservationId: String, val type: String) : ReservationEvent()
 }
@@ -22,7 +23,8 @@ data class NurseInfo(
     val firstName: String,
     val lastName: String,
     val ratingAvg: Double,
-    val totalReviews: Int
+    val totalReviews: Int,
+    val photoUrl: String? = null,
 )
 
 data class NurseOfferResponse(
@@ -37,8 +39,4 @@ data class NurseOfferResponse(
     val createdAt: String,
     val updatedAt: String,
     val nurseId: String = nurse?.id ?: ""
-)
-
-data class OfferIdPayload(
-    val offerId: String
 )

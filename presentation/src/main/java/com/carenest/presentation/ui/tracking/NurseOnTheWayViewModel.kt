@@ -144,6 +144,11 @@ class NurseOnTheWayViewModel @Inject constructor(
                                 updateState { copy(showCancelConfirmationDialog = false,showNurseCancelledDialog = true) } // Close if user was about to cancel
                             }
                         }
+                        is ReservationEvent.PresenceUpdate -> {
+                            updateState {
+                                copy(nurseInfo = nurseInfo?.copy(isOnline = true))
+                            }
+                        }
                         ReservationEvent.Completed -> {
                             socketServiceController.stopService()
                             sendEffect(NurseOnTheWayEffect.NavigateToVisitCompleted(requestId))
@@ -155,7 +160,6 @@ class NurseOnTheWayViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        super.onCleared()
         reservationEventsJob?.cancel()
     }
 }

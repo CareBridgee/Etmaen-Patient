@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -32,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.components.button.PrimaryButton
 import com.carenest.designsystem.components.button.SecondaryButton
 import com.carenest.designsystem.theme.SpTheme
@@ -65,7 +68,7 @@ fun NurseOfferCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Nurse avatar placeholder
+                // Nurse avatar
                 Box(
                     modifier = Modifier
                         .size(60.dp)
@@ -75,22 +78,47 @@ fun NurseOfferCard(
                         .background(Theme.colors.surface),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        tint = Theme.colors.hint,
-                        modifier = Modifier.size(36.dp)
-                    )
+                    if (offer.nurse?.photoUrl != null) {
+                        AsyncImage(
+                            model = offer.nurse?.photoUrl ?: RD.drawable.nurse_image,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = Theme.colors.hint,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
                 Spacer(Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
+                    val nurseName = offer.nurse?.let { "${it.firstName} ${it.lastName}" } ?: "Nurse"
                     Text(
-                        text = "Nurse ID: ${offer.nurseId.take(8)}…",
+                        text = nurseName,
                         style = Theme.typography.title.copy(fontWeight = FontWeight.SemiBold),
                         color = Theme.colors.primaryFont
                     )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        offer.nurse?.let { nurse ->
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = null,
+                                tint = Theme.colors.warning,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = "${nurse.ratingAvg} (${nurse.totalReviews})",
+                                style = Theme.typography.body.small,
+                                color = Theme.colors.secondaryFont
+                            )
+                        }
+                    }
                     Text(
                         text = offer.message ?: "",
                         style = Theme.typography.body.medium,
@@ -158,6 +186,13 @@ private fun Preview() {
                 id = "offer-1",
                 serviceRequestId = "req-123",
                 nurseId = "nurse-456",
+                nurse = com.carenest.domain.socket.model.NurseInfo(
+                    id = "nurse-456",
+                    firstName = "Sarah",
+                    lastName = "Mitchell",
+                    ratingAvg = 4.8,
+                    totalReviews = 124
+                ),
                 proposedPrice = 58.0,
                 proposedDate = "2025-08-01",
                 proposedTime = "10:00 AM",

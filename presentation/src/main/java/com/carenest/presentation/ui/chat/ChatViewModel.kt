@@ -90,7 +90,7 @@ class ChatViewModel @Inject constructor(
                             nurseId = info.nurseId,
                             name = info.name,
                             photoUrl = info.photoUrl,
-                            isOnline = session.participant.isOnline, // Use online status from session if available
+                            isOnline = info.isOnline, // Use real online status from tracking info
                             phoneNumber = info.phoneNumber
                         )
                     } ?: session.participant
@@ -132,9 +132,15 @@ class ChatViewModel @Inject constructor(
                     Log.e("ChatViewModel", "Reservation socket error: ${e.message}")
                 }
                 .collect { event ->
+                    Log.d("ChatViewModel", "Received reservation event: $event")
                     when (event) {
                         is ReservationEvent.RequestCancelled -> {
                             updateState { copy(showNurseCancelledDialog = true) }
+                        }
+                        is ReservationEvent.PresenceUpdate -> {
+                            updateState {
+                                copy(participant = participant?.copy(isOnline = true))
+                            }
                         }
                         else -> Unit
                     }

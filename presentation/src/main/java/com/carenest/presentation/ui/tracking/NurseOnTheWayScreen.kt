@@ -176,6 +176,8 @@ private fun NurseOnTheWayContent(
             reviewsCount = nurseInfo.reviewsCount,
             rating = nurseInfo.rating,
             estimatedArrivalTime = nurseInfo.estimatedArrivalTime,
+            isOnline = nurseInfo.isOnline,
+            photoUrl = nurseInfo.photoUrl,
             onCallClick = { onIntent(NurseOnTheWayIntent.OnCallNurseClicked) },
             onMessageClick = { onIntent(NurseOnTheWayIntent.OnMessageNurseClicked) },
         )

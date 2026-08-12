@@ -40,6 +40,10 @@ data class ReservationEventDto(
                 json.decodeFromJsonElement<OfferIdPayloadDto>(data!!).offerId
             )
             ReservationEventType.REQUEST_CANCELLED -> ReservationEvent.RequestCancelled(reservationId)
+            ReservationEventType.PRESENCE_UPDATE -> ReservationEvent.PresenceUpdate(
+                reservationId,
+                json.decodeFromJsonElement<PresenceUpdateDto>(data!!).isOnline
+            )
             ReservationEventType.COMPLETED -> ReservationEvent.Completed
             ReservationEventType.OFFERS_LIST -> ReservationEvent.OffersList(
                 reservationId,
@@ -51,19 +55,26 @@ data class ReservationEventDto(
 }
 
 @Serializable
+data class PresenceUpdateDto(
+    val isOnline: Boolean
+)
+
+@Serializable
 data class NurseInfoDto(
     val id: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
     val ratingAvg: Double? = null,
-    val totalReviews: Int? = null
+    val totalReviews: Int? = null,
+    val profileImageUrl: String? = null,
 ) {
     fun toDomain() = com.carenest.domain.socket.model.NurseInfo(
         id = id ?: "",
         firstName = firstName ?: "",
         lastName = lastName ?: "",
         ratingAvg = ratingAvg ?: 0.0,
-        totalReviews = totalReviews ?: 0
+        totalReviews = totalReviews ?: 0,
+        photoUrl = profileImageUrl
     )
 }
 

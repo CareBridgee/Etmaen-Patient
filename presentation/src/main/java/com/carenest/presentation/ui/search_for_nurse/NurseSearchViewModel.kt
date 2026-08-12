@@ -111,7 +111,7 @@ class NurseSearchViewModel @Inject constructor(
                 sendEffect(NavigateBack)
             }
             is ReservationEvent.Unknown -> Unit
-            ReservationEvent.Completed -> TODO()
+            else -> Unit
         }
     }
 
