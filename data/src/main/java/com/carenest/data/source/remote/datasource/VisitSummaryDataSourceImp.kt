@@ -17,7 +17,7 @@ class VisitSummaryDataSourceImp @Inject constructor(
         val review = ReviewRequestDto(
             serviceRequestId = requestId,
             rating = rating,
-            reviewText = comment?.takeIf { it.isNotBlank() },
+            reviewText = comment.orEmpty(),
             isAnonymous = isAnonymous
         )
         apiService.submitReview(review).getOrThrow()
