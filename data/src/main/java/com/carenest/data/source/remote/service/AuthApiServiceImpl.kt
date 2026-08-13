@@ -2,6 +2,8 @@ package com.carenest.data.source.remote.service
 
 import com.carenest.data.di.AuthHttpClient
 import com.carenest.data.source.remote.dto.AuthResponse
+import com.carenest.data.source.remote.dto.GoogleAuthResponseDto
+import com.carenest.data.source.remote.dto.GoogleLoginRequest
 import com.carenest.data.source.remote.dto.LoginRequest
 import com.carenest.data.source.remote.dto.LoginResponse
 import com.carenest.data.source.remote.dto.RefreshRequest
@@ -31,6 +33,14 @@ class AuthApiServiceImpl @Inject constructor(
             contentType(ContentType.Application.Json)
         }
 
+    override suspend fun loginWithGoogle(idToken: String): Result<GoogleAuthResponseDto> =
+        httpClient.executeRequest<GoogleAuthResponseDto>(json) {
+            method = HttpMethod.Post
+            url { path("api/v1/auth/google") }
+            setBody(GoogleLoginRequest(idToken))
+            contentType(ContentType.Application.Json)
+        }
+
     override suspend fun requestDevOtp(phoneNumber: String): Result<LoginResponse> =
         httpClient.executeRequest<LoginResponse>(json) {
             method = HttpMethod.Post
@@ -39,11 +49,11 @@ class AuthApiServiceImpl @Inject constructor(
             contentType(ContentType.Application.Json)
         }
 
-    override suspend fun verifyOtp(phoneNumber: String, otp: String): Result<AuthResponse> =
+    override suspend fun verifyOtp(phoneNumber: String, otp: String, pendingToken: String?): Result<AuthResponse> =
         httpClient.executeRequest<AuthResponse>(json) {
             method = HttpMethod.Post
             url { path("api/v1/auth/verify-otp") }
-            setBody(VerifyOtpRequest(phoneNumber, otp))
+            setBody(VerifyOtpRequest(phoneNumber, otp, pendingToken))
             contentType(ContentType.Application.Json)
         }
 

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class VerifyOtpUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(phoneNumber: String, otp: String): Result<AuthResult> {
-        return authRepository.verifyOtp(phoneNumber, otp)
+    suspend operator fun invoke(phoneNumber: String, otp: String, pendingToken: String? = null): Result<AuthResult> {
+        return authRepository.verifyOtp(phoneNumber, otp, pendingToken)
     }
 }

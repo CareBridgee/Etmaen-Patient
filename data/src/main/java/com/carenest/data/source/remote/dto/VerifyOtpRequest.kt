@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class VerifyOtpRequest(
     val phoneNumber: String,
     val otp: String,
+    val pendingToken: String? = null
 )

@@ -136,7 +136,8 @@ private class FakeOtpAuthRepository : AuthRepository {
     }
 
     override suspend fun loginWithPhone(phoneNumber: String) = Result.success(Unit)
-    override suspend fun verifyOtp(phoneNumber: String, otp: String) =
+    override suspend fun loginWithGoogle(idToken: String) = Result.failure<com.carenest.domain.model.auth.GoogleAuthResult>(UnsupportedOperationException())
+    override suspend fun verifyOtp(phoneNumber: String, otp: String, pendingToken: String?) =
         Result.failure<AuthResult>(UnsupportedOperationException())
     override suspend fun refreshToken() = Result.success(Unit)
     override suspend fun logout() = Result.success(Unit)

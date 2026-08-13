@@ -3,6 +3,8 @@ package com.carenest.presentation.ui.auth.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.auth.GoogleAuthResult
+import com.carenest.domain.usecase.auth.LoginWithGoogleUseCase
 import com.carenest.domain.usecase.auth.LoginWithPhoneUseCase
 import com.carenest.domain.usecase.auth.RequestDevOtpUseCase
 import com.carenest.domain.validation.PhoneValidator
@@ -19,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginWithPhoneUseCase: LoginWithPhoneUseCase,
+    private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
     private val requestDevOtpUseCase: RequestDevOtpUseCase
 ) : ViewModel(),
     StateHolder<LoginState> by DefaultStateHolder(LoginState()),
@@ -72,6 +75,11 @@ class LoginViewModel @Inject constructor(
 
             LoginIntent.RequestOtpClicked -> requestOtp()
             LoginIntent.BackClicked -> handleBack()
+
+            is LoginIntent.GoogleSignInClicked -> handleGoogleSignIn(event.idToken)
+            is LoginIntent.GoogleSignInFailed -> {
+                updateState { copy(errorMessage = AuthUiError.GoogleSignInFailed) }
+            }
         }
     }
 
@@ -89,6 +97,45 @@ class LoginViewModel @Inject constructor(
             LoginStep.LANDING -> {
                 // Not handled here, screen level back or exit app
             }
+        }
+    }
+
+    private fun handleGoogleSignIn(idToken: String) {
+        if (currentState.isLoading) return
+        
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, errorMessage = null) }
+            
+            val result = loginWithGoogleUseCase(idToken)
+            updateState { copy(isLoading = false) }
+            
+            result.fold(
+                onSuccess = { authResult ->
+                    when (authResult) {
+                        is GoogleAuthResult.Authenticated -> {
+                            sendEffect(LoginEffect.NavigateToHome)
+                        }
+                        is GoogleAuthResult.PhoneRequired -> {
+                            updateState { 
+                                copy(
+                                    currentStep = LoginStep.PHONE_INPUT,
+                                    pendingToken = authResult.pendingToken,
+                                    email = authResult.email,
+                                    firstName = authResult.firstName,
+                                    lastName = authResult.lastName,
+                                    profileImageUrl = authResult.profileImageUrl
+                                ) 
+                            }
+                        }
+                    }
+                },
+                onFailure = { error ->
+                    Log.e(TAG, "handleGoogleSignIn failed: ${error.message}", error)
+                    updateState {
+                        copy(errorMessage = error.toAuthUiError(AuthUiError.GoogleSignInFailed))
+                    }
+                }
+            )
         }
     }
 
@@ -114,17 +161,18 @@ class LoginViewModel @Inject constructor(
             updateState { copy(isLoading = true, errorMessage = null) }
 
             val result = requestDevOtpUseCase(fullPhoneNumber)
-
+            
             updateState { copy(isLoading = false) }
 
             result.fold(
-                onSuccess = { otp ->
-                    Log.d(TAG, "requestOtp success: $otp")
+                onSuccess = { otpCode ->
+                    Log.d(TAG, "requestOtp success: $otpCode")
                     sendEffect(
                         LoginEffect.NavigateToOtp(
                             phone = fullPhoneNumber,
-                            otp = otp,
-                            method = currentState.selectedOtpMethod
+                            otp = otpCode,
+                            method = currentState.selectedOtpMethod,
+                            pendingToken = currentState.pendingToken
                         )
                     )
                 },

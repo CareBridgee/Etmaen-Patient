@@ -12,6 +12,8 @@ sealed interface LoginIntent {
     data object ContinueWithPhoneClicked : LoginIntent
     data object RequestOtpClicked : LoginIntent
     data object BackClicked : LoginIntent
+    data class GoogleSignInClicked(val idToken: String) : LoginIntent
+    data class GoogleSignInFailed(val error: String) : LoginIntent
 }
 
 enum class LoginStep {
@@ -46,7 +48,12 @@ data class LoginState(
     val selectedOtpMethod: OtpDeliveryMethod = OtpDeliveryMethod.SMS,
     val isLoading: Boolean = false,
     val phoneValidationError: PhoneNumberValidationError? = null,
-    val errorMessage: AuthUiError? = null
+    val errorMessage: AuthUiError? = null,
+    val pendingToken: String? = null,
+    val email: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val profileImageUrl: String? = null
 ) {
     val isPhoneValid: Boolean
         get() = phoneNumber.isNotBlank() &&
@@ -54,9 +61,11 @@ data class LoginState(
 }
 
 sealed interface LoginEffect {
+    data object NavigateToHome : LoginEffect
     data class NavigateToOtp(
         val phone: String,
         val otp: String? = null,
-        val method: OtpDeliveryMethod
+        val method: OtpDeliveryMethod,
+        val pendingToken: String? = null
     ) : LoginEffect
 }

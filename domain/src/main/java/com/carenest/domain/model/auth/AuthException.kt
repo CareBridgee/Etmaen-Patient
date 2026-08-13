@@ -7,6 +7,7 @@ enum class AuthFailure {
     ExpiredOtp,
     TooManyRequests,
     Server,
+    PhoneAlreadyTaken,
     Unknown
 }
 
@@ -15,5 +16,6 @@ class AuthException(
     message: String,
     val statusCode: Int? = null,
     val backendCode: String? = null,
+    val details: Map<String, String>? = null,
     cause: Throwable? = null
 ) : Exception(message, cause)

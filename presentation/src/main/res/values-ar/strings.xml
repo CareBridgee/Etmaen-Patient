@@ -19,6 +19,11 @@
   <string name="phone_input_carrier_charges">قد تطبق شركة الاتصالات رسوماً على الرسائل النصية.</string>
   <string name="phone_input_next_btn">التالي</string>
   <string name="otp_title">التحقق من الهاتف</string>
+  <string name="auth_error_google_sign_in_failed">فشل تسجيل الدخول باستخدام Google. يُرجى المحاولة مرة أخرى.</string>
+  <string name="auth_error_phone_already_taken">رقم الهاتف مستخدم بالفعل</string>
+  <string name="auth_existing_account_message">رقم الهاتف هذا مرتبط بحساب موجود بالفعل باسم %1$s. هل تريد تسجيل الدخول إلى هذا الحساب باستخدام رمز التحقق الذي تلقيته للتو؟</string>
+  <string name="auth_existing_account_action_signin">تسجيل الدخول إلى الحساب الموجود</string>
+  <string name="auth_existing_account_action_cancel">إلغاء</string>
   <string name="otp_subtitle">أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
   <string name="otp_verify_btn">تحقق</string>
     <string name="otp_resend_timer">إعادة إرسال الرمز خلال %1$s</string>
