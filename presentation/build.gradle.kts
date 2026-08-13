@@ -67,6 +67,7 @@ dependencies {
 
     // Location
     implementation(libs.play.services.location)
+    implementation(libs.play.services.auth)
 
     // Image loading
     implementation(libs.bundles.coil)
