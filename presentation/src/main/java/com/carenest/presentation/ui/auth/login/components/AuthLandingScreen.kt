@@ -10,15 +10,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -38,6 +45,31 @@ import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
 fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
+    val context = LocalContext.current
+    
+    val googleSignInClient = remember {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("588669996312-j7mtte5q10a1lcsu4jfn4g18n9gri40e.apps.googleusercontent.com")
+            .requestEmail()
+            .requestProfile()
+            .build()
+        GoogleSignIn.getClient(context, gso)
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account?.idToken?.let { idToken ->
+                onEvent(LoginIntent.GoogleSignInClicked(idToken))
+            } ?: run {
+                onEvent(LoginIntent.GoogleSignInFailed("ID Token is null"))
+            }
+        } catch (e: ApiException) {
+            onEvent(LoginIntent.GoogleSignInFailed(e.message ?: "Google sign-in failed"))
+        }
+    }
+
     var showGoogleUnavailableDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showGoogleUnavailableDialog) {
@@ -146,7 +178,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
                 SocialButton(
                     caption = stringResource(R.string.auth_continue_google),
                     iconPainter = painterResource(id = DR.drawable.ic_google),
-                    onClick = { showGoogleUnavailableDialog = true },
+                    onClick = { launcher.launch(googleSignInClient.signInIntent) },
                     backgroundColor = Theme.colors.backGround,
                     contentColor = Theme.colors.primaryFont,
                     borderColor = Theme.colors.hint.copy(alpha = 0.3f)

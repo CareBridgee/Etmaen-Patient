@@ -14,6 +14,7 @@ import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import com.carenest.presentation.ui.auth.AuthUiError
 import com.carenest.presentation.ui.auth.toAuthUiError
+import com.carenest.domain.model.auth.AuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,11 +38,18 @@ class OtpViewModel @Inject constructor(
 
     fun onEvent(event: OtpIntent) {
         when (event) {
-            is OtpIntent.PhoneNumberChanged -> updateState { copy(phoneNumber = event.phone) }
+            is OtpIntent.PhoneNumberChanged -> updateState { copy(phoneNumber = event.phone, pendingToken = event.pendingToken) }
             is OtpIntent.OtpCodeChanged -> updateState { copy(otpCode = event.otp, errorMessage = null) }
             OtpIntent.VerifyOtpClicked -> verifyOtp()
             OtpIntent.BackClicked -> sendEffect(OtpEffect.NavigateBack)
             OtpIntent.ResendClicked -> resendOtp()
+            OtpIntent.ConfirmSignInToExistingAccount -> {
+                updateState { copy(showExistingAccountDialog = false, pendingToken = null) }
+                verifyOtp()
+            }
+            OtpIntent.DismissExistingAccountDialog -> {
+                updateState { copy(showExistingAccountDialog = false) }
+            }
         }
     }
 
@@ -104,7 +112,7 @@ class OtpViewModel @Inject constructor(
                 ?: currentState.phoneNumber
             Log.d("OtpViewModel", "Verifying OTP for phone: $sanitizedPhone")
             
-            val result = verifyOtpUseCase(sanitizedPhone, currentState.otpCode)
+            val result = verifyOtpUseCase(sanitizedPhone, currentState.otpCode, currentState.pendingToken)
             
             result.fold(
                 onSuccess = { authResult ->
@@ -130,11 +138,25 @@ class OtpViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            errorMessage = error.toAuthUiError(AuthUiError.VerificationFailed)
-                        )
+                    val authException = error as? AuthException
+                    val isConflict = authException?.statusCode == 409
+                    val existingAccountName = authException?.details?.get("existingAccountName")
+                    
+                    if (isConflict && existingAccountName != null) {
+                        updateState {
+                            copy(
+                                isLoading = false,
+                                existingAccountName = existingAccountName,
+                                showExistingAccountDialog = true
+                            )
+                        }
+                    } else {
+                        updateState {
+                            copy(
+                                isLoading = false,
+                                errorMessage = error.toAuthUiError(AuthUiError.VerificationFailed)
+                            )
+                        }
                     }
                 }
             )

@@ -11,6 +11,11 @@
   <string name="auth_google_unavailable_title">Google sign-in is coming soon</string>
   <string name="auth_google_unavailable_message">Google sign-in isn\'t available yet. Please continue with your phone number.</string>
   <string name="auth_google_unavailable_action">Got it</string>
+  <string name="auth_error_google_sign_in_failed">Google sign-in failed. Please try again.</string>
+  <string name="auth_error_phone_already_taken">Phone Already Taken</string>
+  <string name="auth_existing_account_message">This phone number belongs to an existing account under the name %1$s. Would you like to sign in to that account instead using the verification code you just received?</string>
+  <string name="auth_existing_account_action_signin">Sign in to existing account</string>
+  <string name="auth_existing_account_action_cancel">Cancel</string>
   <string name="auth_continue_apple">Continue with Apple</string>
   <string name="auth_continue_phone">Continue with Phone</string>
   <string name="auth_terms_agreement">joining our app means you agree with our Terms of use and privacy policy</string>

@@ -22,7 +22,9 @@ enum class AuthUiError(@get:StringRes val messageRes: Int) {
     VerificationFailed(R.string.auth_error_verification),
     ProfileLoadFailed(R.string.auth_error_profile_load),
     PhotoUploadFailed(R.string.auth_error_photo_upload),
-    ProfileSaveFailed(R.string.auth_error_profile_save)
+    ProfileSaveFailed(R.string.auth_error_profile_save),
+    GoogleSignInFailed(R.string.auth_error_google_sign_in_failed),
+    PhoneAlreadyTaken(R.string.auth_error_phone_already_taken)
 }
 
 @Composable
@@ -36,6 +38,7 @@ fun Throwable.toAuthUiError(default: AuthUiError): AuthUiError = when (this) {
         AuthFailure.ExpiredOtp -> AuthUiError.ExpiredOtp
         AuthFailure.TooManyRequests -> AuthUiError.TooManyRequests
         AuthFailure.Server -> AuthUiError.ServiceUnavailable
+        AuthFailure.PhoneAlreadyTaken -> AuthUiError.PhoneAlreadyTaken
         AuthFailure.Unknown -> default
     }
     is UserException -> when {

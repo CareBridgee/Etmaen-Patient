@@ -21,7 +21,8 @@ sealed interface AppRoute : NavKey {
      data class Otp(
          val phone: String,
          val otp: String? = null,
-         val method: OtpDeliveryMethod = OtpDeliveryMethod.SMS
+         val method: OtpDeliveryMethod = OtpDeliveryMethod.SMS,
+         val pendingToken: String? = null
      ) : AppRoute
 
      @Serializable
