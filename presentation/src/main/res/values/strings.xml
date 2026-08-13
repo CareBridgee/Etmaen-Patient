@@ -382,11 +382,11 @@
   <string name="validation_invalid_name">Use letters, spaces, apostrophes, or hyphens only.</string>
   <string name="validation_name_length">Use between 2 and 50 characters.</string>
   <string name="validation_invalid_date">Use MM/DD/YYYY, for example 08/25/1995.</string>
-  <string name="validation_future_date">Date of birth must be today or earlier.</string>
+  <string name="validation_future_date">Date of birth must be before today.</string>
   <string name="validation_date_too_old">Enter a date within the last 120 years.</string>
   <string name="validation_invalid_number">Use numbers only.</string>
   <string name="validation_height_range">Enter 30–250 cm.</string>
-  <string name="validation_weight_range">Enter 1–500 kg.</string>
+  <string name="validation_weight_range">Enter 10–300 kg.</string>
   <string name="validation_blood_type">Choose a blood type from the list.</string>
   <string name="validation_text_too_long_100">Keep this under 100 characters.</string>
   <string name="validation_text_too_long_500">Keep this under 500 characters.</string>

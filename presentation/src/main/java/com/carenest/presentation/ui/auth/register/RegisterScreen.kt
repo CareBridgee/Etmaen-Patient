@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.SelectableDates
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,6 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -308,7 +310,8 @@ internal fun RegisterScreenContent(
 
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = parseDateOfBirth(state.dateOfBirth)
+            initialSelectedDateMillis = parseDateOfBirth(state.dateOfBirth),
+            selectableDates = pastDatesOnly()
         )
         SPDatePickerDialog(
             state = datePickerState,
@@ -362,6 +365,22 @@ private fun RegisterProgressHeader() {
 }
 
 private const val DateOfBirthPattern = "MM/dd/yyyy"
+
+private fun pastDatesOnly(): SelectableDates {
+    val localToday = Calendar.getInstance()
+    val todayAsUtcDate = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+        clear()
+        set(
+            localToday.get(Calendar.YEAR),
+            localToday.get(Calendar.MONTH),
+            localToday.get(Calendar.DAY_OF_MONTH)
+        )
+    }.timeInMillis
+    return object : SelectableDates {
+        override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis < todayAsUtcDate
+        override fun isSelectableYear(year: Int): Boolean = year <= localToday.get(Calendar.YEAR)
+    }
+}
 
 private fun parseDateOfBirth(value: String): Long? = runCatching {
     dateOfBirthFormatter().parse(value)?.time

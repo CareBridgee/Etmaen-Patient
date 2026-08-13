@@ -89,7 +89,8 @@ class ProfileRepositoryImpl @Inject constructor(
             firstName = update.firstName,
             lastName = update.lastName,
             dateOfBirth = update.dateOfBirth,
-            gender = update.gender
+            gender = update.gender,
+            profileImageUrl = update.profileImageUrl,
         )
     )
 
