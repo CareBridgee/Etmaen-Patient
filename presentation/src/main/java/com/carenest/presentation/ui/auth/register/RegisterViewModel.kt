@@ -44,7 +44,7 @@ class RegisterViewModel @Inject constructor(
                     backendGender = user.gender?.uppercase()?.takeIf(String::isNotBlank)
                     updateState {
                         copy(
-                            firstName = user.firstName.orEmpty(),
+                            firstName = user.firstName.toEditableFirstName(),
                             lastName = user.lastName.orEmpty(),
                             dateOfBirth = user.dateOfBirth?.toDisplayDate().orEmpty(),
                             gender = backendGender ?: defaultGenderFor(mode),
@@ -204,6 +204,11 @@ class RegisterViewModel @Inject constructor(
 
 private fun defaultGenderFor(mode: PersonalInformationMode): String =
     if (mode == PersonalInformationMode.Registration) "MALE" else ""
+
+internal fun String?.toEditableFirstName(): String =
+    orEmpty().takeUnless { it.equals(DEFAULT_FIRST_NAME_PLACEHOLDER, ignoreCase = true) }.orEmpty()
+
+private const val DEFAULT_FIRST_NAME_PLACEHOLDER = "User"
 
 private fun String.toDisplayDate(): String {
     if (isBlank()) return ""

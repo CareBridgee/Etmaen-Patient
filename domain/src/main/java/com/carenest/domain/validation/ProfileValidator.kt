@@ -49,7 +49,7 @@ object ProfileValidator {
         val errors = buildMap {
             validateMeasurement(height, 30.0, 250.0, ProfileValidationError.HeightOutOfRange)
                 ?.let { put(ProfileField.Height, it) }
-            validateMeasurement(weight, 1.0, 500.0, ProfileValidationError.WeightOutOfRange)
+            validateMeasurement(weight, MINIMUM_WEIGHT_KG, MAXIMUM_WEIGHT_KG, ProfileValidationError.WeightOutOfRange)
                 ?.let { put(ProfileField.Weight, it) }
             if (bloodType.normalizedBloodType() !in allowedBloodTypes) {
                 put(ProfileField.BloodType, ProfileValidationError.InvalidBloodType)
@@ -231,17 +231,19 @@ object ProfileValidator {
     private fun validateDateOfBirth(value: String): ProfileValidationError? {
         if (value.isBlank()) return ProfileValidationError.Required
         val date = parseAnyDate(value) ?: return ProfileValidationError.InvalidDate
-        val today = Calendar.getInstance(UTC).apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        if (date.after(today.time)) return ProfileValidationError.FutureDate
+        // A date of birth is a calendar date, not an instant. Compare its UTC-parsed
+        // components with the device's local date so "today" remains valid around
+        // local midnight even when the UTC date is still yesterday.
+        val enteredDate = Calendar.getInstance(UTC).apply { time = date }
+        val today = Calendar.getInstance()
+        if (enteredDate.toDateKey() > today.toDateKey()) return ProfileValidationError.FutureDate
         val oldestAllowed = (today.clone() as Calendar).apply { add(Calendar.YEAR, -120) }
-        if (date.before(oldestAllowed.time)) return ProfileValidationError.DateTooOld
+        if (enteredDate.toDateKey() < oldestAllowed.toDateKey()) return ProfileValidationError.DateTooOld
         return null
     }
+
+    private fun Calendar.toDateKey(): Int =
+        get(Calendar.YEAR) * 10_000 + (get(Calendar.MONTH) + 1) * 100 + get(Calendar.DAY_OF_MONTH)
 
     private fun validateMeasurement(
         value: String,
@@ -277,4 +279,7 @@ object ProfileValidator {
     }
 
     private val UTC: TimeZone = TimeZone.getTimeZone("UTC")
+
+    private const val MINIMUM_WEIGHT_KG = 10.0
+    private const val MAXIMUM_WEIGHT_KG = 300.0
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.carenest.domain.model.PreferredTime
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
+import com.carenest.domain.model.profile.PersonalInfoUpdate
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
@@ -245,8 +246,32 @@ class RequestServiceViewModel @Inject constructor(
             return
         }
 
+        val patient = selectedPatient ?: return
         updateState { copy(isSubmitting = true) }
         viewModelScope.launch {
+            val currentUser = homeRepository.getUser().getOrNull()
+            val isPrimaryPatient = currentUser?.defaultProfileId == profileId
+
+            if (isPrimaryPatient) {
+                val primaryProfileUpdate = PersonalInfoUpdate(
+                    firstName = patient.firstName.orEmpty(),
+                    lastName = patient.lastName.orEmpty(),
+                    dateOfBirth = patient.dateOfBirth.orEmpty(),
+                    gender = patient.gender.orEmpty(),
+                    profileImageUrl = patient.profileImageUrl,
+                )
+                profileRepository.updatePersonalInfo(profileId, primaryProfileUpdate)
+                    .onFailure { error ->
+                        updateState { copy(isSubmitting = false) }
+                        sendEffect(
+                            RequestServiceEffect.ShowError(
+                                error.message ?: "Failed to sync patient profile"
+                            )
+                        )
+                        return@launch
+                    }
+            }
+
             homeRepository.submitServiceRequest(
                 com.carenest.domain.model.CreateServiceRequestParams(
                     profileId = profileId,

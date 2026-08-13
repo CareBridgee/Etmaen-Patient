@@ -24,7 +24,8 @@ data class PersonalInfoUpdate(
     val firstName: String,
     val lastName: String,
     val dateOfBirth: String,
-    val gender: String
+    val gender: String,
+    val profileImageUrl: String? = null,
 )
 
 data class BasicHealthUpdate(
