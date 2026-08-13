@@ -23,7 +23,10 @@ data class RequestServiceUiState(
 )
 
 sealed class RequestServiceIntent {
-    data class OnStart(val serviceId: String?) : RequestServiceIntent()
+    data class OnStart(
+        val serviceId: String?,
+        val isFromAi: Boolean = false
+    ) : RequestServiceIntent()
     data class OnPatientSelected(val patient: Patient) : RequestServiceIntent()
     data object OnEditProfileClicked : RequestServiceIntent()
     data object OnAddPatientClicked : RequestServiceIntent()

@@ -25,7 +25,7 @@ interface CloudinaryApiService {
 }
 
 class CloudinaryApiServiceImpl @Inject constructor(
-    @AuthHttpClient private val httpClient: HttpClient,
+    @param:AuthHttpClient private val httpClient: HttpClient,
     private val json: Json
 ) : CloudinaryApiService {
     override suspend fun uploadImage(

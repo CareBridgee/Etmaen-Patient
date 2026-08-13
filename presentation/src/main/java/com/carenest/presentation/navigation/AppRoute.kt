@@ -41,7 +41,10 @@ sealed interface AppRoute : NavKey {
      data object Services : AppRoute
 
      @Serializable
-     data class ServiceDetails(val serviceId: String) : AppRoute
+     data class ServiceDetails(
+         val serviceId: String,
+         val isFromAi: Boolean = false
+     ) : AppRoute
 
      @Serializable
      data object History : AppRoute
@@ -63,8 +66,12 @@ sealed interface AppRoute : NavKey {
 
      @Serializable
      data object AddPaymentMethod : AppRoute
+
      @Serializable
-     data class RequestService(val serviceId : String) : AppRoute
+     data class RequestService(
+         val serviceId: String,
+         val isFromAi: Boolean = false
+     ) : AppRoute
 
      @Serializable
      data object Map : AppRoute

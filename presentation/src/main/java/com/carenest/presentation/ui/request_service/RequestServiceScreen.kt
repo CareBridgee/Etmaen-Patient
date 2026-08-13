@@ -30,6 +30,7 @@ fun RequestServiceScreen(
     onNavigateToAddressPicker: () -> Unit,
     onSubmitRequestClick: (serviceRequestId: String) -> Unit,
     selectServiceId : String? = null,
+    isFromAi: Boolean = false,
     mapResultLocation: LocationDetails? = null,
     onMapResultConsumed: () -> Unit = {},
     reloadTrigger: Int = 0,
@@ -45,8 +46,8 @@ fun RequestServiceScreen(
         onLeadingClick = onNavigateBack
     )
 
-    LaunchedEffect(Unit, selectServiceId, reloadTrigger) {
-        viewModel.onIntent(RequestServiceIntent.OnStart(selectServiceId))
+    LaunchedEffect(Unit, selectServiceId, reloadTrigger, isFromAi) {
+        viewModel.onIntent(RequestServiceIntent.OnStart(selectServiceId, isFromAi))
     }
 
     LaunchedEffect(mapResultLocation) {
@@ -91,6 +92,7 @@ fun RequestServiceScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             CareRequestScreenContent(
                 state = state,
+                isFromAi = isFromAi,
                 onPatientSelected = { viewModel.onIntent(RequestServiceIntent.OnPatientSelected(it)) },
                 onEditProfileClick = { viewModel.onIntent(RequestServiceIntent.OnEditProfileClicked) },
                 onAddPatientClick = { viewModel.onIntent(RequestServiceIntent.OnAddPatientClicked) },
