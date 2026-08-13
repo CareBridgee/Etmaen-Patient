@@ -87,9 +87,3 @@ data class ProfileResponseDto(
     val createdAt: String? = null,
     val updatedAt: String? = null
 )
-
-@Serializable
-data class ProfileReportResponseDto(
-    val profileId: String? = null,
-    val report: String? = null
-)

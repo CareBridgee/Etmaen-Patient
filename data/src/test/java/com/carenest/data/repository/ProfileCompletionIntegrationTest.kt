@@ -220,11 +220,6 @@ private class RecordingProfileApiService : ProfileApiService {
         request: EmergencyContactRequestDto
     ) = unexpected<EmergencyContactResponseDto>()
     override suspend fun deleteEmergencyContact(emergencyContactId: String) = unexpected<Unit>()
-    override suspend fun getProfileReport(profileId: String) = unexpected<com.carenest.data.source.remote.dto.profile.ProfileReportResponseDto>()
-
-    // IF THE COMPILER FAILS HERE, IT MEANS ProfileApiService DOES NOT HAVE THIS METHOD IN MY WORKSPACE
-    // BUT CI SAYS IT DOES.
-    // override suspend fun getProfileReport(profileId: String) = Result.failure<com.carenest.data.source.remote.dto.profile.ProfileReportResponseDto>(UnsupportedOperationException())
 
     private fun <T> unexpected(): Result<T> = Result.failure(AssertionError("Unexpected API call"))
 }

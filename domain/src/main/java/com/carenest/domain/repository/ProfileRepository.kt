@@ -70,5 +70,4 @@ interface ProfileRepository {
         input: EmergencyContactInput
     ): Result<EmergencyContact>
     suspend fun deleteEmergencyContact(emergencyContactId: String): Result<Unit>
-    suspend fun getProfileReport(profileId: String): Result<String>
 }

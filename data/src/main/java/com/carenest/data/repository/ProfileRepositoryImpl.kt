@@ -308,12 +308,6 @@ class ProfileRepositoryImpl @Inject constructor(
         }
         return Result.success(Unit)
     }
-
-    override suspend fun getProfileReport(profileId: String): Result<String> {
-        return api.getProfileReport(profileId)
-            .map { it.report.orEmpty() }
-            .profileFailure()
-    }
 }
 
 internal fun Throwable.toDomainFailure(): Throwable = when (this) {
