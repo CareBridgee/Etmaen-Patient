@@ -54,6 +54,7 @@ internal suspend fun HttpResponse.ensureSuccessful(json: Json) {
     throw ApiException(
         statusCode = status.value,
         backendCode = errorResponse?.code,
+        details = errorResponse?.details,
         message = message
     )
 }
