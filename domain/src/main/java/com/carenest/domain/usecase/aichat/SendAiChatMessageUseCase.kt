@@ -1,6 +1,6 @@
 package com.carenest.domain.usecase.aichat
 
-import com.carenest.domain.model.aichat.AiChatMessageResult
+import com.carenest.domain.model.AiChatMessageResult
 import com.carenest.domain.repository.AiChatRepository
 import javax.inject.Inject
 

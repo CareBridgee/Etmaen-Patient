@@ -6,7 +6,7 @@ import com.carenest.domain.repository.AiChatRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import com.carenest.domain.model.aichat.AiChatMessageResult
+import com.carenest.domain.model.AiChatMessageResult
 
 @Singleton
 class AiChatRepositoryImpl @Inject constructor(
