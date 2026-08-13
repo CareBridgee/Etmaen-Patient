@@ -311,11 +311,11 @@
   <string name="validation_invalid_name">استخدم الحروف والمسافات والشرطة والفاصلة العلوية فقط.</string>
   <string name="validation_name_length">استخدم من حرفين إلى 50 حرفًا.</string>
   <string name="validation_invalid_date">استخدم الصيغة شهر/يوم/سنة، مثال: 08/25/1995.</string>
-  <string name="validation_future_date">يجب ألا يكون تاريخ الميلاد بعد اليوم.</string>
+  <string name="validation_future_date">يجب أن يكون تاريخ الميلاد قبل اليوم.</string>
   <string name="validation_date_too_old">أدخل تاريخًا خلال آخر 120 سنة.</string>
   <string name="validation_invalid_number">استخدم الأرقام فقط.</string>
   <string name="validation_height_range">أدخل طولًا من 30 إلى 250 سم.</string>
-  <string name="validation_weight_range">أدخل وزنًا من 2 إلى 500 كجم.</string>
+  <string name="validation_weight_range">أدخل وزنًا من 10 إلى 300 كجم.</string>
   <string name="validation_blood_type">اختر فصيلة دم من القائمة.</string>
   <string name="validation_text_too_long_100">اجعل النص أقل من 100 حرف.</string>
   <string name="validation_text_too_long_500">اجعل النص أقل من 500 حرف.</string>

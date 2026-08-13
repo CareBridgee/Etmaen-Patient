@@ -231,12 +231,9 @@ object ProfileValidator {
     private fun validateDateOfBirth(value: String): ProfileValidationError? {
         if (value.isBlank()) return ProfileValidationError.Required
         val date = parseAnyDate(value) ?: return ProfileValidationError.InvalidDate
-        // A date of birth is a calendar date, not an instant. Compare its UTC-parsed
-        // components with the device's local date so "today" remains valid around
-        // local midnight even when the UTC date is still yesterday.
         val enteredDate = Calendar.getInstance(UTC).apply { time = date }
         val today = Calendar.getInstance()
-        if (enteredDate.toDateKey() > today.toDateKey()) return ProfileValidationError.FutureDate
+        if (enteredDate.toDateKey() >= today.toDateKey()) return ProfileValidationError.FutureDate
         val oldestAllowed = (today.clone() as Calendar).apply { add(Calendar.YEAR, -120) }
         if (enteredDate.toDateKey() < oldestAllowed.toDateKey()) return ProfileValidationError.DateTooOld
         return null
