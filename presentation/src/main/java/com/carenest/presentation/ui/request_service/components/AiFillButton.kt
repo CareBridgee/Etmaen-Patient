@@ -26,17 +26,25 @@ import com.carenest.designsystem.util.bounceClick
 @Composable
 fun AiFillButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     val shape = RoundedCornerShape(percent = 50)
+    val contentColor = if (enabled) Theme.colors.primaryVariant else Theme.colors.secondaryFont.copy(alpha = 0.4f)
+    val borderColor = if (enabled) Theme.colors.primaryVariant else Theme.colors.secondaryFont.copy(alpha = 0.2f)
+
     Row(
         modifier = modifier
-            .bounceClick(
-                shape = shape,
-                onClick = onClick
+            .then(
+                if (enabled) {
+                    Modifier.bounceClick(
+                        shape = shape,
+                        onClick = onClick
+                    )
+                } else Modifier
             )
             .background(Theme.colors.backGround)
-            .border(BorderStroke(1.dp, Theme.colors.primaryVariant), shape)
+            .border(BorderStroke(1.dp, borderColor), shape)
             .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)
@@ -44,13 +52,13 @@ fun AiFillButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_ai_sparkles),
             contentDescription = null,
-            tint = Theme.colors.primaryVariant,
+            tint = contentColor,
             modifier = Modifier.size(Theme.size.iconMedium)
         )
         BasicText(
             text = stringResource(id = R.string.request_service_fill_ai),
             style = Theme.typography.body.large.copy(
-                color = Theme.colors.primaryVariant,
+                color = contentColor,
                 fontWeight = FontWeight.Medium
             )
         )

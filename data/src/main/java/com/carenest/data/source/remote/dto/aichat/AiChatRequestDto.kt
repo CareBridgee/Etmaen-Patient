@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AiChatRequestDto(
+    @SerialName("profileId")
+    val profileId: String,
     @SerialName("message")
     val message: String
 )

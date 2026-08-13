@@ -43,5 +43,6 @@ sealed class AIChatEffect {
     object NavigateBack : AIChatEffect()
     object NavigateToBookings : AIChatEffect()
     data class NavigateToServiceDetails(val categoryId: String) : AIChatEffect()
+    data class NavigateToRequestService(val serviceId: String) : AIChatEffect()
     data class ShowError(val message: String) : AIChatEffect()
 }
