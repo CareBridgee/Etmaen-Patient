@@ -1,6 +1,5 @@
 package com.carenest.presentation.ui.aichat.chat
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -45,6 +42,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.button.SecondaryButton
+import com.carenest.designsystem.util.bounceClick
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.R as RD
@@ -67,10 +69,10 @@ fun AIChatScreen(
     onNavigateToBookings: () -> Unit,
     onNavigateToServiceDetails: (String) -> Unit,
     onNavigateToRequestService: (String) -> Unit = {},
+    onShowMessage: (String) -> Unit = {},
     viewModel: AIChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
 
     ScreenTopBar(
         title = stringResource(R.string.ai_health_assistant),
@@ -84,7 +86,7 @@ fun AIChatScreen(
             is AIChatEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.categoryId)
             is AIChatEffect.NavigateToRequestService -> onNavigateToRequestService(effect.serviceId)
             is AIChatEffect.ShowError -> {
-                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                onShowMessage(effect.message)
             }
         }
     }
@@ -254,7 +256,7 @@ fun ServiceRecommendationCard(
     onViewServiceClick: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Theme.spacing.large),
         color = Theme.colors.surface,
         shadowElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
@@ -278,7 +280,7 @@ fun ServiceRecommendationCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(Theme.spacing.medium)
             ) {
                 Box(
                     modifier = Modifier
@@ -297,18 +299,18 @@ fun ServiceRecommendationCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(Theme.spacing.small))
 
                 Text(
                     text = serviceData.title,
-                    style = Theme.typography.display.copy(
+                    style = Theme.typography.title.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     ),
                     color = Theme.colors.primaryFont
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Theme.spacing.extraSmall))
 
                 Text(
                     text = serviceData.subtitle,
@@ -319,47 +321,21 @@ fun ServiceRecommendationCard(
                     color = Theme.colors.secondaryFont
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(Theme.spacing.medium))
 
-                Button(
+                PrimaryButton(
+                    caption = stringResource(R.string.book_now),
                     onClick = onBookNowClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(26.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary)
-                ) {
-                    Text(
-                        text = stringResource(R.string.book_now),
-                        style = Theme.typography.body.large.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        ),
-                        color = Theme.colors.surface
-                    )
-                }
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Theme.spacing.small))
 
-                Button(
+                SecondaryButton(
+                    caption = stringResource(R.string.view_service),
                     onClick = onViewServiceClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(26.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Theme.colors.primary.copy(alpha = 0.12f)
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.view_service),
-                        style = Theme.typography.body.large.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        ),
-                        color = Theme.colors.primary
-                    )
-                }
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
@@ -377,12 +353,15 @@ fun ChatInputBar(
     Surface(
         color = Theme.colors.surface,
         shadowElevation = 8.dp,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .imePadding()
+            .navigationBarsPadding()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.small),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -414,7 +393,7 @@ fun ChatInputBar(
                         }
                     )
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(Theme.spacing.small))
 
                     Icon(
                         imageVector = Icons.Default.Mic,
@@ -425,16 +404,19 @@ fun ChatInputBar(
                 }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(Theme.spacing.small))
 
             Box(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
                     .background(if (canSend) Theme.colors.primary else Theme.colors.primary.copy(alpha = 0.4f))
-                    .clickable(
-                        enabled = canSend,
-                        onClick = onSendClick
+                    .then(
+                        if (canSend) {
+                            Modifier.bounceClick(shape = CircleShape, onClick = onSendClick)
+                        } else {
+                            Modifier
+                        }
                     ),
                 contentAlignment = Alignment.Center
             ) {

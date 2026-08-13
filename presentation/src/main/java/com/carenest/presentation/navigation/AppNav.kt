@@ -561,7 +561,8 @@ fun AppNav(
                         },
                         onNavigateToRequestService = { serviceId ->
                             backStack.add(AppRoute.RequestService(serviceId = serviceId, isFromAi = true))
-                        }
+                        },
+                        onShowMessage = onShowSnackbar
                     )
                 }
 

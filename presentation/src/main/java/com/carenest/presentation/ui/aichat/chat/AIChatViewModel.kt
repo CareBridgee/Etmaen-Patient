@@ -13,9 +13,15 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+import com.carenest.domain.repository.ProfileRepository
+import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
+import kotlinx.coroutines.flow.firstOrNull
+
 @HiltViewModel
 class AIChatViewModel @Inject constructor(
     private val sendAiChatMessageUseCase: SendAiChatMessageUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val profileRepository: ProfileRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateHolder<AIChatState> by DefaultStateHolder(AIChatState()),
@@ -23,10 +29,19 @@ class AIChatViewModel @Inject constructor(
 
     init {
         val patientIdParam: String? = savedStateHandle["patientId"]
-        updateState {
-            copy(
-                patientId = patientIdParam ?: ""
-            )
+        if (!patientIdParam.isNullOrBlank()) {
+            updateState { copy(patientId = patientIdParam) }
+        }
+        viewModelScope.launch {
+            observeCurrentUserUseCase().collect { user ->
+                user ?: return@collect
+                if (currentState.patientId.isBlank()) {
+                    val defaultId = user.defaultProfileId
+                    if (!defaultId.isNullOrBlank()) {
+                        updateState { copy(patientId = defaultId) }
+                    }
+                }
+            }
         }
     }
 
@@ -35,58 +50,102 @@ class AIChatViewModel @Inject constructor(
             is AIChatEvent.OnInputTextChanged -> {
                 updateState { copy(inputText = event.text, errorMessage = null) }
             }
+
             is AIChatEvent.OnSendMessage -> {
                 sendMessage()
             }
+
             is AIChatEvent.OnBackClicked -> {
                 sendEffect(AIChatEffect.NavigateBack)
             }
+
             is AIChatEvent.OnBookNowClicked -> {
                 val serviceId = currentState.messages.lastOrNull {
                     it.type == ChatMessageType.SERVICE_RECOMMENDATION
                 }?.serviceData?.categoryId ?: ""
                 sendEffect(AIChatEffect.NavigateToRequestService(serviceId))
             }
+
             is AIChatEvent.OnViewServiceClicked -> {
                 sendEffect(AIChatEffect.NavigateToServiceDetails(event.categoryId))
             }
+
             is AIChatEvent.OnDismissError -> {
                 updateState { copy(errorMessage = null) }
             }
         }
     }
-
     private fun sendMessage() {
         val textToSend = currentState.inputText.trim()
         if (textToSend.isBlank() || currentState.isLoading) return
 
-        val userMessage = ChatMessage(
-            id = UUID.randomUUID().toString(),
-            text = textToSend,
-            isUser = true
-        )
-
-        updateState {
-            copy(
-                messages = messages + userMessage,
-                inputText = "",
-                isLoading = true,
-                errorMessage = null
-            )
-        }
-
         viewModelScope.launch {
-            val result = sendAiChatMessageUseCase(textToSend)
+            var activeProfileId = currentState.patientId
+            if (activeProfileId.isBlank()) {
+                val user = observeCurrentUserUseCase().firstOrNull()
+                activeProfileId = user?.defaultProfileId.orEmpty()
+            }
+            if (activeProfileId.isBlank()) {
+                activeProfileId = profileRepository.getDefaultProfile().getOrNull()?.id.orEmpty()
+            }
+
+            if (activeProfileId.isBlank()) {
+                val errorMsg = "Please select or set up a patient profile first."
+                updateState { copy(isLoading = false, errorMessage = errorMsg) }
+                sendEffect(AIChatEffect.ShowError(errorMsg))
+                return@launch
+            }
+
+            val userMessage = ChatMessage(
+                id = UUID.randomUUID().toString(),
+                text = textToSend,
+                isUser = true
+            )
+
+            updateState {
+                copy(
+                    messages = messages + userMessage,
+                    inputText = "",
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            val result = sendAiChatMessageUseCase(activeProfileId, textToSend)
             result.fold(
-                onSuccess = { reply ->
-                    val aiMessage = ChatMessage(
+                onSuccess = { chatResult ->
+                    val aiTextMessage = ChatMessage(
                         id = UUID.randomUUID().toString(),
-                        text = reply,
+                        text = chatResult.reply,
                         isUser = false
                     )
+
+                    val newMessages = mutableListOf<ChatMessage>()
+                    newMessages.add(aiTextMessage)
+
+                    if (!chatResult.serviceTypeId.isNullOrBlank() || !chatResult.serviceTypeName.isNullOrBlank()) {
+                        val recData = ServiceRecommendationData(
+                            categoryId = chatResult.serviceTypeId.orEmpty(),
+                            title = chatResult.serviceTypeName.takeIf { !it.isNullOrBlank() } ?: "Recommended Healthcare Service",
+                            subtitle = chatResult.serviceDescription.takeIf { !it.isNullOrBlank() }
+                                ?: chatResult.careDescription.orEmpty(),
+                            price = "",
+                            duration = ""
+                        )
+                        newMessages.add(
+                            ChatMessage(
+                                id = UUID.randomUUID().toString(),
+                                text = "",
+                                isUser = false,
+                                type = ChatMessageType.SERVICE_RECOMMENDATION,
+                                serviceData = recData
+                            )
+                        )
+                    }
+
                     updateState {
                         copy(
-                            messages = messages + aiMessage,
+                            messages = messages + newMessages,
                             isLoading = false
                         )
                     }
