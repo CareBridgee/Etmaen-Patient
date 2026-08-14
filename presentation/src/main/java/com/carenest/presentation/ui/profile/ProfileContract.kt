@@ -23,7 +23,6 @@ sealed interface ProfileEvent {
     data object OnPersonalInfoClicked : ProfileEvent
     data object OnHealthProfileClicked : ProfileEvent
     data object OnFamilyMembersClicked : ProfileEvent
-    data object OnAddressesClicked : ProfileEvent
     data object OnPaymentClicked : ProfileEvent
     data object OnSettingsClicked : ProfileEvent
     data object OnLogoutClicked : ProfileEvent
@@ -41,7 +40,6 @@ sealed interface ProfileEffect {
     data object NavigateToPersonalInfo : ProfileEffect
     data object NavigateToHealthProfile : ProfileEffect
     data object NavigateToFamilyMembers : ProfileEffect
-    data object NavigateToAddresses : ProfileEffect
     data object NavigateToPayment : ProfileEffect
     data object NavigateToSettings : ProfileEffect
     data object NavigateToLogout : ProfileEffect

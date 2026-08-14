@@ -126,7 +126,6 @@ fun ProfileScreen(
             is ProfileEffect.ShowAvatarUpdateFailed -> onShowMessage(effect.message ?: avatarUpdateFailed)
             ProfileEffect.ShowProfileRefreshError -> onShowMessage(profileRefreshFailed)
             is ProfileEffect.ShowLogoutError -> onShowMessage(logoutFailed)
-            is ProfileEffect.NavigateToAddresses -> Unit
         }
     }
 
@@ -388,15 +387,6 @@ fun ProfileMenuListSection(
             iconBackgroundColor = Theme.colors.primary.copy(alpha = 0.12f),
             iconTint = Theme.colors.primary,
             onClick = { onEvent(ProfileEvent.OnFamilyMembersClicked) }
-        )
-
-        ProfileMenuItemCard(
-            title = stringResource(R.string.profile_addresses_title),
-            subtitle = stringResource(R.string.profile_addresses_subtitle),
-            iconRes = RD.drawable.ic_location,
-            iconBackgroundColor = Theme.colors.primary.copy(alpha = 0.12f),
-            iconTint = Theme.colors.primary,
-            onClick = { onEvent(ProfileEvent.OnAddressesClicked) }
         )
 
         ProfileMenuItemCard(

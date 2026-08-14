@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.carenest.designsystem.R
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.Theme
 import java.util.Calendar
@@ -32,7 +34,7 @@ fun DateTimeSelectionSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "When do you need the service?",
+            text = stringResource(R.string.request_service_when_needed),
             style = Theme.typography.title,
             color = Theme.colors.primaryFont,
             fontWeight = FontWeight.SemiBold
@@ -49,7 +51,7 @@ fun DateTimeSelectionSection(
                     onTextChange = {},
                     readOnly = true,
                     enabled = false,
-                    hint = "Date",
+                    hint = stringResource(R.string.request_service_date),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Box(modifier = Modifier
@@ -84,7 +86,7 @@ fun DateTimeSelectionSection(
                     onTextChange = {},
                     readOnly = true,
                     enabled = false,
-                    hint = "Time",
+                    hint = stringResource(R.string.request_service_time),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Box(modifier = Modifier

@@ -143,12 +143,15 @@ fun SettingsContent(
 
             Text(
                 text = stringResource(R.string.settings_screen_title),
+                modifier = Modifier.fillMaxWidth(),
                 style = Theme.typography.display.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     letterSpacing = (-0.5).sp
                 ),
-                color = Theme.colors.primaryFont
+                color = Theme.colors.primaryFont,
+                maxLines = 1,
+                softWrap = false,
             )
 
             Spacer(modifier = Modifier.height(6.dp))

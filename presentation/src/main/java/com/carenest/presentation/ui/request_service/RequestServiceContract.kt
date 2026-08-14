@@ -1,5 +1,7 @@
 package com.carenest.presentation.ui.request_service
 
+import androidx.annotation.StringRes
+import com.carenest.designsystem.R
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.model.Patient
@@ -46,7 +48,7 @@ sealed class RequestServiceIntent {
 
 sealed class RequestServiceEffect {
     data object NavigateBack : RequestServiceEffect()
-    data class ShowError(val message: String) : RequestServiceEffect()
+    data class ShowError(@param:StringRes val messageRes: Int) : RequestServiceEffect()
     data object NavigateToEditProfile : RequestServiceEffect()
     data object NavigateToAddPatient : RequestServiceEffect()
     data class NavigateToServiceSelection(val currentServiceId: String?) : RequestServiceEffect()
@@ -55,4 +57,11 @@ sealed class RequestServiceEffect {
     data class RequestSubmittedSuccessfully(
         val serviceRequestId: String,
     ) : RequestServiceEffect()
+}
+
+enum class RequestServiceUiError(@get:StringRes val messageRes: Int) {
+    RequiredFields(R.string.request_service_error_required_fields),
+    PreferredDate(R.string.request_service_error_preferred_date),
+    ProfileSync(R.string.request_service_error_profile_sync),
+    Submit(R.string.request_service_error_submit),
 }
