@@ -19,6 +19,11 @@
   <string name="phone_input_carrier_charges">قد تطبق شركة الاتصالات رسوماً على الرسائل النصية.</string>
   <string name="phone_input_next_btn">التالي</string>
   <string name="otp_title">التحقق من الهاتف</string>
+  <string name="auth_error_google_sign_in_failed">فشل تسجيل الدخول باستخدام Google. يُرجى المحاولة مرة أخرى.</string>
+  <string name="auth_error_phone_already_taken">رقم الهاتف مستخدم بالفعل</string>
+  <string name="auth_existing_account_message">رقم الهاتف هذا مرتبط بحساب موجود بالفعل باسم %1$s. هل تريد تسجيل الدخول إلى هذا الحساب باستخدام رمز التحقق الذي تلقيته للتو؟</string>
+  <string name="auth_existing_account_action_signin">تسجيل الدخول إلى الحساب الموجود</string>
+  <string name="auth_existing_account_action_cancel">إلغاء</string>
   <string name="otp_subtitle">أرسلنا رمزاً مكوناً من 6 أرقام إلى رقم هاتفك %1$s</string>
   <string name="otp_verify_btn">تحقق</string>
     <string name="otp_resend_timer">إعادة إرسال الرمز خلال %1$s</string>
@@ -311,11 +316,11 @@
   <string name="validation_invalid_name">استخدم الحروف والمسافات والشرطة والفاصلة العلوية فقط.</string>
   <string name="validation_name_length">استخدم من حرفين إلى 50 حرفًا.</string>
   <string name="validation_invalid_date">استخدم الصيغة شهر/يوم/سنة، مثال: 08/25/1995.</string>
-  <string name="validation_future_date">يجب ألا يكون تاريخ الميلاد بعد اليوم.</string>
+  <string name="validation_future_date">يجب أن يكون تاريخ الميلاد قبل اليوم.</string>
   <string name="validation_date_too_old">أدخل تاريخًا خلال آخر 120 سنة.</string>
   <string name="validation_invalid_number">استخدم الأرقام فقط.</string>
   <string name="validation_height_range">أدخل طولًا من 30 إلى 250 سم.</string>
-  <string name="validation_weight_range">أدخل وزنًا من 2 إلى 500 كجم.</string>
+  <string name="validation_weight_range">أدخل وزنًا من 10 إلى 300 كجم.</string>
   <string name="validation_blood_type">اختر فصيلة دم من القائمة.</string>
   <string name="validation_text_too_long_100">اجعل النص أقل من 100 حرف.</string>
   <string name="validation_text_too_long_500">اجعل النص أقل من 500 حرف.</string>

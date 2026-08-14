@@ -11,6 +11,11 @@
   <string name="auth_google_unavailable_title">Google sign-in is coming soon</string>
   <string name="auth_google_unavailable_message">Google sign-in isn\'t available yet. Please continue with your phone number.</string>
   <string name="auth_google_unavailable_action">Got it</string>
+  <string name="auth_error_google_sign_in_failed">Google sign-in failed. Please try again.</string>
+  <string name="auth_error_phone_already_taken">Phone Already Taken</string>
+  <string name="auth_existing_account_message">This phone number belongs to an existing account under the name %1$s. Would you like to sign in to that account instead using the verification code you just received?</string>
+  <string name="auth_existing_account_action_signin">Sign in to existing account</string>
+  <string name="auth_existing_account_action_cancel">Cancel</string>
   <string name="auth_continue_apple">Continue with Apple</string>
   <string name="auth_continue_phone">Continue with Phone</string>
   <string name="auth_terms_agreement">joining our app means you agree with our Terms of use and privacy policy</string>
@@ -382,11 +387,11 @@
   <string name="validation_invalid_name">Use letters, spaces, apostrophes, or hyphens only.</string>
   <string name="validation_name_length">Use between 2 and 50 characters.</string>
   <string name="validation_invalid_date">Use MM/DD/YYYY, for example 08/25/1995.</string>
-  <string name="validation_future_date">Date of birth must be today or earlier.</string>
+  <string name="validation_future_date">Date of birth must be before today.</string>
   <string name="validation_date_too_old">Enter a date within the last 120 years.</string>
   <string name="validation_invalid_number">Use numbers only.</string>
   <string name="validation_height_range">Enter 30–250 cm.</string>
-  <string name="validation_weight_range">Enter 2–500 kg.</string>
+  <string name="validation_weight_range">Enter 10–300 kg.</string>
   <string name="validation_blood_type">Choose a blood type from the list.</string>
   <string name="validation_text_too_long_100">Keep this under 100 characters.</string>
   <string name="validation_text_too_long_500">Keep this under 500 characters.</string>

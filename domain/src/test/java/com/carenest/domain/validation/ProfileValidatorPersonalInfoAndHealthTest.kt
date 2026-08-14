@@ -14,16 +14,25 @@ import org.junit.Test
 class ProfileValidatorPersonalInfoAndHealthTest {
 
     @Test
-    fun `current local date is accepted as date of birth`() {
+    fun `current local date is rejected as date of birth`() {
         val now = Date()
         val today = SimpleDateFormat("MM/dd/yyyy", Locale.US).format(now)
 
-        val result = ProfileValidator.personalInfo("Aya", "Adel", today, "FEMALE")
+        val error = validationError {
+            ProfileValidator.personalInfo("Aya", "Adel", today, "FEMALE")
+        }
 
-        assertEquals(
-            SimpleDateFormat("yyyy-MM-dd", Locale.US).format(now),
-            result.dateOfBirth
-        )
+        assertEquals(ProfileValidationError.FutureDate, error.fieldErrors[ProfileField.DateOfBirth])
+    }
+
+    @Test
+    fun `yesterday is accepted as date of birth`() {
+        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -1) }.time
+        val displayValue = SimpleDateFormat("MM/dd/yyyy", Locale.US).format(yesterday)
+
+        val result = ProfileValidator.personalInfo("Aya", "Adel", displayValue, "FEMALE")
+
+        assertEquals(SimpleDateFormat("yyyy-MM-dd", Locale.US).format(yesterday), result.dateOfBirth)
     }
 
     @Test
@@ -39,13 +48,13 @@ class ProfileValidatorPersonalInfoAndHealthTest {
     }
 
     @Test
-    fun `one kilogram is rejected while lower boundary is accepted`() {
+    fun `weight below minimum is rejected while lower boundary is accepted`() {
         val error = validationError {
-            ProfileValidator.basicHealth(height = "170", weight = "1", bloodType = "A+")
+            ProfileValidator.basicHealth(height = "170", weight = "9", bloodType = "A+")
         }
 
         assertEquals(ProfileValidationError.WeightOutOfRange, error.fieldErrors[ProfileField.Weight])
-        assertEquals(2.0, ProfileValidator.basicHealth("170", "2", "A+").weight, 0.0)
+        assertEquals(10.0, ProfileValidator.basicHealth("170", "10", "A+").weight, 0.0)
     }
 
     private fun validationError(block: () -> Unit): ProfileValidationException {

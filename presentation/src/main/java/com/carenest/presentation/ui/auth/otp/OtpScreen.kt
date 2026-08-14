@@ -53,8 +53,8 @@ fun OtpScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(entry.phone, entry.otp) {
-        viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone))
+    androidx.compose.runtime.LaunchedEffect(entry.phone, entry.otp, entry.pendingToken) {
+        viewModel.onEvent(OtpIntent.PhoneNumberChanged(entry.phone, entry.pendingToken))
         entry.otp?.let {
             viewModel.onEvent(OtpIntent.OtpCodeChanged(it))
         }
@@ -85,6 +85,50 @@ internal fun OtpScreenContent(
         showLeadingIcon = true,
         onLeadingClick = { onEvent(OtpIntent.BackClicked) }
     )
+
+    if (state.showExistingAccountDialog) {
+        val maskedName = state.existingAccountName ?: ""
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { onEvent(OtpIntent.DismissExistingAccountDialog) },
+            shape = RoundedCornerShape(24.dp),
+            containerColor = Theme.colors.surface,
+            tonalElevation = 0.dp,
+            title = {
+                androidx.compose.material3.Text(
+                    text = stringResource(R.string.auth_error_phone_already_taken),
+                    style = Theme.typography.title.copy(fontWeight = FontWeight.Bold),
+                    color = Theme.colors.primaryFont
+                )
+            },
+            text = {
+                androidx.compose.material3.Text(
+                    text = stringResource(R.string.auth_existing_account_message, maskedName),
+                    style = Theme.typography.body.medium,
+                    color = Theme.colors.secondaryFont
+                )
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { onEvent(OtpIntent.ConfirmSignInToExistingAccount) }
+                ) {
+                    androidx.compose.material3.Text(
+                        text = stringResource(R.string.auth_existing_account_action_signin),
+                        style = Theme.typography.body.medium.copy(fontWeight = FontWeight.SemiBold),
+                        color = Theme.colors.primary
+                    )
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { onEvent(OtpIntent.DismissExistingAccountDialog) }) {
+                    androidx.compose.material3.Text(
+                        text = stringResource(R.string.auth_existing_account_action_cancel),
+                        style = Theme.typography.body.medium.copy(fontWeight = FontWeight.SemiBold),
+                        color = Theme.colors.secondaryFont
+                    )
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier

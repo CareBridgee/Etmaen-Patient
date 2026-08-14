@@ -160,8 +160,9 @@ private class FakeUserRepository(initial: User) : UserRepository {
 private class FakeAuthRepository : AuthRepository {
     var failure = false
     override suspend fun loginWithPhone(phoneNumber: String) = Result.success(Unit)
+    override suspend fun loginWithGoogle(idToken: String) = unsupported<com.carenest.domain.model.auth.GoogleAuthResult>()
     override suspend fun requestDevOtp(phoneNumber: String) = Result.success(null)
-    override suspend fun verifyOtp(phoneNumber: String, otp: String) = unsupported<AuthResult>()
+    override suspend fun verifyOtp(phoneNumber: String, otp: String, pendingToken: String?) = unsupported<AuthResult>()
     override suspend fun refreshToken(): Result<Unit> = Result.success(Unit)
     override suspend fun logout() = if (failure) Result.failure(IllegalStateException()) else Result.success(Unit)
 }

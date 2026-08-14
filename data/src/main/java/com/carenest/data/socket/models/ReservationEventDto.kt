@@ -14,42 +14,62 @@ data class ReservationEventDto(
     val data: JsonElement? = null
 ) {
     fun toDomain(json: Json): ReservationEvent {
-        return when (type) {
-            ReservationEventType.OFFER_CREATED -> ReservationEvent.OfferCreated(
-                reservationId,
-                json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
-            )
-            ReservationEventType.OFFER_UPDATED -> ReservationEvent.OfferUpdated(
-                reservationId,
-                json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
-            )
-            ReservationEventType.OFFER_COUNTERED -> ReservationEvent.OfferCountered(
-                reservationId,
-                json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
-            )
-            ReservationEventType.OFFER_ACCEPTED -> ReservationEvent.OfferAccepted(
-                reservationId,
-                json.decodeFromJsonElement<NurseOfferResponseDto>(data!!).toDomain()
-            )
-            ReservationEventType.OFFER_WITHDRAWN -> ReservationEvent.OfferWithdrawn(
-                reservationId,
-                json.decodeFromJsonElement<OfferIdPayloadDto>(data!!).offerId
-            )
-            ReservationEventType.OFFER_REJECTED -> ReservationEvent.OfferRejected(
-                reservationId,
-                json.decodeFromJsonElement<OfferIdPayloadDto>(data!!).offerId
-            )
-            ReservationEventType.REQUEST_CANCELLED -> ReservationEvent.RequestCancelled(reservationId)
-            ReservationEventType.PRESENCE_UPDATE -> ReservationEvent.PresenceUpdate(
-                reservationId,
-                json.decodeFromJsonElement<PresenceUpdateDto>(data!!).isOnline
-            )
-            ReservationEventType.COMPLETED -> ReservationEvent.Completed
-            ReservationEventType.OFFERS_LIST -> ReservationEvent.OffersList(
-                reservationId,
-                json.decodeFromJsonElement<List<NurseOfferResponseDto>>(data!!).map { it.toDomain() }
-            )
-            ReservationEventType.UNKNOWN -> ReservationEvent.Unknown(reservationId, "UNKNOWN")
+        return try {
+            when (type) {
+                ReservationEventType.OFFER_CREATED -> {
+                    val offerDto = data?.let { json.decodeFromJsonElement<NurseOfferResponseDto>(it) }
+                    if (offerDto != null) ReservationEvent.OfferCreated(reservationId, offerDto.toDomain())
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.OFFER_UPDATED -> {
+                    val offerDto = data?.let { json.decodeFromJsonElement<NurseOfferResponseDto>(it) }
+                    if (offerDto != null) ReservationEvent.OfferUpdated(reservationId, offerDto.toDomain())
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.OFFER_COUNTERED -> {
+                    val offerDto = data?.let { json.decodeFromJsonElement<NurseOfferResponseDto>(it) }
+                    if (offerDto != null) ReservationEvent.OfferCountered(reservationId, offerDto.toDomain())
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.OFFER_ACCEPTED -> {
+                    val offerDto = data?.let { json.decodeFromJsonElement<NurseOfferResponseDto>(it) }
+                    if (offerDto != null) ReservationEvent.OfferAccepted(reservationId, offerDto.toDomain())
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.OFFER_WITHDRAWN -> {
+                    val payload = data?.let { json.decodeFromJsonElement<OfferIdPayloadDto>(it) }
+                    if (payload != null) ReservationEvent.OfferWithdrawn(reservationId, payload.offerId)
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.OFFER_REJECTED -> {
+                    val payload = data?.let { json.decodeFromJsonElement<OfferIdPayloadDto>(it) }
+                    if (payload != null) ReservationEvent.OfferRejected(reservationId, payload.offerId)
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.REQUEST_CANCELLED -> ReservationEvent.RequestCancelled(reservationId)
+                ReservationEventType.PRESENCE_UPDATE -> {
+                    val presence = data?.let { json.decodeFromJsonElement<PresenceUpdateDto>(it) }
+                    if (presence != null) ReservationEvent.PresenceUpdate(reservationId, presence.isOnline)
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.COMPLETED -> ReservationEvent.Completed
+                ReservationEventType.OFFERS_LIST -> {
+                    val offers = data?.let { json.decodeFromJsonElement<List<NurseOfferResponseDto>>(it) }
+                    if (offers != null) ReservationEvent.OffersList(reservationId, offers.map { it.toDomain() })
+                    else ReservationEvent.Unknown(reservationId, "MISSING_DATA")
+                }
+
+                ReservationEventType.UNKNOWN -> ReservationEvent.Unknown(reservationId, "UNKNOWN")
+            }
+        } catch (e: Exception) {
+            ReservationEvent.Unknown(reservationId, "DECODE_ERROR: ${e.message}")
         }
     }
 }

@@ -195,9 +195,10 @@ fun AppNav(
 
                 entry<AppRoute.Login> {
                     LoginScreen(
-                        onNavigateToOtp = { phone, otp, method ->
-                            backStack.add(AppRoute.Otp(phone = phone, otp = otp, method = method))
-                        }
+                        onNavigateToOtp = { phone, otp, method, pendingToken ->
+                            backStack.add(AppRoute.Otp(phone = phone, otp = otp, method = method, pendingToken = pendingToken))
+                        },
+                        onNavigateToHome = { replaceWith(AppRoute.Home) }
                     )
                 }
 
