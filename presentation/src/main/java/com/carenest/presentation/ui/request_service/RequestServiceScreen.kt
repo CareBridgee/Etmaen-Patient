@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -38,7 +38,7 @@ fun RequestServiceScreen(
     viewModel: RequestServiceViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val toastState = rememberToastState()
     val listeningMessage = stringResource(DesignR.string.request_service_listening)
     val requestSuccessMessage = stringResource(DesignR.string.request_service_success)
@@ -78,7 +78,7 @@ fun RequestServiceScreen(
         when (effect) {
             RequestServiceEffect.NavigateBack -> onNavigateBack()
             is RequestServiceEffect.ShowError -> {
-                toastState.show(context.getString(effect.messageRes))
+                toastState.show(resources.getString(effect.messageRes))
             }
             RequestServiceEffect.NavigateToEditProfile -> onNavigateToEditProfile()
             RequestServiceEffect.NavigateToAddPatient -> onNavigateToAddPatient()
