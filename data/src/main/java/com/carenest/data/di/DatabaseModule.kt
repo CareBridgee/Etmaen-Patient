@@ -2,6 +2,7 @@ package com.carenest.data.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
 import com.carenest.data.source.local.database.CareNestDatabase
 import com.carenest.data.source.local.database.dao.ServiceHistoryDao
 import com.carenest.data.source.local.database.dao.UserDao
@@ -15,6 +16,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+    private val migration2To3 = Migration(2, 3) { database ->
+        database.execSQL(
+            "ALTER TABLE service_history ADD COLUMN nurseProfileImageUrl TEXT"
+        )
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): CareNestDatabase =
@@ -22,7 +29,10 @@ object DatabaseModule {
             context,
             CareNestDatabase::class.java,
             "carenest.db"
-        ).fallbackToDestructiveMigration(dropAllTables = true).build()
+        )
+            .addMigrations(migration2To3)
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
 
     @Provides
     fun provideUserDao(database: CareNestDatabase): UserDao = database.userDao()

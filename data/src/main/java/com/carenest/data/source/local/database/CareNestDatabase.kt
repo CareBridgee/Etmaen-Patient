@@ -9,7 +9,7 @@ import com.carenest.data.source.local.database.entity.UserEntity
 
 @Database(
     entities = [UserEntity::class, ServiceHistoryEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class CareNestDatabase : RoomDatabase() {

@@ -1,6 +1,5 @@
 package com.carenest.presentation.ui.history_details
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -28,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.history.ServiceHistory
@@ -276,14 +276,31 @@ private fun NurseSection(history: ServiceHistory) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
     ) {
-        Image(
-            painter = painterResource(id = RD.drawable.nurse_image),
-            contentDescription = null,
+        Box(
             modifier = Modifier
                 .size(Theme.size.large - Theme.spacing.small)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+                .clip(CircleShape)
+                .background(Theme.colors.primaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = RD.drawable.ic_profile),
+                contentDescription = null,
+                tint = Theme.colors.primary,
+                modifier = Modifier.size(Theme.spacing.extraLarge)
+            )
+
+            history.nurseProfileImageUrl
+                ?.takeIf(String::isNotBlank)
+                ?.let { imageUrl ->
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = history.nurseName,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+        }
         Column {
             Text(
                 text = history.nurseName ?: stringResource(R.string.history_value_unassigned),

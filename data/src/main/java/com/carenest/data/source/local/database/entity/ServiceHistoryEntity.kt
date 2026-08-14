@@ -18,5 +18,6 @@ data class ServiceHistoryEntity(
     val nurseId: String?,
     val nurseName: String?,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val nurseProfileImageUrl: String? = null
 )
