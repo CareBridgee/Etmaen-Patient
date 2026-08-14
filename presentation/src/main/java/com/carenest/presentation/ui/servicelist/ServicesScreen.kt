@@ -93,7 +93,7 @@ internal fun ServicesScreenContent(
             start = Theme.spacing.space20,
             top = Theme.spacing.small,
             end = Theme.spacing.space20,
-            bottom = 112.dp,
+            bottom = Theme.spacing.medium,
         ),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {

@@ -14,6 +14,7 @@ data class ServiceHistoryDto(
     @SerialName("status") val status: String? = null,
     @SerialName("nurseId") val nurseId: String? = null,
     @SerialName("nurseName") val nurseName: String? = null,
+    @SerialName("nurseProfileImageUrl") val nurseProfileImageUrl: String? = null,
     @SerialName("createdAt") val createdAt: String? = null,
     @SerialName("updatedAt") val updatedAt: String? = null
 )

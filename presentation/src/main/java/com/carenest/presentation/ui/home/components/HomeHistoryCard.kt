@@ -1,6 +1,5 @@
 package com.carenest.presentation.ui.home.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.history.ServiceHistory
 import com.carenest.designsystem.R as RD
@@ -101,14 +102,31 @@ fun HomeHistoryItem(
             horizontalArrangement = Arrangement.spacedBy(Theme.spacing.space14),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = RD.drawable.nurse_image),
-                contentDescription = serviceHistory.nurseName,
+            Box(
                 modifier = Modifier
                     .size(Theme.size.large - Theme.spacing.small)
-                    .clip(Theme.shapes.large),
-                contentScale = ContentScale.Crop
-            )
+                    .clip(Theme.shapes.large)
+                    .background(Theme.colors.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = RD.drawable.ic_profile),
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(Theme.spacing.extraLarge)
+                )
+
+                serviceHistory.nurseProfileImageUrl
+                    ?.takeIf(String::isNotBlank)
+                    ?.let { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = serviceHistory.nurseName,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+            }
 
             Column(
                 modifier = Modifier.weight(1f),

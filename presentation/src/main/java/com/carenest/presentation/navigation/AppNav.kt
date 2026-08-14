@@ -11,7 +11,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -665,28 +663,8 @@ fun AppNav(
                             modifier = Modifier.statusBarsPadding()
                         )
                     }
-                }
-            ) { paddingValues ->
-                Box(modifier = Modifier.fillMaxSize()) {
-                    NavDisplay<NavKey>(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = paddingValues.calculateTopPadding())
-                            .then(
-                                if (shouldShowBottomBar) Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                                else Modifier
-                            ),
-                        entries = rememberDecoratedNavEntries(
-                            backStack = backStack,
-                            entryProvider = entryProvider,
-                            entryDecorators = listOf(
-                                rememberSaveableStateHolderNavEntryDecorator(),
-                                rememberViewModelStoreNavEntryDecorator()
-                            )
-                        ),
-                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                    )
-
+                },
+                bottomBar = {
                     if (shouldShowBottomBar) {
                         SPBottomNavigation(
                             items = listOf(
@@ -713,12 +691,24 @@ fun AppNav(
                             ),
                             selectedIndex = selectedIndex,
                             onItemSelected = ::onBottomNavItemSelected,
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = paddingValues.calculateBottomPadding()),
                         )
                     }
                 }
+            ) { paddingValues ->
+                NavDisplay<NavKey>(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    entries = rememberDecoratedNavEntries(
+                        backStack = backStack,
+                        entryProvider = entryProvider,
+                        entryDecorators = listOf(
+                            rememberSaveableStateHolderNavEntryDecorator(),
+                            rememberViewModelStoreNavEntryDecorator()
+                        )
+                    ),
+                    onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                )
             }
         }
     }

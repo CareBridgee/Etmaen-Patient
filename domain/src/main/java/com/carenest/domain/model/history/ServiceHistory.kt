@@ -11,7 +11,8 @@ data class ServiceHistory(
     val nurseId: String?,
     val nurseName: String?,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val nurseProfileImageUrl: String? = null
 )
 
 data class PreferredTime(
