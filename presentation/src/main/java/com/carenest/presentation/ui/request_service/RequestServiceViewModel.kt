@@ -96,6 +96,7 @@ class RequestServiceViewModel @Inject constructor(
         when (intent) {
             is RequestServiceIntent.OnStart -> {
                 viewModelScope.launch {
+                    updateState { copy(isLoading = true, error = null) }
                     val currentUser = homeRepository.getUser().getOrNull()
                     // Fetch all available profiles (family members + self)
                     profileRepository.getProfiles().onSuccess { profiles ->
@@ -179,6 +180,7 @@ class RequestServiceViewModel @Inject constructor(
                                 }
                             }
                     }
+                    updateState { copy(isLoading = false) }
                 }
             }
 

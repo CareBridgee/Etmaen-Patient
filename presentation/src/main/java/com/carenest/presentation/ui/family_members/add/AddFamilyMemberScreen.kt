@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -56,6 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.carenest.designsystem.components.textfield.CustomTextField
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.validation.EgyptianPhoneNumberValidator
@@ -161,6 +163,11 @@ fun AddFamilyMemberContent(
         showLeadingIcon = true,
         onLeadingClick = { onEvent(AddFamilyMemberEvent.BackClicked) }
     )
+
+    if (state.isLoadingData) {
+        AddFamilyMemberLoadingShimmer()
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -341,6 +348,97 @@ fun AddFamilyMemberContent(
             continueEnabled = !state.isSubmitting && !state.isLoadingData && isInputValid,
             isLoading = state.isSubmitting
         )
+    }
+}
+
+@Composable
+private fun AddFamilyMemberLoadingShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround),
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    horizontal = Theme.spacing.space20,
+                    vertical = Theme.spacing.large,
+                ),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(Theme.colors.surface)
+                    .padding(Theme.spacing.large),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .fillMaxWidth(0.48f)
+                        .height(24.dp),
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                ShimmerPlaceholder(
+                    modifier = Modifier.size(104.dp),
+                    shape = CircleShape,
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+
+                repeat(4) { index ->
+                    ShimmerPlaceholder(
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .fillMaxWidth(if (index == 0) 0.36f else 0.48f)
+                            .height(14.dp),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (index == 1) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+                        ) {
+                            repeat(2) {
+                                ShimmerPlaceholder(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(52.dp),
+                                    shape = RoundedCornerShape(14.dp),
+                                )
+                            }
+                        }
+                    } else {
+                        ShimmerPlaceholder(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp),
+                            shape = RoundedCornerShape(14.dp),
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Theme.colors.surface)
+                .padding(Theme.spacing.space20),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        ) {
+            repeat(2) {
+                ShimmerPlaceholder(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                )
+            }
+        }
     }
 }
 

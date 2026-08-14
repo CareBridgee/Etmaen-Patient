@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +34,7 @@ import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.designsystem.R as RD
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 
 @Composable
 fun ServiceHistoryDetailsScreen(
@@ -67,10 +67,7 @@ fun ServiceHistoryDetailsScreen(
             .padding(top = Theme.size.large)
     ) {
         if (state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = Theme.colors.primary
-            )
+            ServiceHistoryDetailsLoadingShimmer()
         } else if (state.error != null) {
             Text(
                 text = state.error!!,
@@ -81,6 +78,82 @@ fun ServiceHistoryDetailsScreen(
         } else {
             state.serviceHistory?.let { history ->
                 ServiceHistoryDetailsContent(history)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ServiceHistoryDetailsLoadingShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = Theme.spacing.space20, vertical = Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.large),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(72.dp),
+                shape = CircleShape,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ShimmerPlaceholder(
+                modifier = Modifier
+                    .fillMaxWidth(0.62f)
+                    .height(28.dp),
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            ShimmerPlaceholder(
+                modifier = Modifier
+                    .width(96.dp)
+                    .height(28.dp),
+                shape = CircleShape,
+            )
+        }
+
+        repeat(3) { cardIndex ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = Theme.shapes.large,
+                colors = CardDefaults.cardColors(containerColor = Theme.colors.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(Theme.spacing.large),
+                    verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                ) {
+                    ShimmerPlaceholder(
+                        modifier = Modifier
+                            .fillMaxWidth(0.34f)
+                            .height(12.dp),
+                    )
+                    repeat(if (cardIndex == 0) 3 else 1) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                        ) {
+                            ShimmerPlaceholder(modifier = Modifier.size(40.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                ShimmerPlaceholder(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.38f)
+                                        .height(11.dp),
+                                )
+                                Spacer(modifier = Modifier.height(7.dp))
+                                ShimmerPlaceholder(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.72f)
+                                        .height(16.dp),
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

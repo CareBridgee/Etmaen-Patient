@@ -59,6 +59,7 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.designsystem.R as RD
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 
 @Composable
 fun ChoosePatientScreen(
@@ -105,7 +106,10 @@ fun ChoosePatientContent(
             .fillMaxSize()
             .background(Theme.colors.backGround)
     ) {
-        Column(
+        if (state.isLoading) {
+            ChoosePatientLoadingShimmer()
+        } else {
+            Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 88.dp)
@@ -165,16 +169,109 @@ fun ChoosePatientContent(
             Spacer(modifier = Modifier.height(32.dp))
         }
 
-        Box(
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 24.dp)
+            ) {
+                BottomCTA(
+                    onClick = { onEvent(ChoosePatientEvent.OnContinueClicked) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChoosePatientLoadingShimmer() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 88.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                )
+                ShimmerPlaceholder(
+                    modifier = Modifier
+                        .width(148.dp)
+                        .height(18.dp),
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            ShimmerPlaceholder(
+                modifier = Modifier
+                    .fillMaxWidth(0.62f)
+                    .height(34.dp),
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            ShimmerPlaceholder(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(15.dp),
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ShimmerPlaceholder(
+                modifier = Modifier
+                    .fillMaxWidth(0.82f)
+                    .height(15.dp),
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            repeat(3) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(24.dp),
+                    color = Theme.colors.surface,
+                    shadowElevation = 0.dp,
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        ShimmerPlaceholder(
+                            modifier = Modifier.size(64.dp),
+                            shape = CircleShape,
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            ShimmerPlaceholder(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.7f)
+                                    .height(18.dp),
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            ShimmerPlaceholder(
+                                modifier = Modifier
+                                    .width(72.dp)
+                                    .height(26.dp),
+                                shape = CircleShape,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+
+        ShimmerPlaceholder(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 24.dp)
-        ) {
-            BottomCTA(
-                onClick = { onEvent(ChoosePatientEvent.OnContinueClicked) }
-            )
-        }
+                .height(64.dp),
+            shape = RoundedCornerShape(32.dp),
+        )
     }
 }
 

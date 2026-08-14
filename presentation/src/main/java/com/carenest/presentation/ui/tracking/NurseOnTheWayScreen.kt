@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MedicalServices
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +36,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 import com.carenest.domain.model.tracking.NurseTrackingInfo
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.tracking.components.CancellationInfoBanner
@@ -101,7 +102,7 @@ fun NurseOnTheWayLanding(
         contentAlignment = Alignment.Center,
     ) {
         when {
-            state.isLoading -> CircularProgressIndicator(color = Theme.colors.primary)
+            state.isLoading -> NurseOnTheWayLoadingShimmer()
             state.nurseInfo != null -> NurseOnTheWayContent(
                 state = state,
                 nurseInfo = state.nurseInfo,
@@ -237,6 +238,76 @@ private fun Preview(){
         NurseOnTheWayLanding(
             state = NurseOnTheWayState(),
             onIntent = {},
+        )
+    }
+}
+
+@Composable
+private fun NurseOnTheWayLoadingShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ShimmerPlaceholder(
+            modifier = Modifier.size(84.dp),
+            shape = CircleShape,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth(0.58f)
+                .height(26.dp),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth(0.82f)
+                .height(15.dp),
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(58.dp),
+            shape = RoundedCornerShape(16.dp),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(184.dp),
+            shape = RoundedCornerShape(24.dp),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            repeat(2) {
+                ShimmerPlaceholder(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(96.dp),
+                    shape = RoundedCornerShape(20.dp),
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp),
         )
     }
 }
