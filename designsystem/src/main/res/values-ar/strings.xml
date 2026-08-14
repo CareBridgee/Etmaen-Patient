@@ -1,4 +1,14 @@
 <resources>
+    <string name="request_service_title">طلب خدمة</string>
+    <string name="request_service_fill_ai">املأ بالذكاء الاصطناعي</string>
+    <string name="request_service_patient_label">المريض</string>
+    <string name="request_service_edit_profile">تعديل الملف الشخصي</string>
+    <string name="request_service_chosen_service">الخدمة المختارة</string>
+    <string name="request_service_service_details">تفاصيل الخدمة</string>
+    <string name="request_service_change_service">تغيير</string>
+    <string name="request_service_situation_label">صف الحالة أو الأعراض</string>
+    <string name="request_service_situation_hint">مثال: الشعور بالجفاف بعد الإنفلونزا أو الحاجة إلى إعطاء محلول وريدي بشكل دوري…</string>
+    <string name="request_service_edit_address">تعديل العنوان</string>
     <string name="request_service_listening">جاري الاستماع…</string>
     <string name="permission_audio_title">مطلوب إذن الوصول إلى الميكروفون</string>
     <string name="permission_audio_rationale">يحتاج هذا التطبيق إلى الوصول إلى الميكروفون لاستخدام ميزة التعرف على الكلام لمساعدتك في كتابة الوصف.</string>
@@ -10,5 +20,18 @@
     <string name="payment_method_paymob_desc">ادفع بأمان باستخدام بطاقتك</string>
     <string name="request_service_success">تم تقديم الطلب بنجاح</string>
     <string name="request_service_no_address">لم يتم اختيار عنوان</string>
+    <string name="request_service_precise">موقع دقيق</string>
+    <string name="request_service_payment_method_label">اختر طريقة الدفع</string>
+    <string name="request_service_submit">إرسال الطلب</string>
+    <string name="request_service_when_needed">متى تحتاج إلى الخدمة؟</string>
+    <string name="request_service_date">التاريخ</string>
+    <string name="request_service_time">الوقت</string>
+    <string name="request_service_error_required_fields">يرجى استكمال جميع البيانات المطلوبة واختيار المريض.</string>
+    <string name="request_service_error_preferred_date">يرجى تحديد موعد احتياجك للخدمة.</string>
+    <string name="request_service_error_profile_sync">تعذر تحديث ملف المريض. يرجى المحاولة مرة أخرى.</string>
+    <string name="request_service_error_submit">تعذر إرسال طلبك. يرجى المحاولة مرة أخرى.</string>
+    <string name="request_service_speech_error">الإدخال الصوتي غير متاح حاليًا. يرجى المحاولة مرة أخرى.</string>
+    <string name="permission_allow">سماح</string>
+    <string name="permission_deny">ليس الآن</string>
     <string name="common_guest">زائر</string>
 </resources>

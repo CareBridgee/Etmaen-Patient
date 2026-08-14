@@ -123,6 +123,14 @@
     <string name="request_service_submit">Submit Request</string>
     <string name="request_service_success">Request submitted successfully</string>
     <string name="request_service_listening">Listening…</string>
+    <string name="request_service_when_needed">When do you need the service?</string>
+    <string name="request_service_date">Date</string>
+    <string name="request_service_time">Time</string>
+    <string name="request_service_error_required_fields">Please complete all required fields and select a patient.</string>
+    <string name="request_service_error_preferred_date">Please select when you need the service.</string>
+    <string name="request_service_error_profile_sync">We couldn\'t update the patient profile. Please try again.</string>
+    <string name="request_service_error_submit">We couldn\'t submit your request. Please try again.</string>
+    <string name="request_service_speech_error">Voice input isn\'t available right now. Please try again.</string>
 
     <!-- Common -->
     <string name="common_guest">Guest</string>
@@ -130,6 +138,8 @@
     <!-- Permissions -->
     <string name="permission_audio_title">Audio Permission Required</string>
     <string name="permission_audio_rationale">This app needs access to your microphone for speech recognition to help you fill the description.</string>
+    <string name="permission_allow">Allow</string>
+    <string name="permission_deny">Not now</string>
 </resources>
 
 
