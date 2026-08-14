@@ -104,7 +104,6 @@ class ProfileViewModelTest {
             ProfileEvent.OnPersonalInfoClicked to ProfileEffect.NavigateToPersonalInfo,
             ProfileEvent.OnHealthProfileClicked to ProfileEffect.NavigateToHealthProfile,
             ProfileEvent.OnFamilyMembersClicked to ProfileEffect.NavigateToFamilyMembers,
-            ProfileEvent.OnAddressesClicked to ProfileEffect.NavigateToAddresses,
             ProfileEvent.OnPaymentClicked to ProfileEffect.NavigateToPayment,
             ProfileEvent.OnSettingsClicked to ProfileEffect.NavigateToSettings
         )

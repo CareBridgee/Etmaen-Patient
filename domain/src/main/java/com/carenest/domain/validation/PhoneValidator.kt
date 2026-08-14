@@ -26,8 +26,8 @@ enum class SupportedPhoneCountry(
     );
 
     fun sanitize(input: String): String {
-        var digits = input.filter(Char::isDigit)
-        val dialDigits = dialCode.filter(Char::isDigit)
+        var digits = input.toAsciiDigits()
+        val dialDigits = dialCode.toAsciiDigits()
 
         if (digits.startsWith(dialDigits) && digits.length > nationalDigitLength) {
             digits = digits.drop(dialDigits.length)
@@ -39,15 +39,18 @@ enum class SupportedPhoneCountry(
         return digits.take(nationalDigitLength)
     }
 
-    fun validate(nationalDigits: String): PhoneNumberValidationError? = when {
-        nationalDigits.isBlank() -> PhoneNumberValidationError.Required
-        nationalDigits.length != nationalDigitLength -> PhoneNumberValidationError.InvalidLength
-        !mobileRegex.matches(nationalDigits) -> PhoneNumberValidationError.InvalidFormat
-        else -> null
+    fun validate(nationalDigits: String): PhoneNumberValidationError? {
+        val digits = nationalDigits.toAsciiDigits()
+        return when {
+            digits.isBlank() -> PhoneNumberValidationError.Required
+            digits.length != nationalDigitLength -> PhoneNumberValidationError.InvalidLength
+            !mobileRegex.matches(digits) -> PhoneNumberValidationError.InvalidFormat
+            else -> null
+        }
     }
 
     fun format(nationalDigits: String): String {
-        val digits = nationalDigits.filter(Char::isDigit).take(nationalDigitLength)
+        val digits = nationalDigits.toAsciiDigits().take(nationalDigitLength)
         var offset = 0
         return buildList {
             groupSizes.forEach { groupSize ->
@@ -59,7 +62,8 @@ enum class SupportedPhoneCountry(
         }.joinToString(" ")
     }
 
-    fun toInternationalNumber(nationalDigits: String): String = dialCode + nationalDigits
+    fun toInternationalNumber(nationalDigits: String): String =
+        dialCode + nationalDigits.toAsciiDigits().take(nationalDigitLength)
 }
 
 object PhoneValidator {
@@ -79,14 +83,13 @@ object PhoneValidator {
     ): String = country.toInternationalNumber(nationalDigits)
 
     fun detectCountry(input: String): SupportedPhoneCountry? {
-        val digits = input.filter(Char::isDigit)
+        val digits = input.toAsciiDigits()
         return SupportedPhoneCountry.entries.firstOrNull { supportedCountry ->
-            digits.startsWith(supportedCountry.dialCode.filter(Char::isDigit))
+            digits.startsWith(supportedCountry.dialCode.toAsciiDigits())
         } ?: SupportedPhoneCountry.EGYPT.takeIf { digits.startsWith('0') }
     }
 
     fun formatInternationalNumber(input: String): String {
-        val digits = input.filter(Char::isDigit)
         val country = detectCountry(input) ?: return input
         val nationalDigits = country.sanitize(input)
 
@@ -94,10 +97,15 @@ object PhoneValidator {
     }
 
     fun normalizeInternationalNumber(input: String): String? {
-        val digits = input.filter(Char::isDigit)
         val country = detectCountry(input) ?: return null
         val nationalDigits = country.sanitize(input)
         return country.toInternationalNumber(nationalDigits)
             .takeIf { country.validate(nationalDigits) == null }
+    }
+}
+
+private fun String.toAsciiDigits(): String = buildString {
+    this@toAsciiDigits.forEach { char ->
+        char.digitToIntOrNull()?.let { append(it.digitToChar()) }
     }
 }

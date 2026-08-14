@@ -41,7 +41,6 @@ class ProfileViewModel @Inject constructor(
             ProfileEvent.OnPersonalInfoClicked -> sendEffect(ProfileEffect.NavigateToPersonalInfo)
             ProfileEvent.OnHealthProfileClicked -> sendEffect(ProfileEffect.NavigateToHealthProfile)
             ProfileEvent.OnFamilyMembersClicked -> sendEffect(ProfileEffect.NavigateToFamilyMembers)
-            ProfileEvent.OnAddressesClicked -> sendEffect(ProfileEffect.NavigateToAddresses)
             ProfileEvent.OnPaymentClicked -> sendEffect(ProfileEffect.NavigateToPayment)
             ProfileEvent.OnSettingsClicked -> sendEffect(ProfileEffect.NavigateToSettings)
             ProfileEvent.OnLogoutClicked -> performLogout()

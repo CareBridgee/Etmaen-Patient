@@ -12,8 +12,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.carenest.designsystem.theme.Theme
+import com.carenest.presentation.R
 
 @Composable
 fun NotificationPermissionHandler(
@@ -47,21 +50,41 @@ fun NotificationPermissionHandler(
     if (showRationale) {
         AlertDialog(
             onDismissRequest = onRationaleDismissed,
-            title = { Text("Notification Permission Required") },
-            text = { Text("This app needs notification permissions to show background service status for real-time updates.") },
+            title = {
+                Text(
+                    text = stringResource(R.string.notification_permission_title),
+                    style = Theme.typography.title,
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.notification_permission_rationale),
+                    style = Theme.typography.body.medium,
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     launcher.launch(permission)
                     onRationaleDismissed()
                 }) {
-                    Text("Allow")
+                    Text(
+                        text = stringResource(R.string.notification_permission_allow),
+                        color = Theme.colors.primary,
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = onRationaleDismissed) {
-                    Text("Deny")
+                    Text(
+                        text = stringResource(R.string.notification_permission_deny),
+                        color = Theme.colors.secondaryFont,
+                    )
                 }
-            }
+            },
+            shape = Theme.shapes.large,
+            containerColor = Theme.colors.surface,
+            titleContentColor = Theme.colors.primaryFont,
+            textContentColor = Theme.colors.secondaryFont,
         )
     } else {
         LaunchedEffect(Unit) {

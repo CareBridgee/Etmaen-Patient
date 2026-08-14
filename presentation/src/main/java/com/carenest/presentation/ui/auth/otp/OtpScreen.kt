@@ -80,6 +80,9 @@ internal fun OtpScreenContent(
     state: OtpState,
     onEvent: (OtpIntent) -> Unit
 ) {
+    val formattedPhoneNumber = PhoneValidator.formatInternationalNumber(state.phoneNumber)
+    val leftToRightPhoneNumber = "\u2066$formattedPhoneNumber\u2069"
+
     ScreenTopBar(
         title = stringResource(R.string.otp_app_name),
         showLeadingIcon = true,
@@ -179,7 +182,7 @@ internal fun OtpScreenContent(
             BasicText(
                 text = stringResource(
                     R.string.otp_subtitle,
-                    PhoneValidator.formatInternationalNumber(state.phoneNumber)
+                    leftToRightPhoneNumber
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = Theme.typography.body.large.copy(

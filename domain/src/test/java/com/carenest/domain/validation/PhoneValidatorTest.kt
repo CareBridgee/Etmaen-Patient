@@ -19,6 +19,19 @@ class PhoneValidatorTest {
     }
 
     @Test
+    fun arabicIndicDigitsAreNormalizedBeforeValidationAndDisplay() {
+        val country = SupportedPhoneCountry.EGYPT
+
+        assertEquals("1027642749", PhoneValidator.sanitize("٠١٠٢٧٦٤٢٧٤٩", country))
+        assertNull(PhoneValidator.validate("١٠٢٧٦٤٢٧٤٩", country))
+        assertEquals("+201027642749", PhoneValidator.toInternationalNumber("١٠٢٧٦٤٢٧٤٩", country))
+        assertEquals(
+            "+20 102 764 2749",
+            PhoneValidator.formatInternationalNumber("+٢٠ ١٠٢ ٧٦٤ ٢٧٤٩")
+        )
+    }
+
+    @Test
     fun egypt_rejectsWrongLengthsAndPrefixes() {
         val country = SupportedPhoneCountry.EGYPT
 

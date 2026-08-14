@@ -182,8 +182,8 @@
   <string name="phone_input_feature_instant_sms">رسائل SMS فورية</string>
   <string name="phone_input_feature_verified_private">خصوصية موثوقة</string>
   <string name="services_greeting">صباح الخير</string>
-  <string name="services_greeting_subtitle">ابحثي عن الرعاية التي تحتاجينها اليوم</string>
-  <string name="services_search_hint">ابحثي عن خدمة (مثال: حقن)</string>
+  <string name="services_greeting_subtitle">ابحث عن الرعاية التي تحتاجها اليوم</string>
+  <string name="services_search_hint">ابحث عن خدمة (مثال: حقن)</string>
   <string name="services_categories_title">فئات الخدمات</string>
   <string name="services_categories_subtitle">رعاية متخصصة تصلك حتى باب المنزل</string>
   <string name="services_general_nursing">التمريض العام</string>
@@ -272,8 +272,6 @@
   <string name="profile_health_profile_subtitle">السجل الطبي والمستندات</string>
   <string name="profile_family_members_title">أفراد العائلة</string>
   <string name="profile_family_members_subtitle">إدارة المعالين (%1$d نشط)</string>
-  <string name="profile_addresses_title">العناوين</string>
-  <string name="profile_addresses_subtitle">مواقع المنزل والرعاية</string>
   <string name="profile_payment_title">الدفع</string>
   <string name="profile_payment_subtitle">فيزا تنتهي بـ ••42</string>
   <string name="profile_settings_title">الإعدادات</string>
@@ -523,6 +521,11 @@
   <string name="profile_load_error_description">يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.</string>
   <string name="retry">إعادة المحاولة</string>
   <string name="profile_notifications_unavailable">الإشعارات غير متاحة في هذا الإصدار.</string>
+  <string name="notification_permission_title">تفعيل الإشعارات</string>
+  <string name="notification_permission_rationale">اسمح بالإشعارات لتصلك تحديثات مباشرة عن طلبات الرعاية وحالة الخدمة في الخلفية.</string>
+  <string name="notification_permission_allow">السماح بالإشعارات</string>
+  <string name="notification_permission_deny">ليس الآن</string>
+  <string name="notifications_disabled_message">الإشعارات متوقفة. فعّلها لتصلك تحديثات الخدمة مباشرة.</string>
   <string name="profile_avatar_updated">تم تحديث صورة الملف الشخصي.</string>
   <string name="profile_avatar_update_failed">تعذر تحديث صورة الملف الشخصي.</string>
   <string name="profile_logout_failed">تعذر تسجيل الخروج. حاول مرة أخرى.</string>

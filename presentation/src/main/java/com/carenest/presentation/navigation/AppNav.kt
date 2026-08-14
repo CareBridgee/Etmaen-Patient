@@ -115,6 +115,7 @@ fun AppNav(
         val coroutineScope = rememberCoroutineScope()
         
         var showNotificationRationale by remember { mutableStateOf(false) }
+        val notificationsDisabledMessage = stringResource(R.string.notifications_disabled_message)
 
         if (mainState.isLoggedIn) {
             com.carenest.presentation.util.NotificationPermissionHandler(
@@ -127,7 +128,7 @@ fun AppNav(
                 showRationale = showNotificationRationale,
                 onRationaleDismissed = {
                     showNotificationRationale = false
-                    coroutineScope.launch { snackbarHostState.showSnackbar("Notifications are disabled. The app needs this to show background service status.") }
+                    coroutineScope.launch { snackbarHostState.showSnackbar(notificationsDisabledMessage) }
                 }
             )
         }

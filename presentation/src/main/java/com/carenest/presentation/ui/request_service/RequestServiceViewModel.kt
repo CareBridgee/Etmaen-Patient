@@ -237,14 +237,14 @@ class RequestServiceViewModel @Inject constructor(
         ) {
             sendEffect(
                 RequestServiceEffect.ShowError(
-                    "Please fill all required fields and select a patient"
+                    RequestServiceUiError.RequiredFields.messageRes
                 )
             )
             return
         }
 
         if (currentState.preferredDate.isBlank()) {
-            sendEffect(RequestServiceEffect.ShowError("Please select a preferred date"))
+            sendEffect(RequestServiceEffect.ShowError(RequestServiceUiError.PreferredDate.messageRes))
             return
         }
 
@@ -263,11 +263,11 @@ class RequestServiceViewModel @Inject constructor(
                     profileImageUrl = patient.profileImageUrl,
                 )
                 profileRepository.updatePersonalInfo(profileId, primaryProfileUpdate)
-                    .onFailure { error ->
+                    .onFailure {
                         updateState { copy(isSubmitting = false) }
                         sendEffect(
                             RequestServiceEffect.ShowError(
-                                error.message ?: "Failed to sync patient profile"
+                                RequestServiceUiError.ProfileSync.messageRes
                             )
                         )
                         return@launch
@@ -300,9 +300,9 @@ class RequestServiceViewModel @Inject constructor(
                         serviceRequestId = result.serviceRequestId
                     )
                 )
-            }.onFailure { error ->
+            }.onFailure {
                 updateState { copy(isSubmitting = false) }
-                sendEffect(RequestServiceEffect.ShowError(error.message ?: "Failed to submit request"))
+                sendEffect(RequestServiceEffect.ShowError(RequestServiceUiError.Submit.messageRes))
             }
         }
     }

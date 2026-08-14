@@ -36,12 +36,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.R
@@ -95,15 +93,11 @@ fun SPBottomNavigation(
                 .background(containerColor),
         ) {
             val itemWidth = maxWidth / items.size
-            val layoutDirection = LocalLayoutDirection.current
             val boundedSelectedIndex = selectedIndex.coerceIn(items.indices)
-            val visualSelectedIndex = if (layoutDirection == LayoutDirection.Rtl) {
-                items.lastIndex - boundedSelectedIndex
-            } else {
-                boundedSelectedIndex
-            }
             val indicatorOffset by animateDpAsState(
-                targetValue = itemWidth * visualSelectedIndex,
+                // Modifier.offset is relative to the current layout direction, so the
+                // same logical index works for both LTR and RTL layouts.
+                targetValue = itemWidth * boundedSelectedIndex,
                 animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
                 label = "bottomNavIndicatorOffset",
             )
