@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,15 +39,10 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.onBoarding.components.OnBoardingCard
-import com.carenest.presentation.ui.onBoarding.components.OnBoardingCard
 import com.carenest.presentation.ui.onBoarding.components.OnBoardingPageIndicator
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.HideTopBar
-
-import android.Manifest
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import com.carenest.presentation.util.NotificationPermissionHandler
 
 @Composable
 fun OnBoardingScreen(
@@ -52,24 +50,26 @@ fun OnBoardingScreen(
     viewModel: OnBoardingViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { _ -> onNavigateToHome() }
-    )
-
-    fun handleComplete() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            onNavigateToHome()
-        }
-    }
+    var showPermissionHandler by remember { mutableStateOf(false) }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            OnBoardingEffect.NavigateToHome -> handleComplete()
+            OnBoardingEffect.NavigateToHome -> {
+                showPermissionHandler = true
+            }
         }
+    }
+
+    if (showPermissionHandler) {
+        NotificationPermissionHandler(
+            onPermissionGranted = {
+                showPermissionHandler = false
+                onNavigateToHome()
+            },
+            onPermissionDenied = {
+                // Permission is mandatory; do not proceed to home until granted
+            }
+        )
     }
 
     OnBoardingContent(

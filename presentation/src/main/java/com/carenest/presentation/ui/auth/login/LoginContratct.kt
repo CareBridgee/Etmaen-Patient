@@ -14,6 +14,7 @@ sealed interface LoginIntent {
     data object BackClicked : LoginIntent
     data class GoogleSignInClicked(val idToken: String) : LoginIntent
     data class GoogleSignInFailed(val error: String) : LoginIntent
+    data object DismissErrorDialog : LoginIntent
 }
 
 enum class LoginStep {
@@ -49,6 +50,7 @@ data class LoginState(
     val isLoading: Boolean = false,
     val phoneValidationError: PhoneNumberValidationError? = null,
     val errorMessage: AuthUiError? = null,
+    val errorAlertMessage: String? = null,
     val pendingToken: String? = null,
     val email: String? = null,
     val firstName: String? = null,

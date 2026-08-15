@@ -3,6 +3,19 @@ package com.carenest.presentation.navigation
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
@@ -105,22 +119,18 @@ fun AppNav(
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
-        
-        var showNotificationRationale by remember { mutableStateOf(false) }
-        val notificationsDisabledMessage = stringResource(R.string.notifications_disabled_message)
 
-        if (mainState.isLoggedIn) {
+        var showLoginNotificationPermissionHandler by rememberSaveable(mainState.isLoggedIn) {
+            mutableStateOf(true)
+        }
+
+        if (mainState.isLoggedIn && showLoginNotificationPermissionHandler) {
             com.carenest.presentation.util.NotificationPermissionHandler(
                 onPermissionGranted = {
-                    showNotificationRationale = false
+                    showLoginNotificationPermissionHandler = false
                 },
                 onPermissionDenied = {
-                    showNotificationRationale = true
-                },
-                showRationale = showNotificationRationale,
-                onRationaleDismissed = {
-                    showNotificationRationale = false
-                    coroutineScope.launch { snackbarHostState.showSnackbar(notificationsDisabledMessage) }
+                    // Notification permission is required; do not dismiss until granted
                 }
             )
         }
@@ -727,6 +737,19 @@ fun AppNav(
                         )
                     ),
                     onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    transitionSpec = {
+                        (slideInHorizontally(
+                            initialOffsetX = { width -> (width * 0.15f).toInt() },
+                            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
+                        ) + fadeIn(
+                            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+                        )) togetherWith (slideOutHorizontally(
+                            targetOffsetX = { width -> (-width * 0.15f).toInt() },
+                            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
+                        ) + fadeOut(
+                            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+                        ))
+                    }
                 )
             }
         }

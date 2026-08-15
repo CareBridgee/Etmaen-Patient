@@ -78,7 +78,15 @@ class LoginViewModel @Inject constructor(
 
             is LoginIntent.GoogleSignInClicked -> handleGoogleSignIn(event.idToken)
             is LoginIntent.GoogleSignInFailed -> {
-                updateState { copy(errorMessage = AuthUiError.GoogleSignInFailed) }
+                updateState {
+                    copy(
+                        errorMessage = AuthUiError.GoogleSignInFailed,
+                        errorAlertMessage = event.error.takeIf { it.isNotBlank() }
+                    )
+                }
+            }
+            LoginIntent.DismissErrorDialog -> {
+                updateState { copy(errorMessage = null, errorAlertMessage = null) }
             }
         }
     }
@@ -90,7 +98,8 @@ class LoginViewModel @Inject constructor(
                     currentStep = LoginStep.LANDING,
                     phoneNumber = "",
                     phoneValidationError = null,
-                    errorMessage = null
+                    errorMessage = null,
+                    errorAlertMessage = null
                 )
             }
 
@@ -104,7 +113,7 @@ class LoginViewModel @Inject constructor(
         if (currentState.isLoading) return
         
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isLoading = true, errorMessage = null, errorAlertMessage = null) }
             
             val result = loginWithGoogleUseCase(idToken)
             updateState { copy(isLoading = false) }
@@ -132,7 +141,10 @@ class LoginViewModel @Inject constructor(
                 onFailure = { error ->
                     Log.e(TAG, "handleGoogleSignIn failed: ${error.message}", error)
                     updateState {
-                        copy(errorMessage = error.toAuthUiError(AuthUiError.GoogleSignInFailed))
+                        copy(
+                            errorMessage = error.toAuthUiError(AuthUiError.GoogleSignInFailed),
+                            errorAlertMessage = error.message?.takeIf { it.isNotBlank() }
+                        )
                     }
                 }
             )
@@ -147,7 +159,7 @@ class LoginViewModel @Inject constructor(
             currentState.selectedCountry.phoneConfig
         )
         if (validationError != null) {
-            updateState { copy(phoneValidationError = validationError, errorMessage = null) }
+            updateState { copy(phoneValidationError = validationError, errorMessage = null, errorAlertMessage = null) }
             return
         }
 
@@ -158,7 +170,7 @@ class LoginViewModel @Inject constructor(
             )
             Log.d(TAG, "requestOtp: $fullPhoneNumber")
 
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isLoading = true, errorMessage = null, errorAlertMessage = null) }
 
             val result = requestDevOtpUseCase(fullPhoneNumber)
             
@@ -180,7 +192,8 @@ class LoginViewModel @Inject constructor(
                     Log.e(TAG, "requestOtp failed: ${error.message}", error)
                     updateState {
                         copy(
-                            errorMessage = error.toAuthUiError(AuthUiError.SendCodeFailed)
+                            errorMessage = error.toAuthUiError(AuthUiError.SendCodeFailed),
+                            errorAlertMessage = error.message?.takeIf { it.isNotBlank() }
                         )
                     }
                 }

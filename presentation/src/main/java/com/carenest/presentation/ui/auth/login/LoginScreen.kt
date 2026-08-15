@@ -6,11 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.stringResource
+import com.carenest.designsystem.components.dialog.CareNestDialog
 import com.carenest.designsystem.theme.SpTheme
+import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.R
+import com.carenest.presentation.ui.auth.localizedMessage
 
 import com.carenest.presentation.ui.auth.login.components.AuthLandingScreen
 import com.carenest.presentation.ui.auth.login.components.PhoneInputScreen
@@ -41,6 +44,20 @@ internal fun LoginScreenContent(
     state: LoginState,
     onEvent: (LoginIntent) -> Unit
 ) {
+    val errorMessage = state.errorAlertMessage ?: state.errorMessage?.localizedMessage()
+
+    if (errorMessage != null) {
+        CareNestDialog(
+            title = stringResource(R.string.home_error_title),
+            message = errorMessage,
+            confirmText = stringResource(R.string.ok),
+            onConfirm = { onEvent(LoginIntent.DismissErrorDialog) },
+            onDismiss = { onEvent(LoginIntent.DismissErrorDialog) },
+            dismissText = null,
+            confirmColor = Theme.colors.primary,
+        )
+    }
+
     when (state.currentStep) {
         LoginStep.LANDING -> {
             HideTopBar()
