@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +45,7 @@ import com.carenest.designsystem.R as DR
 import com.carenest.presentation.navigation.HideTopBar
 
 @Composable
-fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
+fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false) {
     val context = LocalContext.current
     
     val googleSignInClient = remember {
@@ -111,8 +112,6 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
     ) {
         HideTopBar()
 
-        val primaryColor = Theme.colors.primary
-        
 
         Column(
             modifier = Modifier
@@ -211,6 +210,16 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit) {
             }
             
             Spacer(modifier = Modifier.height(32.dp))
+        }
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.colors.backGround.copy(alpha = 0.6f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Theme.colors.primary)
+            }
         }
     }
 }

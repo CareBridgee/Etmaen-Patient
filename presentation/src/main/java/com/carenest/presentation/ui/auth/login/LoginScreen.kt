@@ -44,7 +44,7 @@ internal fun LoginScreenContent(
     when (state.currentStep) {
         LoginStep.LANDING -> {
             HideTopBar()
-            AuthLandingScreen(onEvent)
+            AuthLandingScreen(onEvent, state.isLoading)
         }
         LoginStep.PHONE_INPUT -> {
             ScreenTopBar(
