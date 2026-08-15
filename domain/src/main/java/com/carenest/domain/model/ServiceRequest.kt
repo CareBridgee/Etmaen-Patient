@@ -29,6 +29,9 @@ data class CreateServiceRequestParams(
     val serviceTypeId: String,
     val latitude: Double,
     val longitude: Double,
+    val address: String,
+    val district: String,
+    val apartment: String,
     val preferredDate: String,      // "yyyy-MM-dd"
     val preferredTime: PreferredTime,
     val serviceDescription: String,

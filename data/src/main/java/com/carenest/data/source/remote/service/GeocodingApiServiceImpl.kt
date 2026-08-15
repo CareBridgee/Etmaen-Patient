@@ -38,4 +38,24 @@ class GeocodingApiServiceImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun forwardGeocode(query: String): Result<List<ReverseGeocodeResponse>> {
+        return try {
+            val response = httpClient.get {
+                url("https://us1.locationiq.com/v1/search")
+                parameter("key", BuildConfig.location_iq_token)
+                parameter("q", query)
+                parameter("format", "json")
+            }
+
+            if (response.status.isSuccess()) {
+                val body = response.body<List<ReverseGeocodeResponse>>()
+                Result.success(body)
+            } else {
+                Result.failure(Exception("LocationIQ search API error: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

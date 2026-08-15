@@ -37,9 +37,6 @@ import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.domain.model.LocationDetails
 
-// Default location: Cairo, Egypt
-private const val DEFAULT_LATITUDE = 30.0444
-private const val DEFAULT_LONGITUDE = 31.2357
 private const val DEFAULT_ZOOM = 13
 
 private fun buildMapSnapshotUrl(latitude: Double, longitude: Double): String {
@@ -65,6 +62,9 @@ fun AddressSection(
             .clip(Theme.shapes.medium)
             .background(Theme.colors.backGround)
     ) {
+        val lat = location?.latitude
+        val lon = location?.longitude
+        
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,44 +73,61 @@ fun AddressSection(
                 .noRippleClickable(onClick = onMapClick),
             contentAlignment = Alignment.Center
         ) {
-            val lat = location?.latitude ?: DEFAULT_LATITUDE
-            val lon = location?.longitude ?: DEFAULT_LONGITUDE
-            val mapSnapshotUrl = remember(lat, lon) { buildMapSnapshotUrl(lat, lon) }
+            if (lat != null && lon != null) {
+                val mapSnapshotUrl = remember(lat, lon) { buildMapSnapshotUrl(lat, lon) }
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(mapSnapshotUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Crop
-            )
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(mapSnapshotUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(Theme.spacing.medium)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Theme.colors.primaryVariant)
-                    .padding(horizontal = Theme.spacing.small, vertical = 6.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(Theme.spacing.medium)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Theme.colors.primaryVariant)
+                        .padding(horizontal = Theme.spacing.small, vertical = 6.dp)
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_location),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        BasicText(
+                            text = stringResource(id = R.string.request_service_precise),
+                            style = Theme.typography.body.medium.copy(
+                                color = Color.White, 
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        )
+                    }
+                }
+            } else {
+                // Empty state for map preview
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_location),
                         contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
+                        tint = Theme.colors.secondaryFont,
+                        modifier = Modifier.size(36.dp).padding(bottom = 8.dp)
                     )
                     BasicText(
-                        text = stringResource(id = R.string.request_service_precise),
+                        text = stringResource(id = R.string.request_service_no_address),
                         style = Theme.typography.body.medium.copy(
-                            color = Color.White, 
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            color = Theme.colors.secondaryFont,
+                            fontWeight = FontWeight.Medium,
                         )
                     )
                 }
@@ -174,8 +191,9 @@ private fun AddressSectionPreview() {
                     address = "Cairo, Egypt",
                     apartment = "Downtown Cairo",
                     district = "Cairo Governorate",
-                    latitude = DEFAULT_LATITUDE,
-                    longitude = DEFAULT_LONGITUDE,
+                    city = "Cairo",
+                    latitude = 30.0444,
+                    longitude = 31.2357,
                 ),
                 onEditClick = {},
                 onMapClick = {}

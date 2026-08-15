@@ -34,6 +34,7 @@ object NavigationConfig {
             serializableSubclass(AppRoute.ChoosePatient::class)
             serializableSubclass(AppRoute.RequestService::class)
             serializableSubclass(AppRoute.Map::class)
+            serializableSubclass(AppRoute.ManualAddress::class)
             serializableSubclass(AppRoute.SearchForNurse::class)
             serializableSubclass(AppRoute.AIChat::class)
             serializableSubclass(AppRoute.EmergencyAssistance::class)

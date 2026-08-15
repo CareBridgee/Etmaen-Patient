@@ -32,6 +32,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -71,6 +72,8 @@ import com.mapbox.maps.viewannotation.viewAnnotationOptions
 @SuppressLint("MissingPermission")
 @Composable
 fun MapScreen(
+    initialLatitude: Double? = null,
+    initialLongitude: Double? = null,
     onLocationConfirmed: (LocationDetails) -> Unit,
     onBack: () -> Unit,
     viewModel: MapViewModel = hiltViewModel(),
@@ -79,20 +82,32 @@ fun MapScreen(
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
-    // Default location: Cairo
-    val defaultPoint = Point.fromLngLat(31.2357, 30.0444)
     var cameraOptions by remember {
         mutableStateOf(
-            CameraOptions.Builder()
-                .center(defaultPoint)
-                .zoom(12.0)
-                .build()
+            if (initialLatitude != null && initialLongitude != null) {
+                CameraOptions.Builder()
+                    .center(Point.fromLngLat(initialLongitude, initialLatitude))
+                    .zoom(15.0)
+                    .build()
+            } else {
+                CameraOptions.Builder()
+                    .center(Point.fromLngLat(31.2357, 30.0444)) // Default to Cairo
+                    .zoom(10.0)
+                    .build()
+            }
         )
     }
     var flyToTrigger by remember { mutableLongStateOf(0L) }
 
     var showLocationPermissionHandler by remember { mutableStateOf(false) }
     var showLocationRationale by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        if (initialLatitude != null && initialLongitude != null) {
+            val initialPoint = Point.fromLngLat(initialLongitude, initialLatitude)
+            viewModel.onIntent(MapIntent.OnMapTapped(initialPoint))
+        }
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
