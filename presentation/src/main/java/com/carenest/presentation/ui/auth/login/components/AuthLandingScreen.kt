@@ -177,7 +177,11 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
                 SocialButton(
                     caption = stringResource(R.string.auth_continue_google),
                     iconPainter = painterResource(id = DR.drawable.ic_google),
-                    onClick = { launcher.launch(googleSignInClient.signInIntent) },
+                    onClick = {
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            launcher.launch(googleSignInClient.signInIntent)
+                        }
+                    },
                     backgroundColor = Theme.colors.backGround,
                     contentColor = Theme.colors.primaryFont,
                     borderColor = Theme.colors.hint.copy(alpha = 0.3f)
