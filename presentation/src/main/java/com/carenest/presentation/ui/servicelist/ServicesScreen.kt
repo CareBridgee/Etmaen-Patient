@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
@@ -97,7 +98,7 @@ internal fun ServicesScreenContent(
         ),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {
-        item { GreetingHeader(userName = state.userName) }
+        item { GreetingHeader(userName = state.userName, userImage = state.userImageUrl) }
         item {
             CustomTextField(
                 text = state.searchQuery,
@@ -160,7 +161,7 @@ internal fun ServicesScreenContent(
 }
 
 @Composable
-private fun GreetingHeader(userName: String) {
+private fun GreetingHeader(userName: String, userImage: String?) {
     val greeting = rememberTimeBasedGreeting(userName)
 
     Row(
@@ -175,11 +176,11 @@ private fun GreetingHeader(userName: String) {
                 .border(1.dp, Theme.colors.primaryVariant, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Box(
-                Modifier
-                    .size(4.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primaryVariant),
+            AsyncImage(
+                model = userImage,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                placeholder = painterResource(RD.drawable.ic_profile)
             )
         }
         Column {
