@@ -60,11 +60,11 @@ import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 
 import android.widget.Toast
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 import androidx.compose.ui.platform.LocalContext
 import com.carenest.designsystem.components.dialog.CareNestDialog
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 
 @Composable
 fun FamilyMembersScreen(
@@ -149,14 +149,11 @@ fun FamilyMembersContent(
 
         when {
             state.isLoading && state.members.isEmpty() -> {
-                Box(
+                FamilyMembersLoadingShimmer(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Theme.colors.primary)
-                }
+                        .weight(1f)
+                )
             }
             state.loadFailed -> {
                 FamilyMembersLoadError(
@@ -212,6 +209,68 @@ fun FamilyMembersContent(
                     Spacer(modifier = Modifier.height(32.dp))
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun FamilyMembersLoadingShimmer(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp),
+    ) {
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth(0.58f)
+                .height(34.dp),
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .height(16.dp),
+        )
+        Spacer(modifier = Modifier.height(28.dp))
+
+        repeat(3) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                color = Theme.colors.surface,
+                shadowElevation = 0.dp,
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        ShimmerPlaceholder(
+                            modifier = Modifier.size(60.dp),
+                            shape = CircleShape,
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            ShimmerPlaceholder(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.68f)
+                                    .height(18.dp),
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            ShimmerPlaceholder(
+                                modifier = Modifier
+                                    .width(74.dp)
+                                    .height(24.dp),
+                                shape = CircleShape,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(46.dp),
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

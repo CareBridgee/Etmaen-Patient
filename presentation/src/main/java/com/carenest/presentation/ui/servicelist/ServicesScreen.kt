@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,7 +48,6 @@ import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.HideTopBar
 import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
-import com.carenest.designsystem.R as RD
 import com.carenest.presentation.ui.servicelist.components.ServicesShimmerLoading
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
@@ -234,17 +232,10 @@ private fun CategoryColumn(
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(Theme.spacing.space12)) {
         items.forEach { (service, height) ->
-            val iconRes = when (service.iconResName) {
-                "ic_syringe" -> RD.drawable.ic_syringe
-                "ic_pill" -> RD.drawable.ic_pill
-                "ic_physical_therapy" -> RD.drawable.ic_physical_therapy
-                "ic_services" -> RD.drawable.ic_services
-                else -> RD.drawable.ic_heart_beat
-            }
             ServiceCategoryCard(
                 title = service.name,
-                subtitle = "Professional care", // Fallback generic subtitle
-                icon = painterResource(id = iconRes),
+                subtitle = service.description,
+                icon = service.iconResName,
                 height = height,
                 onClick = { onCategoryClick(service) },
             )

@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +32,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 import com.carenest.domain.model.visit_summary.VisitSummary
 import com.carenest.presentation.R
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -68,7 +68,7 @@ fun VisitCompletedScreen(
         contentAlignment = Alignment.Center,
     ) {
         when {
-            state.isLoading -> CircularProgressIndicator(color = Theme.colors.primary)
+            state.isLoading -> VisitCompletedLoadingShimmer()
             state.summary != null -> VisitCompletedContent(
                 summary = state.summary ?: VisitSummary(
                     requestId = "",
@@ -198,5 +198,54 @@ private fun Preview() {
                 totalAmount = 85.0,
                 isVerified = true,
             ), onIntent = {})
+    }
+}
+
+@Composable
+private fun VisitCompletedLoadingShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = Theme.spacing.space20, vertical = Theme.spacing.extraLarge),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ShimmerPlaceholder(
+            modifier = Modifier.size(90.dp),
+            shape = CircleShape,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth(0.58f)
+                .height(28.dp),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth(0.78f)
+                .height(15.dp),
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(248.dp),
+            shape = RoundedCornerShape(24.dp),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(82.dp),
+            shape = RoundedCornerShape(20.dp),
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        ShimmerPlaceholder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+        )
     }
 }

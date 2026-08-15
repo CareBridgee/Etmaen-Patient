@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.emptystate.EmptyState
+import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
@@ -119,7 +119,10 @@ private fun QrCodeScreenContent(
             contentAlignment = Alignment.Center
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator(color = Theme.colors.primary)
+                ShimmerPlaceholder(
+                    modifier = Modifier.fillMaxSize(),
+                    shape = RoundedCornerShape(12.dp),
+                )
             } else if (state.error != null) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
