@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.carenest.designsystem.R as RD
 import com.carenest.designsystem.components.emptystate.EmptyState
 import com.carenest.designsystem.components.textfield.CustomTextField
 import com.carenest.designsystem.theme.SpTheme
