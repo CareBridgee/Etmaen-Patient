@@ -526,27 +526,6 @@ fun AppNav(
                     )
                 }
 
-//                entry<AppRoute.AddFamilyMember> { route ->
-//                    AddFamilyMemberScreenRoute(
-//                        memberId = route.memberId,
-//                        onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-//                        onMemberSaved = {
-//                            familyMembersReloadTrigger += 1
-//                            requestServiceReloadTrigger += 1
-//                        },
-//                        onNavigateToCompleteProfile = { newMemberId ->
-//                            backStack.add(
-//                                AppRoute.ProfileCompletion(
-//                                    profileId = newMemberId,
-//                                    isEditMode = false,
-//                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
-//                                )
-//                            )
-//                        },
-//                        onShowMessage = onShowSnackbar
-//                    )
-//                }
-
                 entry<AppRoute.AddFamilyMember> { route ->
                     AddFamilyMemberScreenRoute(
                         memberId = route.memberId,
