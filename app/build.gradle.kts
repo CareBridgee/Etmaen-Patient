@@ -13,12 +13,17 @@ android {
     namespace = "com.carenest"
     compileSdk = 37
 
+    val customKeystore = rootProject.file("debug.keystore").takeIf { it.exists() }
+        ?: file("debug.keystore").takeIf { it.exists() }
+
     signingConfigs {
-        create("debugShared") {
-            storeFile = file("debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+        if (customKeystore != null) {
+            create("debugShared") {
+                storeFile = customKeystore
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
         }
     }
 
@@ -37,7 +42,9 @@ android {
             isMinifyEnabled = false
         }
         debug {
-            signingConfig = signingConfigs.getByName("debugShared")
+            if (customKeystore != null) {
+                signingConfig = signingConfigs.getByName("debugShared")
+            }
         }
     }
     compileOptions {

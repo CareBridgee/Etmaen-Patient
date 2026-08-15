@@ -61,6 +61,9 @@ class HomeRepositoryImpl @Inject constructor(
             serviceTypeId = params.serviceTypeId,
             latitude = params.latitude,
             longitude = params.longitude,
+            address = params.address,
+            district = params.district,
+            apartment = params.apartment,
             preferredDate = params.preferredDate,
             preferredTime = String.format(
                 java.util.Locale.US,

@@ -282,6 +282,9 @@ class RequestServiceViewModel @Inject constructor(
                     serviceTypeId = serviceId,
                     latitude = location.latitude,
                     longitude = location.longitude,
+                    address = location.address,
+                    district = location.district.ifBlank { location.address },
+                    apartment = location.apartment,
                     preferredDate = currentState.preferredDate,
                     preferredTime =
                         PreferredTime(

@@ -4,4 +4,5 @@ import com.carenest.data.source.remote.dto.ReverseGeocodeResponse
 
 interface GeocodingApiService {
     suspend fun reverseGeocode(latitude: Double, longitude: Double): Result<ReverseGeocodeResponse>
+    suspend fun forwardGeocode(query: String): Result<List<ReverseGeocodeResponse>>
 }

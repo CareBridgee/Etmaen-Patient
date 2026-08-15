@@ -132,6 +132,32 @@
     <string name="request_service_error_submit">We couldn\'t submit your request. Please try again.</string>
     <string name="request_service_speech_error">Voice input isn\'t available right now. Please try again.</string>
 
+    <!-- Manual Address Entry -->
+    <string name="manual_address_title">Service Address</string>
+    <string name="manual_address_use_current_location_title">Use current location</string>
+    <string name="manual_address_use_current_location_subtitle">Finds your location automatically</string>
+    <string name="manual_address_country_label">Country</string>
+    <string name="manual_address_country_default">Egypt</string>
+    <string name="manual_address_city_label">City</string>
+    <string name="manual_address_city_hint">e.g., Giza</string>
+    <string name="manual_address_area_label">Area</string>
+    <string name="manual_address_area_hint">e.g., First District</string>
+    <string name="manual_address_street_label">Street Name</string>
+    <string name="manual_address_street_hint">e.g., Cairo University St</string>
+    <string name="manual_address_building_label">Building (optional)</string>
+    <string name="manual_address_building_hint">e.g., 12</string>
+    <string name="manual_address_apartment_label">Apt No. (optional)</string>
+    <string name="manual_address_apartment_hint">e.g., 4B</string>
+    <string name="manual_address_landmark_label">Landmark / Notes (optional)</string>
+    <string name="manual_address_landmark_hint">e.g., Near the gas station</string>
+    <string name="manual_address_map_preview_title">Map Location Preview</string>
+    <string name="manual_address_map_preview_hint">Tap map to refine location</string>
+    <string name="manual_address_save_btn">Save Address</string>
+    <string name="manual_address_error_street_required">Street name is required.</string>
+    <string name="manual_address_error_city_required">City is required.</string>
+    <string name="manual_address_error_area_required">Area is required.</string>
+    <string name="manual_address_error_geocoding_failed">Could not locate address automatically. Tap the map preview to select your location on the map.</string>
+
     <!-- Common -->
     <string name="common_guest">Guest</string>
 

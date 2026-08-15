@@ -558,4 +558,5 @@
   <string name="error_first_name_required">الاسم الأول مطلوب</string>
   <string name="error_last_name_required">اسم العائلة مطلوب</string>
   <string name="error_dob_required">تاريخ الميلاد مطلوب</string>
+  <string name="error_location_unavailable">الموقع غير متاح. يرجى التحقق من GPS والصلاحيات.</string>
 </resources>

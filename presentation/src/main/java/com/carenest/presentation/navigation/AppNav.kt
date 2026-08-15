@@ -55,6 +55,7 @@ import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.R
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
+import com.carenest.presentation.ui.address.ManualAddressScreen
 import com.carenest.presentation.ui.aichat.chat.AIChatScreen
 import com.carenest.presentation.ui.aichat.choosepatient.ChoosePatientScreen
 import com.carenest.presentation.ui.aichat.emergency.EmergencyAssistanceScreen
@@ -138,6 +139,7 @@ fun AppNav(
         val initialRoute: NavKey = if (deepLinkRequestId != null) AppRoute.Home else AppRoute.Splash
 
         var mapResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
+        var addressResultLocation by remember { mutableStateOf<LocationDetails?>(null) }
         // Retained destinations need an explicit trigger to reload after successful add/edit flows.
         var familyMembersReloadTrigger by remember { mutableStateOf(0) }
         var profileReloadTrigger by remember { mutableStateOf(0) }
@@ -375,7 +377,7 @@ fun AppNav(
                         },
 
                         onNavigateToMap = {
-                            backStack.add(AppRoute.Map)
+                            backStack.add(AppRoute.Map())
                         },
 
                         onNavigateToEditProfile = {
@@ -397,8 +399,16 @@ fun AppNav(
                             backStack.add(AppRoute.Services)
                         },
 
-                        onNavigateToAddressPicker = {
-                            // TODO
+                        onNavigateToAddressPicker = { currentLocation ->
+                            backStack.add(
+                                AppRoute.ManualAddress(
+                                    initialAddress = currentLocation?.address,
+                                    initialApartment = currentLocation?.apartment,
+                                    initialDistrict = currentLocation?.district,
+                                    latitude = currentLocation?.latitude,
+                                    longitude = currentLocation?.longitude
+                                )
+                            )
                         },
 
                         onSubmitRequestClick = { serviceRequestId ->
@@ -414,21 +424,47 @@ fun AppNav(
 
                         isFromAi = route.isFromAi,
 
-                        mapResultLocation = mapResultLocation,
+                        mapResultLocation = mapResultLocation ?: addressResultLocation,
 
                         onMapResultConsumed = {
                             mapResultLocation = null
+                            addressResultLocation = null
                         },
 
                         reloadTrigger = requestServiceReloadTrigger
                     )
                 }
 
-                entry<AppRoute.Map> {
+                entry<AppRoute.Map> { route ->
                     MapScreen(
+                        initialLatitude = route.latitude,
+                        initialLongitude = route.longitude,
                         onLocationConfirmed = { locationDetails ->
                             mapResultLocation = locationDetails
                             if (backStack.size > 1) backStack.removeLastOrNull()
+                        },
+                        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                    )
+                }
+
+                entry<AppRoute.ManualAddress> { route ->
+                    ManualAddressScreen(
+                        initialAddress = route.initialAddress.orEmpty(),
+                        initialApartment = route.initialApartment.orEmpty(),
+                        initialDistrict = route.initialDistrict.orEmpty(),
+                        latitude = route.latitude,
+                        longitude = route.longitude,
+                        mapResultLocation = mapResultLocation,
+                        onMapResultConsumed = { mapResultLocation = null },
+                        onAddressConfirmed = { locationDetails ->
+                            addressResultLocation = locationDetails
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                        },
+                        onNavigateToMap = { currentLat, currentLon ->
+                            backStack.add(AppRoute.Map(
+                                latitude = currentLat,
+                                longitude = currentLon
+                            ))
                         },
                         onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
                     )

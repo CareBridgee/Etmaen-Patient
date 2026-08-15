@@ -75,7 +75,19 @@ sealed interface AppRoute : NavKey {
      ) : AppRoute
 
      @Serializable
-     data object Map : AppRoute
+     data class Map(
+         val latitude: Double? = null,
+         val longitude: Double? = null
+     ) : AppRoute
+
+     @Serializable
+     data class ManualAddress(
+         val initialAddress: String? = null,
+         val initialApartment: String? = null,
+         val initialDistrict: String? = null,
+         val latitude: Double? = null,
+         val longitude: Double? = null,
+     ) : AppRoute
      @Serializable
      data class SearchForNurse(
          val reservationId: String,

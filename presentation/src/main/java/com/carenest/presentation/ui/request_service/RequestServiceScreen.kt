@@ -28,7 +28,7 @@ fun RequestServiceScreen(
     onNavigateToEditProfile: () -> Unit,
     onNavigateToAddPatient: () -> Unit,
     onNavigateToServiceSelection: () -> Unit,
-    onNavigateToAddressPicker: () -> Unit,
+    onNavigateToAddressPicker: (LocationDetails?) -> Unit,
     onSubmitRequestClick: (serviceRequestId: String) -> Unit,
     selectServiceId : String? = null,
     isFromAi: Boolean = false,
@@ -83,7 +83,7 @@ fun RequestServiceScreen(
             RequestServiceEffect.NavigateToEditProfile -> onNavigateToEditProfile()
             RequestServiceEffect.NavigateToAddPatient -> onNavigateToAddPatient()
             is RequestServiceEffect.NavigateToServiceSelection -> onNavigateToServiceSelection()
-            RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker()
+            RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker(state.location)
             RequestServiceEffect.NavigateToMap -> onNavigateToMap()
             is RequestServiceEffect.RequestSubmittedSuccessfully -> {
                 toastState.show(requestSuccessMessage)
