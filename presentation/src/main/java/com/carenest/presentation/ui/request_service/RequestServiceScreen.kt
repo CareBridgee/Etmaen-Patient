@@ -106,8 +106,6 @@ fun RequestServiceScreen(
                 onMapClick = { viewModel.onIntent(RequestServiceIntent.OnMapClicked) },
                 onMicClick = { speechToTextHelper.startListening() },
                 onSubmitClick = { viewModel.onIntent(RequestServiceIntent.OnSubmitClicked) },
-                onDateChanged = { viewModel.onIntent(RequestServiceIntent.OnPreferredDateChanged(it)) },
-                onTimeChanged = { hour, minute -> viewModel.onIntent(RequestServiceIntent.OnPreferredTimeChanged(hour, minute)) }
             )
             ToastHost(state = toastState)
         }

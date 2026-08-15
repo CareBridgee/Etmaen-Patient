@@ -7,6 +7,7 @@ data class ServicesState(
     val services: List<HealthcareService> = emptyList(),
     val filteredServices: List<HealthcareService> = emptyList(),
     val userName: String = "",
+    val userImageUrl: String? = null,
     val isLoading: Boolean = true
 )
 

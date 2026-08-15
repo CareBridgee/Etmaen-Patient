@@ -29,7 +29,12 @@ class ServicesViewModel @Inject constructor(
     private fun observeUser() {
         viewModelScope.launch {
             observeCurrentUserUseCase().collect { user ->
-                updateState { copy(userName = user?.firstName.orEmpty()) }
+                updateState {
+                    copy(
+                        userName = user?.firstName.orEmpty(),
+                        userImageUrl = user?.profileImageUrl
+                    )
+                }
             }
         }
     }

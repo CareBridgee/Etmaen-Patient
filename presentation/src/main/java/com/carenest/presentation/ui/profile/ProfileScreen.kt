@@ -197,6 +197,7 @@ fun ProfileContent(
                 userName = state.userName,
                 userRole = state.userRole,
                 userAvatarUrl = state.userAvatarUrl,
+                isUpdatingAvatar = state.isUpdatingAvatar,
                 onEditAvatarClick = { onEvent(ProfileEvent.OnEditAvatarClicked) }
             )
 
@@ -278,26 +279,6 @@ fun ProfileHeaderSection(
             ),
             color = Theme.colors.primary
         )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Theme.colors.primary),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = RD.drawable.ic_profile),
-                    contentDescription = null,
-                    tint = Theme.colors.surface,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
     }
 }
 
@@ -306,6 +287,7 @@ fun ProfileAvatarSection(
     userName: String,
     userRole: String,
     userAvatarUrl: String?,
+    isUpdatingAvatar: Boolean,
     onEditAvatarClick: () -> Unit
 ) {
     Column(
@@ -314,6 +296,7 @@ fun ProfileAvatarSection(
     ) {
         ProfileAvatarHeader(
             avatarUrl = userAvatarUrl,
+            isLoading = isUpdatingAvatar,
             onEditAvatarClick = onEditAvatarClick
         )
 

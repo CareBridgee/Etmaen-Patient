@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,7 +34,8 @@ fun ProfileAvatarHeader(
     modifier: Modifier = Modifier,
     avatarSize: Dp = 120.dp,
     badgeSize: Dp = 36.dp,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
     Box(
         modifier = modifier,
@@ -64,27 +67,44 @@ fun ProfileAvatarHeader(
                     modifier = Modifier.size(avatarSize * 0.4f)
                 )
             }
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.35f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Theme.colors.surface,
+                        strokeWidth = 2.5.dp
+                    )
+                }
+            }
         }
 
-        Box(
-            modifier = Modifier
-                .size(badgeSize)
-                .clip(CircleShape)
-                .background(Theme.colors.primary)
-                .clickable(
-                    enabled = enabled,
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onEditAvatarClick
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Edit,
-                contentDescription = stringResource(R.string.profile_avatar_content_description),
-                tint = Theme.colors.onPrimary,
-                modifier = Modifier.size(badgeSize * 0.5f)
-            )
+        if (!isLoading) {
+            Box(
+                modifier = Modifier
+                    .size(badgeSize)
+                    .clip(CircleShape)
+                    .background(Theme.colors.primary)
+                    .clickable(
+                        enabled = enabled,
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onEditAvatarClick
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = stringResource(R.string.profile_avatar_content_description),
+                    tint = Theme.colors.onPrimary,
+                    modifier = Modifier.size(badgeSize * 0.5f)
+                )
+            }
         }
     }
 }
