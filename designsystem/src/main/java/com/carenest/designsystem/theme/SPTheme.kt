@@ -1,5 +1,6 @@
 package com.carenest.designsystem.theme
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
@@ -7,11 +8,16 @@ import android.content.res.Resources
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.core.view.WindowCompat
 import com.carenest.designsystem.dimensions.LocalSPShapes
 import com.carenest.designsystem.dimensions.LocalSPSize
 import com.carenest.designsystem.dimensions.LocalSPSpacing
@@ -41,6 +47,23 @@ fun SpTheme(
 
     val colors = remember(isDarkTheme) {
         if (isDarkTheme) darkColors else lightColors
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as? Activity)?.window
+            window?.let {
+                val primaryColor = colors.primary.toArgb()
+                it.statusBarColor = primaryColor
+                it.navigationBarColor = primaryColor
+
+                val insetsController = WindowCompat.getInsetsController(it, view)
+                val isLightColor = colors.primary.luminance() > 0.5f
+                insetsController.isAppearanceLightStatusBars = isLightColor
+                insetsController.isAppearanceLightNavigationBars = isLightColor
+            }
+        }
     }
 
     val typography = defaultSPTypographyForLanguage(languageCode)
