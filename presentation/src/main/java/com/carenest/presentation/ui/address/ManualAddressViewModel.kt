@@ -91,20 +91,12 @@ class ManualAddressViewModel @Inject constructor(
         }
     }
 
-    /**
-     * When the user changes a geographic field (country, city, area, street),
-     * mark coordinates as stale so we re-geocode on save.
-     */
     private fun onGeographicFieldChanged(update: ManualAddressUiState.() -> ManualAddressUiState) {
         updateState {
             update().copy(coordinatesStale = true)
         }
     }
 
-    /**
-     * Flow A: Use Current Location.
-     * GPS provides lat/lng → reverse geocode → populate ALL address fields.
-     */
     private fun fetchCurrentLocationDetails(latitude: Double, longitude: Double) {
         updateState {
             copy(
@@ -122,7 +114,6 @@ class ManualAddressViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoadingCurrentLocation = false,
-                            // Current location overwrites all geographic fields
                             street = details.address,
                             area = details.district,
                             city = details.city,
@@ -140,11 +131,6 @@ class ManualAddressViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Flow B: Map selection returned a LocationDetails (already reverse-geocoded by MapViewModel).
-     * Update coordinates and populate empty geographic fields OR default fields. 
-     * Do NOT destroy user's explicit manual input.
-     */
     private fun applyMapResult(mapDetails: LocationDetails) {
         updateState {
             copy(
@@ -218,49 +204,6 @@ class ManualAddressViewModel @Inject constructor(
                 }
         }
     }
-
-    /**
-     * Build the final LocationDetails from the user's actual input.
-     * The user's text is always the source of truth for the address string.
-     * Coordinates come from geocoding or map selection — never from the user's text.
-     */
-//    private fun confirmLocationWithCoordinates(lat: Double, lon: Double) {
-//        val s = state.value
-//
-//        // Compose the full user-entered address into LocationDetails.address
-//        val addressParts = listOf(
-//            s.street.trim(),
-//            s.building.trim().takeIf { it.isNotBlank() },
-//            s.apartment.trim().takeIf { it.isNotBlank() },
-//            s.area.trim().takeIf { it.isNotBlank() },
-//            s.city.trim().takeIf { it.isNotBlank() },
-//            s.landmark.trim().takeIf { it.isNotBlank() },
-//            s.country.trim().takeIf { it.isNotBlank() }
-//        ).filterNotNull().filter { it.isNotBlank() }.joinToString(", ")
-//
-//        // apartment field: building + apt number
-//        val apartmentField = listOfNotNull(
-//            s.building.trim().takeIf { it.isNotBlank() },
-//            s.apartment.trim().takeIf { it.isNotBlank() }
-//        ).joinToString(", ")
-//
-//        // district field: area + city
-//        val districtField = listOfNotNull(
-//            s.area.trim().takeIf { it.isNotBlank() },
-//            s.city.trim().takeIf { it.isNotBlank() }
-//        ).joinToString(", ")
-//
-//        val locationDetails = LocationDetails(
-//            address = addressParts.ifBlank { s.street.trim() },
-//            apartment = apartmentField,
-//            district = districtField.ifBlank { s.area.trim() },
-//            city = s.city.trim(),
-//            latitude = lat,
-//            longitude = lon
-//        )
-//
-//        sendEffect(ManualAddressEffect.ConfirmLocation(locationDetails))
-//    }
 
     private fun confirmLocationWithCoordinates(lat: Double, lon: Double) {
         val s = state.value
