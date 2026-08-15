@@ -572,4 +572,7 @@
   <string name="error_first_name_required">First name is required</string>
   <string name="error_last_name_required">Last name is required</string>
   <string name="error_dob_required">Date of birth is required</string>
+  <string name="notification_permission_settings_title">Notification Permission Required</string>
+  <string name="notification_permission_settings_message">Notification permission is disabled. Please enable notifications in Settings to receive live updates about your care requests.</string>
+  <string name="notification_permission_open_settings">Open Settings</string>
 </resources>

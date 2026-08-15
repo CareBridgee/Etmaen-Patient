@@ -558,4 +558,7 @@
   <string name="error_first_name_required">الاسم الأول مطلوب</string>
   <string name="error_last_name_required">اسم العائلة مطلوب</string>
   <string name="error_dob_required">تاريخ الميلاد مطلوب</string>
+  <string name="notification_permission_settings_title">إذن الإشعارات مطلوب</string>
+  <string name="notification_permission_settings_message">إذن الإشعارات معطل. يرجى تفعيل الإشعارات من الإعدادات لتلقي تحديثات مباشرة حول طلبات الرعاية الخاصة بك.</string>
+  <string name="notification_permission_open_settings">فتح الإعدادات</string>
 </resources>
