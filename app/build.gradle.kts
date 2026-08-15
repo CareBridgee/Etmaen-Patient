@@ -15,7 +15,16 @@ android {
 
     signingConfigs {
         create("debugShared") {
-            storeFile = file("debug.keystore")
+            val rootKeystore = project.rootProject.file("debug.keystore")
+            val appKeystore = file("debug.keystore")
+            val userKeystore = file("${System.getProperty("user.home")}/.android/debug.keystore")
+
+            storeFile = when {
+                appKeystore.exists() -> appKeystore
+                rootKeystore.exists() -> rootKeystore
+                userKeystore.exists() -> userKeystore
+                else -> userKeystore
+            }
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
