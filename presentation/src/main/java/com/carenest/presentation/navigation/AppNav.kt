@@ -4,13 +4,18 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -705,6 +710,19 @@ fun AppNav(
                         )
                     ),
                     onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                    transitionSpec = {
+                        (slideInHorizontally(
+                            initialOffsetX = { width -> (width * 0.15f).toInt() },
+                            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
+                        ) + fadeIn(
+                            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+                        )) togetherWith (slideOutHorizontally(
+                            targetOffsetX = { width -> (-width * 0.15f).toInt() },
+                            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
+                        ) + fadeOut(
+                            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
+                        ))
+                    }
                 )
             }
         }
