@@ -24,9 +24,13 @@ class ManualAddressViewModel @Inject constructor(
     private var isInitialized = false
 
     fun init(
-        initialAddress: String?,
+        initialStreet: String?,
+        initialBuilding: String?,
         initialApartment: String?,
-        initialDistrict: String?,
+        initialArea: String?,
+        initialCity: String?,
+        initialLandmark: String?,
+        initialCountry: String?,
         latitude: Double?,
         longitude: Double?,
         defaultCountry: String
@@ -35,13 +39,16 @@ class ManualAddressViewModel @Inject constructor(
         isInitialized = true
         updateState {
             copy(
-                country = defaultCountry,
-                street = initialAddress.orEmpty(),
+                country = initialCountry?.takeIf { it.isNotBlank() } ?: defaultCountry,
+                street = initialStreet.orEmpty(),
+                building = initialBuilding.orEmpty(),
                 apartment = initialApartment.orEmpty(),
-                area = initialDistrict.orEmpty(),
-                initialStreet = initialAddress.orEmpty(),
+                area = initialArea.orEmpty(),
+                city = initialCity.orEmpty(),
+                landmark = initialLandmark.orEmpty(),
+                initialStreet = initialStreet.orEmpty(),
                 initialApartment = initialApartment.orEmpty(),
-                initialArea = initialDistrict.orEmpty(),
+                initialArea = initialArea.orEmpty(),
                 latitude = latitude,
                 longitude = longitude,
                 coordinatesStale = false
@@ -176,7 +183,7 @@ class ManualAddressViewModel @Inject constructor(
         val hasValidCoordinates = currentLat != null && currentLon != null && !currentState.coordinatesStale
 
         if (hasValidCoordinates) {
-            confirmLocationWithCoordinates(currentLat!!, currentLon!!)
+            confirmLocationWithCoordinates(currentLat, currentLon)
         } else {
             geocodeAndConfirm()
         }
@@ -217,10 +224,47 @@ class ManualAddressViewModel @Inject constructor(
      * The user's text is always the source of truth for the address string.
      * Coordinates come from geocoding or map selection — never from the user's text.
      */
+//    private fun confirmLocationWithCoordinates(lat: Double, lon: Double) {
+//        val s = state.value
+//
+//        // Compose the full user-entered address into LocationDetails.address
+//        val addressParts = listOf(
+//            s.street.trim(),
+//            s.building.trim().takeIf { it.isNotBlank() },
+//            s.apartment.trim().takeIf { it.isNotBlank() },
+//            s.area.trim().takeIf { it.isNotBlank() },
+//            s.city.trim().takeIf { it.isNotBlank() },
+//            s.landmark.trim().takeIf { it.isNotBlank() },
+//            s.country.trim().takeIf { it.isNotBlank() }
+//        ).filterNotNull().filter { it.isNotBlank() }.joinToString(", ")
+//
+//        // apartment field: building + apt number
+//        val apartmentField = listOfNotNull(
+//            s.building.trim().takeIf { it.isNotBlank() },
+//            s.apartment.trim().takeIf { it.isNotBlank() }
+//        ).joinToString(", ")
+//
+//        // district field: area + city
+//        val districtField = listOfNotNull(
+//            s.area.trim().takeIf { it.isNotBlank() },
+//            s.city.trim().takeIf { it.isNotBlank() }
+//        ).joinToString(", ")
+//
+//        val locationDetails = LocationDetails(
+//            address = addressParts.ifBlank { s.street.trim() },
+//            apartment = apartmentField,
+//            district = districtField.ifBlank { s.area.trim() },
+//            city = s.city.trim(),
+//            latitude = lat,
+//            longitude = lon
+//        )
+//
+//        sendEffect(ManualAddressEffect.ConfirmLocation(locationDetails))
+//    }
+
     private fun confirmLocationWithCoordinates(lat: Double, lon: Double) {
         val s = state.value
 
-        // Compose the full user-entered address into LocationDetails.address
         val addressParts = listOf(
             s.street.trim(),
             s.building.trim().takeIf { it.isNotBlank() },
@@ -231,13 +275,11 @@ class ManualAddressViewModel @Inject constructor(
             s.country.trim().takeIf { it.isNotBlank() }
         ).filterNotNull().filter { it.isNotBlank() }.joinToString(", ")
 
-        // apartment field: building + apt number
         val apartmentField = listOfNotNull(
             s.building.trim().takeIf { it.isNotBlank() },
             s.apartment.trim().takeIf { it.isNotBlank() }
         ).joinToString(", ")
 
-        // district field: area + city
         val districtField = listOfNotNull(
             s.area.trim().takeIf { it.isNotBlank() },
             s.city.trim().takeIf { it.isNotBlank() }
@@ -249,7 +291,12 @@ class ManualAddressViewModel @Inject constructor(
             district = districtField.ifBlank { s.area.trim() },
             city = s.city.trim(),
             latitude = lat,
-            longitude = lon
+            longitude = lon,
+            street = s.street.trim(),
+            building = s.building.trim(),
+            area = s.area.trim(),
+            landmark = s.landmark.trim(),
+            country = s.country.trim()
         )
 
         sendEffect(ManualAddressEffect.ConfirmLocation(locationDetails))

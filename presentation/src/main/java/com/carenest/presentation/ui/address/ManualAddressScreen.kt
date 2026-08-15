@@ -72,11 +72,7 @@ private fun buildMapSnapshotUrl(latitude: Double, longitude: Double): String {
 @SuppressLint("MissingPermission")
 @Composable
 fun ManualAddressScreen(
-    initialAddress: String = "",
-    initialApartment: String = "",
-    initialDistrict: String = "",
-    latitude: Double? = null,
-    longitude: Double? = null,
+    existingLocation: LocationDetails? = null,
     mapResultLocation: LocationDetails? = null,
     onMapResultConsumed: () -> Unit = {},
     onAddressConfirmed: (LocationDetails) -> Unit,
@@ -93,11 +89,15 @@ fun ManualAddressScreen(
     // Initialize once with route parameters
     LaunchedEffect(Unit) {
         viewModel.init(
-            initialAddress = initialAddress,
-            initialApartment = initialApartment,
-            initialDistrict = initialDistrict,
-            latitude = latitude,
-            longitude = longitude,
+            initialStreet = existingLocation?.street,
+            initialBuilding = existingLocation?.building,
+            initialApartment = existingLocation?.apartment,
+            initialArea = existingLocation?.area,
+            initialCity = existingLocation?.city,
+            initialLandmark = existingLocation?.landmark,
+            initialCountry = existingLocation?.country,
+            latitude = existingLocation?.latitude,
+            longitude = existingLocation?.longitude,
             defaultCountry = defaultCountry
         )
     }

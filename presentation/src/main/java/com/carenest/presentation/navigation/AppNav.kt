@@ -3,14 +3,6 @@ package com.carenest.presentation.navigation
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -54,6 +45,8 @@ import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.model.settings.ThemeMode
 import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.R
+import com.carenest.presentation.model.toArg
+import com.carenest.presentation.model.toDomain
 import com.carenest.presentation.navigation.NavigationConfig.savedStateConfiguration
 import com.carenest.presentation.ui.address.ManualAddressScreen
 import com.carenest.presentation.ui.aichat.chat.AIChatScreen
@@ -401,13 +394,7 @@ fun AppNav(
 
                         onNavigateToAddressPicker = { currentLocation ->
                             backStack.add(
-                                AppRoute.ManualAddress(
-                                    initialAddress = currentLocation?.address,
-                                    initialApartment = currentLocation?.apartment,
-                                    initialDistrict = currentLocation?.district,
-                                    latitude = currentLocation?.latitude,
-                                    longitude = currentLocation?.longitude
-                                )
+                                AppRoute.ManualAddress(currentLocation?.toArg())
                             )
                         },
 
@@ -449,11 +436,7 @@ fun AppNav(
 
                 entry<AppRoute.ManualAddress> { route ->
                     ManualAddressScreen(
-                        initialAddress = route.initialAddress.orEmpty(),
-                        initialApartment = route.initialApartment.orEmpty(),
-                        initialDistrict = route.initialDistrict.orEmpty(),
-                        latitude = route.latitude,
-                        longitude = route.longitude,
+                        existingLocation = route.location?.toDomain(),
                         mapResultLocation = mapResultLocation,
                         onMapResultConsumed = { mapResultLocation = null },
                         onAddressConfirmed = { locationDetails ->
