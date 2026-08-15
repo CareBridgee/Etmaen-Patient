@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +53,7 @@ import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.presentation.ui.servicelist.components.ServicesShimmerLoading
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
+import com.carenest.designsystem.R as RD
 
 @Composable
 fun ServicesScreen(
