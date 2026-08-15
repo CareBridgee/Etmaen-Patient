@@ -39,7 +39,6 @@ sealed class RequestServiceIntent {
     data class OnPaymentMethodSelected(val paymentMethod: PaymentMethod) : RequestServiceIntent()
     data object OnSubmitClicked : RequestServiceIntent()
     data object OnBackClicked : RequestServiceIntent()
-    data object OnHelpClicked : RequestServiceIntent()
     data object OnFillWithAiClicked : RequestServiceIntent()
     data class OnLocationDetailsReceived(val locationDetails: LocationDetails) : RequestServiceIntent()
     data class OnPreferredDateChanged(val date: String) : RequestServiceIntent()

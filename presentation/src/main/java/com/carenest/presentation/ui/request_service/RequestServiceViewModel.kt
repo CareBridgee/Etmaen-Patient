@@ -13,6 +13,10 @@ import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,12 +28,12 @@ class RequestServiceViewModel @Inject constructor(
 ) : ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
         RequestServiceUiState(
-            preferredDate = java.text.SimpleDateFormat(
+            preferredDate = SimpleDateFormat(
                 "yyyy-MM-dd",
-                java.util.Locale.US
-            ).format(java.util.Date()), preferredHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY),
-            preferredMinute = java.util.Calendar.getInstance()
-                .get(java.util.Calendar.MINUTE),
+                Locale.US
+            ).format(Date()), preferredHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+            preferredMinute = Calendar.getInstance()
+                .get(Calendar.MINUTE),
         )
     ),
     EffectPublisher<RequestServiceEffect> by DefaultEffectPublisher() {
@@ -200,10 +204,6 @@ class RequestServiceViewModel @Inject constructor(
             RequestServiceIntent.OnFillWithAiClicked -> {
                 val aiReport = aiChatRepository.getLastAiReport().orEmpty()
                 updateState { copy(description = aiReport) }
-            }
-
-            RequestServiceIntent.OnHelpClicked -> {
-                // Implement help logic if needed
             }
 
             RequestServiceIntent.OnSubmitClicked -> { submitServiceRequest() }
