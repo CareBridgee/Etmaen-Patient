@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
@@ -111,22 +112,18 @@ fun AppNav(
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
         val coroutineScope = rememberCoroutineScope()
-        
-        var showNotificationRationale by remember { mutableStateOf(false) }
-        val notificationsDisabledMessage = stringResource(R.string.notifications_disabled_message)
 
-        if (mainState.isLoggedIn) {
+        var showLoginNotificationPermissionHandler by rememberSaveable(mainState.isLoggedIn) {
+            mutableStateOf(true)
+        }
+
+        if (mainState.isLoggedIn && showLoginNotificationPermissionHandler) {
             com.carenest.presentation.util.NotificationPermissionHandler(
                 onPermissionGranted = {
-                    showNotificationRationale = false
+                    showLoginNotificationPermissionHandler = false
                 },
                 onPermissionDenied = {
-                    showNotificationRationale = true
-                },
-                showRationale = showNotificationRationale,
-                onRationaleDismissed = {
-                    showNotificationRationale = false
-                    coroutineScope.launch { snackbarHostState.showSnackbar(notificationsDisabledMessage) }
+                    showLoginNotificationPermissionHandler = false
                 }
             )
         }
