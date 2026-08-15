@@ -73,7 +73,7 @@ fun SPBottomNavigation(
         Theme.colors.primaryContainer
     }
     val shadowElevation = if (isDarkTheme) 3.dp else 4.dp
-    val navShape = RoundedCornerShape(40.dp)
+    val navShape = RoundedCornerShape(30.dp)
 
     Box(
         modifier = modifier
@@ -111,7 +111,7 @@ fun SPBottomNavigation(
                         horizontal = Theme.spacing.extraSmall,
                         vertical = Theme.spacing.space10,
                     )
-                    .clip(RoundedCornerShape(percent = 50))
+                    .clip(RoundedCornerShape(percent = 40))
                     .background(indicatorColor),
             )
 

@@ -54,7 +54,6 @@ import com.carenest.presentation.ui.components.rememberTimeBasedGreeting
 import com.carenest.presentation.ui.servicelist.components.ServicesShimmerLoading
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
-import com.carenest.designsystem.R as RD
 
 @Composable
 fun ServicesScreen(
