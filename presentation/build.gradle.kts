@@ -45,6 +45,8 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
 
+    implementation(libs.androidx.compose.ui.graphics)
+
     // Lifecycle and ViewModel
     implementation(libs.bundles.lifecycle)
 
