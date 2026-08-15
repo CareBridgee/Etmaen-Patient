@@ -123,7 +123,7 @@ fun AppNav(
                     showLoginNotificationPermissionHandler = false
                 },
                 onPermissionDenied = {
-                    showLoginNotificationPermissionHandler = false
+                    // Notification permission is required; do not dismiss until granted
                 }
             )
         }

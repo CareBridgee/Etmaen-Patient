@@ -67,8 +67,7 @@ fun OnBoardingScreen(
                 onNavigateToHome()
             },
             onPermissionDenied = {
-                showPermissionHandler = false
-                onNavigateToHome()
+                // Permission is mandatory; do not proceed to home until granted
             }
         )
     }
