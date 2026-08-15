@@ -18,6 +18,7 @@ fun ServiceHistoryDto.toDomain(): ServiceHistory {
         status = status.orEmpty(),
         nurseId = nurseId,
         nurseName = nurseName,
+        nurseImage = nurseProfileImageUrl?.takeIf(String::isNotBlank),
         createdAt = createdAt.orEmpty(),
         updatedAt = updatedAt.orEmpty(),
         nurseProfileImageUrl = nurseProfileImageUrl?.takeIf(String::isNotBlank)
@@ -38,6 +39,7 @@ fun ServiceHistory.toEntity(): ServiceHistoryEntity {
         status = status,
         nurseId = nurseId,
         nurseName = nurseName,
+        nurseImage = nurseImage,
         createdAt = createdAt,
         updatedAt = updatedAt,
         nurseProfileImageUrl = nurseProfileImageUrl
@@ -60,6 +62,7 @@ fun ServiceHistoryEntity.toDomain(): ServiceHistory {
         status = status,
         nurseId = nurseId,
         nurseName = nurseName,
+        nurseImage = nurseImage,
         createdAt = createdAt,
         updatedAt = updatedAt,
         nurseProfileImageUrl = nurseProfileImageUrl

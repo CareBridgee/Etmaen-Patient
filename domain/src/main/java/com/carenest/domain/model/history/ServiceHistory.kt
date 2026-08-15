@@ -10,6 +10,7 @@ data class ServiceHistory(
     val status: String,
     val nurseId: String?,
     val nurseName: String?,
+    val nurseImage: String? = null,
     val createdAt: String,
     val updatedAt: String,
     val nurseProfileImageUrl: String? = null
