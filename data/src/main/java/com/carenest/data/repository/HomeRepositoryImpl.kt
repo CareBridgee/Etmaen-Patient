@@ -5,9 +5,11 @@ import com.carenest.data.mapper.history.toEntity
 import com.carenest.data.mapper.toDomain
 import com.carenest.data.mapper.toServiceDetails
 import com.carenest.data.source.local.database.dao.ServiceHistoryDao
+import com.carenest.data.source.remote.ApiException
 import com.carenest.data.source.remote.datasource.CareNestRemoteDatasource
 import com.carenest.data.source.remote.dto.CreateServiceRequestDto
 import com.carenest.domain.model.CreateServiceRequestParams
+import com.carenest.domain.model.ServiceRequestException
 import com.carenest.domain.model.ServiceDetailsModel
 import com.carenest.domain.model.ServiceRequestResult
 import com.carenest.domain.model.history.ServiceHistory
@@ -73,6 +75,7 @@ class HomeRepositoryImpl @Inject constructor(
                 params.preferredTime.second
             ),
             serviceDescription = params.serviceDescription,
+            paymentType = params.paymentType.name,
         )
         return careNestRemoteDatasource.submitServiceRequest(dto).map { response ->
             ServiceRequestResult(
@@ -80,6 +83,16 @@ class HomeRepositoryImpl @Inject constructor(
                 status = response.status,
                 nearbyNursesCount = response.nearbyNurses.size,
             )
-        }
+        }.mapServiceRequestFailure()
     }
 }
+
+private fun <T> Result<T>.mapServiceRequestFailure(): Result<T> =
+    exceptionOrNull()?.let { throwable ->
+        Result.failure(
+            ServiceRequestException(
+                message = throwable.message ?: "Service request failed",
+                backendCode = (throwable as? ApiException)?.backendCode,
+            )
+        )
+    } ?: this

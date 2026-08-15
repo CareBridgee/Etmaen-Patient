@@ -17,6 +17,14 @@ data class PaymentMethod(
             subDescription = "",
             isSelected = true
         )
+        val CREDIT = PaymentMethod(
+            id = "credit",
+            title = "Account Credit",
+            description = "Use your available CareNest credit",
+            iconResName = "ic_wallet",
+            subDescription = "",
+            isSelected = false
+        )
         val PAYMOB = PaymentMethod(
             id = "paymob",
             title = "Credit/Debit Card via Paymob",

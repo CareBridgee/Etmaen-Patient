@@ -18,6 +18,7 @@ data class RequestServiceUiState(
     val preferredMinute: Int = 0,
     val paymentMethods: List<PaymentMethod> = emptyList(),
     val selectedPaymentMethod: PaymentMethod? = null,
+    val availableCredit: Double = 0.0,
     val isSubmitting: Boolean = false,
     val isLoading: Boolean = false,
     val isListening: Boolean = false,
@@ -62,5 +63,6 @@ enum class RequestServiceUiError(@get:StringRes val messageRes: Int) {
     RequiredFields(R.string.request_service_error_required_fields),
     PreferredDate(R.string.request_service_error_preferred_date),
     ProfileSync(R.string.request_service_error_profile_sync),
+    InsufficientCredit(R.string.request_service_error_insufficient_credit),
     Submit(R.string.request_service_error_submit),
 }

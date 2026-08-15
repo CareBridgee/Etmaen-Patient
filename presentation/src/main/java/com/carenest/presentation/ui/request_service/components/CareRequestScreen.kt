@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,10 +27,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.carenest.designsystem.R
 import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.cards.PaymentMethodCard
 import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.Patient
+import com.carenest.domain.model.PaymentMethod
 import com.carenest.presentation.ui.request_service.RequestServiceUiState
 import com.carenest.presentation.util.AudioPermissionHandler
 
@@ -43,6 +46,7 @@ fun CareRequestScreenContent(
     onChangeServiceClick: () -> Unit,
     onDescriptionChange: (String) -> Unit,
     onEditAddressClick: () -> Unit,
+    onPaymentMethodSelected: (PaymentMethod) -> Unit,
     onFillWithAiClick: () -> Unit,
     onMapClick: () -> Unit,
     onMicClick: () -> Unit,
@@ -118,6 +122,12 @@ fun CareRequestScreenContent(
             onMapClick = onMapClick
         )
 
+        PaymentSelectionSection(
+            paymentMethods = state.paymentMethods,
+            selectedPaymentMethod = state.selectedPaymentMethod,
+            availableCredit = state.availableCredit,
+            onPaymentMethodSelected = onPaymentMethodSelected,
+        )
 
         PrimaryButton(
             caption = stringResource(id = R.string.request_service_submit),
@@ -201,10 +211,67 @@ private fun CareRequestScreenPreview() {
             onChangeServiceClick = {},
             onDescriptionChange = {},
             onEditAddressClick = {},
+            onPaymentMethodSelected = {},
             onFillWithAiClick = {},
             onMapClick = {},
             onMicClick = {},
             onSubmitClick = {},
         )
+    }
+}
+
+@Composable
+private fun PaymentSelectionSection(
+    paymentMethods: List<PaymentMethod>,
+    selectedPaymentMethod: PaymentMethod?,
+    availableCredit: Double,
+    onPaymentMethodSelected: (PaymentMethod) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Theme.colors.surface, RoundedCornerShape(20.dp))
+            .padding(Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+    ) {
+        BasicText(
+            text = stringResource(id = R.string.request_service_payment_method_label),
+            style = Theme.typography.body.large.copy(color = Theme.colors.primaryFont),
+        )
+
+        BasicText(
+            text = stringResource(id = R.string.request_service_available_credit, availableCredit),
+            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+        )
+
+        paymentMethods.forEach { method ->
+            val isCredit = method.id == PaymentMethod.CREDIT.id
+            PaymentMethodCard(
+                title = stringResource(
+                    id = if (isCredit) {
+                        R.string.request_service_payment_credit
+                    } else {
+                        R.string.request_service_payment_cash
+                    }
+                ),
+                description = stringResource(
+                    id = if (isCredit) {
+                        R.string.request_service_payment_credit_desc
+                    } else {
+                        R.string.request_service_payment_cash_desc
+                    }
+                ),
+                painter = androidx.compose.ui.res.painterResource(
+                    id = if (isCredit) R.drawable.ic_wallet else R.drawable.cod
+                ),
+                selected = selectedPaymentMethod?.id == method.id,
+                onClick = { onPaymentMethodSelected(method) },
+                subDescription = if (isCredit) {
+                    stringResource(id = R.string.request_service_available_credit, availableCredit)
+                } else {
+                    null
+                },
+            )
+        }
     }
 }

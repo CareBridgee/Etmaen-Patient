@@ -16,5 +16,6 @@ data class UserResponseDto(
     val createdAt: String? = null,
     val updatedAt: String? = null,
     val lastLoginAt: String? = null,
-    val defaultProfileId: String? = null
+    val defaultProfileId: String? = null,
+    val credit: Double? = null,
 )

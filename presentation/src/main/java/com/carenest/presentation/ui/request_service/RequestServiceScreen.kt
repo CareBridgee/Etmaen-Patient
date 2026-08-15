@@ -102,6 +102,7 @@ fun RequestServiceScreen(
                 onChangeServiceClick = { viewModel.onIntent(RequestServiceIntent.OnChangeServiceClicked) },
                 onDescriptionChange = { viewModel.onIntent(RequestServiceIntent.OnDescriptionChanged(it)) },
                 onEditAddressClick = { viewModel.onIntent(RequestServiceIntent.OnEditAddressClicked) },
+                onPaymentMethodSelected = { viewModel.onIntent(RequestServiceIntent.OnPaymentMethodSelected(it)) },
                 onFillWithAiClick = { viewModel.onIntent(RequestServiceIntent.OnFillWithAiClicked) },
                 onMapClick = { viewModel.onIntent(RequestServiceIntent.OnMapClicked) },
                 onMicClick = { speechToTextHelper.startListening() },

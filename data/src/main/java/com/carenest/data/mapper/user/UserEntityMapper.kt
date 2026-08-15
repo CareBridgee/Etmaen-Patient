@@ -16,5 +16,6 @@ internal fun UserEntity.toDomain(): User = User(
     createdAt = createdAt,
     updatedAt = updatedAt,
     lastLoginAt = lastLoginAt,
-    defaultProfileId = defaultProfileId
+    defaultProfileId = defaultProfileId,
+    credit = credit,
 )

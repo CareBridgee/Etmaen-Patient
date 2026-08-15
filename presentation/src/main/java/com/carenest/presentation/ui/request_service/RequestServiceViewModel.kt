@@ -2,7 +2,10 @@ package com.carenest.presentation.ui.request_service
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.model.PaymentMethod
+import com.carenest.domain.model.PaymentType
 import com.carenest.domain.model.PreferredTime
+import com.carenest.domain.model.ServiceRequestException
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.domain.model.profile.PersonalInfoUpdate
@@ -89,7 +92,8 @@ class RequestServiceViewModel @Inject constructor(
                             } else {
                                 selected
                             }
-                        }
+                        },
+                        availableCredit = user.credit,
                     )
                 }
             }
@@ -148,7 +152,14 @@ class RequestServiceViewModel @Inject constructor(
                             }
                         }
 
-                        updateState { copy(patients = mappedPatients) }
+                        updateState {
+                            copy(
+                                patients = mappedPatients,
+                                availableCredit = currentUser?.credit ?: availableCredit,
+                                paymentMethods = defaultPaymentMethods(),
+                                selectedPaymentMethod = selectedPaymentMethod ?: PaymentMethod.COD,
+                            )
+                        }
 
                         // If no patient is selected yet, select primary/default profile first
                         if (currentState.selectedPatient == null) {
@@ -198,7 +209,16 @@ class RequestServiceViewModel @Inject constructor(
             }
 
             is RequestServiceIntent.OnPatientSelected -> { updateState { copy(selectedPatient = intent.patient) } }
-            is RequestServiceIntent.OnPaymentMethodSelected -> { updateState { copy(selectedPaymentMethod = intent.paymentMethod) } }
+            is RequestServiceIntent.OnPaymentMethodSelected -> {
+                updateState {
+                    copy(
+                        selectedPaymentMethod = intent.paymentMethod,
+                        paymentMethods = paymentMethods.map { method ->
+                            method.copy(isSelected = method.id == intent.paymentMethod.id)
+                        },
+                    )
+                }
+            }
             RequestServiceIntent.OnAddPatientClicked -> { sendEffect(RequestServiceEffect.NavigateToAddPatient) }
             RequestServiceIntent.OnChangeServiceClicked -> { sendEffect(RequestServiceEffect.NavigateToServiceSelection(currentState.selectedService?.id)) }
             RequestServiceIntent.OnEditAddressClicked -> { sendEffect(RequestServiceEffect.NavigateToAddressPicker) }
@@ -235,7 +255,8 @@ class RequestServiceViewModel @Inject constructor(
         if (
             serviceId == null ||
             location == null ||
-            profileId == null
+            profileId == null ||
+            currentState.selectedPaymentMethod == null
         ) {
             sendEffect(
                 RequestServiceEffect.ShowError(
@@ -297,6 +318,7 @@ class RequestServiceViewModel @Inject constructor(
                         currentState.description.ifBlank {
                             "No description provided"
                         },
+                    paymentType = currentState.selectedPaymentMethod.toPaymentType(),
                 )
             ).onSuccess { result ->
                 updateState { copy(isSubmitting = false) }
@@ -305,10 +327,24 @@ class RequestServiceViewModel @Inject constructor(
                         serviceRequestId = result.serviceRequestId
                     )
                 )
-            }.onFailure {
+            }.onFailure { throwable ->
                 updateState { copy(isSubmitting = false) }
-                sendEffect(RequestServiceEffect.ShowError(RequestServiceUiError.Submit.messageRes))
+                val error = if (
+                    throwable is ServiceRequestException &&
+                    throwable.backendCode == "INSUFFICIENT_CREDIT"
+                ) {
+                    RequestServiceUiError.InsufficientCredit
+                } else {
+                    RequestServiceUiError.Submit
+                }
+                sendEffect(RequestServiceEffect.ShowError(error.messageRes))
             }
         }
     }
+
+    private fun defaultPaymentMethods(): List<PaymentMethod> =
+        listOf(PaymentMethod.COD, PaymentMethod.CREDIT)
+
+    private fun PaymentMethod?.toPaymentType(): PaymentType =
+        if (this?.id == PaymentMethod.CREDIT.id) PaymentType.CREDIT else PaymentType.CASH
 }

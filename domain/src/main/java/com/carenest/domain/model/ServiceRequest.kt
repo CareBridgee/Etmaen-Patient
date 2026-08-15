@@ -11,6 +11,16 @@ data class ServiceRequestResult(
     val nearbyNursesCount: Int,
 )
 
+enum class PaymentType {
+    CASH,
+    CREDIT
+}
+
+class ServiceRequestException(
+    message: String,
+    val backendCode: String? = null,
+) : Exception(message)
+
 /**
  * Represents the preferred time for the service.
  */
@@ -35,4 +45,5 @@ data class CreateServiceRequestParams(
     val preferredDate: String,      // "yyyy-MM-dd"
     val preferredTime: PreferredTime,
     val serviceDescription: String,
+    val paymentType: PaymentType = PaymentType.CASH,
 )

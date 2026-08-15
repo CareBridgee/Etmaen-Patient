@@ -18,7 +18,8 @@ internal fun User.toEntity(): UserEntity = UserEntity(
     createdAt = createdAt,
     updatedAt = updatedAt,
     lastLoginAt = lastLoginAt,
-    defaultProfileId = defaultProfileId
+    defaultProfileId = defaultProfileId,
+    credit = credit,
 )
 
 internal fun UserUpdate.toDto(): UpdateUserRequestDto = UpdateUserRequestDto(

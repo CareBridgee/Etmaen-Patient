@@ -17,5 +17,6 @@ data class UserEntity(
     val createdAt: String?,
     val updatedAt: String?,
     val lastLoginAt: String?,
-    val defaultProfileId: String?
+    val defaultProfileId: String?,
+    val credit: Double,
 )

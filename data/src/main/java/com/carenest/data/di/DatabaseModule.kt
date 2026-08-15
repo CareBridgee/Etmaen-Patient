@@ -22,6 +22,12 @@ object DatabaseModule {
         )
     }
 
+    private val migration4To5 = Migration(4, 5) { database ->
+        database.execSQL(
+            "ALTER TABLE current_user ADD COLUMN credit REAL NOT NULL DEFAULT 0.0"
+        )
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): CareNestDatabase =
@@ -30,7 +36,7 @@ object DatabaseModule {
             CareNestDatabase::class.java,
             "carenest.db"
         )
-            .addMigrations(migration2To3)
+            .addMigrations(migration2To3, migration4To5)
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 

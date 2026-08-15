@@ -13,7 +13,8 @@ data class User(
     val createdAt: String? = null,
     val updatedAt: String? = null,
     val lastLoginAt: String? = null,
-    val defaultProfileId: String? = null
+    val defaultProfileId: String? = null,
+    val credit: Double = 0.0,
 ) {
     val name: String?
         get() = listOfNotNull(firstName, lastName)
