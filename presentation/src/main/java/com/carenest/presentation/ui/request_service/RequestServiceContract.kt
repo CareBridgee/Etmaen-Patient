@@ -7,12 +7,21 @@ import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.model.Patient
 import com.carenest.domain.model.PaymentMethod
 
+val DEFAULT_CAIRO_LOCATION = LocationDetails(
+    address = "Cairo, Egypt",
+    apartment = "",
+    district = "Cairo Governorate",
+    city = "Cairo",
+    latitude = 30.0444,
+    longitude = 31.2357,
+)
+
 data class RequestServiceUiState(
     val patients: List<Patient> = emptyList(),
     val selectedPatient: Patient? = null,
     val selectedService: HealthcareService? = null,
     val description: String = "",
-    val location: LocationDetails? = null,
+    val location: LocationDetails? = DEFAULT_CAIRO_LOCATION,
     val preferredDate: String = "",          // "yyyy-MM-dd"
     val preferredHour: Int = 9,
     val preferredMinute: Int = 0,
@@ -52,7 +61,7 @@ sealed class RequestServiceEffect {
     data object NavigateToAddPatient : RequestServiceEffect()
     data class NavigateToServiceSelection(val currentServiceId: String?) : RequestServiceEffect()
     data object NavigateToAddressPicker : RequestServiceEffect()
-    data object NavigateToMap : RequestServiceEffect()
+    data class NavigateToMap(val location: LocationDetails? = null) : RequestServiceEffect()
     data class RequestSubmittedSuccessfully(
         val serviceRequestId: String,
     ) : RequestServiceEffect()

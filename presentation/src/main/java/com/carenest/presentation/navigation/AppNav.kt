@@ -379,8 +379,13 @@ fun AppNav(
                             }
                         },
 
-                        onNavigateToMap = {
-                            backStack.add(AppRoute.Map())
+                        onNavigateToMap = { location ->
+                            backStack.add(
+                                AppRoute.Map(
+                                    latitude = location?.latitude,
+                                    longitude = location?.longitude
+                                )
+                            )
                         },
 
                         onNavigateToEditProfile = {

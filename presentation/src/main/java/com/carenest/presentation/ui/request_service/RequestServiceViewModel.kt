@@ -210,7 +210,7 @@ class RequestServiceViewModel @Inject constructor(
 
             RequestServiceIntent.OnSubmitClicked -> { submitServiceRequest() }
             RequestServiceIntent.OnBackClicked -> { sendEffect(RequestServiceEffect.NavigateBack) }
-            RequestServiceIntent.OnMapClicked -> { sendEffect(RequestServiceEffect.NavigateToMap) }
+            RequestServiceIntent.OnMapClicked -> { sendEffect(RequestServiceEffect.NavigateToMap(currentState.location)) }
             is RequestServiceIntent.OnLocationDetailsReceived -> { updateState { copy(location = intent.locationDetails) } }
             is RequestServiceIntent.OnPreferredDateChanged -> { updateState { copy(preferredDate = intent.date) } }
             is RequestServiceIntent.OnPreferredTimeChanged -> {

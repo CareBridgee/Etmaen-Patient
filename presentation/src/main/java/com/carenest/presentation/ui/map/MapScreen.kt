@@ -68,6 +68,8 @@ import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
+import java.util.Locale
+
 @OptIn(MapboxExperimental::class)
 @SuppressLint("MissingPermission")
 @Composable
@@ -82,19 +84,15 @@ fun MapScreen(
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
+    val defaultLat = initialLatitude ?: 30.0444
+    val defaultLng = initialLongitude ?: 31.2357
+
     var cameraOptions by remember {
         mutableStateOf(
-            if (initialLatitude != null && initialLongitude != null) {
-                CameraOptions.Builder()
-                    .center(Point.fromLngLat(initialLongitude, initialLatitude))
-                    .zoom(15.0)
-                    .build()
-            } else {
-                CameraOptions.Builder()
-                    .center(Point.fromLngLat(31.2357, 30.0444)) // Default to Cairo
-                    .zoom(10.0)
-                    .build()
-            }
+            CameraOptions.Builder()
+                .center(Point.fromLngLat(defaultLng, defaultLat))
+                .zoom(12.0)
+                .build()
         )
     }
     var flyToTrigger by remember { mutableLongStateOf(0L) }
@@ -103,10 +101,8 @@ fun MapScreen(
     var showLocationRationale by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        if (initialLatitude != null && initialLongitude != null) {
-            val initialPoint = Point.fromLngLat(initialLongitude, initialLatitude)
-            viewModel.onIntent(MapIntent.OnMapTapped(initialPoint))
-        }
+        val initialPoint = Point.fromLngLat(defaultLng, defaultLat)
+        viewModel.onIntent(MapIntent.OnMapTapped(initialPoint))
     }
 
     ObserveEffect(viewModel.effect) { effect ->
@@ -259,7 +255,7 @@ private fun MarkerPin() {
         contentDescription = null,
         tint = Theme.colors.onErrorContainer,
         modifier = Modifier
-            .size(Theme.size.medium)
+            .size(36.dp)
             .scale(scale),
     )
 }
@@ -379,7 +375,9 @@ private fun LocationInfoCard(
 
                         Spacer(modifier = Modifier.height(4.dp))
                         BasicText(
-                            text = "%.5f, %.5f".format(
+                            text = String.format(
+                                Locale.US,
+                                "%.5f, %.5f",
                                 locationDetails.latitude,
                                 locationDetails.longitude,
                             ),

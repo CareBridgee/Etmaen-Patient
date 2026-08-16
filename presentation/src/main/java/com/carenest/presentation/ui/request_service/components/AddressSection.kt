@@ -36,12 +36,15 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.util.noRippleClickable
 import com.carenest.domain.model.LocationDetails
+import java.util.Locale
 
-private const val DEFAULT_ZOOM = 13
+private const val DEFAULT_ZOOM = 12
+private const val DEFAULT_CAIRO_LAT = 30.0444
+private const val DEFAULT_CAIRO_LON = 31.2357
 
 private fun buildMapSnapshotUrl(latitude: Double, longitude: Double): String {
-    val lon = "%.6f".format(longitude)
-    val lat = "%.6f".format(latitude)
+    val lon = String.format(Locale.US, "%.6f", longitude)
+    val lat = String.format(Locale.US, "%.6f", latitude)
     val pin = "pin-s+e53935($lon,$lat)"
     return "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/" +
         "$pin/$lon,$lat,$DEFAULT_ZOOM,0/700x300@2x" +
@@ -62,8 +65,8 @@ fun AddressSection(
             .clip(Theme.shapes.medium)
             .background(Theme.colors.backGround)
     ) {
-        val lat = location?.latitude
-        val lon = location?.longitude
+        val lat = location?.latitude ?: DEFAULT_CAIRO_LAT
+        val lon = location?.longitude ?: DEFAULT_CAIRO_LON
         
         Box(
             modifier = Modifier
@@ -73,61 +76,42 @@ fun AddressSection(
                 .noRippleClickable(onClick = onMapClick),
             contentAlignment = Alignment.Center
         ) {
-            if (lat != null && lon != null) {
-                val mapSnapshotUrl = remember(lat, lon) { buildMapSnapshotUrl(lat, lon) }
+            val mapSnapshotUrl = remember(lat, lon) { buildMapSnapshotUrl(lat, lon) }
 
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(mapSnapshotUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(mapSnapshotUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
 
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(Theme.spacing.medium)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Theme.colors.primaryVariant)
-                        .padding(horizontal = Theme.spacing.small, vertical = 6.dp)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(Theme.spacing.medium)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Theme.colors.primaryVariant)
+                    .padding(horizontal = Theme.spacing.small, vertical = 6.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_location),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        BasicText(
-                            text = stringResource(id = R.string.request_service_precise),
-                            style = Theme.typography.body.medium.copy(
-                                color = Color.White, 
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        )
-                    }
-                }
-            } else {
-                // Empty state for map preview
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_location),
                         contentDescription = null,
-                        tint = Theme.colors.secondaryFont,
-                        modifier = Modifier.size(36.dp).padding(bottom = 8.dp)
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
                     )
                     BasicText(
-                        text = stringResource(id = R.string.request_service_no_address),
+                        text = stringResource(id = R.string.request_service_precise),
                         style = Theme.typography.body.medium.copy(
-                            color = Theme.colors.secondaryFont,
-                            fontWeight = FontWeight.Medium,
+                            color = Color.White, 
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
                         )
                     )
                 }

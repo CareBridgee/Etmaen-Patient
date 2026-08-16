@@ -24,7 +24,7 @@ import com.carenest.presentation.navigation.ScreenTopBar
 @Composable
 fun RequestServiceScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToMap: () -> Unit,
+    onNavigateToMap: (LocationDetails?) -> Unit,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToAddPatient: () -> Unit,
     onNavigateToServiceSelection: () -> Unit,
@@ -84,7 +84,7 @@ fun RequestServiceScreen(
             RequestServiceEffect.NavigateToAddPatient -> onNavigateToAddPatient()
             is RequestServiceEffect.NavigateToServiceSelection -> onNavigateToServiceSelection()
             RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker(state.location)
-            RequestServiceEffect.NavigateToMap -> onNavigateToMap()
+            is RequestServiceEffect.NavigateToMap -> onNavigateToMap(effect.location)
             is RequestServiceEffect.RequestSubmittedSuccessfully -> {
                 toastState.show(requestSuccessMessage)
                 onSubmitRequestClick(effect.serviceRequestId)
