@@ -159,7 +159,7 @@
   <string name="emergency_contact_phone_hint">0100 000 0000</string>
   <string name="emergency_contact_security">Your data is encrypted and only shared with medical professionals during active care sessions.</string>
   <string name="emergency_contact_multiple_unavailable">Multiple emergency contacts are saved. Editing is unavailable here until contact selection is supported.</string>
-  <string name="emergency_contact_continue">Continue to Final Step</string>
+  <string name="emergency_contact_continue">Finish</string>
   <string name="relationship_spouse">Spouse</string>
   <string name="relationship_parent">Parent</string>
   <string name="relationship_sibling">Sibling</string>

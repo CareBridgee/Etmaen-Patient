@@ -153,7 +153,7 @@
   <string name="emergency_contact_phone">رقم الهاتف</string>
   <string name="emergency_contact_phone_hint">0100 000 0000</string>
   <string name="emergency_contact_security">بياناتك مشفرة ولا تتم مشاركتها إلا مع المتخصصين الطبيين أثناء جلسات الرعاية النشطة.</string>
-  <string name="emergency_contact_continue">المتابعة إلى الخطوة الأخيرة</string>
+  <string name="emergency_contact_continue">انهاء</string>
   <string name="relationship_spouse">الزوج أو الزوجة</string>
   <string name="relationship_parent">أحد الوالدين</string>
   <string name="relationship_sibling">أخ أو أخت</string>
