@@ -93,6 +93,15 @@ class GeocodingRepositoryImpl @Inject constructor(
     }
 
     private fun mapToLocationDetails(address: Address, lat: Double, lon: Double): LocationDetails {
+        val fullAddressLine = if (address.maxAddressLineIndex >= 0) {
+            (0..address.maxAddressLineIndex)
+                .mapNotNull { address.getAddressLine(it) }
+                .filter { it.isNotBlank() }
+                .joinToString(", ")
+        } else {
+            null
+        }
+
         // City fallback priority
         val city = address.locality 
             ?: address.subAdminArea 
@@ -114,13 +123,26 @@ class GeocodingRepositoryImpl @Inject constructor(
         // Apartment fallback priority
         val apartment = address.subThoroughfare ?: ""
 
+        val displayAddress = fullAddressLine?.ifBlank { null }
+            ?: listOfNotNull(
+                address.featureName?.takeIf { it != street && it != district && it != city },
+                street.takeIf { it.isNotBlank() },
+                district.takeIf { it.isNotBlank() },
+                city.takeIf { it.isNotBlank() },
+                address.countryName?.takeIf { it.isNotBlank() }
+            ).distinct().joinToString(", ")
+
         return LocationDetails(
-            address = street,
+            address = displayAddress,
             apartment = apartment,
             district = district,
             city = city,
             latitude = lat,
-            longitude = lon
+            longitude = lon,
+            street = street,
+            building = apartment,
+            area = district,
+            country = address.countryName.orEmpty()
         )
     }
 }
