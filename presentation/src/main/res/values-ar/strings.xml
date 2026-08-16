@@ -4,7 +4,7 @@
   <string name="nav_booking">السجل</string>
   <string name="nav_services">الخدمات</string>
   <string name="nav_profile">الملف الشخصي</string>
-  <string name="auth_title">كير كونيكت</string>
+  <string name="auth_title">إطمئن</string>
   <string name="auth_subtitle">رعاية مطمئنة لك ولأحبائك</string>
   <string name="auth_continue_google">المتابعة باستخدام Google</string>
   <string name="auth_google_unavailable_title">تسجيل الدخول عبر Google قريبًا</string>
@@ -41,8 +41,8 @@
     <string name="auth_error_profile_load">تم التحقق من هاتفك، لكن تعذر تحميل ملفك الشخصي. حاول مرة أخرى.</string>
     <string name="auth_error_photo_upload">تعذر رفع صورتك. تحقق من اتصالك وحاول مرة أخرى.</string>
     <string name="auth_error_profile_save">تعذر حفظ معلوماتك الشخصية. حاول مرة أخرى.</string>
-  <string name="welcome_topbar_title">كير كونيكت</string>
-  <string name="welcome_title">مرحباً بك في كير كونيكت</string>
+  <string name="welcome_topbar_title">إطمئن</string>
+  <string name="welcome_title">مرحباً بك في إطمئن</string>
   <string name="welcome_subtitle">حسابك جاهز! لتقديم أفضل دعم ممكن، نقترح إكمال ملفك الصحي.</string>
   <string name="welcome_complete_profile_btn">إكمال الملف الصحي\n(موصى به)</string>
   <string name="welcome_skip_btn">تخطي الآن\nإعداد ملفك لاحقاً</string>
@@ -161,12 +161,12 @@
   <string name="relationship_friend_neighbor">صديق أو جار</string>
   <string name="relationship_self">نفسي</string>
   <string name="relationship_other">أخرى</string>
-  <string name="onboarding_title">كير نيست</string>
+  <string name="onboarding_title">إطمئن</string>
   <string name="onboarding_skip">تخطي</string>
   <string name="onboarding_get_started">ابدأ الآن</string>
   <string name="onboarding_next">التالي ←</string>
   <string name="nav_wallet">المحفظة</string>
-  <string name="app_name_careconnect">CareConnect</string>
+  <string name="app_name_careconnect">إطمئن</string>
   <string name="app_name_healthcare">الرعاية الصحية</string>
   <string name="app_auth_description">رعاية مطمئنة لك ولأحبائك</string>
   <string name="phone_header_brand">الرعاية الآمنة</string>
@@ -258,7 +258,7 @@
   <string name="home_services_empty_title">لا توجد خدمات متاحة</string>
   <string name="home_services_empty_desc">ستظهر الخدمات هنا عندما تكون متاحة.</string>
   <string name="home_search_hint">البحث عن خدمات، أعراض...</string>
-  <string name="otp_app_name">CareConnect</string>
+  <string name="otp_app_name">إطمئن</string>
   <string name="home_error_title">حدث خطأ ما</string>
   <string name="home_error_default_desc">فشل في تحميل محتوى الصفحة الرئيسية. يرجى المحاولة مرة أخرى.</string>
   <string name="home_error_retry">إعادة المحاولة</string>
@@ -277,7 +277,7 @@
   <string name="profile_settings_title">الإعدادات</string>
   <string name="profile_settings_subtitle">الأمان وتفضيلات التطبيق</string>
   <string name="profile_logout_title">تسجيل الخروج</string>
-  <string name="profile_app_version">سيرين كير v2.4.1</string>
+  <string name="profile_app_version">إطمئن v%1$s</string>
   <string name="family_members_screen_title">أفراد العائلة</string>
   <string name="family_members_screen_subtitle">إدارة الملفات الصحية لأحبائك.</string>
   <string name="family_members_last_checkup">آخر فحص</string>
@@ -296,7 +296,7 @@
   <string name="settings_theme_dark">داكن</string>
   <string name="settings_theme_system">حسب النظام</string>
   <string name="settings_section_security_privacy">الأمان والخصوصية</string>
-  <string name="settings_security_privacy_description">خصوصيتك وأمانك مهمان لدى CareNest.\n\n• يتم تخزين معلوماتك الشخصية والطبية بأمان.\n• تُستخدم بياناتك فقط لتقديم خدمات الرعاية الصحية وتحسين تجربتك.\n• لا تشارك CareNest معلوماتك الشخصية مع أطراف ثالثة غير مصرح لها.\n• يتم تشفير جميع الاتصالات مع خدماتنا كلما أمكن ذلك.</string>
+  <string name="settings_security_privacy_description">خصوصيتك وأمانك مهمان لدى إطمئن.\n\n• يتم تخزين معلوماتك الشخصية والطبية بأمان.\n• تُستخدم بياناتك فقط لتقديم خدمات الرعاية الصحية وتحسين تجربتك.\n• لا يشارك إطمئن معلوماتك الشخصية مع أطراف ثالثة غير مصرح لها.\n• يتم تشفير جميع الاتصالات مع خدماتنا كلما أمكن ذلك.</string>
   <string name="settings_security_privacy_got_it">فهمت</string>
   <string name="settings_select_language_title">اختر اللغة</string>
   <string name="settings_language_english">English</string>
@@ -534,7 +534,7 @@
   <string name="family_members_load_failed_description">يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.</string>
   <string name="family_member_phone">رقم الهاتف</string>
   <string name="family_member_phone_hint">0100 000 0000</string>
-  <string name="profile_app_version_dynamic">CareNest v%1$s</string>
+  <string name="profile_app_version_dynamic">إطمئن v%1$s</string>
   <string name="settings_save_failed">تعذر حفظ هذا الإعداد. حاول مرة أخرى.</string>
   <string name="settings_privacy_unavailable">لم يتم إعداد وجهة لسياسة الخصوصية.</string>
   <string name="settings_terms_unavailable">لم يتم إعداد وجهة للشروط والأحكام.</string>
@@ -562,4 +562,6 @@
   <string name="notification_permission_settings_title">إذن الإشعارات مطلوب</string>
   <string name="notification_permission_settings_message">إذن الإشعارات معطل. يرجى تفعيل الإشعارات من الإعدادات لتلقي تحديثات مباشرة حول طلبات الرعاية الخاصة بك.</string>
   <string name="notification_permission_open_settings">فتح الإعدادات</string>
+  <string name="service_share_message">خدمة إطمئن: %1$s\n\n%2$s\n\nحمّل إطمئن واحجز الآن!</string>
+  <string name="service_share_chooser">مشاركة عبر</string>
 </resources>

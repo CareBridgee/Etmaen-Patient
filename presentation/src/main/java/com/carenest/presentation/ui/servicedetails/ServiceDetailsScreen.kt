@@ -85,17 +85,17 @@ fun ServiceDetailsScreen(
                     type = "text/plain"
                     putExtra(Intent.EXTRA_SUBJECT, effect.serviceName)
                     
-                    val shareMessage = """
-                        CareNest Service: ${effect.serviceName}
-                        
-                        ${effect.description}
-                        
-                        Download CareNest to book now!
-                    """.trimIndent()
-                    
+                    val shareMessage = context.getString(
+                        R.string.service_share_message,
+                        effect.serviceName,
+                        effect.description
+                    )
+
                     putExtra(Intent.EXTRA_TEXT, shareMessage)
                 }
-                context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                context.startActivity(
+                    Intent.createChooser(shareIntent, context.getString(R.string.service_share_chooser))
+                )
             }
             is ServiceDetailsEffect.RequestService ->{
                 onRequestService(effect.serviceId)

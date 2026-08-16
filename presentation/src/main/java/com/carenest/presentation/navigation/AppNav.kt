@@ -105,8 +105,6 @@ fun AppNav(
 ) {
     val mainState by mainViewModel.state.collectAsStateWithLifecycle()
 
-    if (!mainState.isReady) return
-
     val isDarkTheme = when (mainState.themeMode) {
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true

@@ -121,7 +121,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.5f),
+                    .weight(0.42f),
                 contentAlignment = Alignment.Center
             ) {
                 Row(
@@ -131,9 +131,9 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
                 ) {
 
                     Image(
-                        painter = painterResource(DR.drawable.auth_logo),
+                        painter = painterResource(DR.drawable.etmaen_logo_primary),
                         contentDescription = null,
-                        modifier = Modifier.size(200.dp),
+                        modifier = Modifier.size(156.dp),
                         contentScale = ContentScale.Fit
                     )
 
@@ -144,7 +144,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .weight(0.3f)
+                    .weight(0.22f)
                 ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -153,7 +153,7 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
                     style = Theme.typography.display.copy(
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.Normal,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Center
                     )
                 )
 
@@ -193,8 +193,9 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
                     caption = stringResource(R.string.auth_continue_phone),
                     iconPainter = painterResource(id = DR.drawable.ic_call),
                     onClick = { onEvent(LoginIntent.ContinueWithPhoneClicked) },
-                    backgroundColor = Theme.colors.primary.copy(alpha = 0.08f),
+                    backgroundColor = Theme.colors.backGround,
                     contentColor = Theme.colors.primary,
+                    borderColor = Theme.colors.primary.copy(alpha = 0.7f),
                     iconTint = Theme.colors.primary
                 )
 
