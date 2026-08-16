@@ -54,7 +54,6 @@ import com.carenest.presentation.ui.servicelist.components.ServicesShimmerLoadin
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.presentation.ui.servicelist.components.ServiceCategoryCard
 import com.carenest.designsystem.R as RD
-
 @Composable
 fun ServicesScreen(
     onNavigateToDetails: (String) -> Unit,

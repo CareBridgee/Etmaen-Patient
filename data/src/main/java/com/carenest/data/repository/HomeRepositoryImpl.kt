@@ -32,7 +32,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getServices(): Result<List<HealthcareService>> {
-        return careNestRemoteDatasource.getServices().map { it -> it.map { it.toDomain() } }
+        return careNestRemoteDatasource.getServices().map { it -> it.map { it.toDomain() }.shuffled() }
     }
 
     override suspend fun getServiceDetails(serviceId: String): Result<ServiceDetailsModel> {
