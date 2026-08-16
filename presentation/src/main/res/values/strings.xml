@@ -5,7 +5,7 @@
   <string name="nav_booking">History</string>
   <string name="nav_services">Services</string>
   <string name="nav_profile">Profile</string>
-  <string name="auth_title">CareConnect</string>
+  <string name="auth_title">Etmaen</string>
   <string name="auth_subtitle">Reassuring care for you and your loved ones</string>
   <string name="auth_continue_google">Continue with Google</string>
   <string name="auth_google_unavailable_title">Google sign-in is coming soon</string>
@@ -42,8 +42,8 @@
     <string name="auth_error_profile_load">Your phone was verified, but we couldn\'t load your profile. Please try again.</string>
     <string name="auth_error_photo_upload">We couldn\'t upload your photo. Check your connection and try again.</string>
     <string name="auth_error_profile_save">We couldn\'t save your personal information. Please try again.</string>
-  <string name="welcome_topbar_title">CareConnect</string>
-  <string name="welcome_title">Welcome to CareConnect</string>
+  <string name="welcome_topbar_title">Etmaen</string>
+  <string name="welcome_title">Welcome to Etmaen</string>
   <string name="welcome_subtitle">Your account is ready! To provide the best possible support, we suggest completing your health profile.</string>
   <string name="welcome_complete_profile_btn">Complete Health Profile\n(RECOMMENDED)</string>
   <string name="welcome_skip_btn">Skip for Now\nSet up your profile later</string>
@@ -167,11 +167,11 @@
   <string name="relationship_friend_neighbor">Friend / Neighbor</string>
   <string name="relationship_self">Self</string>
   <string name="relationship_other">Other</string>
-  <string name="onboarding_title">CareNest</string>
+  <string name="onboarding_title">Etmaen</string>
   <string name="onboarding_skip">Skip</string>
   <string name="onboarding_get_started">Get Started</string>
   <string name="onboarding_next">Next</string>
-  <string name="app_name_careconnect">CareConnect</string>
+  <string name="app_name_careconnect">Etmaen</string>
   <string name="app_name_healthcare">Healthcare</string>
   <string name="nav_wallet">Wallet</string>
   <string name="app_auth_description">Reassuring care for you and your loved ones</string>
@@ -264,7 +264,7 @@
   <string name="home_services_empty_title">No services available</string>
   <string name="home_services_empty_desc">Services will appear here when available.</string>
   <string name="home_search_hint">Search services, symptoms...</string>
-  <string name="otp_app_name">CareConnect</string>
+  <string name="otp_app_name">Etmaen</string>
   <string name="home_error_title">Something went wrong</string>
   <string name="home_error_default_desc">Failed to load home content. Please try again.</string>
   <string name="home_error_retry">Retry</string>
@@ -333,7 +333,7 @@
   <string name="profile_settings_title">Settings</string>
   <string name="profile_settings_subtitle">Security &amp; App preferences</string>
   <string name="profile_logout_title">Logout</string>
-  <string name="profile_app_version">CareNest v%1$s</string>
+  <string name="profile_app_version">Etmaen v%1$s</string>
   <string name="profile_load_failed">We couldn\'t load your profile. Check your connection and try again.</string>
   <string name="profile_load_error_title">Unable to load your profile</string>
   <string name="profile_load_error_description">Please check your internet connection and try again.</string>
@@ -370,7 +370,7 @@
   <string name="settings_theme_dark">Dark</string>
   <string name="settings_theme_system">System</string>
   <string name="settings_section_security_privacy">Security &amp; Privacy</string>
-  <string name="settings_security_privacy_description">Your privacy and security are important to CareNest.\n\n• Your personal and medical information is securely stored.\n• Your data is only used to provide healthcare services and improve your experience.\n• CareNest does not share your personal information with unauthorized third parties.\n• All communication with our services is encrypted whenever possible.</string>
+  <string name="settings_security_privacy_description">Your privacy and security are important to Etmaen.\n\n• Your personal and medical information is securely stored.\n• Your data is only used to provide healthcare services and improve your experience.\n• Etmaen does not share your personal information with unauthorized third parties.\n• All communication with our services is encrypted whenever possible.</string>
   <string name="settings_security_privacy_got_it">Got it</string>
   <string name="settings_select_language_title">Select Language</string>
   <string name="settings_language_english">English</string>
@@ -548,7 +548,7 @@
   <string name="family_members_load_failed_description">Please check your internet connection and try again.</string>
   <string name="family_member_phone">Phone Number</string>
   <string name="family_member_phone_hint">0100 000 0000</string>
-  <string name="profile_app_version_dynamic">CareNest v%1$s</string>
+  <string name="profile_app_version_dynamic">Etmaen v%1$s</string>
   <string name="settings_save_failed">Unable to save this setting. Please try again.</string>
   <string name="settings_privacy_unavailable">No Privacy Policy destination is configured.</string>
   <string name="settings_terms_unavailable">No Terms and Conditions destination is configured.</string>
@@ -576,4 +576,6 @@
   <string name="notification_permission_settings_message">Notification permission is disabled. Please enable notifications in Settings to receive live updates about your care requests.</string>
   <string name="notification_permission_open_settings">Open Settings</string>
   <string name="error_location_unavailable">Location is unavailable. Please check your GPS and permissions.</string>
+  <string name="service_share_message">Etmaen Service: %1$s\n\n%2$s\n\nDownload Etmaen to book now!</string>
+  <string name="service_share_chooser">Share via</string>
 </resources>

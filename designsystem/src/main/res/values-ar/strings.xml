@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name">إطمئن</string>
     <string name="request_service_title">طلب خدمة</string>
     <string name="request_service_fill_ai">املأ بالذكاء الاصطناعي</string>
     <string name="request_service_patient_label">المريض</string>

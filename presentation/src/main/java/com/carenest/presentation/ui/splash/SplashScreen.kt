@@ -1,5 +1,6 @@
 package com.carenest.presentation.ui.splash
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,12 +12,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -77,6 +78,7 @@ private fun SplashContent(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -84,18 +86,20 @@ private fun SplashContent(
                     .background(Theme.colors.surface),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = RD.drawable.ic_work),
-                    contentDescription = "App Icon",
-                    tint = Theme.colors.primary,
-                    modifier = Modifier.size(48.dp)
+                Image(
+                    painter = painterResource(
+                        id = RD.drawable.etmaen_logo_primary
+                    ),
+                    contentDescription = "Etmaen Logo",
+                    modifier = Modifier.size(68.dp),
+                    contentScale = ContentScale.Fit
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             BasicText(
-                text = "CareNest",
+                text = "Etmaen",
                 style = Theme.typography.displayMedium.copy(
                     color = Theme.colors.onPrimary,
                     fontWeight = FontWeight.Bold,
@@ -129,7 +133,10 @@ private fun SplashContent(
                 style = Theme.typography.hint.medium.copy(
                     color = Theme.colors.onPrimary.copy(alpha = 0.8f),
                     fontWeight = FontWeight.Medium,
-                    letterSpacing = androidx.compose.ui.unit.TextUnit(0.1f, TextUnitType.Em)
+                    letterSpacing = androidx.compose.ui.unit.TextUnit(
+                        0.1f,
+                        TextUnitType.Em
+                    )
                 )
             )
         }
@@ -149,7 +156,10 @@ private fun SplashContent(
 @Preview(showBackground = true, widthDp = 390, heightDp = 844)
 @Composable
 private fun SplashContentPreview() {
-    SpTheme(isDarkTheme = false, languageCode = "en") {
+    SpTheme(
+        isDarkTheme = false,
+        languageCode = "en"
+    ) {
         SplashContent(
             state = SplashState(),
         )

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Etmaen</string>
+    <string name="socket_service_notification_title">Etmaen Service</string>
 </resources>

@@ -92,7 +92,7 @@ class SocketForegroundService : Service() {
         )
 
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("CareNest Service")
+            .setContentTitle(getString(com.carenest.R.string.socket_service_notification_title))
             .setContentText(statusText)
             .setSmallIcon(android.R.drawable.ic_popup_sync) 
             .setPriority(NotificationCompat.PRIORITY_LOW)
