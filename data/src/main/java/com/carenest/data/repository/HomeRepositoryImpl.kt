@@ -73,6 +73,7 @@ class HomeRepositoryImpl @Inject constructor(
                 params.preferredTime.second
             ),
             serviceDescription = params.serviceDescription,
+            paymentType = params.paymentType.backendValue,
         )
         return careNestRemoteDatasource.submitServiceRequest(dto).map { response ->
             ServiceRequestResult(
