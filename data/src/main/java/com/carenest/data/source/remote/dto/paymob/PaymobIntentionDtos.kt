@@ -2,6 +2,7 @@ package com.carenest.data.source.remote.dto.paymob
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class PaymobIntentionRequestDto(
@@ -12,6 +13,8 @@ data class PaymobIntentionRequestDto(
     @SerialName("billing_data") val billingData: PaymobBillingDataDto,
     @SerialName("customer") val customer: PaymobCustomerDto,
     @SerialName("special_reference") val specialReference: String,
+    @SerialName("notification_url") val notificationUrl: String,
+    @SerialName("redirection_url") val redirectionUrl: String,
     @SerialName("extras") val extras: Map<String, String> = mapOf("source" to "carenest_android_wallet"),
 )
 
@@ -52,4 +55,13 @@ data class PaymobIntentionResponseDto(
     @SerialName("id") val id: String? = null,
     @SerialName("client_secret") val clientSecret: String? = null,
     @SerialName("status") val status: String? = null,
+)
+
+@Serializable
+data class PaymobRetrievedIntentionDto(
+    @SerialName("id") val id: String? = null,
+    @SerialName("confirmed") val confirmed: Boolean? = null,
+    @SerialName("status") val status: String? = null,
+    @SerialName("transaction_records") val transactionRecords: List<JsonElement> = emptyList(),
+    @SerialName("transactions") val transactions: List<JsonElement> = emptyList(),
 )

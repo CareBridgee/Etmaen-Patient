@@ -5,6 +5,7 @@ import com.carenest.data.paymob.PaymobConfigProvider
 import com.carenest.data.paymob.PaymobIntentionRequestFactory
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionRequestDto
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionResponseDto
+import com.carenest.data.source.remote.dto.paymob.PaymobRetrievedIntentionDto
 import com.carenest.data.source.remote.service.PaymobApiService
 import com.carenest.domain.model.home.User
 import com.carenest.domain.model.payment.WalletException
@@ -24,6 +25,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class PaymobWalletTopUpPaymentGatewayTest {
     @Test
@@ -109,6 +112,32 @@ class PaymobWalletTopUpPaymentGatewayTest {
     }
 
     @Test
+    fun `pending checkout with confirmed retrieved transaction returns success`() = runTest {
+        val attempts = InMemoryTopUpAttemptRepository()
+        val gateway = gateway(
+            api = RecordingPaymobApiService(
+                retrievedIntention = PaymobRetrievedIntentionDto(
+                    confirmed = true,
+                    status = "confirmed",
+                    transactions = listOf(
+                        JsonObject(mapOf("id" to JsonPrimitive(123456))),
+                    ),
+                ),
+            ),
+            attempts = attempts,
+            launcher = FakeNativeCheckoutLauncher(
+                result = PaymobNativeCheckoutResult.Pending,
+            ),
+        )
+
+        val result = gateway.startTopUp(amount()).getOrThrow()
+
+        assertEquals(WalletTopUpPaymentResult.Success("123456", "attempt-1"), result)
+        assertEquals(WalletTopUpAttemptState.PaymobSucceeded, attempts.attempt?.state)
+        assertEquals("123456", attempts.attempt?.paymobTransactionId)
+    }
+
+    @Test
     fun `cancelled failed and pending checkout are not success`() = runTest {
         val outcomes = listOf(
             PaymobNativeCheckoutResult.Cancelled to WalletTopUpPaymentResult.Cancelled,
@@ -157,14 +186,25 @@ private class FakePaymobConfigProvider(
     override fun current(): Result<PaymobConfig> = result
 }
 
-private class RecordingPaymobApiService : PaymobApiService {
+private class RecordingPaymobApiService(
+    private val retrievedIntention: PaymobRetrievedIntentionDto = PaymobRetrievedIntentionDto(),
+) : PaymobApiService {
     val requests = mutableListOf<PaymobIntentionRequestDto>()
+    val retrieveRequests = mutableListOf<Pair<String, String>>()
 
     override suspend fun createIntention(
         request: PaymobIntentionRequestDto,
     ): Result<PaymobIntentionResponseDto> {
         requests += request
         return Result.success(PaymobIntentionResponseDto(clientSecret = "client-secret"))
+    }
+
+    override suspend fun retrieveIntention(
+        publicKey: String,
+        clientSecret: String,
+    ): Result<PaymobRetrievedIntentionDto> {
+        retrieveRequests += publicKey to clientSecret
+        return Result.success(retrievedIntention)
     }
 }
 

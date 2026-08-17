@@ -3,6 +3,7 @@ package com.carenest.data.source.remote.service
 import com.carenest.data.di.PaymobHttpClient
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionRequestDto
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionResponseDto
+import com.carenest.data.source.remote.dto.paymob.PaymobRetrievedIntentionDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
@@ -25,5 +26,14 @@ class PaymobApiServiceImpl @Inject constructor(
             url { path("v1/intention/") }
             contentType(ContentType.Application.Json)
             setBody(request)
+        }
+
+    override suspend fun retrieveIntention(
+        publicKey: String,
+        clientSecret: String,
+    ): Result<PaymobRetrievedIntentionDto> =
+        httpClient.executeRequest(json) {
+            method = HttpMethod.Get
+            url { path("v1/intention/element/$publicKey/$clientSecret/") }
         }
 }

@@ -39,6 +39,8 @@ class PaymobIntentionSerializationTest {
                     email = "patient@carenest.local",
                 ),
                 specialReference = "carenest-wallet-test",
+                notificationUrl = "https://accept.paymob.com/api/acceptance/post_pay",
+                redirectionUrl = "https://accept.paymob.com/api/acceptance/post_pay",
             ),
         )
 
@@ -48,6 +50,14 @@ class PaymobIntentionSerializationTest {
         assertEquals("EGP", root.getValue("currency").jsonPrimitive.content)
         assertEquals("5855102", root.getValue("payment_methods").jsonArray.single().jsonPrimitive.content)
         assertEquals("carenest-wallet-test", root.getValue("special_reference").jsonPrimitive.content)
+        assertEquals(
+            "https://accept.paymob.com/api/acceptance/post_pay",
+            root.getValue("notification_url").jsonPrimitive.content,
+        )
+        assertEquals(
+            "https://accept.paymob.com/api/acceptance/post_pay",
+            root.getValue("redirection_url").jsonPrimitive.content,
+        )
         assertEquals("CareNest", root.getValue("billing_data").jsonObject.getValue("first_name").jsonPrimitive.content)
         assertEquals("Patient", root.getValue("customer").jsonObject.getValue("last_name").jsonPrimitive.content)
     }

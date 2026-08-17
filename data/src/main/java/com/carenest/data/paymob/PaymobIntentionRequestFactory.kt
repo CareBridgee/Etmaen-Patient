@@ -16,6 +16,7 @@ class PaymobIntentionRequestFactory @Inject constructor() {
         amount: WalletTopUpAmount,
         integrationId: Int,
         merchantReference: String,
+        postPayUrl: String,
         user: User,
     ): Result<PaymobIntentionRequestDto> {
         val phoneNumber = user.phoneNumber.toPaymobPhoneNumber()
@@ -52,6 +53,8 @@ class PaymobIntentionRequestFactory @Inject constructor() {
                     email = email,
                 ),
                 specialReference = merchantReference,
+                notificationUrl = postPayUrl,
+                redirectionUrl = postPayUrl,
                 extras = mapOf(
                     "source" to "carenest_android_wallet",
                     "merchant_reference" to merchantReference,
