@@ -4,12 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.carenest.designsystem.components.button.SocialButton
+import com.carenest.designsystem.components.dialog.CareNestDialog
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.ui.auth.login.LoginIntent
@@ -74,34 +71,13 @@ fun AuthLandingScreen(onEvent: (LoginIntent) -> Unit, isLoading: Boolean = false
     var showGoogleUnavailableDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showGoogleUnavailableDialog) {
-        AlertDialog(
-            onDismissRequest = { showGoogleUnavailableDialog = false },
-            shape = RoundedCornerShape(24.dp),
-            containerColor = Theme.colors.surface,
-            tonalElevation = 0.dp,
-            title = {
-                Text(
-                    text = stringResource(R.string.auth_google_unavailable_title),
-                    style = Theme.typography.title.copy(fontWeight = FontWeight.Bold),
-                    color = Theme.colors.primaryFont
-                )
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.auth_google_unavailable_message),
-                    style = Theme.typography.body.medium,
-                    color = Theme.colors.secondaryFont
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = { showGoogleUnavailableDialog = false }) {
-                    Text(
-                        text = stringResource(R.string.auth_google_unavailable_action),
-                        style = Theme.typography.body.medium.copy(fontWeight = FontWeight.SemiBold),
-                        color = Theme.colors.primary
-                    )
-                }
-            }
+        CareNestDialog(
+            title = stringResource(R.string.auth_google_unavailable_title),
+            message = stringResource(R.string.auth_google_unavailable_message),
+            confirmText = stringResource(R.string.auth_google_unavailable_action),
+            dismissText = null,
+            onConfirm = { showGoogleUnavailableDialog = false },
+            onDismiss = { showGoogleUnavailableDialog = false },
         )
     }
 
