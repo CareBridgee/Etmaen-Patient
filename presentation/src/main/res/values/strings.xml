@@ -311,6 +311,8 @@
   <string name="send">Send</string>
   <string name="ai_chat_welcome_message">Hello, I\'m your AI health assistant. How can I help you today?</string>
   <string name="ai_chat_error_failed_response">Failed to get AI response. Please try again.</string>
+  <string name="start_over">Start Over</string>
+  <string name="chat_reset_success">Chat history reset successfully</string>
 
 
   <!-- Search For Nurse -->

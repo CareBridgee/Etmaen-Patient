@@ -1,6 +1,7 @@
 package com.carenest.data.repository
 
 import com.carenest.data.source.remote.dto.aichat.AiChatRequestDto
+import com.carenest.data.source.remote.dto.aichat.ResetAiChatRequestDto
 import com.carenest.data.source.remote.service.AiChatApiService
 import com.carenest.domain.repository.AiChatRepository
 import javax.inject.Inject
@@ -35,6 +36,14 @@ class AiChatRepositoryImpl @Inject constructor(
                 isComplete = response.draft?.complete ?: false
             )
         }
+    }
+
+    override suspend fun resetChat(profileId: String): Result<Unit> {
+        val result = apiService.resetChat(ResetAiChatRequestDto(profileId = profileId))
+        if (result.isSuccess) {
+            lastAiReport = null
+        }
+        return result
     }
 
     override fun getLastAiReport(): String? = lastAiReport

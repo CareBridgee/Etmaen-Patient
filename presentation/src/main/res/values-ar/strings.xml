@@ -298,6 +298,12 @@
   <string name="settings_section_security_privacy">الأمان والخصوصية</string>
   <string name="settings_security_privacy_description">خصوصيتك وأمانك مهمان لدى إطمئن.\n\n• يتم تخزين معلوماتك الشخصية والطبية بأمان.\n• تُستخدم بياناتك فقط لتقديم خدمات الرعاية الصحية وتحسين تجربتك.\n• لا يشارك إطمئن معلوماتك الشخصية مع أطراف ثالثة غير مصرح لها.\n• يتم تشفير جميع الاتصالات مع خدماتنا كلما أمكن ذلك.</string>
   <string name="settings_security_privacy_got_it">فهمت</string>
+  <string name="settings_section_background_service">خدمة الخلفية</string>
+  <string name="settings_stop_service">إيقاف خدمة الخلفية</string>
+  <string name="settings_stop_service_description">قطع اتصال المقابس وإيقاف الخدمة في الخلفية</string>
+  <string name="settings_service_stopped_success">تم إيقاف خدمة الخلفية وقطع الاتصال بنجاح.</string>
+  <string name="settings_service_enabled">تم تشغيل خدمة الخلفية والاتصال بالمقبس.</string>
+  <string name="settings_service_disabled">تم إيقاف خدمة الخلفية وقطع الاتصال بالمقبس.</string>
   <string name="settings_select_language_title">اختر اللغة</string>
   <string name="settings_language_english">English</string>
   <string name="settings_language_arabic">العربية</string>
@@ -468,6 +474,8 @@
   <string name="send">إرسال</string>
   <string name="ai_chat_welcome_message">مرحباً، أنا مساعدك الصحي بالذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟</string>
   <string name="ai_chat_error_failed_response">فشل في الحصول على رد من الذكاء الاصطناعي. يرجى المحاولة مرة أخرى.</string>
+  <string name="start_over">البدء من جديد</string>
+  <string name="chat_reset_success">تم إعادة ضبط المحادثة بنجاح</string>
   <string name="emergency_urgent_badge">عاجل</string>
   <string name="emergency_assistance_required">مطلوب مساعدة طارئة</string>
   <string name="emergency_description">اكتشف نظام الذكاء الاصطناعي أعراضاً حرجة. يرجى التزام الهدوء واتباع خطوات الطوارئ أدناه.</string>

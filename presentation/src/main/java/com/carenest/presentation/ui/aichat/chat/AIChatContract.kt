@@ -27,12 +27,14 @@ data class AIChatState(
     val messages: List<ChatMessage> = emptyList(),
     val inputText: String = "",
     val isLoading: Boolean = false,
+    val isResetting: Boolean = false,
     val errorMessage: String? = null
 )
 
 sealed class AIChatEvent {
     data class OnInputTextChanged(val text: String) : AIChatEvent()
     object OnSendMessage : AIChatEvent()
+    object OnStartOverClicked : AIChatEvent()
     object OnBackClicked : AIChatEvent()
     object OnBookNowClicked : AIChatEvent()
     data class OnViewServiceClicked(val categoryId: String) : AIChatEvent()
