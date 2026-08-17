@@ -3,6 +3,7 @@ package com.carenest.presentation.ui.aichat.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.usecase.aichat.ResetAiChatUseCase
 import com.carenest.domain.usecase.aichat.SendAiChatMessageUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.firstOrNull
 @HiltViewModel
 class AIChatViewModel @Inject constructor(
     private val sendAiChatMessageUseCase: SendAiChatMessageUseCase,
+    private val resetAiChatUseCase: ResetAiChatUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val profileRepository: ProfileRepository,
     savedStateHandle: SavedStateHandle
@@ -53,6 +55,10 @@ class AIChatViewModel @Inject constructor(
 
             is AIChatEvent.OnSendMessage -> {
                 sendMessage()
+            }
+
+            is AIChatEvent.OnStartOverClicked -> {
+                resetChat()
             }
 
             is AIChatEvent.OnBackClicked -> {
@@ -155,6 +161,51 @@ class AIChatViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
+                            errorMessage = errorMsg
+                        )
+                    }
+                    sendEffect(AIChatEffect.ShowError(errorMsg))
+                }
+            )
+        }
+    }
+
+    private fun resetChat() {
+        if (currentState.isResetting) return
+
+        viewModelScope.launch {
+            var activeProfileId = currentState.patientId
+            if (activeProfileId.isBlank()) {
+                val user = observeCurrentUserUseCase().firstOrNull()
+                activeProfileId = user?.defaultProfileId.orEmpty()
+            }
+            if (activeProfileId.isBlank()) {
+                activeProfileId = profileRepository.getDefaultProfile().getOrNull()?.id.orEmpty()
+            }
+            if (activeProfileId.isBlank()) {
+                activeProfileId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+
+            updateState { copy(isResetting = true, errorMessage = null) }
+
+            val result = resetAiChatUseCase(activeProfileId)
+            result.fold(
+                onSuccess = {
+                    updateState {
+                        copy(
+                            messages = emptyList(),
+                            inputText = "",
+                            isLoading = false,
+                            isResetting = false,
+                            errorMessage = null
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    val errorMsg = error.message ?: "Failed to reset chat. Please try again."
+                    updateState {
+                        copy(
+                            isResetting = false,
                             errorMessage = errorMsg
                         )
                     }

@@ -2,7 +2,9 @@ package com.carenest.data.source.remote.service
 
 import com.carenest.data.source.remote.dto.aichat.AiChatRequestDto
 import com.carenest.data.source.remote.dto.aichat.AiChatResponseDto
+import com.carenest.data.source.remote.dto.aichat.ResetAiChatRequestDto
 import com.carenest.data.utils.executeRequest
+import com.carenest.data.utils.executeUnitRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -23,6 +25,14 @@ class AiChatApiServiceImpl @Inject constructor(
         httpClient.executeRequest<AiChatResponseDto>(json) {
             method = HttpMethod.Post
             url { path("api/v1/chat") }
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+
+    override suspend fun resetChat(request: ResetAiChatRequestDto): Result<Unit> =
+        httpClient.executeUnitRequest(json) {
+            method = HttpMethod.Post
+            url { path("api/v1/chat/reset") }
             contentType(ContentType.Application.Json)
             setBody(request)
         }
