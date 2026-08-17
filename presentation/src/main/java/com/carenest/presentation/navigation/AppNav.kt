@@ -347,16 +347,15 @@ fun AppNav(
                     WalletScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
                         onAddFunds = { backStack.add(AppRoute.AddFunds) },
-                        onAddPaymentMethod = { backStack.add(AppRoute.AddPaymentMethod) }
+                        onShowMessage = onShowSnackbar
                     )
                 }
 
                 entry<AppRoute.AddFunds> {
                     AddFundsScreen(
                         onNavigateBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onAddPaymentMethod = { backStack.add(AppRoute.AddPaymentMethod) },
                         onTermsClick = {},
-                        onAddFunds = {}
+                        onShowMessage = onShowSnackbar
                     )
                 }
 
@@ -420,6 +419,10 @@ fun AppNav(
                                     serviceRequestId = serviceRequestId
                                 )
                             )
+                        },
+
+                        onNavigateToAddFunds = {
+                            backStack.add(AppRoute.AddFunds)
                         },
 
                         selectServiceId = route.serviceId,

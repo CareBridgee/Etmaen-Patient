@@ -3,10 +3,8 @@ package com.carenest.presentation.ui.wallet
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.BasicTextField
@@ -15,11 +13,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,20 +25,19 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.R as DR
+import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.button.SecondaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.presentation.R
+import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
-import com.carenest.presentation.ui.wallet.components.WalletActionRow
-import com.carenest.presentation.ui.wallet.components.RequiredPaymentMethodRow
-import com.carenest.presentation.ui.wallet.components.dashedRoundedBorder
 
 @Composable
 fun AddFundsScreen(
     onNavigateBack: () -> Unit,
-    onAddPaymentMethod: () -> Unit,
     onTermsClick: () -> Unit,
-    onAddFunds: () -> Unit,
+    onShowMessage: (String) -> Unit,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     ScreenTopBar(
@@ -48,16 +45,27 @@ fun AddFundsScreen(
         onLeadingClick = onNavigateBack
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    AddFundsContent(state, viewModel::onEvent, onAddPaymentMethod, onTermsClick, onAddFunds)
+    val context = LocalContext.current
+
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is WalletEffect.ShowMessage -> onShowMessage(context.getString(effect.messageRes))
+            is WalletEffect.ShowTextMessage -> onShowMessage(effect.message)
+        }
+    }
+
+    AddFundsContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onTermsClick = onTermsClick,
+    )
 }
 
 @Composable
 private fun AddFundsContent(
     state: WalletState,
     onEvent: (WalletIntent) -> Unit,
-    onAddPaymentMethod: () -> Unit,
     onTermsClick: () -> Unit,
-    onAddFunds: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
         Column(
@@ -81,6 +89,7 @@ private fun AddFundsContent(
             Spacer(Modifier.height(28.dp))
             AmountInput(
                 amount = state.topUpAmount,
+                hasError = state.topUpAmountError,
                 onAmountChanged = { onEvent(WalletIntent.TopUpAmountChanged(it)) }
             )
             Spacer(Modifier.height(12.dp))
@@ -109,47 +118,6 @@ private fun AddFundsContent(
                     modifier = Modifier.weight(1f)
                 )
             }
-            Spacer(Modifier.height(26.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                listOf(155, 310, 620).forEach { amount ->
-                    OutlinedButton(
-                        onClick = {
-                            onEvent(WalletIntent.SuggestedAmountSelected(amount))
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(58.dp),
-                        shape = CircleShape,
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = Theme.colors.onDisable
-                        ),
-                        contentPadding = PaddingValues(0.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Theme.colors.primary
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(
-                                R.string.wallet_suggested_amount,
-                                amount
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            maxLines = 2,
-                            style = Theme.typography.body.small.copy(
-                                fontSize = 13.sp,
-                                lineHeight = 20.sp
-                            ),
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-            }
             TextButton(onClick = onTermsClick, contentPadding = PaddingValues(vertical = 18.dp)) {
                 Text(
                     stringResource(R.string.wallet_terms_apply),
@@ -158,72 +126,80 @@ private fun AddFundsContent(
                     fontWeight = FontWeight.Medium
                 )
             }
-            Spacer(Modifier.height(4.dp))
-            Text(
-                stringResource(R.string.wallet_payment_method_label),
-                color = Theme.colors.secondaryFont,
-                style = Theme.typography.body.small.copy(fontSize = 12.sp),
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(10.dp))
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(92.dp)
-                    .dashedRoundedBorder(Theme.colors.error.copy(alpha = .55f), 16.dp),
-                color = Theme.colors.errorContainer.copy(alpha = .55f),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                if (state.selectedPaymentMethod == null) {
-                    RequiredPaymentMethodRow(
-                        title = stringResource(R.string.wallet_add_payment_method),
-                        requiredText = stringResource(R.string.wallet_required),
-                        onClick = onAddPaymentMethod
-                    )
-                } else {
-                    WalletActionRow(
-                        title = stringResource(R.string.wallet_cash),
-                        icon = painterResource(DR.drawable.ic_wallet_cash),
-                        onClick = onAddPaymentMethod,
-                        iconContainerShape = RoundedCornerShape(12.dp)
-                    )
-                }
+            if (state.hasPendingCreditAdd) {
+                PendingCreditAddSection(
+                    isRetrying = state.isRetryingCreditAdd,
+                    onRetry = { onEvent(WalletIntent.RetryPendingCreditAdd) },
+                )
             }
         }
         Surface(color = Theme.colors.surface, shadowElevation = 4.dp) {
-            Button(
-                onClick = onAddFunds,
-                enabled = state.canAddFunds,
+            PrimaryButton(
+                caption = stringResource(R.string.wallet_add_funds),
+                onClick = { onEvent(WalletIntent.AddFundsClicked) },
+                isDisabled = !state.canAddFunds,
+                isLoading = state.isAddingFunds,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
                     .height(54.dp),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Theme.colors.primary,
-                    contentColor = Theme.colors.onPrimary,
-                    disabledContainerColor = Theme.colors.onDisable,
-                    disabledContentColor = Theme.colors.hint
-                )
-            ) {
-                Text(
-                    stringResource(R.string.wallet_add_funds),
-                    style = Theme.typography.body.medium.copy(fontSize = 16.sp),
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            )
         }
     }
 }
 
 @Composable
-private fun AmountInput(amount: String, onAmountChanged: (String) -> Unit) {
+private fun PendingCreditAddSection(
+    isRetrying: Boolean,
+    onRetry: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Theme.colors.surface,
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, Theme.colors.primary.copy(alpha = 0.35f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.wallet_pending_credit_title),
+                color = Theme.colors.primaryFont,
+                style = Theme.typography.body.medium.copy(fontSize = 16.sp),
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = stringResource(R.string.wallet_pending_credit_description),
+                color = Theme.colors.secondaryFont,
+                style = Theme.typography.body.medium.copy(fontSize = 14.sp, lineHeight = 20.sp),
+            )
+            SecondaryButton(
+                caption = stringResource(R.string.wallet_retry_credit_add),
+                onClick = onRetry,
+                isLoading = isRetrying,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun AmountInput(
+    amount: String,
+    hasError: Boolean,
+    onAmountChanged: (String) -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(88.dp)
             .background(Theme.colors.surface, RoundedCornerShape(13.dp))
-            .border(1.5.dp, Theme.colors.onDisable, RoundedCornerShape(13.dp))
+            .border(
+                1.5.dp,
+                if (hasError) Theme.colors.error else Theme.colors.onDisable,
+                RoundedCornerShape(13.dp),
+            )
             .padding(horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -265,4 +241,4 @@ private fun AmountInput(amount: String, onAmountChanged: (String) -> Unit) {
 @Preview
 @Composable
 private fun AddFundsPreview() =
-    SpTheme { AddFundsContent(WalletState(selectedPaymentMethod = null), {}, {}, {}, {}) }
+    SpTheme { AddFundsContent(WalletState(), {}, {}) }

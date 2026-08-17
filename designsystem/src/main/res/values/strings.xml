@@ -120,6 +120,20 @@
     <string name="request_service_no_address">No address selected</string>
     <string name="request_service_precise">Precise</string>
     <string name="request_service_payment_method_label">Select Payment Method</string>
+    <string name="request_service_payment_cash_title">Cash</string>
+    <string name="request_service_payment_cash_description">Pay when the service is completed.</string>
+    <string name="request_service_payment_wallet_title">Wallet</string>
+    <string name="request_service_payment_wallet_description">Use your available CareNest credit.</string>
+    <string name="request_service_wallet_balance_loading">Loading wallet balance...</string>
+    <string name="request_service_wallet_balance_available">Available: %1$s</string>
+    <string name="request_service_wallet_balance_empty">No wallet credit available.</string>
+    <string name="request_service_wallet_balance_insufficient">Your wallet balance may be insufficient for this service.</string>
+    <string name="request_service_wallet_add_credit">Add credit</string>
+    <string name="request_service_wallet_retry">Retry</string>
+    <string name="request_service_wallet_cash_remainder_title">Wallet balance is not enough</string>
+    <string name="request_service_wallet_cash_remainder_message">Your wallet will cover %1$s. The remaining %2$s will be paid in cash.</string>
+    <string name="request_service_wallet_cash_remainder_continue">Continue</string>
+    <string name="request_service_wallet_cash_remainder_cancel">Cancel</string>
     <string name="request_service_submit">Submit Request</string>
     <string name="request_service_success">Request submitted successfully</string>
     <string name="request_service_listening">Listening…</string>
@@ -130,6 +144,7 @@
     <string name="request_service_error_preferred_date">Please select when you need the service.</string>
     <string name="request_service_error_profile_sync">We couldn\'t update the patient profile. Please try again.</string>
     <string name="request_service_error_submit">We couldn\'t submit your request. Please try again.</string>
+    <string name="request_service_error_wallet_credit">We couldn\'t load your wallet balance. Please try again.</string>
     <string name="request_service_speech_error">Voice input isn\'t available right now. Please try again.</string>
 
     <!-- Manual Address Entry -->

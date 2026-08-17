@@ -5,7 +5,7 @@ import com.carenest.designsystem.R
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.model.Patient
-import com.carenest.domain.model.PaymentMethod
+import com.carenest.domain.model.payment.ServicePaymentMethod
 
 val DEFAULT_CAIRO_LOCATION = LocationDetails(
     address = "Cairo, Egypt",
@@ -25,8 +25,10 @@ data class RequestServiceUiState(
     val preferredDate: String = "",          // "yyyy-MM-dd"
     val preferredHour: Int = 9,
     val preferredMinute: Int = 0,
-    val paymentMethods: List<PaymentMethod> = emptyList(),
-    val selectedPaymentMethod: PaymentMethod? = null,
+    val paymentMethods: List<ServicePaymentMethod> = ServicePaymentMethod.entries,
+    val selectedPaymentMethod: ServicePaymentMethod = ServicePaymentMethod.Cash,
+    val walletCreditState: WalletCreditUiState = WalletCreditUiState.NotRequested,
+    val walletCashRemainderAlert: WalletCashRemainderAlert? = null,
     val isSubmitting: Boolean = false,
     val isLoading: Boolean = false,
     val isListening: Boolean = false,
@@ -45,7 +47,11 @@ sealed class RequestServiceIntent {
     data class OnDescriptionChanged(val description: String) : RequestServiceIntent()
     data object OnEditAddressClicked : RequestServiceIntent()
     data object OnMapClicked : RequestServiceIntent()
-    data class OnPaymentMethodSelected(val paymentMethod: PaymentMethod) : RequestServiceIntent()
+    data class OnPaymentMethodSelected(val paymentMethod: ServicePaymentMethod) : RequestServiceIntent()
+    data object OnWalletCreditRetryClicked : RequestServiceIntent()
+    data object OnAddWalletCreditClicked : RequestServiceIntent()
+    data object OnWalletCashRemainderConfirmed : RequestServiceIntent()
+    data object OnWalletCashRemainderDismissed : RequestServiceIntent()
     data object OnSubmitClicked : RequestServiceIntent()
     data object OnBackClicked : RequestServiceIntent()
     data object OnFillWithAiClicked : RequestServiceIntent()
@@ -62,9 +68,23 @@ sealed class RequestServiceEffect {
     data class NavigateToServiceSelection(val currentServiceId: String?) : RequestServiceEffect()
     data object NavigateToAddressPicker : RequestServiceEffect()
     data class NavigateToMap(val location: LocationDetails? = null) : RequestServiceEffect()
+    data object NavigateToAddFunds : RequestServiceEffect()
     data class RequestSubmittedSuccessfully(
         val serviceRequestId: String,
     ) : RequestServiceEffect()
+}
+
+data class WalletCashRemainderAlert(
+    val walletCredit: Double,
+    val cashRemainder: Double,
+)
+
+sealed interface WalletCreditUiState {
+    data object NotRequested : WalletCreditUiState
+    data object Loading : WalletCreditUiState
+    data object Empty : WalletCreditUiState
+    data class Available(val credit: Double) : WalletCreditUiState
+    data class Failure(@param:StringRes val messageRes: Int) : WalletCreditUiState
 }
 
 enum class RequestServiceUiError(@get:StringRes val messageRes: Int) {
@@ -72,4 +92,5 @@ enum class RequestServiceUiError(@get:StringRes val messageRes: Int) {
     PreferredDate(R.string.request_service_error_preferred_date),
     ProfileSync(R.string.request_service_error_profile_sync),
     Submit(R.string.request_service_error_submit),
+    WalletCredit(R.string.request_service_error_wallet_credit),
 }

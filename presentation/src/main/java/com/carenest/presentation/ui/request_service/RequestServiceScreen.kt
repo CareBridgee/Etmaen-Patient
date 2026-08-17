@@ -2,6 +2,9 @@ package com.carenest.presentation.ui.request_service
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -13,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
+import com.carenest.designsystem.util.formatPrice
 import com.carenest.domain.model.LocationDetails
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.request_service.components.CareRequestScreenContent
@@ -30,6 +34,7 @@ fun RequestServiceScreen(
     onNavigateToServiceSelection: () -> Unit,
     onNavigateToAddressPicker: (LocationDetails?) -> Unit,
     onSubmitRequestClick: (serviceRequestId: String) -> Unit,
+    onNavigateToAddFunds: () -> Unit,
     selectServiceId : String? = null,
     isFromAi: Boolean = false,
     mapResultLocation: LocationDetails? = null,
@@ -85,6 +90,7 @@ fun RequestServiceScreen(
             is RequestServiceEffect.NavigateToServiceSelection -> onNavigateToServiceSelection()
             RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker(state.location)
             is RequestServiceEffect.NavigateToMap -> onNavigateToMap(effect.location)
+            RequestServiceEffect.NavigateToAddFunds -> onNavigateToAddFunds()
             is RequestServiceEffect.RequestSubmittedSuccessfully -> {
                 toastState.show(requestSuccessMessage)
                 onSubmitRequestClick(effect.serviceRequestId)
@@ -104,12 +110,52 @@ fun RequestServiceScreen(
                 onEditAddressClick = { viewModel.onIntent(RequestServiceIntent.OnEditAddressClicked) },
                 onFillWithAiClick = { viewModel.onIntent(RequestServiceIntent.OnFillWithAiClicked) },
                 onMapClick = { viewModel.onIntent(RequestServiceIntent.OnMapClicked) },
+                onPaymentMethodSelected = { viewModel.onIntent(RequestServiceIntent.OnPaymentMethodSelected(it)) },
+                onWalletCreditRetryClick = { viewModel.onIntent(RequestServiceIntent.OnWalletCreditRetryClicked) },
+                onAddWalletCreditClick = { viewModel.onIntent(RequestServiceIntent.OnAddWalletCreditClicked) },
                 onMicClick = { speechToTextHelper.startListening() },
                 onSubmitClick = { viewModel.onIntent(RequestServiceIntent.OnSubmitClicked) },
             )
             ToastHost(state = toastState)
         }
 
+    state.walletCashRemainderAlert?.let { alert ->
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderDismissed)
+            },
+            title = {
+                Text(stringResource(DesignR.string.request_service_wallet_cash_remainder_title))
+            },
+            text = {
+                Text(
+                    stringResource(
+                        DesignR.string.request_service_wallet_cash_remainder_message,
+                        formatPrice(alert.walletCredit),
+                        formatPrice(alert.cashRemainder),
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderConfirmed)
+                    },
+                ) {
+                    Text(stringResource(DesignR.string.request_service_wallet_cash_remainder_continue))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderDismissed)
+                    },
+                ) {
+                    Text(stringResource(DesignR.string.request_service_wallet_cash_remainder_cancel))
+                }
+            },
+        )
+    }
 }
 
 @Preview
@@ -123,5 +169,6 @@ private fun RequestServiceScreenPreview() {
         onNavigateToServiceSelection = { },
         onNavigateToAddressPicker = { },
         onSubmitRequestClick = { },
+        onNavigateToAddFunds = { },
     )
 }

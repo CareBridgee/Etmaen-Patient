@@ -23,6 +23,20 @@
     <string name="request_service_no_address">لم يتم اختيار عنوان</string>
     <string name="request_service_precise">موقع دقيق</string>
     <string name="request_service_payment_method_label">اختر طريقة الدفع</string>
+    <string name="request_service_payment_cash_title">نقدًا</string>
+    <string name="request_service_payment_cash_description">ادفع عند اكتمال الخدمة.</string>
+    <string name="request_service_payment_wallet_title">المحفظة</string>
+    <string name="request_service_payment_wallet_description">استخدم رصيدك المتاح في كيرنست.</string>
+    <string name="request_service_wallet_balance_loading">جاري تحميل رصيد المحفظة...</string>
+    <string name="request_service_wallet_balance_available">المتاح: %1$s</string>
+    <string name="request_service_wallet_balance_empty">لا يوجد رصيد متاح في المحفظة.</string>
+    <string name="request_service_wallet_balance_insufficient">قد لا يكفي رصيد المحفظة لهذه الخدمة.</string>
+    <string name="request_service_wallet_add_credit">إضافة رصيد</string>
+    <string name="request_service_wallet_retry">إعادة المحاولة</string>
+    <string name="request_service_wallet_cash_remainder_title">رصيد المحفظة غير كافٍ</string>
+    <string name="request_service_wallet_cash_remainder_message">ستغطي المحفظة %1$s. سيتم دفع المبلغ المتبقي %2$s نقدًا.</string>
+    <string name="request_service_wallet_cash_remainder_continue">متابعة</string>
+    <string name="request_service_wallet_cash_remainder_cancel">إلغاء</string>
     <string name="request_service_submit">إرسال الطلب</string>
     <string name="request_service_when_needed">متى تحتاج إلى الخدمة؟</string>
     <string name="request_service_date">التاريخ</string>
@@ -31,6 +45,7 @@
     <string name="request_service_error_preferred_date">يرجى تحديد موعد احتياجك للخدمة.</string>
     <string name="request_service_error_profile_sync">تعذر تحديث ملف المريض. يرجى المحاولة مرة أخرى.</string>
     <string name="request_service_error_submit">تعذر إرسال طلبك. يرجى المحاولة مرة أخرى.</string>
+    <string name="request_service_error_wallet_credit">تعذر تحميل رصيد المحفظة. يرجى المحاولة مرة أخرى.</string>
     <string name="request_service_speech_error">الإدخال الصوتي غير متاح حاليًا. يرجى المحاولة مرة أخرى.</string>
     <!-- Manual Address Entry -->
     <string name="manual_address_title">عنوان الخدمة</string>

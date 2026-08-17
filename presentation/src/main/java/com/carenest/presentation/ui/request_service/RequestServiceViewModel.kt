@@ -3,10 +3,13 @@ package com.carenest.presentation.ui.request_service
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carenest.domain.model.PreferredTime
+import com.carenest.domain.model.payment.ServicePaymentMethod
+import com.carenest.domain.model.payment.WalletException
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.domain.model.profile.PersonalInfoUpdate
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
+import com.carenest.domain.usecase.wallet.GetWalletCreditUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
@@ -24,6 +27,7 @@ class RequestServiceViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val getWalletCreditUseCase: GetWalletCreditUseCase,
     private val aiChatRepository: com.carenest.domain.repository.AiChatRepository
 ) : ViewModel(),
     StateHolder<RequestServiceUiState> by DefaultStateHolder(
@@ -198,7 +202,21 @@ class RequestServiceViewModel @Inject constructor(
             }
 
             is RequestServiceIntent.OnPatientSelected -> { updateState { copy(selectedPatient = intent.patient) } }
-            is RequestServiceIntent.OnPaymentMethodSelected -> { updateState { copy(selectedPaymentMethod = intent.paymentMethod) } }
+            is RequestServiceIntent.OnPaymentMethodSelected -> {
+                updateState { copy(selectedPaymentMethod = intent.paymentMethod) }
+                if (intent.paymentMethod == ServicePaymentMethod.Wallet) {
+                    loadWalletCredit()
+                }
+            }
+            RequestServiceIntent.OnWalletCreditRetryClicked -> { loadWalletCredit(force = true) }
+            RequestServiceIntent.OnAddWalletCreditClicked -> { sendEffect(RequestServiceEffect.NavigateToAddFunds) }
+            RequestServiceIntent.OnWalletCashRemainderConfirmed -> {
+                updateState { copy(walletCashRemainderAlert = null) }
+                submitServiceRequest(allowWalletCashRemainder = true)
+            }
+            RequestServiceIntent.OnWalletCashRemainderDismissed -> {
+                updateState { copy(walletCashRemainderAlert = null) }
+            }
             RequestServiceIntent.OnAddPatientClicked -> { sendEffect(RequestServiceEffect.NavigateToAddPatient) }
             RequestServiceIntent.OnChangeServiceClicked -> { sendEffect(RequestServiceEffect.NavigateToServiceSelection(currentState.selectedService?.id)) }
             RequestServiceIntent.OnEditAddressClicked -> { sendEffect(RequestServiceEffect.NavigateToAddressPicker) }
@@ -224,8 +242,10 @@ class RequestServiceViewModel @Inject constructor(
         }
     }
 
-    private fun submitServiceRequest() {
+    private fun submitServiceRequest(allowWalletCashRemainder: Boolean = false) {
         val currentState = state.value
+        if (currentState.isSubmitting) return
+
         val serviceId = currentState.selectedService?.id
         val selectedPatient = currentState.selectedPatient
         val profileId = selectedPatient?.defaultProfileId ?: selectedPatient?.id
@@ -251,6 +271,14 @@ class RequestServiceViewModel @Inject constructor(
         }
 
         val patient = selectedPatient ?: return
+        if (!allowWalletCashRemainder) {
+            val cashRemainderAlert = currentState.walletCashRemainderAlert()
+            if (cashRemainderAlert != null) {
+                updateState { copy(walletCashRemainderAlert = cashRemainderAlert) }
+                return
+            }
+        }
+
         updateState { copy(isSubmitting = true) }
         viewModelScope.launch {
             val currentUser = homeRepository.getUser().getOrNull()
@@ -297,6 +325,7 @@ class RequestServiceViewModel @Inject constructor(
                         currentState.description.ifBlank {
                             "No description provided"
                         },
+                    paymentType = currentState.selectedPaymentMethod.paymentType,
                 )
             ).onSuccess { result ->
                 updateState { copy(isSubmitting = false) }
@@ -310,5 +339,57 @@ class RequestServiceViewModel @Inject constructor(
                 sendEffect(RequestServiceEffect.ShowError(RequestServiceUiError.Submit.messageRes))
             }
         }
+    }
+
+    private fun loadWalletCredit(force: Boolean = false) {
+        val walletState = currentState.walletCreditState
+        if (!force && walletState is WalletCreditUiState.Available) return
+        if (!force && walletState is WalletCreditUiState.Empty) return
+        if (walletState is WalletCreditUiState.Loading) return
+
+        updateState { copy(walletCreditState = WalletCreditUiState.Loading) }
+
+        viewModelScope.launch {
+            getWalletCreditUseCase()
+                .onSuccess { credit ->
+                    updateState {
+                        copy(
+                            walletCreditState = if (credit.credit > 0.0) {
+                                WalletCreditUiState.Available(credit.credit)
+                            } else {
+                                WalletCreditUiState.Empty
+                            }
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    updateState {
+                        copy(
+                            walletCreditState = WalletCreditUiState.Failure(
+                                walletErrorRes(error)
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun walletErrorRes(error: Throwable): Int =
+        when (error) {
+            WalletException.MissingAuthenticatedUserId ->
+                RequestServiceUiError.RequiredFields.messageRes
+            else -> RequestServiceUiError.WalletCredit.messageRes
+        }
+
+    private fun RequestServiceUiState.walletCashRemainderAlert(): WalletCashRemainderAlert? {
+        if (selectedPaymentMethod != ServicePaymentMethod.Wallet) return null
+        val servicePrice = selectedService?.basePrice ?: return null
+        val walletCredit = (walletCreditState as? WalletCreditUiState.Available)?.credit ?: return null
+        if (walletCredit <= 0.0 || walletCredit >= servicePrice) return null
+
+        return WalletCashRemainderAlert(
+            walletCredit = walletCredit,
+            cashRemainder = servicePrice - walletCredit,
+        )
     }
 }
