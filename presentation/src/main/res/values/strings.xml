@@ -311,6 +311,8 @@
   <string name="send">Send</string>
   <string name="ai_chat_welcome_message">Hello, I\'m your AI health assistant. How can I help you today?</string>
   <string name="ai_chat_error_failed_response">Failed to get AI response. Please try again.</string>
+  <string name="start_over">Start Over</string>
+  <string name="chat_reset_success">Chat history reset successfully</string>
 
 
   <!-- Search For Nurse -->
@@ -372,6 +374,12 @@
   <string name="settings_section_security_privacy">Security &amp; Privacy</string>
   <string name="settings_security_privacy_description">Your privacy and security are important to Etmaen.\n\n• Your personal and medical information is securely stored.\n• Your data is only used to provide healthcare services and improve your experience.\n• Etmaen does not share your personal information with unauthorized third parties.\n• All communication with our services is encrypted whenever possible.</string>
   <string name="settings_security_privacy_got_it">Got it</string>
+  <string name="settings_section_background_service">Background Service</string>
+  <string name="settings_stop_service">Stop Background Service</string>
+  <string name="settings_stop_service_description">Disconnect background sockets and stop foreground service</string>
+  <string name="settings_service_stopped_success">Background service stopped and sockets disconnected successfully.</string>
+  <string name="settings_service_enabled">Background service started and socket connected.</string>
+  <string name="settings_service_disabled">Background service stopped and socket disconnected.</string>
   <string name="settings_select_language_title">Select Language</string>
   <string name="settings_language_english">English</string>
   <string name="settings_language_arabic">العربية</string>

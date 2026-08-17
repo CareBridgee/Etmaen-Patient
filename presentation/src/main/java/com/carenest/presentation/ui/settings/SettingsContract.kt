@@ -8,6 +8,7 @@ data class SettingsState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val isLanguagePickerDialogVisible: Boolean = false,
     val isThemePickerDialogVisible: Boolean = false,
+    val isBackgroundServiceEnabled: Boolean = false,
     val isLoading: Boolean = false
 )
 
@@ -22,6 +23,8 @@ sealed interface SettingsEvent {
     data object OnTermsClicked : SettingsEvent
     data object OnDeleteAccountClicked : SettingsEvent
     data object OnContactSupportClicked : SettingsEvent
+    data object OnStopServiceClicked : SettingsEvent
+    data class OnToggleService(val enabled: Boolean) : SettingsEvent
 }
 
 sealed interface SettingsEffect {
@@ -33,5 +36,8 @@ enum class SettingsMessage {
     SaveFailed,
     TermsUnavailable,
     DeleteAccountUnavailable,
-    ContactSupportUnavailable
+    ContactSupportUnavailable,
+    ServiceStopped,
+    ServiceEnabled,
+    ServiceDisabled
 }
