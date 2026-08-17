@@ -2,9 +2,6 @@ package com.carenest.presentation.ui.request_service
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -14,6 +11,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.carenest.designsystem.components.dialog.CareNestDialog
 import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
 import com.carenest.designsystem.util.formatPrice
@@ -120,40 +118,17 @@ fun RequestServiceScreen(
         }
 
     state.walletCashRemainderAlert?.let { alert ->
-        AlertDialog(
-            onDismissRequest = {
-                viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderDismissed)
-            },
-            title = {
-                Text(stringResource(DesignR.string.request_service_wallet_cash_remainder_title))
-            },
-            text = {
-                Text(
-                    stringResource(
-                        DesignR.string.request_service_wallet_cash_remainder_message,
-                        formatPrice(alert.walletCredit),
-                        formatPrice(alert.cashRemainder),
-                    )
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderConfirmed)
-                    },
-                ) {
-                    Text(stringResource(DesignR.string.request_service_wallet_cash_remainder_continue))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderDismissed)
-                    },
-                ) {
-                    Text(stringResource(DesignR.string.request_service_wallet_cash_remainder_cancel))
-                }
-            },
+        CareNestDialog(
+            title = stringResource(DesignR.string.request_service_wallet_cash_remainder_title),
+            message = stringResource(
+                DesignR.string.request_service_wallet_cash_remainder_message,
+                formatPrice(alert.walletCredit),
+                formatPrice(alert.cashRemainder),
+            ),
+            confirmText = stringResource(DesignR.string.request_service_wallet_cash_remainder_continue),
+            dismissText = stringResource(DesignR.string.request_service_wallet_cash_remainder_cancel),
+            onConfirm = { viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderConfirmed) },
+            onDismiss = { viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderDismissed) },
         )
     }
 }
