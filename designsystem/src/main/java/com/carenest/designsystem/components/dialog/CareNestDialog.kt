@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,74 +51,86 @@ fun CareNestDialog(
     icon: Painter? = null,
     confirmColor: Color = Theme.colors.primary,
 ) {
+    CareNestContentDialog(onDismiss = onDismiss) {
+        if (icon != null) {
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape)
+                    .background(confirmColor.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    colorFilter = ColorFilter.tint(confirmColor),
+                )
+            }
+            Spacer(Modifier.height(20.dp))
+        }
+
+        Text(
+            text = title,
+            style = Theme.typography.title,
+            fontWeight = FontWeight.Bold,
+            color = Theme.colors.primaryFont,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            text = message,
+            style = Theme.typography.body.medium,
+            color = Theme.colors.secondaryFont,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (dismissText != null) {
+                PrimaryButton(
+                    caption = dismissText,
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    containerColor = Theme.colors.surfaceVariant,
+                    contentColor = Theme.colors.primary,
+                )
+            }
+            PrimaryButton(
+                caption = confirmText,
+                onClick = onConfirm,
+                modifier = Modifier.weight(1f),
+                containerColor = confirmColor,
+                contentColor = Theme.colors.onPrimary,
+            )
+        }
+    }
+}
+
+@Composable
+fun CareNestContentDialog(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(24.dp),
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Dialog(onDismissRequest = onDismiss) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
                 .background(Theme.colors.surface)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if (icon != null) {
-                Box(
-                    modifier = Modifier
-                        .size(72.dp)
-                        .clip(CircleShape)
-                        .background(confirmColor.copy(alpha = 0.12f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        painter = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp),
-                        colorFilter = ColorFilter.tint(confirmColor),
-                    )
-                }
-                Spacer(Modifier.height(20.dp))
-            }
-
-            Text(
-                text = title,
-                style = Theme.typography.title,
-                fontWeight = FontWeight.Bold,
-                color = Theme.colors.primaryFont,
-                textAlign = TextAlign.Center,
-            )
-
-            Spacer(Modifier.height(10.dp))
-
-            Text(
-                text = message,
-                style = Theme.typography.body.medium,
-                color = Theme.colors.secondaryFont,
-                textAlign = TextAlign.Center,
-            )
-
-            Spacer(Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                if (dismissText != null) {
-                    PrimaryButton(
-                        caption = dismissText,
-                        onClick = onDismiss,
-                        modifier = Modifier.weight(1f),
-                        containerColor = Theme.colors.surfaceVariant,
-                        contentColor = Theme.colors.primary,
-                    )
-                }
-                PrimaryButton(
-                    caption = confirmText,
-                    onClick = onConfirm,
-                    modifier = Modifier.weight(1f),
-                    containerColor = confirmColor,
-                    contentColor = Theme.colors.onPrimary,
-                )
-            }
-        }
+                .padding(contentPadding),
+            horizontalAlignment = horizontalAlignment,
+            content = content,
+        )
     }
 }
 
