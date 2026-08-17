@@ -374,6 +374,10 @@
   <string name="settings_section_security_privacy">Security &amp; Privacy</string>
   <string name="settings_security_privacy_description">Your privacy and security are important to Etmaen.\n\n• Your personal and medical information is securely stored.\n• Your data is only used to provide healthcare services and improve your experience.\n• Etmaen does not share your personal information with unauthorized third parties.\n• All communication with our services is encrypted whenever possible.</string>
   <string name="settings_security_privacy_got_it">Got it</string>
+  <string name="settings_section_background_service">Background Service</string>
+  <string name="settings_stop_service">Stop Background Service</string>
+  <string name="settings_stop_service_description">Disconnect background sockets and stop foreground service</string>
+  <string name="settings_service_stopped_success">Background service stopped and sockets disconnected successfully.</string>
   <string name="settings_select_language_title">Select Language</string>
   <string name="settings_language_english">English</string>
   <string name="settings_language_arabic">العربية</string>
