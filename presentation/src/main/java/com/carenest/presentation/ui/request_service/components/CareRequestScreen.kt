@@ -45,6 +45,9 @@ fun CareRequestScreenContent(
     onEditAddressClick: () -> Unit,
     onFillWithAiClick: () -> Unit,
     onMapClick: () -> Unit,
+    onPaymentMethodSelected: (com.carenest.domain.model.payment.ServicePaymentMethod) -> Unit,
+    onWalletCreditRetryClick: () -> Unit,
+    onAddWalletCreditClick: () -> Unit,
     onMicClick: () -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -118,6 +121,16 @@ fun CareRequestScreenContent(
             onMapClick = onMapClick
         )
 
+        PaymentSelectionSection(
+            paymentMethods = state.paymentMethods,
+            selectedPaymentMethod = state.selectedPaymentMethod,
+            walletCreditState = state.walletCreditState,
+            servicePrice = state.selectedService?.basePrice,
+            onPaymentMethodSelected = onPaymentMethodSelected,
+            onWalletRetryClick = onWalletCreditRetryClick,
+            onAddWalletCreditClick = onAddWalletCreditClick,
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         PrimaryButton(
             caption = stringResource(id = R.string.request_service_submit),
@@ -203,6 +216,9 @@ private fun CareRequestScreenPreview() {
             onEditAddressClick = {},
             onFillWithAiClick = {},
             onMapClick = {},
+            onPaymentMethodSelected = {},
+            onWalletCreditRetryClick = {},
+            onAddWalletCreditClick = {},
             onMicClick = {},
             onSubmitClick = {},
         )

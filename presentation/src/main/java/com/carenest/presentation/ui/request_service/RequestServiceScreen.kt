@@ -11,8 +11,10 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.carenest.designsystem.components.dialog.CareNestDialog
 import com.carenest.designsystem.components.toast.ToastHost
 import com.carenest.designsystem.components.toast.rememberToastState
+import com.carenest.designsystem.util.formatPrice
 import com.carenest.domain.model.LocationDetails
 import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.ui.request_service.components.CareRequestScreenContent
@@ -30,6 +32,7 @@ fun RequestServiceScreen(
     onNavigateToServiceSelection: () -> Unit,
     onNavigateToAddressPicker: (LocationDetails?) -> Unit,
     onSubmitRequestClick: (serviceRequestId: String) -> Unit,
+    onNavigateToAddFunds: () -> Unit,
     selectServiceId : String? = null,
     isFromAi: Boolean = false,
     mapResultLocation: LocationDetails? = null,
@@ -85,6 +88,7 @@ fun RequestServiceScreen(
             is RequestServiceEffect.NavigateToServiceSelection -> onNavigateToServiceSelection()
             RequestServiceEffect.NavigateToAddressPicker -> onNavigateToAddressPicker(state.location)
             is RequestServiceEffect.NavigateToMap -> onNavigateToMap(effect.location)
+            RequestServiceEffect.NavigateToAddFunds -> onNavigateToAddFunds()
             is RequestServiceEffect.RequestSubmittedSuccessfully -> {
                 toastState.show(requestSuccessMessage)
                 onSubmitRequestClick(effect.serviceRequestId)
@@ -104,12 +108,29 @@ fun RequestServiceScreen(
                 onEditAddressClick = { viewModel.onIntent(RequestServiceIntent.OnEditAddressClicked) },
                 onFillWithAiClick = { viewModel.onIntent(RequestServiceIntent.OnFillWithAiClicked) },
                 onMapClick = { viewModel.onIntent(RequestServiceIntent.OnMapClicked) },
+                onPaymentMethodSelected = { viewModel.onIntent(RequestServiceIntent.OnPaymentMethodSelected(it)) },
+                onWalletCreditRetryClick = { viewModel.onIntent(RequestServiceIntent.OnWalletCreditRetryClicked) },
+                onAddWalletCreditClick = { viewModel.onIntent(RequestServiceIntent.OnAddWalletCreditClicked) },
                 onMicClick = { speechToTextHelper.startListening() },
                 onSubmitClick = { viewModel.onIntent(RequestServiceIntent.OnSubmitClicked) },
             )
             ToastHost(state = toastState)
         }
 
+    state.walletCashRemainderAlert?.let { alert ->
+        CareNestDialog(
+            title = stringResource(DesignR.string.request_service_wallet_cash_remainder_title),
+            message = stringResource(
+                DesignR.string.request_service_wallet_cash_remainder_message,
+                formatPrice(alert.walletCredit),
+                formatPrice(alert.cashRemainder),
+            ),
+            confirmText = stringResource(DesignR.string.request_service_wallet_cash_remainder_continue),
+            dismissText = stringResource(DesignR.string.request_service_wallet_cash_remainder_cancel),
+            onConfirm = { viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderConfirmed) },
+            onDismiss = { viewModel.onIntent(RequestServiceIntent.OnWalletCashRemainderDismissed) },
+        )
+    }
 }
 
 @Preview
@@ -123,5 +144,6 @@ private fun RequestServiceScreenPreview() {
         onNavigateToServiceSelection = { },
         onNavigateToAddressPicker = { },
         onSubmitRequestClick = { },
+        onNavigateToAddFunds = { },
     )
 }

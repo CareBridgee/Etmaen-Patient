@@ -1,5 +1,7 @@
 package com.carenest.domain.model
 
+import com.carenest.domain.model.payment.PaymentType
+
 /**
  * The response returned by the backend after a patient submits a new service request.
  * Note: the API response does not return a separate reservationId.
@@ -35,4 +37,5 @@ data class CreateServiceRequestParams(
     val preferredDate: String,      // "yyyy-MM-dd"
     val preferredTime: PreferredTime,
     val serviceDescription: String,
+    val paymentType: PaymentType,
 )

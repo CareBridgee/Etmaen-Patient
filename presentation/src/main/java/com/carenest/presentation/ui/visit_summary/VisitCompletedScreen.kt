@@ -27,9 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.carenest.designsystem.components.dialog.CareNestContentDialog
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
@@ -86,7 +86,9 @@ fun VisitCompletedScreen(
         }
 
         if (state.showRatingDialog) {
-            Dialog(onDismissRequest = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) }) {
+            CareNestContentDialog(
+                onDismiss = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) },
+            ) {
                 VisitRatingDialogContent(
                     selectedRating = state.selectedRating,
                     reviewText = state.reviewText,
@@ -97,6 +99,7 @@ fun VisitCompletedScreen(
                     onAnonymousChanged = { viewModel.handleIntent(VisitCompletedIntent.OnAnonymousChanged(it)) },
                     onSubmit = { viewModel.handleIntent(VisitCompletedIntent.OnSubmitRatingClicked) },
                     onDismiss = { viewModel.handleIntent(VisitCompletedIntent.OnDismissRatingDialogClicked) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

@@ -2,14 +2,11 @@ package com.carenest.presentation.ui.wallet
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,10 +14,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.carenest.designsystem.R as DR
+import com.carenest.designsystem.components.button.SecondaryButton
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
+import com.carenest.designsystem.util.formatPrice
 import com.carenest.presentation.R
+import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.navigation.ScreenTopBar
 import com.carenest.presentation.ui.wallet.components.*
 
@@ -28,7 +27,7 @@ import com.carenest.presentation.ui.wallet.components.*
 fun WalletScreen(
     onNavigateBack: () -> Unit,
     onAddFunds: () -> Unit,
-    onAddPaymentMethod: () -> Unit,
+    onShowMessage: (String) -> Unit,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     ScreenTopBar(
@@ -36,14 +35,30 @@ fun WalletScreen(
         onLeadingClick = onNavigateBack
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    WalletContent(state, onAddFunds, onAddPaymentMethod)
+    val resources = LocalResources.current
+
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is WalletEffect.ShowMessage ->
+                onShowMessage(resources.getString(effect.messageRes))
+
+            is WalletEffect.ShowTextMessage ->
+                onShowMessage(effect.message)
+        }
+    }
+
+    WalletContent(
+        state = state,
+        onAddFunds = onAddFunds,
+        onRetry = { viewModel.onEvent(WalletIntent.RefreshBalance) },
+    )
 }
 
 @Composable
 private fun WalletContent(
     state: WalletState,
     onAddFunds: () -> Unit,
-    onAddPaymentMethod: () -> Unit
+    onRetry: () -> Unit,
 ) {
     Column(
         Modifier
@@ -53,56 +68,33 @@ private fun WalletContent(
             .padding(bottom = 96.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        val balance = when (val balanceState = state.balanceState) {
+            WalletBalanceState.Loading -> stringResource(R.string.wallet_balance_loading)
+            WalletBalanceState.Empty -> formatPrice(0.0)
+            is WalletBalanceState.Available -> formatPrice(balanceState.credit)
+            is WalletBalanceState.Failure -> stringResource(R.string.wallet_balance_unavailable)
+        }
+        val status = when (state.balanceState) {
+            WalletBalanceState.Loading -> stringResource(R.string.wallet_balance_loading_description)
+            WalletBalanceState.Empty -> stringResource(R.string.wallet_balance_empty)
+            is WalletBalanceState.Available -> stringResource(R.string.wallet_balance_available)
+            is WalletBalanceState.Failure -> stringResource(R.string.wallet_balance_load_failed)
+        }
+
         WalletBalanceCard(
             balanceLabel = stringResource(R.string.wallet_balance),
-            balance = stringResource(
-                R.string.wallet_balance_value,
-                state.balance
-            ),
-            autoRefillText = stringResource(
-                if (state.isAutoRefillEnabled) {
-                    R.string.wallet_auto_refill_on
-                } else {
-                    R.string.wallet_auto_refill_off
-                }
-            ),
+            balance = balance,
+            autoRefillText = status,
             addFundsText = stringResource(R.string.wallet_add_funds),
             onAddFunds = onAddFunds
         )
-        SectionTitle(stringResource(R.string.wallet_payment_methods))
-        Surface(
-            color = Theme.colors.surface,
-            shape = RoundedCornerShape(18.dp),
-            shadowElevation = 2.dp
-        ) {
-            WalletActionRow(
-                stringResource(R.string.wallet_cash),
-                icon = painterResource(DR.drawable.ic_wallet_cash),
-                onClick = onAddPaymentMethod,
-                iconContainerShape = RoundedCornerShape(12.dp)
+
+        if (state.balanceState is WalletBalanceState.Failure) {
+            SecondaryButton(
+                caption = stringResource(R.string.retry),
+                onClick = onRetry,
+                modifier = Modifier.fillMaxWidth(),
             )
-        }
-        OutlinedWalletAction(stringResource(R.string.wallet_add_payment_method), onAddPaymentMethod)
-        SectionTitle(stringResource(R.string.wallet_ride_profiles))
-        Surface(
-            color = Theme.colors.surface,
-            shape = RoundedCornerShape(18.dp),
-            shadowElevation = 2.dp
-        ) {
-            Column {
-                WalletActionRow(
-                    stringResource(R.string.wallet_personal),
-                    icon = painterResource(DR.drawable.ic_wallet_personal),
-                    selected = true,
-                    showChevron = false
-                )
-                HorizontalDivider(Modifier.padding(start = 72.dp), color = Theme.colors.divider)
-                WalletActionRow(
-                    stringResource(R.string.wallet_business),
-                    stringResource(R.string.wallet_business_subtitle),
-                    painterResource(DR.drawable.ic_wallet_business)
-                )
-            }
         }
     }
 }

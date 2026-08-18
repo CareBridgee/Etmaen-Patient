@@ -18,6 +18,8 @@ import com.carenest.data.repository.HomeRepositoryImpl
 import com.carenest.data.repository.ProfileRepositoryImpl
 import com.carenest.data.repository.NurseTrackingRepositoryImpl
 import com.carenest.data.repository.VisitSummaryRepositoryImpl
+import com.carenest.data.paymob.PaymobConfigProvider
+import com.carenest.data.paymob.PaymobConfiguration
 import com.carenest.domain.repository.HomeRepository
 import com.carenest.domain.repository.ProfileRepository
 import com.carenest.data.repository.GeocodingRepositoryImpl
@@ -37,11 +39,19 @@ import com.carenest.data.source.remote.datasource.ChatDataSource
 import com.carenest.data.source.remote.datasource.ChatDataSourceImp
 import com.carenest.domain.repository.ChatRepository
 import com.carenest.data.repository.UserRepositoryImpl
+import com.carenest.data.repository.PaymobWalletTopUpPaymentGateway
+import com.carenest.data.repository.WalletOperationGuardRepositoryImpl
+import com.carenest.data.repository.WalletRepositoryImpl
+import com.carenest.data.repository.WalletTopUpAttemptRepositoryImpl
 import com.carenest.data.source.local.datasource.UserLocalDataSource
 import com.carenest.data.source.local.datasource.UserLocalDataSourceImpl
 import com.carenest.data.source.remote.datasource.user.UserRemoteDataSource
 import com.carenest.data.source.remote.datasource.user.UserRemoteDataSourceImpl
 import com.carenest.domain.repository.UserRepository
+import com.carenest.domain.repository.WalletOperationGuardRepository
+import com.carenest.domain.repository.WalletRepository
+import com.carenest.domain.repository.WalletTopUpAttemptRepository
+import com.carenest.domain.repository.WalletTopUpPaymentGateway
 import com.carenest.data.repository.AiChatRepositoryImpl
 import com.carenest.domain.repository.AiChatRepository
 
@@ -49,6 +59,8 @@ import com.carenest.data.repository.FamilyMembersRepositoryImpl
 import com.carenest.domain.repository.FamilyMembersRepository
 import com.carenest.data.source.remote.datasource.FamilyMembersDataSource
 import com.carenest.data.source.remote.datasource.FamilyMembersDataSourceImpl
+import com.carenest.data.source.remote.datasource.WalletRemoteDataSource
+import com.carenest.data.source.remote.datasource.WalletRemoteDataSourceImpl
 
 import com.carenest.data.repository.ChatSocketRepositoryImpl
 import com.carenest.data.repository.NotificationSocketRepositoryImpl
@@ -84,6 +96,10 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindPaymobConfigProvider(impl: PaymobConfiguration): PaymobConfigProvider
+
+    @Binds
+    @Singleton
     abstract fun provideAuthRepositoryImpl(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
 
     @Binds
@@ -114,6 +130,28 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWalletRepository(impl: WalletRepositoryImpl): WalletRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWalletOperationGuardRepository(
+        impl: WalletOperationGuardRepositoryImpl,
+    ): WalletOperationGuardRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWalletTopUpPaymentGateway(
+        impl: PaymobWalletTopUpPaymentGateway,
+    ): WalletTopUpPaymentGateway
+
+    @Binds
+    @Singleton
+    abstract fun bindWalletTopUpAttemptRepository(
+        impl: WalletTopUpAttemptRepositoryImpl,
+    ): WalletTopUpAttemptRepository
 
     @Binds
     @Singleton
@@ -154,6 +192,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUserRemoteDataSource(impl: UserRemoteDataSourceImpl): UserRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindWalletRemoteDataSource(impl: WalletRemoteDataSourceImpl): WalletRemoteDataSource
 
     @Binds
     @Singleton

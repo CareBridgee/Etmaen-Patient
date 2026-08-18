@@ -15,6 +15,7 @@ data class CreateServiceRequestDto(
     @SerialName("preferredDate") val preferredDate: String, // "yyyy-MM-dd"
     @SerialName("preferredTime") val preferredTime: String, // "HH:mm:ss"
     @SerialName("serviceDescription") val serviceDescription: String,
+    @SerialName("paymentType") val paymentType: String,
 )
 
 @Serializable

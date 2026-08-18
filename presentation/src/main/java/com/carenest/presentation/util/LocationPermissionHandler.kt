@@ -14,9 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import com.carenest.designsystem.components.dialog.CareNestDialog
 
 @Composable
 fun LocationPermissionHandler(
@@ -45,23 +43,16 @@ fun LocationPermissionHandler(
     }
 
     if (showRationale) {
-        AlertDialog(
-            onDismissRequest = onRationaleDismissed,
-            title = { Text("Location Permission Required") },
-            text = { Text("This app needs access to your location to help you select an address on the map.") },
-            confirmButton = {
-                TextButton(onClick = {
+        CareNestDialog(
+            title = "Location Permission Required",
+            message = "This app needs access to your location to help you select an address on the map.",
+            confirmText = "Allow",
+            dismissText = "Deny",
+            onConfirm = {
                     launcher.launch(permissions)
                     onRationaleDismissed()
-                }) {
-                    Text("Allow")
-                }
             },
-            dismissButton = {
-                TextButton(onClick = onRationaleDismissed) {
-                    Text("Deny")
-                }
-            }
+            onDismiss = onRationaleDismissed,
         )
     } else {
         LaunchedEffect(Unit) {

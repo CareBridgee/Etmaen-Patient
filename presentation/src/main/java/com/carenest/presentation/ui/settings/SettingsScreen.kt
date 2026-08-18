@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -51,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.carenest.designsystem.R as RD
 import com.carenest.designsystem.components.button.PrimaryButton
+import com.carenest.designsystem.components.dialog.CareNestContentDialog
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.settings.ThemeMode
@@ -496,68 +496,70 @@ fun LanguagePickerDialog(
     onLanguageSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.settings_select_language_title),
-                style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
-                color = Theme.colors.primaryFont
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onLanguageSelected("en") }
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = currentLanguageCode == "en",
-                        onClick = { onLanguageSelected("en") },
-                        colors = RadioButtonDefaults.colors(selectedColor = Theme.colors.primary)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.settings_language_english),
-                        style = Theme.typography.body.large,
-                        color = Theme.colors.primaryFont
-                    )
-                }
+    CareNestContentDialog(
+        onDismiss = onDismiss,
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Text(
+            text = stringResource(R.string.settings_select_language_title),
+            style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
+            color = Theme.colors.primaryFont
+        )
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onLanguageSelected("ar") }
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = currentLanguageCode == "ar",
-                        onClick = { onLanguageSelected("ar") },
-                        colors = RadioButtonDefaults.colors(selectedColor = Theme.colors.primary)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.settings_language_arabic),
-                        style = Theme.typography.body.large,
-                        color = Theme.colors.primaryFont
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onLanguageSelected("en") }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = currentLanguageCode == "en",
+                    onClick = { onLanguageSelected("en") },
+                    colors = RadioButtonDefaults.colors(selectedColor = Theme.colors.primary)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.cancel),
-                    color = Theme.colors.primary
+                    text = stringResource(R.string.settings_language_english),
+                    style = Theme.typography.body.large,
+                    color = Theme.colors.primaryFont
                 )
             }
-        },
-        containerColor = Theme.colors.surface
-    )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onLanguageSelected("ar") }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = currentLanguageCode == "ar",
+                    onClick = { onLanguageSelected("ar") },
+                    colors = RadioButtonDefaults.colors(selectedColor = Theme.colors.primary)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.settings_language_arabic),
+                    style = Theme.typography.body.large,
+                    color = Theme.colors.primaryFont
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        PrimaryButton(
+            caption = stringResource(R.string.cancel),
+            onClick = onDismiss,
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = Theme.colors.surfaceVariant,
+            contentColor = Theme.colors.primary,
+        )
+    }
 }
 
 @Composable
@@ -571,52 +573,54 @@ fun ThemePickerDialog(
         ThemeMode.DARK to stringResource(R.string.settings_theme_dark),
         ThemeMode.SYSTEM to stringResource(R.string.settings_theme_system)
     )
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.settings_select_theme_title),
-                style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
-                color = Theme.colors.primaryFont
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                options.forEach { (mode, label) ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onThemeSelected(mode) }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = currentThemeMode == mode,
-                            onClick = { onThemeSelected(mode) },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Theme.colors.primary
-                            )
+    CareNestContentDialog(
+        onDismiss = onDismiss,
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Text(
+            text = stringResource(R.string.settings_select_theme_title),
+            style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
+            color = Theme.colors.primaryFont
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            options.forEach { (mode, label) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onThemeSelected(mode) }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = currentThemeMode == mode,
+                        onClick = { onThemeSelected(mode) },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Theme.colors.primary
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = label,
-                            style = Theme.typography.body.large,
-                            color = Theme.colors.primaryFont
-                        )
-                    }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = label,
+                        style = Theme.typography.body.large,
+                        color = Theme.colors.primaryFont
+                    )
                 }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(R.string.cancel),
-                    color = Theme.colors.primary
-                )
-            }
-        },
-        containerColor = Theme.colors.surface
-    )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        PrimaryButton(
+            caption = stringResource(R.string.cancel),
+            onClick = onDismiss,
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = Theme.colors.surfaceVariant,
+            contentColor = Theme.colors.primary,
+        )
+    }
 }
 
 @Preview(showBackground = true, name = "Settings Light Mode", widthDp = 390, heightDp = 844)

@@ -12,6 +12,8 @@ import com.carenest.data.source.remote.service.ProfileApiService
 import com.carenest.data.source.remote.service.ProfileApiServiceImpl
 import com.carenest.data.source.remote.service.UserApiService
 import com.carenest.data.source.remote.service.UserApiServiceImpl
+import com.carenest.data.source.remote.service.WalletApiService
+import com.carenest.data.source.remote.service.WalletApiServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -22,6 +24,8 @@ import com.carenest.data.source.remote.service.FamilyMembersApiService
 import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
 import com.carenest.data.source.remote.service.NurseTrackingService
 import com.carenest.data.source.remote.service.NurseTrackingServiceImp
+import com.carenest.data.source.remote.service.PaymobApiService
+import com.carenest.data.source.remote.service.PaymobApiServiceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -42,6 +46,9 @@ abstract class ApiServiceModule {
     abstract fun provideUserApiService(userApiServiceImpl: UserApiServiceImpl): UserApiService
 
     @Binds
+    abstract fun provideWalletApiService(walletApiServiceImpl: WalletApiServiceImpl): WalletApiService
+
+    @Binds
     abstract fun provideFamilyMembersApiService(impl: FamilyMembersApiServiceImpl): FamilyMembersApiService
 
     @Binds
@@ -49,5 +56,7 @@ abstract class ApiServiceModule {
 
     @Binds
     abstract fun provideCloudinaryApiService(impl: CloudinaryApiServiceImpl): CloudinaryApiService
-}
 
+    @Binds
+    abstract fun providePaymobApiService(impl: PaymobApiServiceImpl): PaymobApiService
+}

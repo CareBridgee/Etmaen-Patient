@@ -2,6 +2,7 @@ package com.carenest.data.di
 
 import android.util.Log
 import com.carenest.data.BuildConfig
+import com.carenest.data.paymob.PaymobConfiguration
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.RefreshRequest
 import com.carenest.data.source.remote.dto.TokenPairResponse
@@ -110,6 +111,27 @@ object NetworkModule {
 
             install(Logging) {
                 level = LogLevel.BODY
+            }
+        }
+
+    @Provides
+    @Singleton
+    @PaymobHttpClient
+    fun providePaymobHttpClient(
+        json: Json,
+    ): HttpClient =
+        HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(json)
+            }
+
+            installPaymobSecretAuthorization(
+                secretKey = BuildConfig.paymob_secret_key,
+                allowedHost = Url(paymobBaseUrl()).host,
+            )
+
+            defaultRequest {
+                url(paymobBaseUrl())
             }
         }
 
@@ -235,3 +257,40 @@ private val SafeNetworkLogging = createClientPlugin("SafeNetworkLogging") {
 }
 
 private const val NETWORK_LOG_TAG = "CareNestHttp"
+
+internal fun HttpClientConfig<*>.installPaymobSecretAuthorization(
+    secretKey: String,
+    allowedHost: String,
+) {
+    install(PaymobSecretAuthPlugin) {
+        this.secretKey = secretKey
+        this.allowedHost = allowedHost
+    }
+}
+
+class PaymobSecretAuthPluginConfig {
+    var secretKey: String = ""
+    var allowedHost: String = ""
+}
+
+val PaymobSecretAuthPlugin = createClientPlugin(
+    "PaymobSecretAuthPlugin",
+    ::PaymobSecretAuthPluginConfig,
+) {
+    val secretKey = pluginConfig.secretKey
+    val allowedHost = pluginConfig.allowedHost
+
+    onRequest { request, _ ->
+        val requestUrl = request.url.build()
+        if (
+            secretKey.isNotBlank() &&
+            allowedHost.isNotBlank() &&
+            requestUrl.host.equals(allowedHost, ignoreCase = true)
+        ) {
+            request.headers[io.ktor.http.HttpHeaders.Authorization] = "Token $secretKey"
+        }
+    }
+}
+
+private fun paymobBaseUrl(): String =
+    BuildConfig.paymob_base_url.trim().ifBlank { PaymobConfiguration.DEFAULT_EGYPT_BASE_URL }

@@ -30,6 +30,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        dataBinding = true
     }
 }
 
@@ -37,6 +38,7 @@ dependencies {
     // Project modules
     implementation(project(":domain"))
     implementation(project(":designsystem"))
+    implementation("com.paymob.sdk:Paymob-SDK:1.9.2")
     implementation(libs.bundles.androidx.core)
     // Android core
     implementation(libs.androidx.core.ktx)

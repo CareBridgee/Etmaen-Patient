@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.kover)
 }
 
+val localProperties = gradleLocalProperties(rootDir, providers)
+
 android {
     namespace = "com.carenest.data"
     compileSdk = 37
@@ -54,6 +56,26 @@ android {
                 name = "cloudinary_upload_url",
                 value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_upload_url", "https://api.cloudinary.com/v1_1/jonkn070/image/upload")}\""
             )
+            buildConfigField(
+                type = "String",
+                name = "paymob_secret_key",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("PAYMOB_SECRET_KEY", "")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_public_key",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("PAYMOB_PUBLIC_KEY", "")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_integration_id",
+                value = "\"${localProperties.getProperty("PAYMOB_CARD_INTEGRATION_ID", localProperties.getProperty("PAYMOB_INTEGRATION_ID", ""))}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_base_url",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("PAYMOB_BASE_URL", "https://accept.paymob.com")}\""
+            )
         }
         getByName("release") {
             buildConfigField(
@@ -90,6 +112,26 @@ android {
                 type = "String",
                 name = "cloudinary_upload_url",
                 value = "\"${gradleLocalProperties(rootDir, providers).getProperty("cloudinary_upload_url", "https://api.cloudinary.com/v1_1/jonkn070/image/upload")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_secret_key",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("PAYMOB_SECRET_KEY", "")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_public_key",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("PAYMOB_PUBLIC_KEY", "")}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_integration_id",
+                value = "\"${localProperties.getProperty("PAYMOB_CARD_INTEGRATION_ID", localProperties.getProperty("PAYMOB_INTEGRATION_ID", ""))}\""
+            )
+            buildConfigField(
+                type = "String",
+                name = "paymob_base_url",
+                value = "\"${gradleLocalProperties(rootDir, providers).getProperty("PAYMOB_BASE_URL", "https://accept.paymob.com")}\""
             )
         }
     }

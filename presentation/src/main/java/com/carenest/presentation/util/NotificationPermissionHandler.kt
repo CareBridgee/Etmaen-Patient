@@ -8,9 +8,6 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
-import com.carenest.designsystem.theme.Theme
+import com.carenest.designsystem.components.dialog.CareNestDialog
 import com.carenest.presentation.R
 
 @Composable
@@ -96,74 +93,36 @@ fun NotificationPermissionHandler(
     }
 
     if (showSettingsAlert) {
-        AlertDialog(
-            onDismissRequest = {
+        CareNestDialog(
+            title = stringResource(R.string.notification_permission_settings_title),
+            message = stringResource(R.string.notification_permission_settings_message),
+            confirmText = stringResource(R.string.notification_permission_open_settings),
+            dismissText = null,
+            onDismiss = {
                 // Keep alert visible; permission is required to proceed
                 showSettingsAlert = true
             },
-            title = {
-                Text(
-                    text = stringResource(R.string.notification_permission_settings_title),
-                    style = Theme.typography.title,
-                )
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.notification_permission_settings_message),
-                    style = Theme.typography.body.medium,
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val intent = Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", context.packageName, null)
-                    ).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    context.startActivity(intent)
-                }) {
-                    Text(
-                        text = stringResource(R.string.notification_permission_open_settings),
-                        color = Theme.colors.primary,
-                    )
+            onConfirm = {
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null)
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
+                context.startActivity(intent)
             },
-            shape = Theme.shapes.large,
-            containerColor = Theme.colors.surface,
-            titleContentColor = Theme.colors.primaryFont,
-            textContentColor = Theme.colors.secondaryFont,
         )
     } else if (showRationale) {
-        AlertDialog(
-            onDismissRequest = onRationaleDismissed,
-            title = {
-                Text(
-                    text = stringResource(R.string.notification_permission_title),
-                    style = Theme.typography.title,
-                )
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.notification_permission_rationale),
-                    style = Theme.typography.body.medium,
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
+        CareNestDialog(
+            title = stringResource(R.string.notification_permission_title),
+            message = stringResource(R.string.notification_permission_rationale),
+            confirmText = stringResource(R.string.notification_permission_allow),
+            dismissText = stringResource(R.string.notification_permission_deny),
+            onConfirm = {
                     launcher.launch(permission)
                     onRationaleDismissed()
-                }) {
-                    Text(
-                        text = stringResource(R.string.notification_permission_allow),
-                        color = Theme.colors.primary,
-                    )
-                }
             },
-            shape = Theme.shapes.large,
-            containerColor = Theme.colors.surface,
-            titleContentColor = Theme.colors.primaryFont,
-            textContentColor = Theme.colors.secondaryFont,
+            onDismiss = onRationaleDismissed,
         )
     }
 }
