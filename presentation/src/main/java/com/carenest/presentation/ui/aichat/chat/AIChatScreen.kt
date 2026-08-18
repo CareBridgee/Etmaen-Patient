@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -115,6 +116,77 @@ fun AIChatContent(
             .fillMaxSize()
             .background(Theme.colors.backGround)
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(Theme.colors.primary)
+                )
+                Text(
+                    text = stringResource(R.string.online_ready),
+                    style = Theme.typography.body.small.copy(fontSize = 12.sp),
+                    color = Theme.colors.secondaryFont
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Theme.colors.primary.copy(alpha = 0.1f))
+                    .then(
+                        if (!state.isResetting && !state.isLoading) {
+                            Modifier.bounceClick(
+                                shape = RoundedCornerShape(20.dp),
+                                onClick = { onEvent(AIChatEvent.OnStartOverClicked) }
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .padding(horizontal = 14.dp, vertical = 7.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    if (state.isResetting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(14.dp),
+                            color = Theme.colors.primary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.start_over),
+                            tint = Theme.colors.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.start_over),
+                        style = Theme.typography.body.medium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp
+                        ),
+                        color = Theme.colors.primary
+                    )
+                }
+            }
+        }
+
         LazyColumn(
             state = listState,
             reverseLayout = true,

@@ -2,6 +2,9 @@ package com.carenest.presentation.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.carenest.domain.socket.ConnectionState
+import com.carenest.domain.socket.SocketConnectionManager
+import com.carenest.domain.socket.SocketServiceController
 import com.carenest.domain.usecase.settings.GetSettingsUseCase
 import com.carenest.domain.usecase.settings.UpdateSettingsUseCase
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
@@ -17,7 +20,9 @@ import kotlinx.coroutines.launch
 class SettingsViewModel @Inject constructor(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val updateSettingsUseCase: UpdateSettingsUseCase,
-    private val observeCurrentUser: ObserveCurrentUserUseCase
+    private val observeCurrentUser: ObserveCurrentUserUseCase,
+    private val socketServiceController: SocketServiceController,
+    private val socketConnectionManager: SocketConnectionManager
 ) : ViewModel(),
     StateHolder<SettingsState> by DefaultStateHolder(SettingsState()),
     EffectPublisher<SettingsEffect> by DefaultEffectPublisher() {
@@ -36,6 +41,17 @@ class SettingsViewModel @Inject constructor(
                         themeMode = settings.themeMode
                     )
                 }
+            }
+        }
+        viewModelScope.launch {
+            socketConnectionManager.connectionState.collect { connectionState ->
+                val isConnectedOrConnecting = when (connectionState) {
+                    is ConnectionState.Connected,
+                    is ConnectionState.Connecting,
+                    is ConnectionState.Reconnecting -> true
+                    else -> false
+                }
+                updateState { copy(isBackgroundServiceEnabled = isConnectedOrConnecting) }
             }
         }
     }
@@ -73,6 +89,21 @@ class SettingsViewModel @Inject constructor(
                 sendEffect(SettingsEffect.ShowMessage(SettingsMessage.DeleteAccountUnavailable))
             SettingsEvent.OnContactSupportClicked ->
                 sendEffect(SettingsEffect.ShowMessage(SettingsMessage.ContactSupportUnavailable))
+            SettingsEvent.OnStopServiceClicked -> {
+                socketServiceController.stopService()
+                socketConnectionManager.disconnect()
+                sendEffect(SettingsEffect.ShowMessage(SettingsMessage.ServiceStopped))
+            }
+            is SettingsEvent.OnToggleService -> {
+                if (event.enabled) {
+                    socketServiceController.startService()
+                    sendEffect(SettingsEffect.ShowMessage(SettingsMessage.ServiceEnabled))
+                } else {
+                    socketServiceController.stopService()
+                    socketConnectionManager.disconnect()
+                    sendEffect(SettingsEffect.ShowMessage(SettingsMessage.ServiceDisabled))
+                }
+            }
         }
     }
 

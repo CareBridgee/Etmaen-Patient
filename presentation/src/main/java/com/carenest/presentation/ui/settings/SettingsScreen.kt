@@ -26,7 +26,11 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,6 +71,9 @@ fun SettingsScreen(
     val termsUnavailable = stringResource(R.string.settings_terms_unavailable)
     val deleteUnavailable = stringResource(R.string.settings_delete_account_unavailable)
     val supportUnavailable = stringResource(R.string.settings_contact_support_unavailable)
+    val serviceStoppedSuccess = stringResource(R.string.settings_service_stopped_success)
+    val serviceEnabledSuccess = stringResource(R.string.settings_service_enabled)
+    val serviceDisabledSuccess = stringResource(R.string.settings_service_disabled)
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -77,6 +84,9 @@ fun SettingsScreen(
                     SettingsMessage.TermsUnavailable -> termsUnavailable
                     SettingsMessage.DeleteAccountUnavailable -> deleteUnavailable
                     SettingsMessage.ContactSupportUnavailable -> supportUnavailable
+                    SettingsMessage.ServiceStopped -> serviceStoppedSuccess
+                    SettingsMessage.ServiceEnabled -> serviceEnabledSuccess
+                    SettingsMessage.ServiceDisabled -> serviceDisabledSuccess
                 }
             )
         }
@@ -220,6 +230,28 @@ fun SettingsContent(
                 }
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Background Service Section
+            SettingsSectionTitle(text = stringResource(R.string.settings_section_background_service))
+            Spacer(modifier = Modifier.height(12.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                color = Theme.colors.surface,
+                shadowElevation = 0.dp
+            ) {
+                Column {
+                    SettingsRowSwitch(
+                        iconRes = RD.drawable.ic_notification,
+                        title = stringResource(R.string.settings_stop_service),
+                        subtitle = stringResource(R.string.settings_stop_service_description),
+                        checked = state.isBackgroundServiceEnabled,
+                        onCheckedChange = { onEvent(SettingsEvent.OnToggleService(it)) }
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
@@ -349,6 +381,69 @@ fun SettingsRowClickable(
             contentDescription = null,
             tint = Theme.colors.secondaryFont,
             modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+@Composable
+fun SettingsRowSwitch(
+    iconRes: Int,
+    title: String,
+    subtitle: String? = null,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onCheckedChange(!checked) }
+            )
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            tint = Theme.colors.secondaryFont,
+            modifier = Modifier.size(22.dp)
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = Theme.typography.body.large.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
+                ),
+                color = Theme.colors.primaryFont
+            )
+            if (subtitle != null) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    style = Theme.typography.body.small.copy(fontSize = 12.sp),
+                    color = Theme.colors.secondaryFont
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Theme.colors.surface,
+                checkedTrackColor = Theme.colors.primary,
+                uncheckedThumbColor = Theme.colors.surface,
+                uncheckedTrackColor = Theme.colors.divider,
+                uncheckedBorderColor = Color.Transparent
+            )
         )
     }
 }
