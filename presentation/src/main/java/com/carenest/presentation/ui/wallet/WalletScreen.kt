@@ -2,13 +2,11 @@ package com.carenest.presentation.ui.wallet
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,12 +35,15 @@ fun WalletScreen(
         onLeadingClick = onNavigateBack
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is WalletEffect.ShowMessage -> onShowMessage(context.getString(effect.messageRes))
-            is WalletEffect.ShowTextMessage -> onShowMessage(effect.message)
+            is WalletEffect.ShowMessage ->
+                onShowMessage(resources.getString(effect.messageRes))
+
+            is WalletEffect.ShowTextMessage ->
+                onShowMessage(effect.message)
         }
     }
 
