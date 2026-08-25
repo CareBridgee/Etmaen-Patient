@@ -1,5 +1,6 @@
 package com.carenest.data.source.remote.datasource
 
+import com.carenest.data.socket.models.NurseOfferResponseDto
 import com.carenest.data.source.remote.dto.tracking.NurseDetailsDto
 import com.carenest.data.source.remote.dto.tracking.ServiceRequestTrackingDto
 import com.carenest.data.source.remote.dto.tracking.VisitCodeResponseDto
@@ -28,5 +29,9 @@ class NurseTrackingDataSourceImp @Inject constructor(
 
     override suspend fun fetchNurseDetails(nurseId: String): NurseDetailsDto {
         return nurseTrackingService.fetchNurseDetails(nurseId).getOrThrow()
+    }
+
+    override suspend fun fetchNurseOffers(serviceRequestId: String): List<NurseOfferResponseDto> {
+        return nurseTrackingService.getNurseOffers(serviceRequestId).getOrThrow()
     }
 }

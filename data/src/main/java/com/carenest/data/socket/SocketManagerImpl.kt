@@ -71,26 +71,4 @@ class SocketManagerImpl @Inject constructor(
         logger.log("Sending payload to $destination")
         stompClient.send(frame)
     }
-
-    /**
-     * Sends an empty STOMP SEND frame to a destination.
-     * Used internally by repository implementations only.
-     */
-    suspend fun sendEmpty(destination: String) {
-        val frame = StompFrame(
-            command = StompFrame.SEND,
-            headers = mapOf("destination" to destination)
-        )
-        logger.log("Sending empty payload to $destination")
-        stompClient.send(frame)
-    }
-
-    /**
-     * Checks if the socket is currently connected.
-     * Used internally by repository implementations only.
-     */
-    fun isConnected(): Boolean {
-        val currentState = connectionManager.connectionState.value
-        return currentState is ConnectionState.Connected
-    }
 }

@@ -2,6 +2,8 @@ package com.carenest.data.socket.models
 
 import com.carenest.domain.socket.model.NurseOfferResponse
 import com.carenest.domain.socket.model.ReservationEvent
+import com.carenest.data.socket.serialization.FlexibleDateStringSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -10,7 +12,7 @@ import kotlinx.serialization.json.Json
 @Serializable
 data class ReservationEventDto(
     val type: ReservationEventType,
-    val reservationId: String,
+    val reservationId: String = "",
     val data: JsonElement? = null
 ) {
     fun toDomain(json: Json): ReservationEvent {
@@ -81,12 +83,15 @@ data class PresenceUpdateDto(
 
 @Serializable
 data class NurseInfoDto(
-    val id: String? = null,
-    val firstName: String? = null,
-    val lastName: String? = null,
-    val ratingAvg: Double? = null,
-    val totalReviews: Int? = null,
-    val profileImageUrl: String? = null,
+    @SerialName("id") val id: String? = null,
+    @SerialName("firstName") val firstName: String? = null,
+    @SerialName("lastName") val lastName: String? = null,
+    @SerialName("ratingAvg") val ratingAvg: Double? = null,
+    @SerialName("totalReviews") val totalReviews: Int? = null,
+    @SerialName("profileImageUrl") val profileImageUrl: String? = null,
+    @SerialName("photoUrl") val photoUrl: String? = null,
+    @SerialName("avatarUrl") val avatarUrl: String? = null,
+    @SerialName("profileImage") val profileImage: String? = null
 ) {
     fun toDomain() = com.carenest.domain.socket.model.NurseInfo(
         id = id ?: "",
@@ -94,26 +99,27 @@ data class NurseInfoDto(
         lastName = lastName ?: "",
         ratingAvg = ratingAvg ?: 0.0,
         totalReviews = totalReviews ?: 0,
-        photoUrl = profileImageUrl
+        photoUrl = profileImageUrl ?: photoUrl ?: avatarUrl ?: profileImage
     )
 }
 
 @Serializable
 data class NurseOfferResponseDto(
-    val id: String? = null,
-    val serviceRequestId: String? = null,
-    val nurse: NurseInfoDto? = null,
-    val nurseId: String? = null,
-    val proposedPrice: Double? = null,
-    val proposedDate: String? = null,
-    val proposedTime: String? = null,
-    val message: String? = null,
-    val status: String? = null,
-    val createdAt: String? = null,
-    val updatedAt: String? = null
+    @SerialName("id") val id: String? = null,
+    @SerialName("offerId") val offerId: String? = null,
+    @SerialName("serviceRequestId") val serviceRequestId: String? = null,
+    @SerialName("nurse") val nurse: NurseInfoDto? = null,
+    @SerialName("nurseId") val nurseId: String? = null,
+    @SerialName("proposedPrice") val proposedPrice: Double? = null,
+    @SerialName("proposedDate") @Serializable(with = FlexibleDateStringSerializer::class) val proposedDate: String? = null,
+    @SerialName("proposedTime") @Serializable(with = FlexibleDateStringSerializer::class) val proposedTime: String? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("status") val status: String? = null,
+    @SerialName("createdAt") @Serializable(with = FlexibleDateStringSerializer::class) val createdAt: String? = null,
+    @SerialName("updatedAt") @Serializable(with = FlexibleDateStringSerializer::class) val updatedAt: String? = null
 ) {
     fun toDomain() = NurseOfferResponse(
-        id = id ?: "",
+        id = id ?: offerId ?: "",
         serviceRequestId = serviceRequestId ?: "",
         nurse = nurse?.toDomain(),
         proposedPrice = proposedPrice ?: 0.0,
@@ -129,5 +135,5 @@ data class NurseOfferResponseDto(
 
 @Serializable
 data class OfferIdPayloadDto(
-    val offerId: String
+    @SerialName("offerId") val offerId: String
 )

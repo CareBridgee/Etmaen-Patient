@@ -10,19 +10,30 @@ import com.carenest.domain.socket.model.OffersListRequest
 import com.carenest.domain.socket.model.ReservationEvent
 import com.carenest.data.socket.models.ReservationEventDto
 import com.carenest.data.socket.models.toDto
+import com.carenest.data.socket.logger.SocketLogger
 import com.carenest.data.socket.serialization.MessageSerializer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onCompletion
 import javax.inject.Inject
 
 class ReservationSocketRepositoryImpl @Inject constructor(
     private val socketManager: SocketManagerImpl,
-    private val messageSerializer: MessageSerializer
+    private val messageSerializer: MessageSerializer,
+    private val logger: SocketLogger
 ) : ReservationSocketRepository {
 
     override fun observeReservationEvents(reservationId: String): Flow<ReservationEvent> {
         return socketManager.subscribe("/topic/reservation/$reservationId")
-            .mapNotNull { messageSerializer.decodeFromString<ReservationEventDto>(it)?.toDomain(messageSerializer.json) }
+            .mapNotNull { raw ->
+                val event = messageSerializer.decodeFromString<ReservationEventDto>(raw)
+                    ?.toDomain(messageSerializer.json)
+                if (event == null) {
+                    logger.error("Dropping undecodable reservation frame on /topic/reservation/$reservationId: $raw")
+                }
+                event
+            }
+            .onCompletion { socketManager.unsubscribe("/topic/reservation/$reservationId") }
     }
 
     override suspend fun createOffer(request: OfferCreateRequest) {

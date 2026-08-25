@@ -4,6 +4,7 @@ import com.carenest.data.mapper.tracking.toDomain
 import com.carenest.data.source.remote.datasource.NurseTrackingDataSource
 import com.carenest.domain.model.tracking.NurseTrackingInfo
 import com.carenest.domain.repository.NurseTrackingRepository
+import com.carenest.domain.socket.model.NurseOfferResponse
 import javax.inject.Inject
 
 class NurseTrackingRepositoryImpl @Inject constructor(
@@ -40,4 +41,9 @@ class NurseTrackingRepositoryImpl @Inject constructor(
     override suspend fun getVisitVerificationCode(requestId: String): Result<String> = runCatching {
         dataSource.fetchVerificationCode(requestId).code
     }
+
+    override suspend fun getNurseOffers(serviceRequestId: String): Result<List<NurseOfferResponse>> =
+        runCatching {
+            dataSource.fetchNurseOffers(serviceRequestId).map { it.toDomain() }
+        }
 }

@@ -1,6 +1,7 @@
 package com.carenest.data.source.remote.service
 
 import com.carenest.data.socket.models.ChatMessageResponseDto
+import com.carenest.data.socket.models.NurseOfferResponseDto
 import com.carenest.data.socket.models.SendMessageRequestDto
 import com.carenest.data.source.remote.dto.tracking.NurseDetailsDto
 import com.carenest.data.source.remote.dto.tracking.ServiceRequestTrackingDto
@@ -8,6 +9,7 @@ import com.carenest.data.source.remote.dto.tracking.VisitCodeResponseDto
 import com.carenest.data.utils.executeRequest
 import com.carenest.data.utils.executeUnitRequest
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -69,7 +71,7 @@ class NurseTrackingServiceImp @Inject constructor(
         return httpClient.executeRequest<List<ChatMessageResponseDto>>(json) {
             method = HttpMethod.Get
             url {
-                path("api/v1/reservations/$reservationId/messages")
+                path("/api/v1/reservations/$reservationId/messages")
             }
         }
     }
@@ -78,10 +80,20 @@ class NurseTrackingServiceImp @Inject constructor(
         return httpClient.executeRequest<ChatMessageResponseDto>(json) {
             method = HttpMethod.Post
             url {
-                path("api/v1/reservations/$reservationId/messages")
+                path("/api/v1/reservations/$reservationId/messages")
             }
             contentType(ContentType.Application.Json)
             setBody(body)
+        }
+    }
+
+    override suspend fun getNurseOffers(serviceRequestId: String): Result<List<NurseOfferResponseDto>> {
+        return httpClient.executeRequest<List<NurseOfferResponseDto>>(json) {
+            method = HttpMethod.Get
+            url {
+                path("/api/v1/nurse-offers")
+                parameter("serviceRequestId", serviceRequestId)
+            }
         }
     }
 }
