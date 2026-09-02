@@ -1,7 +1,7 @@
 package com.carenest.data.mapper.history
 
 import com.carenest.data.source.remote.dto.history.VisitSummaryResponseDto
-import com.carenest.domain.model.visit_summary.VisitSummary
+import com.carenest.domain.model.VisitSummary
 
 fun VisitSummaryResponseDto.toDomain(): VisitSummary {
     return VisitSummary(

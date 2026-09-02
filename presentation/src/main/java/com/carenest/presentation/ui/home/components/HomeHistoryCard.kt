@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.carenest.designsystem.theme.Theme
-import com.carenest.domain.model.history.ServiceHistory
+import com.carenest.domain.model.ServiceHistory
 import com.carenest.presentation.R
 import com.carenest.designsystem.R as RD
 

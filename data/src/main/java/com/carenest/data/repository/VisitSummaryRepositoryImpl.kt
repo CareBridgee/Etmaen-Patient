@@ -2,7 +2,7 @@ package com.carenest.data.repository
 
 import com.carenest.data.mapper.history.toDomain
 import com.carenest.data.source.remote.datasource.VisitSummaryDataSource
-import com.carenest.domain.model.visit_summary.VisitSummary
+import com.carenest.domain.model.VisitSummary
 import com.carenest.domain.repository.VisitSummaryRepository
 import javax.inject.Inject
 

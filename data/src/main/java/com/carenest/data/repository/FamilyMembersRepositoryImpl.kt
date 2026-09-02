@@ -1,10 +1,10 @@
 package com.carenest.data.repository
 
-import com.carenest.data.mapper.family_members.toDomain
-import com.carenest.data.mapper.family_members.toDto
+import com.carenest.data.mapper.toDomain
+import com.carenest.data.mapper.toDto
 import com.carenest.data.source.remote.datasource.FamilyMembersDataSource
-import com.carenest.domain.model.family_members.FamilyMember
-import com.carenest.domain.model.family_members.FamilyMemberInput
+import com.carenest.domain.model.familymembers.FamilyMember
+import com.carenest.domain.model.familymembers.FamilyMemberInput
 import com.carenest.domain.repository.FamilyMembersRepository
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -1,6 +1,6 @@
 package com.carenest.presentation.ui.home
 
-import com.carenest.domain.model.history.ServiceHistory
+import com.carenest.domain.model.ServiceHistory
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.User
 
