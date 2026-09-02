@@ -1,5 +1,6 @@
 package com.carenest.data.socket.managers
 
+import com.carenest.data.socket.logger.SocketLogger
 import com.carenest.data.socket.stomp.StompClient
 import com.carenest.data.socket.stomp.StompClientEvent
 import com.carenest.data.socket.stomp.StompFrame
@@ -15,11 +16,17 @@ import javax.inject.Singleton
 @Singleton
 class TopicRegistry @Inject constructor(
     private val stompClient: StompClient,
+    private val logger: SocketLogger
 ) {
     private val subIdGenerator = AtomicInteger(0)
+    private val bookkeepingLock = Any()
 
     // Map of topic to Subscription ID
     private val activeSubscriptions = ConcurrentHashMap<String, String>()
+
+    // Number of live collectors per topic; the underlying STOMP subscription is
+    // released only when the last collector unsubscribes.
+    private val subscriberCounts = ConcurrentHashMap<String, AtomicInteger>()
 
     // Flow of raw messages per subscription ID
     private val messageFlows = ConcurrentHashMap<String, MutableSharedFlow<String>>()
@@ -36,7 +43,12 @@ class TopicRegistry @Inject constructor(
                         val subId = frame.headers["subscription"]
                         val body = frame.body
                         if (subId != null && body != null) {
-                            messageFlows[subId]?.tryEmit(body)
+                            val flow = messageFlows[subId]
+                            if (flow != null) {
+                                flow.tryEmit(body)
+                            } else {
+                                logger.error("Dropping MESSAGE for unknown subscription $subId (topic was unsubscribed)")
+                            }
                         }
                     } else if (frame.command == StompFrame.CONNECTED) {
                         // Resubscribe all active topics on reconnect
@@ -47,25 +59,35 @@ class TopicRegistry @Inject constructor(
         }
     }
 
-    fun subscribe(topic: String): Flow<String> {
-        val subId = activeSubscriptions.getOrPut(topic) {
-            val newSubId = "sub-${subIdGenerator.incrementAndGet()}"
-            messageFlows[newSubId] = MutableSharedFlow(extraBufferCapacity = 64)
-            sendSubscribeFrame(topic, newSubId)
-            newSubId
+    fun subscribe(topic: String): Flow<String> = synchronized(bookkeepingLock) {
+        val count = subscriberCounts.getOrPut(topic) { AtomicInteger(0) }
+        if (count.incrementAndGet() == 1 && !activeSubscriptions.containsKey(topic)) {
+            activeSubscriptions[topic] = newSubscription(topic)
         }
-
-        return messageFlows[subId] ?: MutableSharedFlow<String>(extraBufferCapacity = 64).also {
+        val subId = activeSubscriptions.getValue(topic)
+        messageFlows[subId] ?: MutableSharedFlow<String>(extraBufferCapacity = 64).also {
             messageFlows[subId] = it
         }
     }
 
-    fun unsubscribe(topic: String) {
-        val subId = activeSubscriptions.remove(topic)
-        if (subId != null) {
-            messageFlows.remove(subId)
-            sendUnsubscribeFrame(subId)
-        }
+    fun unsubscribe(topic: String) = synchronized(bookkeepingLock) {
+        val count = subscriberCounts[topic] ?: return
+        if (count.decrementAndGet() > 0) return
+        subscriberCounts.remove(topic)
+        releaseSubscription(topic)
+    }
+
+    private fun newSubscription(topic: String): String {
+        val newSubId = "sub-${subIdGenerator.incrementAndGet()}"
+        messageFlows[newSubId] = MutableSharedFlow(extraBufferCapacity = 64)
+        sendSubscribeFrame(topic, newSubId)
+        return newSubId
+    }
+
+    private fun releaseSubscription(topic: String) {
+        val subId = activeSubscriptions.remove(topic) ?: return
+        messageFlows.remove(subId)
+        sendUnsubscribeFrame(subId)
     }
 
     private fun sendSubscribeFrame(topic: String, subId: String) {

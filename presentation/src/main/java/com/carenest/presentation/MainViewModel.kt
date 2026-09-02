@@ -11,14 +11,17 @@ import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
 import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.socket.SocketConnectionManager
+import com.carenest.domain.socket.SocketError
+import com.carenest.domain.socket.SocketServiceController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 import com.carenest.domain.repository.SettingsRepository
 
-import com.carenest.domain.socket.SocketServiceController
 import kotlinx.coroutines.flow.collect
 
 @HiltViewModel
@@ -27,6 +30,7 @@ class MainViewModel @Inject constructor(
     private val getLoggedInStatusUseCase: GetLoggedInStatusUseCase,
     private val settingsRepository: SettingsRepository,
     private val socketServiceController: SocketServiceController,
+    private val socketConnectionManager: SocketConnectionManager,
     private val getSettingsUseCase: GetSettingsUseCase,
 ) : ViewModel(),
     StateHolder<MainState> by DefaultStateHolder(MainState()),
@@ -34,6 +38,7 @@ class MainViewModel @Inject constructor(
 
     init {
         observeAppState()
+        observeSocketErrors()
     }
 
     private fun observeAppState() {
@@ -76,6 +81,71 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    private fun observeSocketErrors() {
+        viewModelScope.launch {
+            val lastNoticeAt = mutableMapOf<String, Long>()
+            socketConnectionManager.socketErrors.collect { error ->
+                when (error) {
+                    is SocketError.AuthFailed -> onSocketAuthFailed()
+                    is SocketError.NetworkError, SocketError.HeartbeatTimeout -> {
+                        if (shouldEmit(lastNoticeAt, error::class.simpleName.orEmpty())) {
+                            sendEffect(MainEffect.ConnectionNotice(SOCKET_RECONNECTING_MESSAGE))
+                        }
+                    }
+                    is SocketError.StompError -> {
+                        if (shouldEmit(lastNoticeAt, "stomp:${error.message}")) {
+                            sendEffect(
+                                MainEffect.SocketAlert(
+                                    title = "Connection error",
+                                    message = error.message
+                                )
+                            )
+                        }
+                    }
+                    is SocketError.OperationError -> {
+                        if (shouldEmit(lastNoticeAt, "op:${error.code}")) {
+                            sendEffect(
+                                MainEffect.SocketAlert(
+                                    title = "Something went wrong",
+                                    message = error.message
+                                )
+                            )
+                        }
+                    }
+                    is SocketError.SubscriptionError, is SocketError.ParsingError -> Unit
+                }
+            }
+        }
+    }
+
+    private suspend fun onSocketAuthFailed() {
+        val stillLoggedIn = getLoggedInStatusUseCase().first()
+        if (stillLoggedIn) {
+            socketServiceController.startService()
+            sendEffect(
+                MainEffect.SocketAlert(
+                    title = "Connection problem",
+                    message = "We couldn't verify your session with the server. Retrying…"
+                )
+            )
+        } else {
+            sendEffect(
+                MainEffect.SocketAlert(
+                    title = "Session expired",
+                    message = "Please sign in again to continue."
+                )
+            )
+        }
+    }
+
+    private fun shouldEmit(lastNoticeAt: MutableMap<String, Long>, key: String): Boolean {
+        val now = System.currentTimeMillis()
+        val last = lastNoticeAt[key] ?: 0L
+        if (now - last < NOTICE_THROTTLE_MS) return false
+        lastNoticeAt[key] = now
+        return true
+    }
 }
 
 data class MainState(
@@ -92,4 +162,10 @@ sealed interface MainIntent {
     data object ResetApp : MainIntent
 }
 
-sealed interface MainEffect
+sealed interface MainEffect {
+    data class SocketAlert(val title: String, val message: String) : MainEffect
+    data class ConnectionNotice(val message: String) : MainEffect
+}
+
+private const val NOTICE_THROTTLE_MS = 10_000L
+private const val SOCKET_RECONNECTING_MESSAGE = "Connection lost — reconnecting…"

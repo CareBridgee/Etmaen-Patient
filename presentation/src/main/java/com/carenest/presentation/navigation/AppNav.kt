@@ -50,6 +50,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.carenest.designsystem.components.bottomnav.BottomNavItem
 import com.carenest.designsystem.components.bottomnav.SPBottomNavigation
+import com.carenest.designsystem.components.dialog.CareNestDialog
 import com.carenest.designsystem.components.toast.SnackbarHost
 import com.carenest.designsystem.components.topbar.BaseTopAppBar
 import com.carenest.designsystem.components.topbar.TopBarAction
@@ -57,7 +58,9 @@ import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.presentation.MainEffect
 import com.carenest.presentation.MainViewModel
+import com.carenest.presentation.core.mvi.ObserveEffect
 import com.carenest.presentation.R
 import com.carenest.presentation.model.toArg
 import com.carenest.presentation.model.toDomain
@@ -137,6 +140,26 @@ fun AppNav(
 
         val onShowSnackbar: (String) -> Unit = { message ->
             coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+        }
+
+        var socketAlert by remember { mutableStateOf<MainEffect.SocketAlert?>(null) }
+
+        ObserveEffect(mainViewModel.effect) { effect ->
+            when (effect) {
+                is MainEffect.SocketAlert -> socketAlert = effect
+                is MainEffect.ConnectionNotice -> onShowSnackbar(effect.message)
+            }
+        }
+
+        socketAlert?.let { alert ->
+            CareNestDialog(
+                title = alert.title,
+                message = alert.message,
+                confirmText = stringResource(R.string.ok),
+                dismissText = null,
+                onConfirm = { socketAlert = null },
+                onDismiss = { socketAlert = null }
+            )
         }
 
         val initialRoute: NavKey = if (deepLinkRequestId != null) AppRoute.Home else AppRoute.Splash
