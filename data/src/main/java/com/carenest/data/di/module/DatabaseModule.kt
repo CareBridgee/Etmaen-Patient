@@ -1,4 +1,4 @@
-package com.carenest.data.di
+package com.carenest.data.di.module
 
 import android.content.Context
 import androidx.room.Room
@@ -8,8 +8,8 @@ import com.carenest.data.source.local.database.dao.ServiceHistoryDao
 import com.carenest.data.source.local.database.dao.UserDao
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 

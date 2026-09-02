@@ -1,6 +1,7 @@
-package com.carenest.data.di
+package com.carenest.data.di.module
 
 import com.carenest.data.BuildConfig
+import com.carenest.data.di.qualifier.SocketHttpClient
 import com.carenest.data.socket.SocketManagerImpl
 import com.carenest.data.socket.logger.DefaultSocketLogger
 import com.carenest.data.socket.logger.SocketLogger

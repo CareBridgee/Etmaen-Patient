@@ -1,28 +1,15 @@
-package com.carenest.data.di
+package com.carenest.data.di.module
 
+import com.carenest.data.di.qualifier.DefaultDispatcher
+import com.carenest.data.di.qualifier.IoDispatcher
+import com.carenest.data.di.qualifier.MainDispatcher
+import com.carenest.data.di.qualifier.MainImmediateDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Qualifier
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class IoDispatcher
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class DefaultDispatcher
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class MainDispatcher
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class MainImmediateDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)

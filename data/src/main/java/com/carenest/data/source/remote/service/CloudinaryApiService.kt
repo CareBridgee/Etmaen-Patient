@@ -1,6 +1,7 @@
 package com.carenest.data.source.remote.service
 
 import com.carenest.data.BuildConfig
+import com.carenest.data.di.qualifier.AuthHttpClient
 import com.carenest.data.source.remote.dto.cloudinary.CloudinaryResponseDto
 import com.carenest.data.utils.executeRequest
 import io.ktor.client.HttpClient
@@ -14,7 +15,6 @@ import io.ktor.http.HttpMethod
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-import com.carenest.data.di.AuthHttpClient
 
 interface CloudinaryApiService {
     suspend fun uploadImage(

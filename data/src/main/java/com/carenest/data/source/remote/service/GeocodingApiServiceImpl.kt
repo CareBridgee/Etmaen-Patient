@@ -1,6 +1,7 @@
 package com.carenest.data.source.remote.service
 
 import com.carenest.data.BuildConfig
+import com.carenest.data.di.qualifier.LocationIQHttpClient
 import com.carenest.data.source.remote.dto.ReverseGeocodeResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -9,10 +10,9 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.url
 import io.ktor.http.isSuccess
 import javax.inject.Inject
-import javax.inject.Named
 
 class GeocodingApiServiceImpl @Inject constructor(
-    @param:Named("locationiq") private val httpClient: HttpClient
+    @param:LocationIQHttpClient val httpClient: HttpClient
 ) : GeocodingApiService {
 
     override suspend fun reverseGeocode(

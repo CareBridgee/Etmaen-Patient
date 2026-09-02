@@ -1,4 +1,4 @@
-package com.carenest.data.di
+package com.carenest.data.di.module
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,7 +6,7 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
-import com.carenest.data.source.local.preferences.PreferenceKeys.DATA_STORE_FILE_NAME
+import com.carenest.data.source.local.preferences.PreferenceKeys
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,12 +21,12 @@ object StorageModule{
 
     @Provides
     @Singleton
-    fun provideDatastore(@ApplicationContext context: Context): DataStore<Preferences>{
+    fun provideDatastore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.createWithPath(
             corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
             produceFile = {
                 context.filesDir
-                    .resolve(DATA_STORE_FILE_NAME)
+                    .resolve(PreferenceKeys.DATA_STORE_FILE_NAME)
                     .absolutePath
                     .toPath()
             }

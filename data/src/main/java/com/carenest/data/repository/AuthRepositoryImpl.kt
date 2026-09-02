@@ -1,7 +1,7 @@
 package com.carenest.data.repository
 
 import android.util.Log
-import com.carenest.data.di.IoDispatcher
+import com.carenest.data.di.qualifier.IoDispatcher
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.datasource.auth.AuthDatasource
 import com.carenest.domain.model.auth.AuthResult

@@ -1,4 +1,4 @@
-package com.carenest.data.di
+package com.carenest.data.di.module
 
 import com.carenest.data.source.remote.service.AiChatApiService
 import com.carenest.data.source.remote.service.AiChatApiServiceImpl
@@ -8,6 +8,12 @@ import com.carenest.data.source.remote.service.CareNestApiService
 import com.carenest.data.source.remote.service.CareNestApiServiceImpl
 import com.carenest.data.source.remote.service.CloudinaryApiService
 import com.carenest.data.source.remote.service.CloudinaryApiServiceImpl
+import com.carenest.data.source.remote.service.FamilyMembersApiService
+import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
+import com.carenest.data.source.remote.service.NurseTrackingService
+import com.carenest.data.source.remote.service.NurseTrackingServiceImp
+import com.carenest.data.source.remote.service.PaymobApiService
+import com.carenest.data.source.remote.service.PaymobApiServiceImpl
 import com.carenest.data.source.remote.service.ProfileApiService
 import com.carenest.data.source.remote.service.ProfileApiServiceImpl
 import com.carenest.data.source.remote.service.UserApiService
@@ -18,14 +24,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-
-
-import com.carenest.data.source.remote.service.FamilyMembersApiService
-import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
-import com.carenest.data.source.remote.service.NurseTrackingService
-import com.carenest.data.source.remote.service.NurseTrackingServiceImp
-import com.carenest.data.source.remote.service.PaymobApiService
-import com.carenest.data.source.remote.service.PaymobApiServiceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)

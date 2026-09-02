@@ -1,7 +1,9 @@
-package com.carenest.data.di
+package com.carenest.data.di.module
 
 import android.util.Log
 import com.carenest.data.BuildConfig
+import com.carenest.data.di.qualifier.AuthHttpClient
+import com.carenest.data.di.qualifier.PaymobHttpClient
 import com.carenest.data.paymob.PaymobConfiguration
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import com.carenest.data.source.remote.dto.RefreshRequest
@@ -27,6 +29,7 @@ import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.Url
 import io.ktor.http.isSuccess
@@ -287,7 +290,7 @@ val PaymobSecretAuthPlugin = createClientPlugin(
             allowedHost.isNotBlank() &&
             requestUrl.host.equals(allowedHost, ignoreCase = true)
         ) {
-            request.headers[io.ktor.http.HttpHeaders.Authorization] = "Token $secretKey"
+            request.headers[HttpHeaders.Authorization] = "Token $secretKey"
         }
     }
 }

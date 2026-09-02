@@ -1,5 +1,7 @@
 package com.carenest.data.di
 
+import com.carenest.data.di.module.installBearerAuthentication
+import com.carenest.data.di.module.installPaymobSecretAuthorization
 import com.carenest.data.source.local.preferences.AuthTokens
 import com.carenest.data.source.local.preferences.CarenestDatastore
 import io.ktor.client.HttpClient
