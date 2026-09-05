@@ -1,6 +1,6 @@
 package com.carenest.data.source.remote.service
 
-import com.carenest.data.di.AuthHttpClient
+import com.carenest.data.di.qualifier.AuthHttpClient
 import com.carenest.data.source.remote.dto.AuthResponse
 import com.carenest.data.source.remote.dto.GoogleAuthResponseDto
 import com.carenest.data.source.remote.dto.GoogleLoginRequest

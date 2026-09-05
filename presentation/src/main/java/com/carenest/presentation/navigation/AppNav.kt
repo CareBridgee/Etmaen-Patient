@@ -3,18 +3,12 @@ package com.carenest.presentation.navigation
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
@@ -57,7 +51,7 @@ import com.carenest.designsystem.components.topbar.TopBarAction
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.domain.model.LocationDetails
-import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.model.ThemeMode
 import com.carenest.presentation.MainEffect
 import com.carenest.presentation.MainViewModel
 import com.carenest.presentation.core.mvi.ObserveEffect
@@ -74,27 +68,27 @@ import com.carenest.presentation.ui.auth.otp.OtpScreen
 import com.carenest.presentation.ui.auth.register.RegisterScreen
 import com.carenest.presentation.ui.auth.register.PersonalInformationMode
 import com.carenest.presentation.ui.history.HistoryScreen
-import com.carenest.presentation.ui.history_details.ServiceHistoryDetailsScreen
+import com.carenest.presentation.ui.historydetails.ServiceHistoryDetailsScreen
 import com.carenest.presentation.ui.chat.ChatScreen
 import com.carenest.presentation.ui.home.HomeScreen
 import com.carenest.presentation.ui.map.MapScreen
-import com.carenest.presentation.ui.onBoarding.OnBoardingScreen
-import com.carenest.presentation.ui.profile_completion.ProfileCompletionScreen
+import com.carenest.presentation.ui.onboarding.OnBoardingScreen
+import com.carenest.presentation.ui.profilecompletion.ProfileCompletionScreen
 import com.carenest.presentation.ui.profile.ProfileScreen
 import com.carenest.presentation.ui.qrcode.QrCodeScreen
-import com.carenest.presentation.ui.request_service.RequestServiceScreen
-import com.carenest.presentation.ui.search_for_nurse.NurseSearchScreen
+import com.carenest.presentation.ui.requestservice.RequestServiceScreen
+import com.carenest.presentation.ui.searchfornurse.NurseSearchScreen
 import com.carenest.presentation.ui.servicedetails.ServiceDetailsScreen
 import com.carenest.presentation.ui.servicelist.ServicesScreen
 import com.carenest.presentation.ui.splash.SplashScreen
 import com.carenest.presentation.ui.tracking.NurseOnTheWayScreen
-import com.carenest.presentation.ui.visit_summary.VisitCompletedScreen
+import com.carenest.presentation.ui.visitsummary.VisitCompletedScreen
 import com.carenest.presentation.ui.wallet.AddFundsScreen
 import com.carenest.presentation.ui.wallet.AddPaymentMethodScreen
 import com.carenest.presentation.ui.wallet.WalletScreen
-import com.carenest.presentation.ui.family_members.add.AddFamilyMemberScreenRoute
-import com.carenest.presentation.ui.family_members.members.FamilyMembersScreen
-import com.carenest.presentation.ui.profile_completion.ProfileCompletionSource
+import com.carenest.presentation.ui.familymembers.add.AddFamilyMemberScreenRoute
+import com.carenest.presentation.ui.familymembers.members.FamilyMembersScreen
+import com.carenest.presentation.ui.profilecompletion.ProfileCompletionSource
 import com.carenest.presentation.ui.settings.SettingsScreen
 import kotlinx.coroutines.launch
 import com.carenest.designsystem.R as RD
@@ -548,7 +542,7 @@ fun AppNav(
                                 AppRoute.ProfileCompletion(
                                     profileId = memberId,
                                     isEditMode = true,
-                                    source = com.carenest.presentation.ui.profile_completion.ProfileCompletionSource.FAMILY_MEMBER
+                                    source = com.carenest.presentation.ui.profilecompletion.ProfileCompletionSource.FAMILY_MEMBER
                                 )
                             )
                         },

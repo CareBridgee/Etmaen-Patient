@@ -1,7 +1,7 @@
 package com.carenest.domain.repository
 
-import com.carenest.domain.model.family_members.FamilyMember
-import com.carenest.domain.model.family_members.FamilyMemberInput
+import com.carenest.domain.model.familymembers.FamilyMember
+import com.carenest.domain.model.familymembers.FamilyMemberInput
 
 interface FamilyMembersRepository {
     suspend fun getFamilyMembers(): Result<List<FamilyMember>>

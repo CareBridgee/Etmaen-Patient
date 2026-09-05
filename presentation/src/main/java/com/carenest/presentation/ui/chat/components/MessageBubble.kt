@@ -25,10 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatMessageType
-import com.carenest.domain.model.chat.MessageSender
-import com.carenest.domain.model.chat.MessageStatus
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatMessageType
+import com.carenest.domain.model.MessageSender
+import com.carenest.domain.model.MessageStatus
 import com.carenest.presentation.R
 import com.carenest.presentation.core.util.formatMessageTime
 import com.carenest.designsystem.R as RD

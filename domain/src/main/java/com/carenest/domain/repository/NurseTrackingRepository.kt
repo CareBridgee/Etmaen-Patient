@@ -1,6 +1,6 @@
 package com.carenest.domain.repository
 
-import com.carenest.domain.model.tracking.NurseTrackingInfo
+import com.carenest.domain.model.NurseTrackingInfo
 import com.carenest.domain.socket.model.NurseOfferResponse
 
 interface NurseTrackingRepository {

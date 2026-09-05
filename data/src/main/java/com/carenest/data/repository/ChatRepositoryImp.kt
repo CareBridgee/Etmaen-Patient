@@ -1,8 +1,8 @@
 package com.carenest.data.repository
 
 import com.carenest.data.source.remote.datasource.ChatDataSource
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatSession
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatSession
 import com.carenest.domain.repository.ChatRepository
 import javax.inject.Inject
 

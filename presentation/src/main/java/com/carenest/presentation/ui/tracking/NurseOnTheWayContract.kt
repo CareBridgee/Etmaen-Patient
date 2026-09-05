@@ -1,6 +1,6 @@
 package com.carenest.presentation.ui.tracking
 
-import com.carenest.domain.model.tracking.NurseTrackingInfo
+import com.carenest.domain.model.NurseTrackingInfo
 
 
 data class NurseOnTheWayState(

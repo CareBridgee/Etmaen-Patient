@@ -1,8 +1,8 @@
 package com.carenest.presentation.ui.chat
 
 
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatParticipant
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatParticipant
 
 data class ChatState(
     val isLoading: Boolean = true,

@@ -1,7 +1,7 @@
 package com.carenest.domain.usecase.chat
 
 
-import com.carenest.domain.model.chat.ChatSession
+import com.carenest.domain.model.ChatSession
 import com.carenest.domain.repository.ChatRepository
 import javax.inject.Inject
 

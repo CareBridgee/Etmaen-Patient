@@ -2,7 +2,7 @@ package com.carenest.presentation.ui.aichat.choosepatient
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.carenest.domain.usecase.family_members.GetFamilyMembersUseCase
+import com.carenest.domain.usecase.familymembers.GetFamilyMembersUseCase
 import com.carenest.domain.usecase.user.GetCurrentUserUseCase
 import com.carenest.domain.usecase.user.ObserveCurrentUserUseCase
 import com.carenest.presentation.core.mvi.DefaultEffectPublisher

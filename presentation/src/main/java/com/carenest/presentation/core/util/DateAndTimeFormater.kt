@@ -2,7 +2,7 @@ package com.carenest.presentation.core.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.carenest.domain.model.chat.ChatMessage
+import com.carenest.domain.model.ChatMessage
 
 import java.time.Instant
 import java.time.LocalDate

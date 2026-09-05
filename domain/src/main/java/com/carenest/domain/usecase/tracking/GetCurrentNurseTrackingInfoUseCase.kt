@@ -1,6 +1,6 @@
 package com.carenest.domain.usecase.tracking
 
-import com.carenest.domain.model.tracking.NurseTrackingInfo
+import com.carenest.domain.model.NurseTrackingInfo
 import com.carenest.domain.repository.NurseTrackingRepository
 import javax.inject.Inject
 

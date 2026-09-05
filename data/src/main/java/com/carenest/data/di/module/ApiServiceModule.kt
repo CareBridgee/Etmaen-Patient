@@ -1,0 +1,60 @@
+package com.carenest.data.di.module
+
+import com.carenest.data.source.remote.service.AiChatApiService
+import com.carenest.data.source.remote.service.AiChatApiServiceImpl
+import com.carenest.data.source.remote.service.AuthApiService
+import com.carenest.data.source.remote.service.AuthApiServiceImpl
+import com.carenest.data.source.remote.service.CareNestApiService
+import com.carenest.data.source.remote.service.CareNestApiServiceImpl
+import com.carenest.data.source.remote.service.CloudinaryApiService
+import com.carenest.data.source.remote.service.CloudinaryApiServiceImpl
+import com.carenest.data.source.remote.service.FamilyMembersApiService
+import com.carenest.data.source.remote.service.FamilyMembersApiServiceImpl
+import com.carenest.data.source.remote.service.NurseTrackingService
+import com.carenest.data.source.remote.service.NurseTrackingServiceImp
+import com.carenest.data.source.remote.service.PaymobApiService
+import com.carenest.data.source.remote.service.PaymobApiServiceImpl
+import com.carenest.data.source.remote.service.ProfileApiService
+import com.carenest.data.source.remote.service.ProfileApiServiceImpl
+import com.carenest.data.source.remote.service.UserApiService
+import com.carenest.data.source.remote.service.UserApiServiceImpl
+import com.carenest.data.source.remote.service.WalletApiService
+import com.carenest.data.source.remote.service.WalletApiServiceImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class ApiServiceModule {
+
+    @Binds
+    abstract fun provideAuthApiService(authApiServiceImpl: AuthApiServiceImpl): AuthApiService
+
+    @Binds
+    abstract fun provideProfileApiService(profileApiServiceImpl: ProfileApiServiceImpl): ProfileApiService
+
+    @Binds
+    abstract fun provideAiChatApiService(aiChatApiServiceImpl: AiChatApiServiceImpl): AiChatApiService
+    @Binds
+    abstract fun provideCareNestApiService(careNestApiServiceImpl: CareNestApiServiceImpl): CareNestApiService
+
+    @Binds
+    abstract fun provideUserApiService(userApiServiceImpl: UserApiServiceImpl): UserApiService
+
+    @Binds
+    abstract fun provideWalletApiService(walletApiServiceImpl: WalletApiServiceImpl): WalletApiService
+
+    @Binds
+    abstract fun provideFamilyMembersApiService(impl: FamilyMembersApiServiceImpl): FamilyMembersApiService
+
+    @Binds
+    abstract fun provideNurseTrackingService(impl: NurseTrackingServiceImp): NurseTrackingService
+
+    @Binds
+    abstract fun provideCloudinaryApiService(impl: CloudinaryApiServiceImpl): CloudinaryApiService
+
+    @Binds
+    abstract fun providePaymobApiService(impl: PaymobApiServiceImpl): PaymobApiService
+}

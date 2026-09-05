@@ -3,8 +3,8 @@ package com.carenest.data.mapper.history
 import com.carenest.data.source.local.database.entity.ServiceHistoryEntity
 import com.carenest.data.source.remote.dto.history.ServiceHistoryDto
 import com.carenest.data.utils.parseTimeString
-import com.carenest.domain.model.history.ServiceHistory
-import com.carenest.domain.model.history.PreferredTime
+import com.carenest.domain.model.ServiceHistory
+import com.carenest.domain.model.PreferredTime
 
 fun ServiceHistoryDto.toDomain(): ServiceHistory {
     val (h, m) = parseTimeString(preferredTime)

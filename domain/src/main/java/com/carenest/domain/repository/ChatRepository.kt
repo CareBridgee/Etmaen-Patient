@@ -1,8 +1,8 @@
 package com.carenest.domain.repository
 
 
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatSession
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatSession
 
 interface ChatRepository {
     suspend fun getChatSession(requestId: String): Result<ChatSession>
