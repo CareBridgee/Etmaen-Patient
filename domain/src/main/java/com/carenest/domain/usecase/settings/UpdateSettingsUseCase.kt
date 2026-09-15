@@ -1,6 +1,6 @@
 package com.carenest.domain.usecase.settings
 
-import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.model.ThemeMode
 import com.carenest.domain.repository.SettingsRepository
 
 class UpdateSettingsUseCase(

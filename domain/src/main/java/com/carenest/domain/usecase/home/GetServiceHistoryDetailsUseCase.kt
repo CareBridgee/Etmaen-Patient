@@ -1,6 +1,6 @@
 package com.carenest.domain.usecase.home
 
-import com.carenest.domain.model.history.ServiceHistory
+import com.carenest.domain.model.ServiceHistory
 import com.carenest.domain.repository.HomeRepository
 import javax.inject.Inject
 

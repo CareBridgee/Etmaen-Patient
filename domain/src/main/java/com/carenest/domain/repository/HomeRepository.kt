@@ -3,10 +3,9 @@ package com.carenest.domain.repository
 import com.carenest.domain.model.CreateServiceRequestParams
 import com.carenest.domain.model.ServiceRequestResult
 import com.carenest.domain.model.ServiceDetailsModel
-import com.carenest.domain.model.home.Booking
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.User
-import com.carenest.domain.model.history.ServiceHistory
+import com.carenest.domain.model.ServiceHistory
 
 interface HomeRepository {
     suspend fun getUser(): Result<User>

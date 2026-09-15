@@ -1,6 +1,6 @@
 package com.carenest.data.source.remote.service
 
-import com.carenest.data.di.PaymobHttpClient
+import com.carenest.data.di.qualifier.PaymobHttpClient
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionRequestDto
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionResponseDto
 import com.carenest.data.source.remote.dto.paymob.PaymobRetrievedIntentionDto

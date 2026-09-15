@@ -3,7 +3,7 @@ package com.carenest.presentation.navigation
 import androidx.navigation3.runtime.NavKey
 import com.carenest.presentation.model.LocationDetailsArg
 import com.carenest.presentation.ui.auth.login.OtpDeliveryMethod
-import com.carenest.presentation.ui.profile_completion.ProfileCompletionSource
+import com.carenest.presentation.ui.profilecompletion.ProfileCompletionSource
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,6 +1,6 @@
 package com.carenest.presentation.ui.history
 
-import com.carenest.domain.model.history.ServiceHistory
+import com.carenest.domain.model.ServiceHistory
 
 data class HistoryState(
     val historyItems: List<ServiceHistory> = emptyList(),

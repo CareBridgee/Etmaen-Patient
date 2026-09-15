@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.carenest.data.di.IoDispatcher
+import com.carenest.data.di.qualifier.IoDispatcher
 import com.carenest.domain.model.payment.WalletTopUpAmount
 import com.carenest.domain.model.payment.WalletTopUpAttempt
 import com.carenest.domain.model.payment.WalletTopUpAttemptState
@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Singleton

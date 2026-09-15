@@ -1,9 +1,9 @@
 package com.carenest.presentation.paymob
 
 import android.util.Log
+import com.carenest.domain.model.PaymobNativeCheckoutRequest
 import com.carenest.domain.model.payment.WalletException
 import com.carenest.domain.repository.PaymobNativeCheckoutLauncher
-import com.carenest.domain.repository.PaymobNativeCheckoutRequest
 import com.carenest.domain.repository.PaymobNativeCheckoutResult
 import com.paymob.paymob_sdk.PaymobSdk
 import com.paymob.paymob_sdk.ui.PaymobSdkListener

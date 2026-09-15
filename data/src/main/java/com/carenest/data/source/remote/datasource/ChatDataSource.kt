@@ -1,8 +1,8 @@
 package com.carenest.data.source.remote.datasource
 
 
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatSession
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatSession
 
 interface ChatDataSource {
     suspend fun fetchChatSession(requestId: String): ChatSession

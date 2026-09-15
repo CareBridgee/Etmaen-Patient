@@ -1,8 +1,7 @@
 package com.carenest.domain.repository
 
-import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
-
 
 interface SettingsRepository {
 

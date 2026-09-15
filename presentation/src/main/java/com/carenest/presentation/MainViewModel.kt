@@ -10,7 +10,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
-import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.model.ThemeMode
 import com.carenest.domain.socket.SocketConnectionManager
 import com.carenest.domain.socket.SocketError
 import com.carenest.domain.socket.SocketServiceController
@@ -21,8 +21,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 import com.carenest.domain.repository.SettingsRepository
-
-import kotlinx.coroutines.flow.collect
 
 @HiltViewModel
 class MainViewModel @Inject constructor(

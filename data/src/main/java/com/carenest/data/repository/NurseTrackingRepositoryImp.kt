@@ -1,8 +1,8 @@
 package com.carenest.data.repository
 
-import com.carenest.data.mapper.tracking.toDomain
+import com.carenest.data.mapper.toDomain
 import com.carenest.data.source.remote.datasource.NurseTrackingDataSource
-import com.carenest.domain.model.tracking.NurseTrackingInfo
+import com.carenest.domain.model.NurseTrackingInfo
 import com.carenest.domain.repository.NurseTrackingRepository
 import com.carenest.domain.socket.model.NurseOfferResponse
 import javax.inject.Inject

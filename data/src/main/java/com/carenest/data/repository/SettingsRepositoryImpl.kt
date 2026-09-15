@@ -1,9 +1,9 @@
 package com.carenest.data.repository
 
-import com.carenest.data.di.IoDispatcher
-import com.carenest.data.mapper.settings.toThemeMode
+import com.carenest.data.di.qualifier.IoDispatcher
+import com.carenest.data.mapper.toThemeMode
 import com.carenest.data.source.local.preferences.CarenestDatastore
-import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.model.ThemeMode
 import com.carenest.domain.repository.SettingsRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher

@@ -6,13 +6,14 @@ import androidx.annotation.RequiresApi
 import com.carenest.data.socket.models.SendMessageRequestDto
 import com.carenest.data.source.local.datasource.UserLocalDataSource
 import com.carenest.data.source.remote.service.NurseTrackingService
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatMessageType
-import com.carenest.domain.model.chat.ChatParticipant
-import com.carenest.domain.model.chat.ChatSession
-import com.carenest.domain.model.chat.MessageSender
-import com.carenest.domain.model.chat.MessageStatus
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatMessageType
+import com.carenest.domain.model.ChatParticipant
+import com.carenest.domain.model.ChatSession
+import com.carenest.domain.model.MessageSender
+import com.carenest.domain.model.MessageStatus
 import kotlinx.coroutines.flow.firstOrNull
+import java.time.Instant
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -37,7 +38,7 @@ class ChatDataSourceImp @Inject constructor(
                 text = dto.content ?: "",
                 senderType = if (isMine) MessageSender.PATIENT else MessageSender.NURSE,
                 sentAtEpochMillis = try {
-                    java.time.Instant.parse(dto.createdAt).toEpochMilli()
+                    Instant.parse(dto.createdAt).toEpochMilli()
                 } catch (_: Exception) {
                     System.currentTimeMillis()
                 },
@@ -71,7 +72,7 @@ class ChatDataSourceImp @Inject constructor(
             text = response.content ?: text,
             senderType = MessageSender.PATIENT,
             sentAtEpochMillis = try {
-                java.time.Instant.parse(response.createdAt).toEpochMilli()
+                Instant.parse(response.createdAt).toEpochMilli()
             } catch (_: Exception) {
                 System.currentTimeMillis()
             },

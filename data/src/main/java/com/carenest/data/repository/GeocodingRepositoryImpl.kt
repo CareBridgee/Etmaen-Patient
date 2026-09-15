@@ -4,7 +4,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
-import com.carenest.data.di.IoDispatcher
+import com.carenest.data.di.qualifier.IoDispatcher
 import com.carenest.domain.model.LocationDetails
 import com.carenest.domain.repository.GeocodingRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -12,11 +12,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class GeocodingRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,

@@ -3,7 +3,7 @@ package com.carenest.data.source.local.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.carenest.data.di.IoDispatcher
+import com.carenest.data.di.qualifier.IoDispatcher
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

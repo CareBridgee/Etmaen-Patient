@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import com.carenest.data.di.IoDispatcher
+import com.carenest.data.di.qualifier.IoDispatcher
 import com.carenest.domain.repository.WalletOperationGuardRepository
 import javax.inject.Inject
 import javax.inject.Singleton

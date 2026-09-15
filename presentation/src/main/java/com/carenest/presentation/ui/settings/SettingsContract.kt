@@ -1,6 +1,6 @@
 package com.carenest.presentation.ui.settings
 
-import com.carenest.domain.model.settings.ThemeMode
+import com.carenest.domain.model.ThemeMode
 
 data class SettingsState(
     val patientName: String = "",

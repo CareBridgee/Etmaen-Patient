@@ -3,11 +3,11 @@ package com.carenest.presentation.ui.chat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.carenest.domain.model.chat.ChatMessage
-import com.carenest.domain.model.chat.ChatMessageType
-import com.carenest.domain.model.chat.MessageSender
-import com.carenest.domain.model.chat.MessageStatus
-import com.carenest.domain.model.chat.ChatParticipant
+import com.carenest.domain.model.ChatMessage
+import com.carenest.domain.model.ChatMessageType
+import com.carenest.domain.model.MessageSender
+import com.carenest.domain.model.MessageStatus
+import com.carenest.domain.model.ChatParticipant
 import com.carenest.domain.repository.ChatSocketRepository
 import com.carenest.domain.repository.ReservationSocketRepository
 import com.carenest.domain.repository.UserRepository

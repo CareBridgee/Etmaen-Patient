@@ -7,6 +7,7 @@ import com.carenest.data.source.remote.dto.paymob.PaymobIntentionRequestDto
 import com.carenest.data.source.remote.dto.paymob.PaymobIntentionResponseDto
 import com.carenest.data.source.remote.dto.paymob.PaymobRetrievedIntentionDto
 import com.carenest.data.source.remote.service.PaymobApiService
+import com.carenest.domain.model.PaymobNativeCheckoutRequest
 import com.carenest.domain.model.home.User
 import com.carenest.domain.model.payment.WalletException
 import com.carenest.domain.model.payment.WalletTopUpAmount
@@ -15,7 +16,6 @@ import com.carenest.domain.model.payment.WalletTopUpAttemptState
 import com.carenest.domain.model.payment.WalletTopUpPaymentResult
 import com.carenest.domain.model.user.UserUpdate
 import com.carenest.domain.repository.PaymobNativeCheckoutLauncher
-import com.carenest.domain.repository.PaymobNativeCheckoutRequest
 import com.carenest.domain.repository.PaymobNativeCheckoutResult
 import com.carenest.domain.repository.UserRepository
 import com.carenest.domain.repository.WalletTopUpAttemptRepository

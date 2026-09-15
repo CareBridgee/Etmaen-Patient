@@ -1,14 +1,6 @@
 package com.carenest.domain.repository
 
-data class PaymobNativeCheckoutRequest(
-    val publicKey: String,
-    val clientSecret: String,
-    val appName: String,
-    val buttonBackgroundColor: Int,
-    val buttonTextColor: Int,
-    val saveCardDefault: Boolean,
-    val showSaveCard: Boolean,
-)
+import com.carenest.domain.model.PaymobNativeCheckoutRequest
 
 sealed interface PaymobNativeCheckoutResult {
     data class Success(val details: Map<String, String>) : PaymobNativeCheckoutResult

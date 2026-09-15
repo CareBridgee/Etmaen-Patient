@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.carenest.designsystem.theme.SpTheme
 import com.carenest.designsystem.theme.Theme
 import com.carenest.designsystem.components.shimmer.ShimmerPlaceholder
-import com.carenest.domain.model.tracking.NurseTrackingInfo
+import com.carenest.domain.model.NurseTrackingInfo
 import com.carenest.presentation.R
 import com.carenest.presentation.ui.tracking.components.CancellationInfoBanner
 import com.carenest.presentation.ui.tracking.components.NurseInfoCard

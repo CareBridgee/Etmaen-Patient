@@ -1,6 +1,6 @@
 package com.carenest.domain.repository
 
-import com.carenest.domain.model.visit_summary.VisitSummary
+import com.carenest.domain.model.VisitSummary
 
 
 interface VisitSummaryRepository {
