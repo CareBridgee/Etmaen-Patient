@@ -28,6 +28,9 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
+import com.carenest.presentation.core.util.UiText
+import com.carenest.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -205,7 +208,8 @@ class ProfileCompletionViewModel @Inject constructor(
                 getDefaultProfile()
             }
             val profile = profileResult.getOrElse {
-                updateState { copy(isInitializing = false, errorMessage = it.userMessage()) }
+                val errorUiText = it.toUiText()
+                updateState { copy(isInitializing = false, errorMessage = errorUiText) }
                 return@launch
             }
             val contactsResult = loadEmergencyContacts(profile.id)
@@ -593,18 +597,22 @@ class ProfileCompletionViewModel @Inject constructor(
         }
     }
 
-    private fun finishFailure(error: Throwable) = updateState {
-        copy(isSubmitting = false, errorMessage = error.userMessage())
+    private fun finishFailure(error: Throwable) {
+        val errorUiText = error.toUiText()
+        updateState { copy(isSubmitting = false, errorMessage = errorUiText) }
+        sendEffect(ProfileCompletionEffect.ShowError(errorUiText))
     }
 
-    private fun finishLoadFailure(error: Throwable) = updateState {
-        copy(isLoadingStep = false, errorMessage = error.userMessage())
+    private fun finishLoadFailure(error: Throwable) {
+        val errorUiText = error.toUiText()
+        updateState { copy(isLoadingStep = false, errorMessage = errorUiText) }
+        sendEffect(ProfileCompletionEffect.ShowError(errorUiText))
     }
 
-    private fun showError(message: String) = updateState { copy(errorMessage = message) }
+    private fun showError(message: UiText) = updateState { copy(errorMessage = message) }
 
     private fun requireProfileId(): String? = currentState.profileId ?: run {
-        showError("Profile information is unavailable")
+        showError(UiText.DynamicString("Profile information is unavailable"))
         null
     }
 
@@ -681,8 +689,6 @@ class ProfileCompletionViewModel @Inject constructor(
 
     private fun Set<String>.toggle(value: String): Set<String> =
         if (value in this) this - value else this + value
-
-    private fun Throwable.userMessage(): String = "profile_operation_failed"
 
     private fun Double.displayNumber(): String =
         if (this % 1.0 == 0.0) toInt().toString() else toString()

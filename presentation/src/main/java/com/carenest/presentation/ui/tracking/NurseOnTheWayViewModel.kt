@@ -12,6 +12,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -82,7 +83,7 @@ class NurseOnTheWayViewModel @Inject constructor(
                 }
                 .onFailure { throwable ->
                     updateState { copy(isCancelling = false) }
-                    sendEffect(NurseOnTheWayEffect.ShowError(throwable.message.orEmpty()))
+                    sendEffect(NurseOnTheWayEffect.ShowError(throwable.toUiText()))
                 }
         }
     }
@@ -110,10 +111,10 @@ class NurseOnTheWayViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            errorMessage = throwable.message
+                            errorMessage = throwable.toUiText()
                         )
                     }
-                    sendEffect(NurseOnTheWayEffect.ShowError(throwable.message.orEmpty()))
+                    sendEffect(NurseOnTheWayEffect.ShowError(throwable.toUiText()))
                 }
         }
     }

@@ -1,10 +1,11 @@
 package com.carenest.presentation.ui.servicedetails
 
 import com.carenest.domain.model.ServiceDetailsModel
+import com.carenest.presentation.core.util.UiText
 
 data class ServiceDetailsState(
     val healthcareService: ServiceDetailsModel? = null,
-    val errorMessage : String?=null
+    val errorMessage: UiText? = null
 )
 
 

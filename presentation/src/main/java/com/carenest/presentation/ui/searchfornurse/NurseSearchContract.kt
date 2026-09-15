@@ -2,6 +2,7 @@ package com.carenest.presentation.ui.searchfornurse
 
 import com.carenest.domain.model.payment.PaymentMethod
 import com.carenest.domain.socket.model.NurseOfferResponse
+import com.carenest.presentation.core.util.UiText
 
 data class NurseSearchState(
     val offers: List<NurseOfferResponse> = emptyList(),
@@ -32,5 +33,5 @@ sealed interface NurseSearchIntent {
 sealed interface NurseSearchEffect {
     data class NavigateToEnRoute(val requestId: String) : NurseSearchEffect
     data object NavigateBack : NurseSearchEffect
-    data class ShowError(val message: String) : NurseSearchEffect
+    data class ShowError(val message: UiText) : NurseSearchEffect
 }

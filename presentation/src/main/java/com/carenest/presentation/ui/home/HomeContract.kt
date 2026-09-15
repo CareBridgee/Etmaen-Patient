@@ -3,6 +3,7 @@ package com.carenest.presentation.ui.home
 import com.carenest.domain.model.ServiceHistory
 import com.carenest.domain.model.home.HealthcareService
 import com.carenest.domain.model.home.User
+import com.carenest.presentation.core.util.UiText
 
 sealed interface HomeIntent {
     data class SearchQueryChanged(val query: String) : HomeIntent
@@ -25,7 +26,7 @@ data class HomeState(
     val activeRequest: ServiceHistory? = null,
     val isLoading: Boolean = true,
     val isError: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: UiText? = null
 ) {
     val isSearchActive: Boolean
         get() = searchQuery.trim().isNotBlank()

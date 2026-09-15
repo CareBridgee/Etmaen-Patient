@@ -122,7 +122,7 @@ internal fun ServiceDetailsScreenContent(
         ServiceDetailsLayout(service = state.healthcareService, onEvent = onEvent)
     } else if (state.errorMessage != null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            BasicText(text = state.errorMessage, style = Theme.typography.body.large)
+            BasicText(text = state.errorMessage.asString(), style = Theme.typography.body.large)
         }
     } else {
         ServiceDetailsShimmerLoading()

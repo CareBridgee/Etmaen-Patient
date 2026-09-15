@@ -74,6 +74,7 @@ fun AIChatScreen(
     viewModel: AIChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     ScreenTopBar(
         title = stringResource(R.string.ai_health_assistant),
@@ -87,7 +88,7 @@ fun AIChatScreen(
             is AIChatEffect.NavigateToServiceDetails -> onNavigateToServiceDetails(effect.categoryId)
             is AIChatEffect.NavigateToRequestService -> onNavigateToRequestService(effect.serviceId)
             is AIChatEffect.ShowError -> {
-                onShowMessage(effect.message)
+                onShowMessage(effect.message.asString(context))
             }
         }
     }

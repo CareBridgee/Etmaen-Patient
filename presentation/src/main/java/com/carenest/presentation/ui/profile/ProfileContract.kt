@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.profile
 
 import com.carenest.domain.model.profile.Profile
+import com.carenest.presentation.core.util.UiText
 
 data class ProfileState(
     val profile: Profile? = null,
@@ -13,9 +14,12 @@ data class ProfileState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isUpdatingAvatar: Boolean = false,
+    val isProcessingImage: Boolean = false,
     val isLoggingOut: Boolean = false,
-    val errorMessage: String? = null,
-)
+    val errorMessage: UiText? = null,
+) {
+    val isAvatarLoading: Boolean get() = isUpdatingAvatar || isProcessingImage
+}
 
 enum class ProfileGreeting { Morning, Day, Evening }
 
@@ -27,6 +31,7 @@ sealed interface ProfileEvent {
     data object OnSettingsClicked : ProfileEvent
     data object OnLogoutClicked : ProfileEvent
     data object OnEditAvatarClicked : ProfileEvent
+    data object OnImageProcessingStarted : ProfileEvent
     data class OnAvatarSelected(
         val fileName: String,
         val contentType: String,
@@ -45,7 +50,7 @@ sealed interface ProfileEffect {
     data object NavigateToLogout : ProfileEffect
     data object SelectAvatar : ProfileEffect
     data object ShowAvatarUpdated : ProfileEffect
-    data class ShowAvatarUpdateFailed(val message: String? = null) : ProfileEffect
+    data class ShowAvatarUpdateFailed(val message: UiText? = null) : ProfileEffect
     data object ShowProfileRefreshError : ProfileEffect
     data object ShowLogoutError : ProfileEffect
 }

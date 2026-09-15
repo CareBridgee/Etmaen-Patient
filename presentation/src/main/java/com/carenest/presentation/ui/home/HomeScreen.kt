@@ -107,7 +107,7 @@ fun HomeScreenContent(
         } else if (state.isError) {
             EmptyState(
                 title = stringResource(R.string.home_error_title),
-                description = state.errorMessage ?: stringResource(R.string.home_error_default_desc),
+                description = state.errorMessage?.asString() ?: stringResource(R.string.home_error_default_desc),
                 actionLabel = stringResource(R.string.home_error_retry),
                 onActionClick = { onEvent(HomeIntent.RetryClicked) },
                 accentColor = Theme.colors.primary,

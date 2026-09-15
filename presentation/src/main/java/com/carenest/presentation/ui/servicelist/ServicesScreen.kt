@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -170,17 +171,26 @@ private fun GreetingHeader(userName: String, userImage: String?) {
     ) {
         Box(
             modifier = Modifier
-                .size(38.dp)
+                .size(40.dp)
                 .clip(CircleShape)
-                .border(1.dp, Theme.colors.primaryVariant, CircleShape),
+                .background(Theme.colors.primaryContainer),
             contentAlignment = Alignment.Center,
         ) {
-            AsyncImage(
-                model = userImage,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                placeholder = painterResource(RD.drawable.ic_profile)
-            )
+            if (userImage.isNullOrBlank()) {
+                Icon(
+                    painter = painterResource(id = RD.drawable.ic_profile),
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            } else {
+                AsyncImage(
+                    model = userImage,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
         Column {
             BasicText(

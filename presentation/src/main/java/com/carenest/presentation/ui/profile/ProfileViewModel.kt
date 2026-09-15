@@ -13,6 +13,9 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
+import com.carenest.presentation.R
+import com.carenest.presentation.core.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Calendar
 import javax.inject.Inject
@@ -45,8 +48,11 @@ class ProfileViewModel @Inject constructor(
             ProfileEvent.OnSettingsClicked -> sendEffect(ProfileEffect.NavigateToSettings)
             ProfileEvent.OnLogoutClicked -> performLogout()
             ProfileEvent.OnEditAvatarClicked -> {
-                if (!currentState.isUpdatingAvatar) sendEffect(ProfileEffect.SelectAvatar)
+                if (!currentState.isUpdatingAvatar && !currentState.isProcessingImage) {
+                    sendEffect(ProfileEffect.SelectAvatar)
+                }
             }
+            ProfileEvent.OnImageProcessingStarted -> updateState { copy(isProcessingImage = true) }
             is ProfileEvent.OnAvatarSelected -> updateAvatar(event)
             ProfileEvent.OnRetryClicked -> loadProfile(refresh = false)
             ProfileEvent.OnRefreshProfile -> loadProfile(refresh = currentState.profile != null)
@@ -79,18 +85,20 @@ class ProfileViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            val currentUser = getCurrentUser().getOrElse {
-                failLoading(refresh)
+            val userResult = getCurrentUser()
+            val profileResult = getDefaultProfile()
+            val profilesResult = getProfiles()
+
+            if (userResult.isFailure || profileResult.isFailure || profilesResult.isFailure) {
+                val error = userResult.exceptionOrNull() ?: profileResult.exceptionOrNull() ?: profilesResult.exceptionOrNull()
+                failLoading(refresh, error)
                 return@launch
             }
-            val profile = getDefaultProfile().getOrElse {
-                failLoading(refresh)
-                return@launch
-            }
-            val profiles = getProfiles().getOrElse {
-                failLoading(refresh)
-                return@launch
-            }
+
+            val currentUser = userResult.getOrThrow()
+            val profile = profileResult.getOrThrow()
+            val profiles = profilesResult.getOrThrow()
+
             val profileName = listOfNotNull(profile.firstName, profile.lastName).filter { it.isNotBlank() }.joinToString(" ")
             val currentUserName = currentUser.name.orEmpty()
             val resolvedName = currentUserName.ifBlank { profileName }
@@ -126,7 +134,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun updateAvatar(event: ProfileEvent.OnAvatarSelected) {
         if (currentState.isUpdatingAvatar) return
-        updateState { copy(isUpdatingAvatar = true) }
+        updateState { copy(isUpdatingAvatar = true, isProcessingImage = false) }
         viewModelScope.launch {
             updateProfileAvatar(event.fileName, event.contentType, event.bytes).fold(
                 onSuccess = {
@@ -140,18 +148,18 @@ class ProfileViewModel @Inject constructor(
                 onFailure = { error ->
                     Log.e("ProfileViewModel", "Avatar update failed", error)
                     updateState { copy(isUpdatingAvatar = false) }
-                    sendEffect(ProfileEffect.ShowAvatarUpdateFailed(error.message ?: error.toString()))
+                    sendEffect(ProfileEffect.ShowAvatarUpdateFailed(error.toUiText()))
                 }
             )
         }
     }
 
-    private fun failLoading(refresh: Boolean) = updateState {
+    private fun failLoading(refresh: Boolean, error: Throwable?) = updateState {
         if (refresh && profile != null) sendEffect(ProfileEffect.ShowProfileRefreshError)
         copy(
             isLoading = false,
             isRefreshing = false,
-            errorMessage = if (refresh && profile != null) null else PROFILE_LOAD_ERROR
+            errorMessage = if (refresh && profile != null) null else error?.toUiText() ?: UiText.StringResource(R.string.profile_load_failed)
         )
     }
 
@@ -161,9 +169,5 @@ class ProfileViewModel @Inject constructor(
         in 5..11 -> ProfileGreeting.Morning
         in 12..17 -> ProfileGreeting.Day
         else -> ProfileGreeting.Evening
-    }
-
-    companion object {
-        private const val PROFILE_LOAD_ERROR = "profile_load_failed"
     }
 }

@@ -3,10 +3,16 @@ package com.carenest.presentation.ui.auth
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.carenest.domain.exception.BadRequestException
+import com.carenest.domain.exception.NoInternetException
+import com.carenest.domain.exception.NotFoundException
+import com.carenest.domain.exception.ServerException
+import com.carenest.domain.exception.UnauthorizedException
 import com.carenest.domain.model.auth.AuthException
 import com.carenest.domain.model.auth.AuthFailure
 import com.carenest.domain.model.user.UserException
 import com.carenest.presentation.R
+import io.ktor.util.network.UnresolvedAddressException
 import java.io.IOException
 
 enum class AuthUiError(@get:StringRes val messageRes: Int) {
@@ -31,6 +37,11 @@ enum class AuthUiError(@get:StringRes val messageRes: Int) {
 fun AuthUiError?.localizedMessage(): String? = this?.let { stringResource(it.messageRes) }
 
 fun Throwable.toAuthUiError(default: AuthUiError): AuthUiError = when (this) {
+    is NoInternetException, is UnresolvedAddressException, is IOException -> AuthUiError.NetworkUnavailable
+    is UnauthorizedException -> AuthUiError.VerificationFailed
+    is NotFoundException -> AuthUiError.ProfileLoadFailed
+    is ServerException -> AuthUiError.ServiceUnavailable
+    is BadRequestException -> default // Or add a specific BadRequest UI error
     is AuthException -> when (failure) {
         AuthFailure.Network -> AuthUiError.NetworkUnavailable
         AuthFailure.InvalidPhone -> AuthUiError.InvalidPhone
@@ -46,6 +57,5 @@ fun Throwable.toAuthUiError(default: AuthUiError): AuthUiError = when (this) {
         (statusCode ?: 0) >= 500 -> AuthUiError.ServiceUnavailable
         else -> default
     }
-    is IOException -> AuthUiError.NetworkUnavailable
     else -> default
 }

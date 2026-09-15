@@ -73,7 +73,7 @@ fun NurseOnTheWayScreen(
             NurseOnTheWayEffect.NavigateBackAfterCancel -> onNavigateBack()
             is NurseOnTheWayEffect.NavigateToVisitCompleted -> onVisitCompleted(effect.requestId)
             is NurseOnTheWayEffect.ShowCancellationFeeWarning -> showSnackbar(effect.message)
-            is NurseOnTheWayEffect.ShowError -> showSnackbar(effect.message)
+            is NurseOnTheWayEffect.ShowError -> showSnackbar(effect.message.asString(context))
 
         }
     }

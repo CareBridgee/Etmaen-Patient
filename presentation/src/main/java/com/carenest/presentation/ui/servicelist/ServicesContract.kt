@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.servicelist
 
 import com.carenest.domain.model.home.HealthcareService
+import com.carenest.presentation.core.util.UiText
 
 data class ServicesState(
     val searchQuery: String = "",
@@ -8,7 +9,8 @@ data class ServicesState(
     val filteredServices: List<HealthcareService> = emptyList(),
     val userName: String = "",
     val userImageUrl: String? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val errorMessage: UiText? = null
 )
 
 sealed interface ServicesIntent {

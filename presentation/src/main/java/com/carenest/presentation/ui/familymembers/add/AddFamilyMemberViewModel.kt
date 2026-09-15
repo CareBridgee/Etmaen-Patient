@@ -13,6 +13,9 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
+import com.carenest.presentation.core.util.UiText
+import com.carenest.presentation.R
 import com.carenest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -71,9 +74,9 @@ class AddFamilyMemberViewModel @Inject constructor(
                         )
                     }
                 },
-                onFailure = {
+                onFailure = { error ->
                     updateState { copy(isLoadingData = false) }
-                    sendEffect(AddFamilyMemberEffect.ShowError("family_member_load_failed"))
+                    sendEffect(AddFamilyMemberEffect.ShowError(error.toUiText()))
                 }
             )
         }
@@ -189,7 +192,7 @@ class AddFamilyMemberViewModel @Inject constructor(
         }
 
         if (hasError) {
-            sendEffect(AddFamilyMemberEffect.ShowError("Please fill out all required fields correctly"))
+            sendEffect(AddFamilyMemberEffect.ShowError(UiText.StringResource(R.string.error_fill_required_fields)))
             return
         }
 
@@ -203,9 +206,9 @@ class AddFamilyMemberViewModel @Inject constructor(
                     contentType = currentState.selectedAvatarContentType ?: "image/jpeg",
                     bytes = currentState.selectedAvatarBytes
                 )
-                uploadResult.getOrElse {
+                uploadResult.getOrElse { error ->
                     updateState { copy(isSubmitting = false) }
-                    sendEffect(AddFamilyMemberEffect.ShowError("Unable to upload profile photo"))
+                    sendEffect(AddFamilyMemberEffect.ShowError(error.toUiText()))
                     return@launch
                 }
             } else {
@@ -250,9 +253,9 @@ class AddFamilyMemberViewModel @Inject constructor(
                 onFailure = { error ->
                     android.util.Log.e("AddFamilyMemberViewModel", "Save family member failed", error)
                     updateState { copy(isSubmitting = false) }
-                    val errorMsg = error.message ?: error.toString()
-                    updateState { copy(errorMessage = errorMsg) }
-                    sendEffect(AddFamilyMemberEffect.ShowError(errorMsg))
+                    val errorUiText = error.toUiText()
+                    updateState { copy(errorMessage = errorUiText) }
+                    sendEffect(AddFamilyMemberEffect.ShowError(errorUiText))
                 }
             )
         }

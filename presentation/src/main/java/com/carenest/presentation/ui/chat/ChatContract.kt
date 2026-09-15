@@ -3,6 +3,7 @@ package com.carenest.presentation.ui.chat
 
 import com.carenest.domain.model.ChatMessage
 import com.carenest.domain.model.ChatParticipant
+import com.carenest.presentation.core.util.UiText
 
 data class ChatState(
     val isLoading: Boolean = true,
@@ -11,7 +12,7 @@ data class ChatState(
     val inputText: String = "",
     val isSending: Boolean = false,
     val showNurseCancelledDialog: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
 )
 
 sealed interface ChatIntent {
@@ -28,5 +29,5 @@ sealed interface ChatEffect {
     data class InitiateCall(val phoneNumber: String) : ChatEffect
     data object NavigateBack : ChatEffect
     data object ScrollToBottom : ChatEffect
-    data class ShowError(val message: String) : ChatEffect
+    data class ShowError(val message: UiText) : ChatEffect
 }

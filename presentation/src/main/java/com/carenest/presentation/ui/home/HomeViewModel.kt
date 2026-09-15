@@ -13,6 +13,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -82,8 +83,8 @@ class HomeViewModel @Inject constructor(
                 val activeRequestResult = activeRequestDeferred.await()
                 
                 if (userResult.isFailure && servicesResult.isFailure && bookingResult.isFailure) {
-                    val errorMsg = userResult.exceptionOrNull()?.message ?: "Failed to load home data"
-                    updateState { copy(isLoading = false, isError = true, errorMessage = errorMsg) }
+                    val error = userResult.exceptionOrNull() ?: Exception("Failed to load home data")
+                    updateState { copy(isLoading = false, isError = true, errorMessage = error.toUiText()) }
                     return@launch
                 }
 
@@ -129,7 +130,7 @@ class HomeViewModel @Inject constructor(
                     copy(
                         isLoading = false,
                         isError = true,
-                        errorMessage = e.message ?: "An unexpected error occurred"
+                        errorMessage = e.toUiText()
                     )
                 }
             }

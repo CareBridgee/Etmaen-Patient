@@ -70,7 +70,7 @@ fun ServiceHistoryDetailsScreen(
             ServiceHistoryDetailsLoadingShimmer()
         } else if (state.error != null) {
             Text(
-                text = state.error!!,
+                text = state.error!!.asString(),
                 style = Theme.typography.body.medium,
                 modifier = Modifier.align(Alignment.Center),
                 color = Theme.colors.error

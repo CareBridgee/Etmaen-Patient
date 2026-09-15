@@ -21,6 +21,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -105,8 +106,8 @@ class ChatViewModel @Inject constructor(
                     sendEffect(ChatEffect.ScrollToBottom)
                 }
                 .onFailure { throwable ->
-                    updateState { copy(isLoading = false, errorMessage = throwable.message) }
-                    sendEffect(ChatEffect.ShowError(throwable.message.orEmpty()))
+                    updateState { copy(isLoading = false, errorMessage = throwable.toUiText()) }
+                    sendEffect(ChatEffect.ShowError(throwable.toUiText()))
                 }
         }
     }
@@ -174,7 +175,7 @@ class ChatViewModel @Inject constructor(
                 }
                 .onFailure { throwable ->
                     updateState { copy(isSending = false) }
-                    sendEffect(ChatEffect.ShowError(throwable.message.orEmpty()))
+                    sendEffect(ChatEffect.ShowError(throwable.toUiText()))
                 }
         }
     }

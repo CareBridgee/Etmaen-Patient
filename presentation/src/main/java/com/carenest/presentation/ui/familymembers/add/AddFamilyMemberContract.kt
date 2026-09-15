@@ -2,6 +2,7 @@ package com.carenest.presentation.ui.familymembers.add
 
 import com.carenest.domain.model.familymembers.FamilyRelationship
 import com.carenest.domain.validation.PhoneNumberValidationError
+import com.carenest.presentation.core.util.UiText
 
 data class AddFamilyMemberState(
     val memberId: String? = null,
@@ -34,7 +35,7 @@ data class AddFamilyMemberState(
     val genderError: String? = null,
     val heightError: String? = null,
     val weightError: String? = null,
-    val errorMessage: String? = null
+    val errorMessage: UiText? = null
 )
 
 sealed interface AddFamilyMemberEvent {
@@ -66,6 +67,6 @@ sealed interface AddFamilyMemberEffect {
     data object NavigateBack : AddFamilyMemberEffect
     data object ShowSuccess : AddFamilyMemberEffect
     data class NavigateToCompleteProfile(val memberId: String) : AddFamilyMemberEffect
-    data class ShowError(val message: String) : AddFamilyMemberEffect
+    data class ShowError(val message: UiText) : AddFamilyMemberEffect
     data object SelectAvatar : AddFamilyMemberEffect
 }

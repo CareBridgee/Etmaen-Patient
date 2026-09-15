@@ -130,7 +130,7 @@ private fun QrCodeScreenContent(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     BasicText(
-                        text = state.error,
+                        text = state.error.asString(),
                         style = Theme.typography.body.small.copy(
                             color = Theme.colors.error,
                             textAlign = TextAlign.Center

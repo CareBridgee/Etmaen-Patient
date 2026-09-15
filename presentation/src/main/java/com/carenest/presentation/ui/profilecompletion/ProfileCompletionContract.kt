@@ -10,6 +10,7 @@ import com.carenest.domain.model.profile.Profile
 import com.carenest.domain.model.profile.ProfileField
 import com.carenest.domain.model.profile.ProfileValidationError
 import com.carenest.domain.validation.SupportedPhoneCountry
+import com.carenest.presentation.core.util.UiText
 
 import kotlinx.serialization.Serializable
 
@@ -45,7 +46,7 @@ data class ProfileCompletionState(
     val isLoadingStep: Boolean = false,
     val isSubmitting: Boolean = false,
     val initialized: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
     val validationErrors: Map<ProfileField, ProfileValidationError> = emptyMap(),
     val medicationValidationErrors: Map<Long, MedicationValidationErrors> = emptyMap(),
     val loadedSteps: Set<ProfileStep> = emptySet(),
@@ -111,4 +112,5 @@ sealed interface ProfileCompletionEffect {
     data object NavigateToHome : ProfileCompletionEffect
     data object NavigateToFamilyMembers : ProfileCompletionEffect
     data object NavigateAfterEdit : ProfileCompletionEffect
+    data class ShowError(val message: UiText) : ProfileCompletionEffect
 }

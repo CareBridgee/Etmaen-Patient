@@ -48,6 +48,7 @@ fun VisitCompletedScreen(
     viewModel: VisitCompletedViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     LaunchedEffect(requestId) {
         viewModel.handleIntent(VisitCompletedIntent.LoadVisitSummary(requestId))
@@ -57,7 +58,7 @@ fun VisitCompletedScreen(
         when (effect) {
             VisitCompletedEffect.NavigateHome -> onNavigateHome()
             VisitCompletedEffect.RatingSubmitted -> onShowSnackbar("Thanks for your feedback!")
-            is VisitCompletedEffect.ShowError -> onShowSnackbar(effect.message)
+            is VisitCompletedEffect.ShowError -> onShowSnackbar(effect.message.asString(context))
         }
     }
 

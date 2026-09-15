@@ -8,6 +8,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,16 +42,25 @@ class ServicesViewModel @Inject constructor(
 
     private fun loadServices() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
-            val result = getServicesUseCase()
-            val services = result.getOrDefault(emptyList())
-            updateState {
-                copy(
-                    services = services,
-                    filteredServices = services,
-                    isLoading = false
-                )
-            }
+            updateState { copy(isLoading = true, errorMessage = null) }
+            getServicesUseCase()
+                .onSuccess { services ->
+                    updateState {
+                        copy(
+                            services = services,
+                            filteredServices = services,
+                            isLoading = false
+                        )
+                    }
+                }
+                .onFailure { throwable ->
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            errorMessage = throwable.toUiText()
+                        )
+                    }
+                }
         }
     }
 

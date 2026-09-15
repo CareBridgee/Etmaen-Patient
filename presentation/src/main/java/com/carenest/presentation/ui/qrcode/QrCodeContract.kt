@@ -1,10 +1,12 @@
 package com.carenest.presentation.ui.qrcode
 
+import com.carenest.presentation.core.util.UiText
+
 data class QrCodeState(
     val requestId: String = "",
     val qrData: String = "",
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: UiText? = null
 )
 
 sealed interface QrCodeIntent {

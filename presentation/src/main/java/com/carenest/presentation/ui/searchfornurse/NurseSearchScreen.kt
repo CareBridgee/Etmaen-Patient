@@ -37,16 +37,18 @@ fun NurseSearchScreen(
     serviceRequestId: String,
     onBack: () -> Unit,
     onMatched: (nurseId: String) -> Unit,
+    onShowMessage: (String) -> Unit = {},
     viewModel: NurseSearchViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val androidContext = androidx.compose.ui.platform.LocalContext.current
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is NurseSearchEffect.NavigateToEnRoute -> onMatched(effect.requestId)
             NurseSearchEffect.NavigateBack -> onBack()
 
-            is NurseSearchEffect.ShowError -> Unit // TODO: wire to snackbar
+            is NurseSearchEffect.ShowError -> onShowMessage(effect.message.asString(androidContext))
         }
     }
 

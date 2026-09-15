@@ -9,6 +9,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ class ChoosePatientViewModel @Inject constructor(
 
     fun loadPatients() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
+            updateState { copy(isLoading = true, errorMessage = null) }
 
             val cachedUser = observeCurrentUserUseCase().first()
             val currentUser = getCurrentUserUseCase().getOrNull() ?: cachedUser
@@ -97,13 +98,19 @@ class ChoosePatientViewModel @Inject constructor(
                         )
                     }
                 }
-            }
-
-            updateState {
-                copy(
-                    patients = if (patientsList.isNotEmpty()) patientsList else patients,
-                    isLoading = false
-                )
+                updateState {
+                    copy(
+                        patients = if (patientsList.isNotEmpty()) patientsList else patients,
+                        isLoading = false
+                    )
+                }
+            }.onFailure { throwable ->
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = throwable.toUiText()
+                    )
+                }
             }
         }
     }
@@ -128,6 +135,7 @@ class ChoosePatientViewModel @Inject constructor(
                     sendEffect(ChoosePatientEffect.NavigateToChat(it.id))
                 }
             }
+            ChoosePatientEvent.OnRetryClicked -> loadPatients()
         }
     }
 }

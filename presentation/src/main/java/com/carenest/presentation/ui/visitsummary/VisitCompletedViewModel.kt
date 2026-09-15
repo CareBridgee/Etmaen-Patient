@@ -8,6 +8,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,8 +49,9 @@ class VisitCompletedViewModel @Inject constructor(
                     }
                 }
                 .onFailure { throwable ->
-                    updateState { copy(isLoading = false, errorMessage = throwable.message) }
-                    sendEffect(VisitCompletedEffect.ShowError(throwable.message.orEmpty()))
+                    val errorUiText = throwable.toUiText()
+                    updateState { copy(isLoading = false, errorMessage = errorUiText) }
+                    sendEffect(VisitCompletedEffect.ShowError(errorUiText))
                 }
         }
     }
@@ -70,8 +72,9 @@ class VisitCompletedViewModel @Inject constructor(
                     sendEffect(VisitCompletedEffect.RatingSubmitted)
                 }
                 .onFailure { throwable ->
+                    val errorUiText = throwable.toUiText()
                     updateState { copy(isSubmittingRating = false) }
-                    sendEffect(VisitCompletedEffect.ShowError(throwable.message.orEmpty()))
+                    sendEffect(VisitCompletedEffect.ShowError(errorUiText))
                 }
         }
     }

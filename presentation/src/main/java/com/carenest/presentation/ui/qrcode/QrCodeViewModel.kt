@@ -10,6 +10,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import com.carenest.domain.usecase.tracking.GetVisitVerificationCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -54,7 +55,7 @@ class QrCodeViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            error =  "Failed to load QR code"
+                            error =  error.toUiText()
                         )
                     }
                 }

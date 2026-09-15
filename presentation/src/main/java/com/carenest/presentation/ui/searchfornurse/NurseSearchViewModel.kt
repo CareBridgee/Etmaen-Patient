@@ -14,6 +14,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import com.carenest.presentation.ui.searchfornurse.NurseSearchEffect.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -82,7 +83,7 @@ class NurseSearchViewModel @Inject constructor(
         observationJob = viewModelScope.launch {
             reservationSocketRepository.observeReservationEvents(reservationId)
                 .catch { e ->
-                    sendEffect(ShowError(e.message ?: "Connection error"))
+                    sendEffect(ShowError(e.toUiText()))
                 }
                 .collect { event -> handleEvent(event) }
         }
@@ -105,7 +106,7 @@ class NurseSearchViewModel @Inject constructor(
         notificationJob = viewModelScope.launch {
             notificationSocketRepository.observeNotifications()
                 .catch { e ->
-                    sendEffect(ShowError(e.message ?: "Notification stream error"))
+                    sendEffect(ShowError(e.toUiText()))
                 }
                 .collect { notification ->
                     // Re-query offers whenever a new notification arrives
@@ -140,7 +141,7 @@ class NurseSearchViewModel @Inject constructor(
                 }
                 .onFailure {
                     if (state.value.offers.isEmpty()) {
-                        sendEffect(ShowError(it.message ?: "Failed to load offers"))
+                        sendEffect(ShowError(it.toUiText()))
                     }
                 }
         }
@@ -218,7 +219,7 @@ class NurseSearchViewModel @Inject constructor(
                     sendEffect(NavigateToEnRoute(offer.serviceRequestId))
                 }
                 .onFailure {
-                    sendEffect(ShowError(it.message ?: "Failed to accept offer"))
+                    sendEffect(ShowError(it.toUiText()))
                 }
         }
     }
@@ -226,7 +227,7 @@ class NurseSearchViewModel @Inject constructor(
     private fun declineOffer(offerId: String) {
         viewModelScope.launch {
             runCatching { reservationSocketRepository.rejectOffer(offerId) }
-                .onFailure { sendEffect(ShowError(it.message ?: "Failed to decline offer")) }
+                .onFailure { sendEffect(ShowError(it.toUiText())) }
         }
     }
 
@@ -235,7 +236,7 @@ class NurseSearchViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { cancelVisitUseCase(serviceRequestId) }
             runCatching { reservationSocketRepository.cancelRequest(serviceRequestId) }
-            sendEffect(NavigateBack)
+            sendEffect(NurseSearchEffect.NavigateBack)
         }
     }
 
@@ -249,7 +250,7 @@ class NurseSearchViewModel @Inject constructor(
                     sendEffect(NavigateToEnRoute(offer.serviceRequestId))
                 }
                 .onFailure {
-                    sendEffect(ShowError(it.message ?: "Failed to accept offer"))
+                    sendEffect(ShowError(it.toUiText()))
                 }
         }
     }

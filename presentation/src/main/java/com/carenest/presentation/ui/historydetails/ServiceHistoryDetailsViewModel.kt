@@ -7,6 +7,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class ServiceHistoryDetailsViewModel @Inject constructor(
                     updateState { copy(serviceHistory = details, isLoading = false) }
                 }
                 .onFailure { error ->
-                    updateState { copy(isLoading = false, error = error.message ?: "Failed to load details") }
+                    updateState { copy(isLoading = false, error = error.toUiText()) }
                 }
         }
     }

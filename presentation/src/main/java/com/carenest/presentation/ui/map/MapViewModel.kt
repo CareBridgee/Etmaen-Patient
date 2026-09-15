@@ -8,6 +8,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -83,7 +84,7 @@ class MapViewModel @Inject constructor(
                 updateState {
                     copy(
                         isGeocodingLoading = false,
-                        geocodingError = error.message ?: "Failed to get address",
+                        geocodingError = error.toUiText(),
                     )
                 }
             }

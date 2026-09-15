@@ -1,13 +1,14 @@
 package com.carenest.presentation.ui.map
 
 import com.carenest.domain.model.LocationDetails
+import com.carenest.presentation.core.util.UiText
 import com.mapbox.geojson.Point
 
 data class MapUiState(
     val selectedPoint: Point? = null,
     val locationDetails: LocationDetails? = null,
     val isGeocodingLoading: Boolean = false,
-    val geocodingError: String? = null,
+    val geocodingError: UiText? = null,
 )
 
 sealed interface MapIntent {
@@ -21,6 +22,6 @@ sealed interface MapIntent {
 sealed interface MapEffect {
     data class NavigateBackWithResult(val locationDetails: LocationDetails) : MapEffect
     data object NavigateBack : MapEffect
-    data class ShowError(val message: String) : MapEffect
+    data class ShowError(val message: UiText) : MapEffect
     data object RequestLocationPermission : MapEffect
 }

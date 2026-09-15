@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.tracking
 
 import com.carenest.domain.model.NurseTrackingInfo
+import com.carenest.presentation.core.util.UiText
 
 
 data class NurseOnTheWayState(
@@ -9,7 +10,7 @@ data class NurseOnTheWayState(
     val isCancelling: Boolean = false,
     val showCancelConfirmationDialog: Boolean = false,
     val showNurseCancelledDialog: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
 )
 
 sealed interface NurseOnTheWayIntent {
@@ -32,5 +33,5 @@ sealed interface NurseOnTheWayEffect {
     data object NavigateBackAfterCancel : NurseOnTheWayEffect
     data class NavigateToVisitCompleted(val requestId: String) : NurseOnTheWayEffect
     data class ShowCancellationFeeWarning(val message: String) : NurseOnTheWayEffect
-    data class ShowError(val message: String) : NurseOnTheWayEffect
+    data class ShowError(val message: UiText) : NurseOnTheWayEffect
 }

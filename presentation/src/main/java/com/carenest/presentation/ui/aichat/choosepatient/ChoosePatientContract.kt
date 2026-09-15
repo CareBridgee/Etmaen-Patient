@@ -1,5 +1,7 @@
 package com.carenest.presentation.ui.aichat.choosepatient
 
+import com.carenest.presentation.core.util.UiText
+
 data class PatientItem(
     val id: String,
     val name: String,
@@ -11,13 +13,15 @@ data class ChoosePatientState(
     val userName: String = "",
     val userAvatarUrl: String? = null,
     val patients: List<PatientItem> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val errorMessage: UiText? = null
 )
 
 sealed class ChoosePatientEvent {
     data class OnPatientSelected(val patientId: String) : ChoosePatientEvent()
     object OnAddFamilyMemberClicked : ChoosePatientEvent()
     object OnContinueClicked : ChoosePatientEvent()
+    object OnRetryClicked : ChoosePatientEvent()
 }
 
 sealed class ChoosePatientEffect {

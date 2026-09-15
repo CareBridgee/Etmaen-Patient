@@ -9,6 +9,9 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
+import com.carenest.presentation.core.util.UiText
+import com.carenest.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -96,9 +99,9 @@ class AIChatViewModel @Inject constructor(
             }
 
             if (activeProfileId.isBlank()) {
-                val errorMsg = "Please select or set up a patient profile first."
-                updateState { copy(isLoading = false, errorMessage = errorMsg) }
-                sendEffect(AIChatEffect.ShowError(errorMsg))
+                val error = UiText.StringResource(R.string.choose_patient_description) // Placeholder
+                updateState { copy(isLoading = false, errorMessage = error) }
+                sendEffect(AIChatEffect.ShowError(error))
                 return@launch
             }
 
@@ -157,14 +160,14 @@ class AIChatViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
-                    val errorMsg = error.message ?: "Failed to get AI response. Please try again."
+                    val errorUiText = error.toUiText()
                     updateState {
                         copy(
                             isLoading = false,
-                            errorMessage = errorMsg
+                            errorMessage = errorUiText
                         )
                     }
-                    sendEffect(AIChatEffect.ShowError(errorMsg))
+                    sendEffect(AIChatEffect.ShowError(errorUiText))
                 }
             )
         }
@@ -202,14 +205,14 @@ class AIChatViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
-                    val errorMsg = error.message ?: "Failed to reset chat. Please try again."
+                    val errorUiText = error.toUiText()
                     updateState {
                         copy(
                             isResetting = false,
-                            errorMessage = errorMsg
+                            errorMessage = errorUiText
                         )
                     }
-                    sendEffect(AIChatEffect.ShowError(errorMsg))
+                    sendEffect(AIChatEffect.ShowError(errorUiText))
                 }
             )
         }

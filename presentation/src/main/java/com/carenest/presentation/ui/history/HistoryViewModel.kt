@@ -7,6 +7,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,7 +41,7 @@ class HistoryViewModel @Inject constructor(
                     updateState { copy(historyItems = items, isLoading = false) }
                 }
                 .onFailure { exception ->
-                    updateState { copy(error = exception.message ?: "Failed to load history", isLoading = false) }
+                    updateState { copy(error = exception.toUiText(), isLoading = false) }
                 }
         }
     }

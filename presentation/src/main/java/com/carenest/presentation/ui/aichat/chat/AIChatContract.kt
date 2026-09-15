@@ -1,5 +1,7 @@
 package com.carenest.presentation.ui.aichat.chat
 
+import com.carenest.presentation.core.util.UiText
+
 enum class ChatMessageType {
     TEXT,
     SERVICE_RECOMMENDATION
@@ -28,7 +30,7 @@ data class AIChatState(
     val inputText: String = "",
     val isLoading: Boolean = false,
     val isResetting: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: UiText? = null
 )
 
 sealed class AIChatEvent {
@@ -46,5 +48,5 @@ sealed class AIChatEffect {
     object NavigateToBookings : AIChatEffect()
     data class NavigateToServiceDetails(val categoryId: String) : AIChatEffect()
     data class NavigateToRequestService(val serviceId: String) : AIChatEffect()
-    data class ShowError(val message: String) : AIChatEffect()
+    data class ShowError(val message: UiText) : AIChatEffect()
 }

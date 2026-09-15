@@ -119,13 +119,7 @@ fun AddFamilyMemberScreenRoute(
                 onNavigateToCompleteProfile(effect.memberId)
             }
             is AddFamilyMemberEffect.ShowError -> {
-                val message = when (effect.message) {
-                    "family_member_load_failed" -> loadFailedMessage
-                    "family_member_save_failed" -> saveFailedMessage
-                    "Please fill out all required fields correctly" -> fillRequiredFieldsMessage
-                    else -> effect.message
-                }
-                onShowMessage(message)
+                onShowMessage(effect.message.asString(androidContext))
             }
             AddFamilyMemberEffect.ShowSuccess -> {
                 onMemberSaved()

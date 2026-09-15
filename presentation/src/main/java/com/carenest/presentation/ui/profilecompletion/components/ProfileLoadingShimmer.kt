@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,8 +57,7 @@ fun ProfileLoadingShimmer(step: ProfileStep) {
                 ProfileStep.CurrentMedications -> MedicationsShimmer()
                 ProfileStep.MedicalHistory -> MedicalHistoryShimmer()
                 ProfileStep.MobilityStatus -> MobilityShimmer()
-                ProfileStep.EmergencyContact -> EmergencyContactShimmer()
-                ProfileStep.FinalStep -> FinalStepShimmer()
+                ProfileStep.EmergencyContact , ProfileStep.FinalStep -> EmergencyContactShimmer()
             }
         }
 
@@ -162,13 +160,6 @@ private fun EmergencyContactShimmer() {
             ShimmerBox(Modifier.fillMaxWidth().height(56.dp), 14.dp)
         }
     }
-}
-
-@Composable
-private fun FinalStepShimmer() {
-    Spacer(Modifier.height(32.dp))
-    ShimmerBox(Modifier.fillMaxWidth().height(240.dp), 28.dp)
-    TextHeaderShimmer()
 }
 
 @Composable

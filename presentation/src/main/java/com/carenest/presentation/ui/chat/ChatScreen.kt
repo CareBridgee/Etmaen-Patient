@@ -77,7 +77,7 @@ fun ChatScreen(
                 }
             }
 
-            is ChatEffect.ShowError -> showSnackbar(effect.message)
+            is ChatEffect.ShowError -> showSnackbar(effect.message.asString(context))
         }
     }
 

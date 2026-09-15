@@ -86,7 +86,7 @@ fun HistoryScreenContent(
         } else if (state.error != null) {
             EmptyState(
                 title = stringResource(R.string.home_error_title),
-                description = state.error,
+                description = state.error.asString(),
                 actionLabel = stringResource(R.string.home_error_retry),
                 onActionClick = { onEvent(HistoryIntent.RetryClicked) },
                 accentColor = Theme.colors.primary,

@@ -47,6 +47,7 @@ fun ProfileCompletionScreen(
             ProfileCompletionEffect.NavigateToHome -> onNavigateToHome()
             ProfileCompletionEffect.NavigateToFamilyMembers -> onNavigateToFamilyMembers()
             ProfileCompletionEffect.NavigateAfterEdit -> onEditComplete()
+            else -> {}
         }
     }
     BackHandler { viewModel.onEvent(ProfileCompletionIntent.BackClicked) }
@@ -68,7 +69,7 @@ fun ProfileCompletionScreen(
 
         state.errorMessage?.let {
             Text(
-                text = stringResource(R.string.profile_health_operation_failed_retry),
+                text = it.asString(),
                 color = Theme.colors.onPrimary,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

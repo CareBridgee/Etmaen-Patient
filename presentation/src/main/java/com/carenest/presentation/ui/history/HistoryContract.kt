@@ -1,11 +1,12 @@
 package com.carenest.presentation.ui.history
 
 import com.carenest.domain.model.ServiceHistory
+import com.carenest.presentation.core.util.UiText
 
 data class HistoryState(
     val historyItems: List<ServiceHistory> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: UiText? = null
 )
 
 sealed interface HistoryIntent {

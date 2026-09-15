@@ -1,6 +1,7 @@
 package com.carenest.presentation.ui.visitsummary
 
 import com.carenest.domain.model.VisitSummary
+import com.carenest.presentation.core.util.UiText
 
 
 data class VisitCompletedState(
@@ -11,7 +12,7 @@ data class VisitCompletedState(
     val reviewText: String = "",
     val isAnonymous: Boolean = false,
     val isSubmittingRating: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
 )
 
 sealed interface VisitCompletedIntent {
@@ -28,5 +29,5 @@ sealed interface VisitCompletedIntent {
 sealed interface VisitCompletedEffect {
     data object NavigateHome : VisitCompletedEffect
     data object RatingSubmitted : VisitCompletedEffect
-    data class ShowError(val message: String) : VisitCompletedEffect
+    data class ShowError(val message: UiText) : VisitCompletedEffect
 }

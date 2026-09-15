@@ -8,6 +8,7 @@ import com.carenest.presentation.core.mvi.DefaultEffectPublisher
 import com.carenest.presentation.core.mvi.DefaultStateHolder
 import com.carenest.presentation.core.mvi.EffectPublisher
 import com.carenest.presentation.core.mvi.StateHolder
+import com.carenest.presentation.core.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -52,7 +53,7 @@ class ServiceDetailsViewModel @Inject constructor(
                 Log.e("service",service.toString())
             }.onFailure {
                 updateState {
-                    copy(errorMessage = it.message)
+                    copy(errorMessage = it.toUiText())
                 }
             }
         }
