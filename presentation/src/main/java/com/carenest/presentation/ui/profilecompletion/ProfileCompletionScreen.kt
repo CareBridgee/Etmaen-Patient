@@ -47,6 +47,7 @@ fun ProfileCompletionScreen(
             ProfileCompletionEffect.NavigateToHome -> onNavigateToHome()
             ProfileCompletionEffect.NavigateToFamilyMembers -> onNavigateToFamilyMembers()
             ProfileCompletionEffect.NavigateAfterEdit -> onEditComplete()
+            else -> {}
         }
     }
     BackHandler { viewModel.onEvent(ProfileCompletionIntent.BackClicked) }
