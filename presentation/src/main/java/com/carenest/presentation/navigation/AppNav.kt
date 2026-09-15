@@ -459,8 +459,6 @@ fun AppNav(
 
                 entry<AppRoute.Map> { route ->
                     MapScreen(
-                        initialLatitude = route.latitude,
-                        initialLongitude = route.longitude,
                         onLocationConfirmed = { locationDetails ->
                             mapResultLocation = locationDetails
                             if (backStack.size > 1) backStack.removeLastOrNull()
